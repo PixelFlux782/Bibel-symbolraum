@@ -46,36 +46,40 @@ export default function StartPage() {
         </div>
       </section>
 
-      <section className="w-full max-w-5xl border-t border-white/5 px-6 py-32">
-        <div className="space-y-20 text-center">
-          <h2 className="font-sans text-[10px] uppercase tracking-[0.5em] text-muted">
+      <section className="w-full max-w-5xl border-t border-white/6 px-6 py-28">
+        <div className="space-y-12 text-center">
+          <h2 className="font-sans text-[10px] uppercase tracking-[0.5em] text-muted-soft">
             Beginne mit einem Zeichen
           </h2>
 
-          <div className="flex flex-wrap justify-center gap-x-12 gap-y-16">
+          <div className="flex flex-wrap justify-center gap-6">
             {symbols.map((symbol) => (
               <Link
                 key={symbol.slug}
                 href={`/symbole/${symbol.slug}`}
-                className="group relative block"
+                className="group relative block w-44 md:w-56"
               >
-                <span className="font-serif text-4xl italic text-foreground/20 transition-all duration-1000 group-hover:text-foreground md:text-6xl">
-                  {symbol.name}
-                </span>
-                <div className="absolute -bottom-4 left-0 h-px w-0 bg-gold/30 transition-all duration-1000 group-hover:w-full" />
+                <div className="rounded-2xl p-6 bg-gradient-to-b from-black/6 to-transparent border border-white/6 hover:bg-black/10 transition-all duration-400">
+                  <span className="block text-3xl md:text-4xl font-serif italic text-foreground-strong transition-colors duration-400">
+                    {symbol.name}
+                  </span>
+                  <div className="mt-3 text-xs text-muted-soft uppercase tracking-[0.35em]">Entdecken</div>
+                </div>
+                <div className="absolute -bottom-3 left-6 right-6 h-px bg-gold/20 opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="px-6 py-48 text-center opacity-80">
-        <div className="mx-auto max-w-2xl space-y-8">
-          <span className="text-2xl text-gold/40">✨</span>
-          <blockquote className="font-serif text-2xl italic leading-relaxed text-muted/80">
+      <section className="px-6 py-36 text-center">
+        <div className="mx-auto max-w-2xl space-y-6">
+          <div className="text-3xl text-gold/40">✦</div>
+          <blockquote className="font-serif text-2xl italic leading-relaxed text-foreground-strong">
             In jedem Wort schläft eine Welt. Wer das Symbol öffnet, findet nicht
             eine Information, sondern einen Weg zu sich selbst.
           </blockquote>
+          <div className="w-24 h-px bg-gradient-to-r from-gold/30 to-transparent mx-auto mt-4" />
         </div>
       </section>
     </main>
