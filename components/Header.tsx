@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
 
 const NAV_ITEMS = [
   { name: 'Start', path: '/' },
@@ -34,10 +33,7 @@ export default function Header() {
                   {item.name}
                 </span>
                 {pathname === item.path && (
-                  <motion.div 
-                    layoutId="nav-underline"
-                    className="absolute -bottom-2 left-0 right-0 h-px bg-gold/40"
-                  />
+                  <div className="absolute -bottom-2 left-0 right-0 h-px bg-gold/40 transition-all duration-500" />
                 )}
               </Link>
             </li>

@@ -5,10 +5,13 @@
 :root {
   --background: #0b0b0f; /* Deep Ink */
   --foreground: #f5f1e8; /* Aged Paper */
+  --foreground-rgb: 245,241,232;
   --muted: #8a8479;
+  --muted-rgb: 138,132,121;
+  --gold: #bda06d; /* Muted Antique Gold */
+  --gold-rgb: 189,160,109;
   --card: rgba(255, 255, 255, 0.02);
   --border: rgba(255, 255, 255, 0.06);
-  --gold: #bda06d; /* Muted Antique Gold */
 }
 
 html {
@@ -30,6 +33,33 @@ body {
   line-height: 1.7;
 }
 
+/* Hero & readability helpers */
+.hero-title-wrap { position: relative; display: inline-block; }
+.hero-title-bg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(88%, 64rem);
+  height: calc(100% + 1.6rem);
+  border-radius: 14px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0.36), rgba(0,0,0,0.12));
+  filter: blur(6px);
+  opacity: 0.9;
+}
+
+.text-foreground-strong { color: rgba(var(--foreground-rgb), 0.96); }
+.text-muted-soft { color: rgba(var(--muted-rgb), 0.75); }
+
+/* subtle warm gradient clipped to text for emphasis (use sparingly) */
+.warm-text-gradient {
+  background: linear-gradient(180deg, rgba(var(--gold-rgb),0.16), rgba(var(--foreground-rgb),0.96));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .font-sans {
   font-family: var(--font-sans), system-ui, sans-serif;
   letter-spacing: 0.05em;
@@ -45,4 +75,28 @@ body {
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
+}
+
+/* Animationen für den Ersatz von Framer Motion */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.08); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate(-20px, -15px); }
+  50% { transform: translate(20px, 15px); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 20s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 35s ease-in-out infinite;
 }
