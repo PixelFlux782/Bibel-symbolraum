@@ -23,7 +23,6 @@ export default function SymbolPage({ params }: { params: { slug: string } }) {
 
   return (
     <main className="min-h-screen py-24 px-6 relative">
-      <AmbientBackground />
       <div className="max-w-5xl mx-auto relative z-10 space-y-10">
         <div className="space-y-4 text-center">
           <p className="text-[10px] uppercase tracking-[0.5em] text-muted-soft">Zeichen</p>

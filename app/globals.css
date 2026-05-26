@@ -100,3 +100,12 @@ body {
 .animate-float-slow {
   animation: float-slow 35s ease-in-out infinite;
 }
+@keyframes drift-slow {
+  from { transform: translateY(-10px) scale(1.02); }
+  to { transform: translateY(10px) scale(1.02); }
+}
+
+.animate-drift-slow {
+  animation: drift-slow 45s ease-in-out infinite alternate;
+}
+

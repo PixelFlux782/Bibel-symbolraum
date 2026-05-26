@@ -13,9 +13,6 @@ const SYMBOLS = getAllSymbols();
 export default function SymbolOverview() {
   return (
     <main className="min-h-screen py-24 px-6 relative">
-      {/* Atmosphärischer Hintergrund */}
-      <AmbientBackground />
-
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-32 space-y-6 animate-[fade-in-up_1s_ease-out]">
           <h1 className="text-5xl font-serif italic text-foreground tracking-tight">Das Archiv der Zeichen</h1>
