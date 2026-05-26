@@ -13,6 +13,92 @@ export type SymbolItem = {
   connectedSymbols: string[];
 };
 
+export type SymbolNetworkItem = {
+  id: string;
+  name: string;
+  hebrew: string;
+  shortMeaning: string;
+  relatedSymbols: string[];
+  roomHref?: string;
+};
+
+export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
+  {
+    id: 'wasser',
+    name: 'Wasser',
+    hebrew: 'מים',
+    shortMeaning: 'Tiefe, Leben, Reinigung und Übergang.',
+    relatedSymbols: ['meer', 'quelle', 'taufe', 'geist', 'licht', 'wueste'],
+    roomHref: '/raeume/wasser',
+  },
+  {
+    id: 'meer',
+    name: 'Meer',
+    hebrew: 'ים',
+    shortMeaning: 'Das große Ungeordnete, Grenze, Gefahr und Schwelle zur Rettung.',
+    relatedSymbols: ['wasser', 'wueste', 'fels'],
+  },
+  {
+    id: 'quelle',
+    name: 'Quelle',
+    hebrew: 'מעין',
+    shortMeaning: 'Verborgenes Hervortreten von Leben, Ursprung und Versorgung.',
+    relatedSymbols: ['wasser', 'baum', 'geist'],
+  },
+  {
+    id: 'taufe',
+    name: 'Taufe',
+    hebrew: 'טבילה',
+    shortMeaning: 'Eintauchen, Sterben des Alten und Auftauchen in neuer Geburt.',
+    relatedSymbols: ['wasser', 'geist', 'licht'],
+  },
+  {
+    id: 'geist',
+    name: 'Geist',
+    hebrew: 'רוח',
+    shortMeaning: 'Atem, Wind und unsichtbare Bewegung, die Leben trägt.',
+    relatedSymbols: ['wasser', 'taufe', 'licht', 'quelle'],
+  },
+  {
+    id: 'licht',
+    name: 'Licht',
+    hebrew: 'אור',
+    shortMeaning: 'Klarheit, Offenbarung und Orientierung im dunklen Raum.',
+    relatedSymbols: ['wasser', 'geist', 'brot', 'baum'],
+    roomHref: '/symbole/licht',
+  },
+  {
+    id: 'wueste',
+    name: 'Wüste',
+    hebrew: 'מדבר',
+    shortMeaning: 'Stille, Prüfung, Leere und der Ort, an dem das Wort hörbar wird.',
+    relatedSymbols: ['wasser', 'meer', 'fels', 'brot'],
+    roomHref: '/symbole/wueste',
+  },
+  {
+    id: 'fels',
+    name: 'Fels',
+    hebrew: 'צור',
+    shortMeaning: 'Stand, Schutz, Härte und die verborgene Quelle im Widerstand.',
+    relatedSymbols: ['wueste', 'wasser', 'meer'],
+  },
+  {
+    id: 'brot',
+    name: 'Brot',
+    hebrew: 'לחם',
+    shortMeaning: 'Nahrung, Teilung, Alltag und die Gabe, die Gemeinschaft stiftet.',
+    relatedSymbols: ['wueste', 'licht', 'baum'],
+    roomHref: '/symbole/brot',
+  },
+  {
+    id: 'baum',
+    name: 'Baum',
+    hebrew: 'עץ',
+    shortMeaning: 'Wurzel, Frucht, Wachstum und Verbindung zwischen Erde und Himmel.',
+    relatedSymbols: ['quelle', 'licht', 'brot'],
+  },
+];
+
 export const SYMBOLS: SymbolItem[] = [
   {
     slug: 'wasser',

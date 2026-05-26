@@ -24,7 +24,7 @@ body {
   color: var(--foreground);
   font-feature-settings: "ss01", "ss02", "cv01";
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 /* Typography System */
@@ -107,5 +107,108 @@ body {
 
 .animate-drift-slow {
   animation: drift-slow 45s ease-in-out infinite alternate;
+}
+
+@keyframes depth-breathe {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.025); }
+  50% { transform: translate3d(0, -1.2%, 0) scale(1.045); }
+}
+
+@keyframes light-drift {
+  0%, 100% { transform: translate3d(-1.2%, 0.6%, 0) scale(1.04); }
+  50% { transform: translate3d(1.2%, -0.8%, 0) scale(1.065); }
+}
+
+@keyframes symbol-drift {
+  0%, 100% { transform: translate3d(1%, -0.8%, 0) scale(1.035); }
+  50% { transform: translate3d(-1%, 0.9%, 0) scale(1.05); }
+}
+
+@keyframes reveal-from-depth {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 54px, 0) scale(0.985);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes symbol-node-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 24px rgba(189, 160, 109, 0.08),
+      inset 0 0 28px rgba(109, 200, 223, 0.035);
+  }
+  50% {
+    box-shadow:
+      0 0 46px rgba(189, 160, 109, 0.16),
+      inset 0 0 38px rgba(109, 200, 223, 0.07);
+  }
+}
+
+.animate-depth-breathe {
+  animation: depth-breathe 34s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-light-drift {
+  animation: light-drift 42s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-symbol-drift {
+  animation: symbol-drift 58s ease-in-out infinite;
+  will-change: transform;
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 54px, 0) scale(0.985);
+  animation: reveal-from-depth 1.4s ease-out both;
+  animation-timeline: view();
+  animation-range: entry 12% cover 36%;
+  will-change: opacity, transform, filter;
+}
+
+.symbol-node-pulse {
+  animation: symbol-node-pulse 8s ease-in-out infinite;
+  will-change: box-shadow;
+}
+
+.symbol-network-flow .react-flow__edge-path {
+  filter: drop-shadow(0 0 8px rgba(189, 160, 109, 0.18));
+}
+
+.symbol-network-flow .react-flow__edge.selected .react-flow__edge-path,
+.symbol-network-flow .react-flow__edge:focus .react-flow__edge-path {
+  stroke: rgba(189, 160, 109, 0.34);
+}
+
+.symbol-network-flow .react-flow__pane {
+  cursor: grab;
+}
+
+.symbol-network-flow .react-flow__pane:active {
+  cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift-slow,
+  .animate-depth-breathe,
+  .animate-light-drift,
+  .animate-symbol-drift,
+  .animate-float-slow,
+  .animate-pulse-soft,
+  .scroll-reveal,
+  .symbol-node-pulse {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }
 

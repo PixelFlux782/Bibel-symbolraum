@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { memo, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 
@@ -13,6 +14,8 @@ function getBackgroundConfig(pathname: string): BackgroundConfig {
   const rooms: Record<string, BackgroundConfig> = {
     '/': { image: '/Visuals/Logo_hero.png', position: 'center', opacity: 0.82 },
     '/symbolnetz': { image: '/Visuals/symbolnetz_backround.png', position: 'center', opacity: 0.84 },
+    '/wasser': { image: '/Visuals/wasser_cinema_hero.png', position: 'center', opacity: 0.88 },
+    '/raeume/wasser': { image: '/Visuals/wasser_cinema_hero.png', position: 'center', opacity: 0.88 },
     '/symbol/wasser': { image: '/Visuals/wasser_cinema_hero.png', position: 'center', opacity: 0.86 },
     '/symbol/wasser/tiefe': { image: '/Visuals/wasser_tiefenbild.png', position: 'center', opacity: 0.86 },
     '/symbol/wasser/hebraeisch': { image: '/Visuals/wasser_hebr_symbl.png', position: 'center', opacity: 0.84 },
@@ -28,22 +31,63 @@ function getBackgroundConfig(pathname: string): BackgroundConfig {
 const AmbientBackground = memo(() => {
   const pathname = usePathname() ?? '/';
   const config = useMemo(() => getBackgroundConfig(pathname), [pathname]);
+  const roomOpacity = config.opacity ?? 0.82;
 
   return (
-    <div aria-hidden="true" className="fixed inset-0 -z-10 overflow-hidden bg-[#03050a] text-transparent">
-      <div
-        className="absolute inset-0 animate-drift-slow bg-cover bg-no-repeat"
-        style={{
-          backgroundImage: `url(${config.image})`,
-          backgroundPosition: config.position,
-          opacity: config.opacity,
-        }}
-      />
+    <div aria-hidden="true" className="fixed inset-0 -z-10 overflow-hidden bg-[#02050b] text-transparent">
+      <div className="absolute inset-[-4%] animate-depth-breathe">
+        <Image
+          src="/Visuals/tiefenraum_backround.png"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-80"
+          quality={82}
+        />
+      </div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,4,10,0.84),rgba(2,4,10,0.24)_45%,rgba(2,4,10,0.86))]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,5,10,0.88),transparent_32%,rgba(3,5,10,0.92))]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_20%,rgba(218,198,154,0.13),transparent_25%),radial-gradient(circle_at_75%_72%,rgba(77,142,174,0.12),transparent_24%)] mix-blend-screen" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:88px_88px] opacity-20" />
+      <div className="absolute inset-[-3%] animate-light-drift mix-blend-screen">
+        <Image
+          src="/Visuals/cinem_lichtraum_backround.png"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-[0.42]"
+          quality={78}
+        />
+      </div>
+
+      <div className="absolute inset-[-2%] animate-symbol-drift mix-blend-screen">
+        <Image
+          src="/Visuals/symbolnetz_backround.png"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-[0.18]"
+          quality={74}
+        />
+      </div>
+
+      <div className="absolute inset-0 opacity-[0.45] mix-blend-screen">
+        <Image
+          src={config.image}
+          alt=""
+          fill
+          sizes="100vw"
+          className="animate-drift-slow object-cover"
+          style={{
+            objectPosition: config.position,
+            opacity: roomOpacity * 0.28,
+          }}
+          quality={76}
+        />
+      </div>
+
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(211,180,116,0.11),transparent_26%),radial-gradient(circle_at_50%_72%,rgba(42,110,136,0.13),transparent_30%)] mix-blend-screen" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(1,3,8,0.9),rgba(1,5,12,0.18)_48%,rgba(1,3,8,0.92))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,5,12,0.86),rgba(2,5,12,0.12)_36%,rgba(2,5,12,0.94))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_28%,rgba(0,0,0,0.55)_72%,rgba(0,0,0,0.9)_100%)]" />
+      <div className="absolute inset-0 opacity-[0.075] mix-blend-overlay [background-image:radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.9)_0,transparent_1px),radial-gradient(circle_at_70%_60%,rgba(255,255,255,0.7)_0,transparent_1px),radial-gradient(circle_at_45%_80%,rgba(255,255,255,0.55)_0,transparent_1px)] [background-size:3px_3px,5px_5px,7px_7px]" />
     </div>
   );
 });

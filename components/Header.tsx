@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 const NAV_ITEMS = [
   { name: 'Start', path: '/' },
   { name: 'Symbolnetz', path: '/symbolnetz' },
-  { name: 'Wasser', path: '/symbol/wasser' },
+  { name: 'Wasser', path: '/raeume/wasser' },
   { name: 'Archiv', path: '/archiv' },
 ];
 
