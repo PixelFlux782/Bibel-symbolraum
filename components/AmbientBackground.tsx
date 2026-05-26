@@ -34,8 +34,8 @@ const AmbientBackground = memo(() => {
   const roomOpacity = config.opacity ?? 0.82;
 
   return (
-    <div aria-hidden="true" className="fixed inset-0 -z-10 overflow-hidden bg-[#02050b] text-transparent">
-      <div className="absolute inset-[-4%] animate-depth-breathe">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#02050b] text-transparent">
+      <div className="absolute inset-[-4%] sacred-drift">
         <Image
           src="/Visuals/tiefenraum_backround.png"
           alt=""
@@ -46,7 +46,7 @@ const AmbientBackground = memo(() => {
         />
       </div>
 
-      <div className="absolute inset-[-3%] animate-light-drift mix-blend-screen">
+      <div className="absolute inset-[-3%] light-pulse mix-blend-screen">
         <Image
           src="/Visuals/cinem_lichtraum_backround.png"
           alt=""
@@ -57,7 +57,7 @@ const AmbientBackground = memo(() => {
         />
       </div>
 
-      <div className="absolute inset-[-2%] animate-symbol-drift mix-blend-screen">
+      <div className="absolute inset-[-2%] sacred-drift mix-blend-screen">
         <Image
           src="/Visuals/symbolnetz_backround.png"
           alt=""
@@ -74,7 +74,7 @@ const AmbientBackground = memo(() => {
           alt=""
           fill
           sizes="100vw"
-          className="animate-drift-slow object-cover"
+          className="sacred-drift object-cover"
           style={{
             objectPosition: config.position,
             opacity: roomOpacity * 0.28,

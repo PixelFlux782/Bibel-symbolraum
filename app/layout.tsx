@@ -24,9 +24,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de" className="scroll-smooth">
-      <body className="min-h-screen overflow-x-hidden bg-[#0b0b0f] text-[#f5f1e8]">
+      <body className="relative min-h-screen overflow-x-hidden bg-[#0b0b0f] text-[#f5f1e8]">
         <AmbientBackground />
-        <div className="relative flex min-h-screen flex-col">
+        <div className="relative z-10 flex min-h-screen flex-col">
           <Header />
           <main id="main-content" className="relative z-10 flex-1">
             {children}

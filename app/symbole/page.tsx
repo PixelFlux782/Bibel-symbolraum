@@ -14,7 +14,7 @@ export default function SymbolOverview() {
   return (
     <main className="min-h-screen py-24 px-6 relative">
       <div className="max-w-6xl mx-auto relative z-10">
-        <header className="text-center mb-32 space-y-6 animate-[fade-in-up_1s_ease-out]">
+        <header className="symbol-fade-in text-center mb-32 space-y-6">
           <h1 className="text-5xl font-serif italic text-foreground tracking-tight">Das Archiv der Zeichen</h1>
           <p className="text-muted font-serif italic max-w-xl mx-auto text-lg leading-relaxed">
             Jedes Symbol ist ein Fenster. Klicke auf ein Artefakt, um tiefer in den Raum der Bedeutung einzutreten.
@@ -35,30 +35,30 @@ function SymbolCard({ symbol }: { symbol: SymbolItem }) {
   return (
     <Link 
       href={`/symbole/${symbol.slug}`} 
-      className="group block relative focus:outline-none focus:ring-2 focus:ring-gold/30 rounded-2xl transition-all" 
+      className="group block relative focus:outline-none focus:ring-2 focus:ring-gold/30 rounded-2xl" 
       aria-label={`Symbol ${symbol.name} explorieren`}
     >
       {/* Warmer Lichteffekt im Hintergrund beim Hover */}
-      <div className="absolute -inset-2 bg-gold/10 rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <div className="light-pulse absolute -inset-2 bg-gold/10 rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-35 transition-opacity duration-1000 pointer-events-none" />
       
       {/* Die Artefakt-Karte */}
       <article className="relative h-full aspect-[4/5] p-10 flex flex-col justify-between 
                       bg-white/[0.03] backdrop-blur-md border border-white/10 
                       rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.2)] 
-                      group-hover:translate-y-[-4px] group-hover:border-gold/20
-                      transition-all duration-500 ease-out">
+                      group-hover:border-gold/20
+                      transition-colors duration-1000">
         
         {/* Oben: Hebräische Lettern & Dekoration */}
         <div className="flex justify-between items-start">
-          <span className="text-3xl font-serif text-muted group-hover:text-gold/40 transition-colors duration-500 uppercase tracking-widest leading-none">
+          <span className="symbol-breathe text-3xl font-serif text-muted group-hover:text-gold/45 transition-colors duration-1000 uppercase tracking-widest leading-none">
             {symbol.hebrew}
           </span>
-          <span className="text-gold/20 group-hover:text-gold/60 transition-colors duration-500 text-lg">✨</span>
+          <span className="text-gold/20 group-hover:text-gold/45 transition-colors duration-1000 text-lg">✨</span>
         </div>
 
         {/* Mitte: Name & Kurze Deutung */}
         <div className="space-y-4">
-          <h2 className="text-3xl font-serif text-foreground group-hover:italic transition-all duration-500 leading-tight">
+          <h2 className="text-3xl font-serif text-foreground transition-colors duration-1000 leading-tight">
             {symbol.name}
           </h2>
           <p className="text-muted font-serif leading-relaxed text-lg italic">

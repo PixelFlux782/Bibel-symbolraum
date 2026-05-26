@@ -93,21 +93,21 @@ function WaterOpening() {
         fill
         priority
         sizes="100vw"
-        className="animate-symbol-drift object-cover opacity-[0.18] mix-blend-screen"
+        className="sacred-drift object-cover opacity-[0.18] mix-blend-screen"
       />
 
-      <div className="absolute inset-0 animate-light-drift bg-[radial-gradient(circle_at_46%_24%,rgba(216,184,116,0.22),transparent_24%),radial-gradient(circle_at_70%_66%,rgba(73,154,180,0.2),transparent_30%)] mix-blend-screen" />
+      <div className="light-pulse absolute inset-0 bg-[radial-gradient(circle_at_46%_24%,rgba(216,184,116,0.16),transparent_24%),radial-gradient(circle_at_70%_66%,rgba(73,154,180,0.14),transparent_30%)] mix-blend-screen" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,5,12,0.42),rgba(2,5,12,0.16)_36%,rgba(2,5,12,0.94))]" />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(1,3,8,0.9),rgba(1,3,8,0.2)_52%,rgba(1,3,8,0.8))]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_32%,rgba(0,0,0,0.58)_78%,rgba(0,0,0,0.9)_100%)]" />
       <div className="absolute inset-x-[8%] top-[48%] h-px bg-gradient-to-r from-transparent via-gold/35 to-transparent" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-10 lg:grid lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
+      <div className="symbol-fade-in relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-10 lg:grid lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
         <div>
           <p className="text-[10px] uppercase tracking-[0.52em] text-gold/75">
             Raum / Wasser
           </p>
-          <h1 className="mt-7 font-serif text-[clamp(7rem,24vw,19rem)] leading-[0.78] text-gold/90 drop-shadow-[0_0_42px_rgba(189,160,109,0.2)]">
+          <h1 className="symbol-breathe mt-7 font-serif text-[clamp(7rem,24vw,19rem)] leading-[0.78] text-gold/90 drop-shadow-[0_0_30px_rgba(189,160,109,0.14)]">
             מים
           </h1>
         </div>
@@ -121,7 +121,7 @@ function WaterOpening() {
           </p>
           <a
             href="#tiefe"
-            className="mt-12 inline-flex items-center gap-4 border border-gold/25 bg-black/[0.22] px-5 py-4 text-[10px] uppercase tracking-[0.34em] text-[#f2deae] backdrop-blur-md transition duration-500 hover:border-gold/55 hover:bg-gold/[0.08]"
+            className="mt-12 inline-flex items-center gap-4 border border-gold/25 bg-black/[0.22] px-5 py-4 text-[10px] uppercase tracking-[0.34em] text-[#f2deae] backdrop-blur-md transition-colors duration-1000 hover:border-gold/40 hover:bg-gold/[0.055]"
           >
             In die Tiefe gehen
             <span className="h-px w-10 bg-gold/55" />
@@ -144,7 +144,7 @@ function MeaningLayers() {
           {MEANING_LAYERS.map((layer) => (
             <article
               key={layer.title}
-              className="scroll-reveal min-h-80 border border-white/10 bg-[#03060d]/[0.72] p-7 backdrop-blur-md transition duration-700 hover:border-gold/25 hover:bg-white/[0.035]"
+              className="scroll-reveal min-h-80 border border-white/10 bg-[#03060d]/[0.72] p-7 backdrop-blur-md transition-colors duration-1000 hover:border-gold/20 hover:bg-white/[0.028]"
             >
               <div className="mb-12 h-px w-24 bg-gradient-to-r from-gold/60 via-[#7fb8c9]/35 to-transparent" />
               <h2 className="font-serif text-4xl italic text-foreground-strong">
@@ -180,7 +180,7 @@ function HebrewReveal() {
               style={{ animationDelay: `${index * 140}ms` }}
             >
               <div className="mx-auto mb-12 h-px w-16 bg-gold/45" />
-              <p className="font-serif text-[8rem] leading-none text-gold/90 sm:text-[10rem]">
+              <p className="symbol-breathe font-serif text-[8rem] leading-none text-gold/90 sm:text-[10rem]">
                 {item.letter}
               </p>
               <h3 className="mt-10 text-[10px] uppercase tracking-[0.42em] text-[#7fb8c9]/70">
@@ -218,7 +218,7 @@ function SymbolJourney() {
                   alt={panel.title}
                   fill
                   sizes="(min-width: 1024px) 58vw, 100vw"
-                  className="animate-depth-breathe object-cover"
+                  className="sacred-drift object-cover"
                 />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_34%,rgba(107,195,217,0.16),transparent_28%),linear-gradient(180deg,rgba(2,5,12,0.08),rgba(2,5,12,0.58)_72%,rgba(2,5,12,0.9))]" />
                 <div className="absolute inset-x-8 bottom-8 h-px bg-gradient-to-r from-gold/45 to-transparent" />
@@ -256,7 +256,7 @@ function ReflectionRoom() {
         <textarea
           aria-label="Reflexion zum Wasserraum"
           placeholder="Still notieren..."
-          className="mt-12 min-h-52 w-full resize-y border border-white/10 bg-[#03060d]/[0.76] p-6 font-serif text-xl leading-relaxed text-[#f5f1e8] outline-none backdrop-blur-md transition duration-500 placeholder:text-[#d8d1c2]/[0.34] focus:border-gold/35 focus:bg-white/[0.035]"
+          className="mt-12 min-h-52 w-full resize-y border border-white/10 bg-[#03060d]/[0.76] p-6 font-serif text-xl leading-relaxed text-[#f5f1e8] outline-none backdrop-blur-md transition-colors duration-1000 placeholder:text-[#d8d1c2]/[0.34] focus:border-gold/35 focus:bg-white/[0.035]"
         />
       </div>
     </section>

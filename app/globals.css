@@ -78,57 +78,11 @@ body {
 }
 
 /* Animationen für den Ersatz von Framer Motion */
-@keyframes pulse-soft {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(1.08); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translate(-20px, -15px); }
-  50% { transform: translate(20px, 15px); }
-}
-
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-pulse-soft {
-  animation: pulse-soft 20s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 35s ease-in-out infinite;
-}
-@keyframes drift-slow {
-  from { transform: translateY(-10px) scale(1.02); }
-  to { transform: translateY(10px) scale(1.02); }
-}
-
-.animate-drift-slow {
-  animation: drift-slow 45s ease-in-out infinite alternate;
-}
-
-@keyframes depth-breathe {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1.025); }
-  50% { transform: translate3d(0, -1.2%, 0) scale(1.045); }
-}
-
-@keyframes light-drift {
-  0%, 100% { transform: translate3d(-1.2%, 0.6%, 0) scale(1.04); }
-  50% { transform: translate3d(1.2%, -0.8%, 0) scale(1.065); }
-}
-
-@keyframes symbol-drift {
-  0%, 100% { transform: translate3d(1%, -0.8%, 0) scale(1.035); }
-  50% { transform: translate3d(-1%, 0.9%, 0) scale(1.05); }
-}
-
-@keyframes reveal-from-depth {
+@keyframes symbol-fade-in {
   from {
     opacity: 0;
-    transform: translate3d(0, 54px, 0) scale(0.985);
-    filter: blur(10px);
+    transform: translate3d(0, 34px, 0) scale(0.992);
+    filter: blur(12px);
   }
   to {
     opacity: 1;
@@ -137,46 +91,71 @@ body {
   }
 }
 
-@keyframes symbol-node-pulse {
+@keyframes symbol-breathe {
   0%, 100% {
-    box-shadow:
-      0 0 24px rgba(189, 160, 109, 0.08),
-      inset 0 0 28px rgba(109, 200, 223, 0.035);
+    opacity: 0.82;
+    transform: translate3d(0, 0, 0) scale(1);
+    text-shadow: 0 0 24px rgba(189, 160, 109, 0.16);
   }
   50% {
-    box-shadow:
-      0 0 46px rgba(189, 160, 109, 0.16),
-      inset 0 0 38px rgba(109, 200, 223, 0.07);
+    opacity: 1;
+    transform: translate3d(0, -4px, 0) scale(1.008);
+    text-shadow: 0 0 36px rgba(189, 160, 109, 0.26);
   }
 }
 
-.animate-depth-breathe {
-  animation: depth-breathe 34s ease-in-out infinite;
+@keyframes sacred-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.018); }
+  50% { transform: translate3d(0, -1.1%, 0) scale(1.032); }
+}
+
+@keyframes light-pulse {
+  0%, 100% {
+    opacity: 0.42;
+    filter: blur(0);
+  }
+  50% {
+    opacity: 0.62;
+    filter: blur(1px);
+  }
+}
+
+.symbol-fade-in {
+  opacity: 0;
+  animation: symbol-fade-in 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+.symbol-breathe {
+  animation: symbol-breathe 13s ease-in-out infinite;
+  will-change: opacity, transform, text-shadow;
+}
+
+.sacred-drift {
+  animation: sacred-drift 52s ease-in-out infinite;
   will-change: transform;
 }
 
-.animate-light-drift {
-  animation: light-drift 42s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-symbol-drift {
-  animation: symbol-drift 58s ease-in-out infinite;
-  will-change: transform;
+.light-pulse {
+  animation: light-pulse 18s ease-in-out infinite;
+  will-change: opacity, filter;
 }
 
 .scroll-reveal {
   opacity: 0;
-  transform: translate3d(0, 54px, 0) scale(0.985);
-  animation: reveal-from-depth 1.4s ease-out both;
+  transform: translate3d(0, 34px, 0) scale(0.992);
+  animation: symbol-fade-in 2s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-timeline: view();
-  animation-range: entry 12% cover 36%;
+  animation-range: entry 10% cover 32%;
   will-change: opacity, transform, filter;
 }
 
 .symbol-node-pulse {
-  animation: symbol-node-pulse 8s ease-in-out infinite;
-  will-change: box-shadow;
+  animation: light-pulse 16s ease-in-out infinite;
+  box-shadow:
+    0 0 28px rgba(189, 160, 109, 0.08),
+    inset 0 0 32px rgba(109, 200, 223, 0.025);
+  will-change: opacity, filter;
 }
 
 .symbol-network-flow .react-flow__edge-path {
@@ -196,19 +175,41 @@ body {
   cursor: grabbing;
 }
 
+.react-flow__accessibility-description,
+.react-flow__screenreader-only,
+.react-flow__sr-only,
+[id^="react-flow__node-desc"],
+[id^="react-flow__edge-desc"],
+[id^="react-flow__aria-live"] {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-drift-slow,
-  .animate-depth-breathe,
-  .animate-light-drift,
-  .animate-symbol-drift,
-  .animate-float-slow,
-  .animate-pulse-soft,
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .symbol-fade-in,
+  .symbol-breathe,
+  .sacred-drift,
+  .light-pulse,
   .scroll-reveal,
   .symbol-node-pulse {
-    animation: none;
-    opacity: 1;
-    transform: none;
-    filter: none;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }
 

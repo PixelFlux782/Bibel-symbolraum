@@ -40,31 +40,31 @@ function SymbolNode({ data }: NodeProps<SymbolNodeData>) {
       <Handle type="source" position={Position.Bottom} className="opacity-0" />
 
       <div
-        className={`absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl transition duration-1000 ${
+        className={`light-pulse absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl transition-opacity duration-1000 ${
           data.isActive
-            ? 'bg-gold/35 opacity-100'
-            : 'bg-[#6dc8df]/18 opacity-45 group-hover:opacity-80'
+            ? 'bg-gold/25 opacity-80'
+            : 'bg-[#6dc8df]/12 opacity-35 group-hover:opacity-50'
         }`}
       />
       <div
-        className={`absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border transition duration-1000 ${
+        className={`absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-opacity duration-1000 ${
           data.isActive
-            ? 'border-gold/25 opacity-100 shadow-[0_0_80px_rgba(189,160,109,0.16)]'
-            : 'border-white/0 opacity-0 group-hover:border-gold/10 group-hover:opacity-100'
+            ? 'border-gold/20 opacity-80 shadow-[0_0_48px_rgba(189,160,109,0.1)]'
+            : 'border-white/0 opacity-0 group-hover:border-gold/10 group-hover:opacity-55'
         }`}
       />
 
       <div
-        className={`symbol-node-pulse relative min-w-32 border px-6 py-5 text-center backdrop-blur-md transition duration-700 ${
+        className={`symbol-node-pulse relative min-w-32 border px-6 py-5 text-center backdrop-blur-md transition-colors duration-1000 ${
           data.isActive
             ? 'border-gold/40 bg-[#08090e]/80'
-            : 'border-white/10 bg-black/30 group-hover:border-gold/28 group-hover:bg-white/[0.045]'
+            : 'border-white/10 bg-black/30 group-hover:border-gold/20 group-hover:bg-white/[0.035]'
         }`}
       >
-        <p className="font-serif text-4xl leading-none text-gold/90 transition duration-700 group-hover:text-gold">
+        <p className="symbol-breathe font-serif text-4xl leading-none text-gold/90 transition-colors duration-1000 group-hover:text-gold/95">
           {data.hebrew}
         </p>
-        <p className="mt-3 text-[10px] uppercase tracking-[0.38em] text-[#d8d1c2]/72 transition duration-700 group-hover:text-foreground">
+        <p className="mt-3 text-[10px] uppercase tracking-[0.38em] text-[#d8d1c2]/72 transition-colors duration-1000 group-hover:text-foreground">
           {data.name}
         </p>
       </div>
@@ -135,13 +135,13 @@ export default function SymbolNetwork() {
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-[0.28]"
+          className="sacred-drift object-cover opacity-[0.28]"
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(189,160,109,0.12),transparent_27%),linear-gradient(180deg,rgba(2,5,12,0.82),rgba(2,5,12,0.38)_42%,rgba(2,5,12,0.96))]" />
+        <div className="light-pulse absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(189,160,109,0.1),transparent_27%),linear-gradient(180deg,rgba(2,5,12,0.82),rgba(2,5,12,0.38)_42%,rgba(2,5,12,0.96))]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_34%,rgba(0,0,0,0.62)_78%,rgba(0,0,0,0.88)_100%)]" />
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_23rem]">
+      <div className="symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_23rem]">
         <div>
           <p className="text-[10px] uppercase tracking-[0.5em] text-gold/70">
             Lebendiges Bedeutungsnetz
@@ -176,11 +176,11 @@ export default function SymbolNetwork() {
           </div>
         </div>
 
-        <aside className="self-end border border-gold/15 bg-[#05070d]/[0.78] p-7 backdrop-blur-md">
+        <aside className="scroll-reveal self-end border border-gold/15 bg-[#05070d]/[0.78] p-7 backdrop-blur-md">
           <p className="text-[10px] uppercase tracking-[0.42em] text-[#7fb8c9]/70">
             Aktiver Ort
           </p>
-          <p className="mt-8 font-serif text-7xl leading-none text-gold/90">
+          <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90">
             {activeSymbol.hebrew}
           </p>
           <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">
@@ -202,7 +202,7 @@ export default function SymbolNetwork() {
                   key={id}
                   type="button"
                   onClick={() => setActiveId(id)}
-                  className="border border-white/10 bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/62 transition duration-500 hover:border-gold/25 hover:text-gold/80"
+                  className="border border-white/10 bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/62 transition-colors duration-1000 hover:border-gold/20 hover:text-gold/75"
                 >
                   {related.name}
                 </button>
@@ -212,7 +212,7 @@ export default function SymbolNetwork() {
           {activeSymbol.roomHref ? (
             <Link
               href={activeSymbol.roomHref}
-              className="mt-10 inline-flex w-full items-center justify-center border border-gold/30 bg-gold/[0.08] px-5 py-4 text-[11px] uppercase tracking-[0.32em] text-[#f2deae] transition duration-500 hover:border-gold/60 hover:bg-gold/[0.13]"
+              className="mt-10 inline-flex w-full items-center justify-center border border-gold/30 bg-gold/[0.08] px-5 py-4 text-[11px] uppercase tracking-[0.32em] text-[#f2deae] transition-colors duration-1000 hover:border-gold/45 hover:bg-gold/[0.1]"
             >
               Raum betreten
             </Link>

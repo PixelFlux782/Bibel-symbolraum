@@ -17,7 +17,7 @@ export default function Header() {
     <header className="fixed left-1/2 top-4 z-50 w-[95%] max-w-5xl -translate-x-1/2">
       <nav className="flex items-center justify-between border border-white/10 bg-black/30 px-5 py-3 shadow-md backdrop-blur-md">
         <Link href="/" className="pointer-events-auto">
-          <div className="text-xs font-sans uppercase tracking-[0.5em] text-foreground-strong transition-colors duration-300 hover:text-gold">
+          <div className="text-xs font-sans uppercase tracking-[0.5em] text-foreground-strong transition-colors duration-1000 hover:text-gold">
             SYMBOLRAUM
           </div>
         </Link>
@@ -30,7 +30,7 @@ export default function Header() {
               <li key={item.path}>
                 <Link href={item.path} className="relative pointer-events-auto">
                   <span
-                    className={`text-[11px] font-sans uppercase tracking-[0.28em] transition-colors duration-300 ${
+                    className={`text-[11px] font-sans uppercase tracking-[0.28em] transition-colors duration-1000 ${
                       active ? 'text-gold' : 'text-muted-soft hover:text-foreground'
                     }`}
                   >
