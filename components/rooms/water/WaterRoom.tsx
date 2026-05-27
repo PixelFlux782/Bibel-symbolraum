@@ -75,8 +75,9 @@ const JOURNEY_PANELS = [
 
 export default function WaterRoom() {
   return (
-    <div className="symbol-page bg-[#02050b]">
+    <div className="symbol-page water-room bg-[#02050b]">
       <WaterOpening />
+      <WaterGlyphChamber />
       <MeaningLayers />
       <HebrewReveal />
       <SymbolJourney />
@@ -87,7 +88,7 @@ export default function WaterRoom() {
 
 function WaterOpening() {
   return (
-    <section className="symbol-section relative flex min-h-screen items-end overflow-hidden pb-20 pt-40 md:pt-36">
+    <section className="symbol-section water-chamber relative flex min-h-screen items-end overflow-hidden pb-24 pt-40 md:pt-36">
       <Image
         src="/Visuals/wasser_cinema_hero.png"
         alt="Dunkler cineastischer Wasserraum"
@@ -111,7 +112,7 @@ function WaterOpening() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_32%,rgba(0,0,0,0.58)_78%,rgba(0,0,0,0.9)_100%)]" />
       <div className="absolute inset-x-[8%] top-[48%] h-px bg-gradient-to-r from-transparent via-gold/35 to-transparent" />
 
-      <div className="symbol-fade-in relative z-10 mx-auto flex w-full max-w-6xl min-w-0 flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
+      <div className="symbol-fade-in relative z-10 mx-auto flex w-full max-w-6xl min-w-0 flex-col gap-16 lg:grid lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
         <div className="min-w-0">
           <p className="symbol-kicker">
             Raum / Wasser
@@ -130,10 +131,10 @@ function WaterOpening() {
           </p>
           <a
             href="#tiefe"
-            className="symbol-cta mt-12 gap-4"
+            className="symbol-cta mt-14 gap-4"
           >
             In die Tiefe gehen
-            <span className="h-px w-10 bg-gold/55" />
+            <span className="h-px w-10 bg-gold/[0.42]" />
           </a>
         </div>
       </div>
@@ -141,30 +142,46 @@ function WaterOpening() {
   );
 }
 
+function WaterGlyphChamber() {
+  return (
+    <section className="symbol-section water-chamber water-glyph-chamber relative grid min-h-screen place-items-center overflow-hidden py-32">
+      <div className="water-chamber-breath absolute left-1/2 top-1/2 h-[38rem] w-[38rem] -translate-x-1/2 -translate-y-1/2 rounded-full" />
+      <div className="absolute inset-x-[18%] top-1/2 h-px bg-gradient-to-r from-transparent via-gold/[0.16] to-transparent" />
+      <div className="relative text-center">
+        <p className="symbol-breathe font-serif text-[clamp(8rem,32vw,24rem)] leading-none text-gold/85">
+          מים
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function MeaningLayers() {
   return (
-    <section id="tiefe" className="symbol-section relative py-28">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
-      <div className="mx-auto max-w-6xl">
-        <p className="symbol-kicker">
+    <section id="tiefe" className="symbol-section water-chamber relative py-24 md:py-32">
+      <div className="pointer-events-none absolute inset-x-[10%] top-0 h-px bg-gradient-to-r from-transparent via-gold/[0.08] to-transparent" />
+      <div className="mx-auto max-w-5xl">
+        <p className="symbol-kicker text-center md:text-left">
           Bedeutungs-Ebenen
         </p>
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
+        <div className="mt-16 grid gap-24 md:gap-32">
           {MEANING_LAYERS.map((layer) => (
             <article
               key={layer.title}
-              className="scroll-reveal symbol-panel min-h-80 p-7 transition-colors duration-[1200ms] hover:border-gold/20 hover:bg-white/[0.028]"
+              className="scroll-reveal water-statement relative grid min-h-[72svh] content-center border-y border-white/[0.035] py-20 md:min-h-[78vh] md:py-28"
             >
-              <div className="mb-12 h-px w-24 bg-gradient-to-r from-gold/60 via-[#7fb8c9]/35 to-transparent" />
-              <h2 className="font-serif text-4xl italic text-foreground-strong">
-                {layer.title}
-              </h2>
-              <p className="mt-5 text-[10px] uppercase tracking-[0.3em] text-cyan-soft">
-                {layer.terms}
-              </p>
-              <p className="symbol-copy mt-8 text-lg">
-                {layer.text}
-              </p>
+              <div className="water-chamber-breath absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-55" />
+              <div className="relative mx-auto max-w-3xl text-center">
+                <p className="symbol-kicker text-cyan-soft">
+                  {layer.terms}
+                </p>
+                <h2 className="mt-9 font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
+                  {layer.title}
+                </h2>
+                <p className="symbol-copy mx-auto mt-12 max-w-2xl text-xl italic sm:text-3xl">
+                  {layer.text}
+                </p>
+              </div>
             </article>
           ))}
         </div>
@@ -175,29 +192,31 @@ function MeaningLayers() {
 
 function HebrewReveal() {
   return (
-    <section className="symbol-section relative py-32">
-      <div className="absolute left-1/2 top-1/2 h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(189,160,109,0.1),transparent_62%)]" />
-      <div className="relative mx-auto max-w-5xl">
+    <section className="symbol-section water-chamber relative py-24 md:py-32">
+      <div className="absolute left-1/2 top-1/2 h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(189,160,109,0.07),transparent_62%)]" />
+      <div className="relative mx-auto max-w-4xl">
         <p className="symbol-kicker text-center">
           Hebräische Buchstaben
         </p>
-        <div className="mt-16 grid gap-8 md:grid-cols-3">
+        <div className="mt-16 grid gap-20 md:gap-28">
           {HEBREW_LETTERS.map((item, index) => (
             <article
               key={item.letter}
-              className="scroll-reveal symbol-panel min-h-[28rem] border-gold/15 p-8 text-center"
+              className="scroll-reveal water-letter-station relative grid min-h-[76svh] place-items-center border-y border-gold/[0.055] py-20 text-center md:min-h-[82vh]"
               style={{ animationDelay: `${index * 140}ms` }}
             >
-              <div className="mx-auto mb-12 h-px w-16 bg-gold/45" />
-              <p className="symbol-breathe font-serif text-[8rem] leading-none text-gold/90 sm:text-[10rem]">
-                {item.letter}
-              </p>
-              <h3 className="symbol-kicker mt-10 text-cyan-soft">
-                {item.title}
-              </h3>
-              <p className="symbol-copy mx-auto mt-8 max-w-xs text-xl">
-                {item.text}
-              </p>
+              <div className="water-chamber-breath absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45" />
+              <div className="relative">
+                <p className="symbol-breathe font-serif text-[11rem] leading-none text-gold/88 sm:text-[16rem]">
+                  {item.letter}
+                </p>
+                <h3 className="symbol-kicker mt-10 text-cyan-soft">
+                  {item.title}
+                </h3>
+                <p className="symbol-copy mx-auto mt-10 max-w-xl text-xl italic sm:text-2xl">
+                  {item.text}
+                </p>
+              </div>
             </article>
           ))}
         </div>
@@ -208,38 +227,36 @@ function HebrewReveal() {
 
 function SymbolJourney() {
   return (
-    <section className="symbol-section relative py-24">
+    <section className="symbol-section water-chamber relative py-24 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <p className="symbol-kicker">
+        <p className="symbol-kicker text-center md:text-left">
           Symbolreise
         </p>
-        <div className="mt-14 grid gap-20">
+        <div className="mt-16 grid gap-32 md:gap-44">
           {JOURNEY_PANELS.map((panel, index) => (
             <article
               key={panel.src}
-              className={`scroll-reveal grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center ${
-                index % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
-              }`}
+              className="scroll-reveal water-journey-station relative grid min-h-[88svh] items-end overflow-hidden py-10 md:min-h-screen md:py-16"
             >
-              <div className="symbol-panel relative min-h-[25rem] overflow-hidden shadow-2xl shadow-black/40 sm:min-h-[34rem] lg:min-h-[40rem]">
+              <div className="absolute inset-0 shadow-[0_34px_120px_rgba(0,0,0,0.34)]">
                 <Image
                   src={panel.src}
                   alt={panel.title}
                   fill
-                  sizes="(min-width: 1024px) 58vw, 100vw"
-                  className="sacred-drift object-cover"
+                  sizes="100vw"
+                  className="sacred-drift object-cover opacity-[0.74]"
                 />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_34%,rgba(107,195,217,0.16),transparent_28%),linear-gradient(180deg,rgba(2,5,12,0.08),rgba(2,5,12,0.58)_72%,rgba(2,5,12,0.9))]" />
-                <div className="absolute inset-x-8 bottom-8 h-px bg-gradient-to-r from-gold/45 to-transparent" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_34%,rgba(107,195,217,0.14),transparent_30%),linear-gradient(180deg,rgba(2,5,12,0.18),rgba(2,5,12,0.7)_70%,rgba(2,5,12,0.96))]" />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(1,3,8,0.82),rgba(1,3,8,0.22)_54%,rgba(1,3,8,0.72))]" />
               </div>
-              <div className="max-w-xl lg:px-4">
+              <div className={`relative max-w-2xl pb-8 ${index % 2 === 1 ? "md:ml-auto" : ""}`}>
                 <p className="symbol-kicker text-cyan-soft">
                   {String(index + 1).padStart(2, "0")}
                 </p>
-                <h2 className="mt-6 font-serif text-4xl italic leading-tight text-foreground-strong sm:text-6xl">
+                <h2 className="mt-7 font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
                   {panel.title}
                 </h2>
-                <p className="symbol-copy mt-8 text-xl sm:text-2xl">
+                <p className="symbol-copy mt-10 text-xl italic sm:text-3xl">
                   {panel.text}
                 </p>
               </div>
@@ -288,9 +305,9 @@ function ReflectionRoom() {
   };
 
   return (
-    <section className="symbol-section relative pb-32 pt-24">
-      <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-[#7fb8c9]/18 to-transparent" />
-      <div className="relative mx-auto max-w-4xl border-y border-gold/15 py-16 text-center">
+    <section className="symbol-section water-chamber relative min-h-screen pb-40 pt-32">
+      <div className="absolute inset-x-[10%] top-1/2 h-px bg-gradient-to-r from-transparent via-[#7fb8c9]/[0.12] to-transparent" />
+      <div className="relative mx-auto max-w-4xl border-y border-gold/[0.08] py-20 text-center">
         <p className="symbol-kicker">
           Reflexionsraum
         </p>
@@ -308,7 +325,7 @@ function ReflectionRoom() {
             setAnswer(event.target.value);
             setSaveStatus("idle");
           }}
-          className="symbol-panel mt-12 min-h-52 w-full resize-y p-6 font-serif text-xl leading-relaxed text-[#f5f1e8] outline-none transition-colors duration-[1200ms] placeholder:text-[#d8d1c2]/[0.34] focus:border-gold/35 focus:bg-white/[0.035]"
+          className="symbol-reflection-field mt-14 min-h-52 w-full resize-y p-6 font-serif text-xl leading-relaxed"
         />
         <div className="mt-5 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="symbol-copy text-left text-sm sm:text-base">

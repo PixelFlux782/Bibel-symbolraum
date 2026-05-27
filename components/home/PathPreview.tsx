@@ -60,8 +60,8 @@ export function PathPreview() {
   const latestReflection = sortedReflections[0];
 
   return (
-    <section className="symbol-section relative pb-24 pt-2 md:pb-32">
-      <div className="scroll-reveal relative mx-auto max-w-5xl border-y border-gold/15 py-9 sm:py-11">
+    <section className="symbol-section relative pb-32 pt-8 md:pb-40">
+      <div className="scroll-reveal relative mx-auto max-w-5xl border-y border-gold/[0.08] py-12 sm:py-14">
         <div className="pointer-events-none absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         <div className="pointer-events-none absolute inset-x-[18%] bottom-0 h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
 
@@ -79,7 +79,7 @@ export function PathPreview() {
               </p>
             </div>
 
-            <div className="relative border-t border-white/10 pt-8 md:border-l md:border-t-0 md:pl-9 md:pt-0">
+            <div className="relative border-t border-white/[0.055] pt-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex items-center justify-center gap-4 md:justify-start">

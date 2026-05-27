@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { PathPreview } from "@/components/home/PathPreview";
 import { RoomTransitionButton } from "@/components/transitions/RoomTransition";
 
@@ -21,47 +20,47 @@ const WATER_LAYERS = [
 export default function StartPage() {
   return (
     <div className="symbol-page">
-      <section className="symbol-section relative flex min-h-screen items-center justify-center pb-24 pt-40 md:pt-36">
-        <div className="pointer-events-none absolute inset-0 z-0">
-          <div className="absolute inset-x-[14%] top-[46%] h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-          <div className="absolute inset-x-[8%] top-[58%] h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-          <div className="light-pulse absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(189,160,109,0.08),transparent_62%)]" />
+      <section className="symbol-section symbol-portal relative flex min-h-screen items-center justify-center overflow-hidden pb-28 pt-36 md:pt-32">
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+          <div className="symbol-portal-depth absolute inset-0" />
+          <div className="symbol-portal-noise absolute inset-0" />
+          <div className="symbol-portal-breath absolute left-1/2 top-1/2 h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full" />
+          <div className="absolute left-1/2 top-1/2 h-[min(72vw,42rem)] w-[min(72vw,42rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold/[0.045]" />
+          <div className="absolute left-1/2 top-1/2 h-[min(56vw,31rem)] w-[min(56vw,31rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.035]" />
+          <div className="absolute inset-x-[12%] top-[50%] h-px bg-gradient-to-r from-transparent via-gold/[0.16] to-transparent" />
+          <div className="absolute inset-x-[24%] top-[50%] h-px -translate-y-8 bg-gradient-to-r from-transparent via-cyan/[0.08] to-transparent" />
+          <span className="symbol-portal-glyph left-[8%] top-[26%] hidden sm:block">מ</span>
+          <span className="symbol-portal-glyph right-[10%] top-[32%] hidden sm:block">י</span>
+          <span className="symbol-portal-glyph bottom-[22%] left-[18%]">ם</span>
+          <span className="symbol-portal-glyph bottom-[18%] right-[16%] hidden md:block">א</span>
         </div>
 
-        <div className="symbol-fade-in relative z-10 mx-auto w-full max-w-[20rem] text-center sm:max-w-5xl">
-          <p className="symbol-kicker mb-8">
-            Biblisches Archiv für innere Bilder
+        <div className="symbol-fade-in relative z-10 mx-auto grid w-full max-w-[21rem] justify-items-center text-center sm:max-w-6xl">
+          <p className="symbol-kicker mb-7 text-gold/55">
+            Archiv der Zeichen
           </p>
-          <h1 className="symbol-breathe max-w-full overflow-hidden font-serif text-[clamp(2rem,9vw,11rem)] italic leading-[0.86] text-foreground-strong sm:text-[clamp(4rem,13vw,11rem)]">
+          <h1 className="symbol-portal-title max-w-full overflow-hidden font-serif text-[clamp(3rem,17vw,13rem)] italic leading-[0.78] text-foreground-strong">
             SYMBOLRAUM
           </h1>
-          <p className="symbol-copy mx-auto mt-9 max-w-[20rem] text-lg sm:max-w-2xl sm:text-2xl">
-            Eine visuelle Reise durch biblische Symbole, hebräische Sprache und innere Bedeutungsräume.
+          <p className="symbol-copy mx-auto mt-9 max-w-[16rem] text-base italic text-muted-soft sm:max-w-xl sm:text-xl">
+            Ein stiller Raum biblischer Bilder.
           </p>
 
-          <div className="mt-12 flex flex-col justify-center gap-3 sm:flex-row">
-            <RoomTransitionButton
-              href="/raeume/wasser"
-              className="symbol-cta group mx-auto max-w-[19rem]"
-            >
-              Wasserraum betreten
-              <span className="ml-4 h-px w-8 bg-gold/60 transition-opacity duration-1000 group-hover:opacity-80" />
-            </RoomTransitionButton>
-            <Link
-              href="/symbolnetz"
-              className="symbol-cta symbol-cta-secondary mx-auto max-w-[19rem]"
-            >
-              Symbolnetz ansehen
-            </Link>
-          </div>
+          <RoomTransitionButton
+            href="/raeume/wasser"
+            className="symbol-portal-entry group mt-16"
+          >
+            <span className="symbol-portal-entry-mark" aria-hidden="true" />
+            <span>Wasserraum betreten</span>
+          </RoomTransitionButton>
         </div>
       </section>
 
       <PathPreview />
 
-      <section className="symbol-section relative pb-28">
-        <div className="mx-auto grid max-w-6xl items-end gap-8 lg:grid-cols-[1.08fr_0.92fr]">
-          <div className="scroll-reveal symbol-panel relative min-h-[28rem] overflow-hidden shadow-2xl shadow-black/40">
+      <section className="symbol-section relative pb-36">
+        <div className="mx-auto grid max-w-6xl items-end gap-14 lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="scroll-reveal relative min-h-[28rem] overflow-hidden shadow-[0_34px_120px_rgba(0,0,0,0.34)]">
             <Image
               src="/Visuals/wasser_cinema_hero.png"
               alt="Cineastischer Wasserraum mit dunkler Tiefe und Licht"
@@ -88,11 +87,11 @@ export default function StartPage() {
               Tiefe, Leben, Reinigung und Übergang.
             </h3>
 
-            <div className="mt-10 grid gap-3">
+            <div className="mt-12 grid gap-7">
               {WATER_LAYERS.map((layer) => (
                 <article
                   key={layer.title}
-                  className="symbol-panel p-5 transition-colors duration-1000 hover:border-gold/20 hover:bg-white/[0.045]"
+                  className="border-t border-white/[0.045] pt-7"
                 >
                   <p className="symbol-kicker">
                     {layer.title}

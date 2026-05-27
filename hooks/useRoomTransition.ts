@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const FULL_TRANSITION_MS = 1050;
-const REDUCED_TRANSITION_MS = 160;
+const FULL_TRANSITION_MS = 1600;
+const REDUCED_TRANSITION_MS = 240;
 
 type StartRoomTransitionOptions = {
   href: string;

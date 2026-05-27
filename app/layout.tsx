@@ -1,3 +1,4 @@
+import "reactflow/dist/style.css";
 import "./globals.css";
 import { Metadata } from "next";
 import Header from "../components/Header";
