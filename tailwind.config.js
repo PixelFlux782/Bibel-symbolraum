@@ -11,6 +11,7 @@ module.exports = {
         foreground: "var(--foreground)",
         muted: "var(--muted)",
         gold: "var(--gold)",
+        cyan: "var(--cyan)",
       },
     },
   },

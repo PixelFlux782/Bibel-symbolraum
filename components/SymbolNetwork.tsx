@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { RoomTransitionButton } from '@/components/transitions/RoomTransition';
 import ReactFlow, {
   ConnectionMode,
   Edge,
@@ -55,7 +56,7 @@ function SymbolNode({ data }: NodeProps<SymbolNodeData>) {
       />
 
       <div
-        className={`symbol-node-pulse relative min-w-32 border px-6 py-5 text-center backdrop-blur-md transition-colors duration-1000 ${
+        className={`symbol-node-pulse relative min-w-32 border px-6 py-5 text-center backdrop-blur-md transition-colors duration-[1200ms] ${
           data.isActive
             ? 'border-gold/40 bg-[#08090e]/80'
             : 'border-white/10 bg-black/30 group-hover:border-gold/20 group-hover:bg-white/[0.035]'
@@ -109,6 +110,13 @@ function buildEdges(): Edge[] {
 export default function SymbolNetwork() {
   const [activeId, setActiveId] = useState('wasser');
   const activeSymbol = SYMBOL_LOOKUP.get(activeId) ?? SYMBOL_NETWORK[0];
+  const mobileSymbols = useMemo(
+    () => [
+      SYMBOL_LOOKUP.get('wasser'),
+      ...SYMBOL_NETWORK.filter((symbol) => symbol.id !== 'wasser'),
+    ].filter(Boolean) as SymbolNetworkItem[],
+    []
+  );
 
   const nodes = useMemo<Node<SymbolNodeData>[]>(
     () =>
@@ -127,7 +135,7 @@ export default function SymbolNetwork() {
   const edges = useMemo(() => buildEdges(), []);
 
   return (
-    <section className="relative min-h-screen overflow-hidden px-5 pb-20 pt-32 sm:px-8 lg:px-14">
+    <section className="symbol-page symbol-section relative min-h-screen pb-24 pt-40 md:pt-36">
       <div className="absolute inset-0">
         <Image
           src="/Visuals/symbolnetz_backround.png"
@@ -135,25 +143,58 @@ export default function SymbolNetwork() {
           fill
           priority
           sizes="100vw"
-          className="sacred-drift object-cover opacity-[0.28]"
+          className="sacred-drift object-cover opacity-[0.18]"
         />
-        <div className="light-pulse absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(189,160,109,0.1),transparent_27%),linear-gradient(180deg,rgba(2,5,12,0.82),rgba(2,5,12,0.38)_42%,rgba(2,5,12,0.96))]" />
+        <div className="light-pulse absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(189,160,109,0.08),transparent_29%),linear-gradient(180deg,rgba(2,5,12,0.84),rgba(2,5,12,0.5)_44%,rgba(2,5,12,0.96))]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_34%,rgba(0,0,0,0.62)_78%,rgba(0,0,0,0.88)_100%)]" />
       </div>
 
-      <div className="symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_23rem]">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.5em] text-gold/70">
+      <div className="symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-8 overflow-hidden lg:grid-cols-[minmax(0,1fr)_23rem]">
+        <div className="min-w-0">
+          <p className="symbol-kicker">
             Lebendiges Bedeutungsnetz
           </p>
           <h1 className="mt-6 max-w-4xl font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
             Symbolnetz
           </h1>
-          <p className="mt-6 max-w-2xl font-serif text-xl leading-relaxed text-[#d8d1c2]/72">
+          <p className="symbol-copy mt-6 max-w-[20rem] text-base sm:max-w-2xl sm:text-xl">
             Ein stilles Archiv aus Beziehungen. Jeder Ort leuchtet aus den Zeichen, die ihn umgeben.
           </p>
 
-          <div className="relative mt-10 h-[620px] overflow-hidden border border-white/10 bg-black/[0.18] backdrop-blur-sm">
+          <div className="symbol-mobile-journey mt-8 md:hidden" aria-label="Gefuehrte Symbolauswahl">
+            {mobileSymbols.map((symbol, index) => {
+              const isActive = symbol.id === activeId;
+
+              return (
+                <div key={symbol.id} className="symbol-mobile-step">
+                  <button
+                    type="button"
+                    onClick={() => setActiveId(symbol.id)}
+                    aria-pressed={isActive}
+                    className={`symbol-mobile-seal ${isActive ? 'is-active' : ''}`}
+                  >
+                    <span className="symbol-mobile-index">
+                      {index === 0 ? 'Einstieg' : String(index + 1).padStart(2, '0')}
+                    </span>
+                    <span className="symbol-mobile-hebrew symbol-breathe">
+                      {symbol.hebrew}
+                    </span>
+                    <span className="symbol-mobile-name">
+                      {symbol.name}
+                    </span>
+                    <span className="symbol-mobile-meaning">
+                      {symbol.shortMeaning}
+                    </span>
+                  </button>
+                  {index < mobileSymbols.length - 1 ? (
+                    <span className="symbol-mobile-thread" aria-hidden="true" />
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="symbol-panel relative mt-10 hidden h-[560px] overflow-hidden md:block sm:h-[620px]">
             <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_44%,transparent_36%,rgba(2,5,12,0.72)_100%)]" />
             <ReactFlow
               nodes={nodes}
@@ -176,8 +217,8 @@ export default function SymbolNetwork() {
           </div>
         </div>
 
-        <aside className="scroll-reveal self-end border border-gold/15 bg-[#05070d]/[0.78] p-7 backdrop-blur-md">
-          <p className="text-[10px] uppercase tracking-[0.42em] text-[#7fb8c9]/70">
+        <aside className="scroll-reveal symbol-panel symbol-detail-panel self-end p-7">
+          <p className="symbol-kicker text-cyan-soft">
             Aktiver Ort
           </p>
           <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90">
@@ -186,7 +227,7 @@ export default function SymbolNetwork() {
           <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">
             {activeSymbol.name}
           </h2>
-          <p className="mt-6 font-serif text-lg leading-relaxed text-[#d8d1c2]/72">
+          <p className="symbol-copy mt-6 text-lg">
             {activeSymbol.shortMeaning}
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
@@ -202,18 +243,22 @@ export default function SymbolNetwork() {
                   key={id}
                   type="button"
                   onClick={() => setActiveId(id)}
-                  className="border border-white/10 bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/62 transition-colors duration-1000 hover:border-gold/20 hover:text-gold/75"
+                  className="border border-white/10 bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/62 transition-colors duration-[1200ms] hover:border-gold/20 hover:text-gold/75"
                 >
                   {related.name}
                 </button>
               );
             })}
           </div>
-          {activeSymbol.roomHref ? (
-            <Link
+          {activeSymbol.roomHref === '/raeume/wasser' ? (
+            <RoomTransitionButton
               href={activeSymbol.roomHref}
-              className="mt-10 inline-flex w-full items-center justify-center border border-gold/30 bg-gold/[0.08] px-5 py-4 text-[11px] uppercase tracking-[0.32em] text-[#f2deae] transition-colors duration-1000 hover:border-gold/45 hover:bg-gold/[0.1]"
+              className="symbol-cta mt-10 w-full"
             >
+              Wasserraum betreten
+            </RoomTransitionButton>
+          ) : activeSymbol.roomHref ? (
+            <Link href={activeSymbol.roomHref} className="symbol-cta mt-10 w-full">
               Raum betreten
             </Link>
           ) : (
