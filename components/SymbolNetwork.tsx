@@ -12,7 +12,7 @@ import ReactFlow, {
   NodeProps,
   Position,
 } from 'reactflow';
-import { SYMBOL_NETWORK, type SymbolNetworkItem } from '@/lib/symbols';
+import { SYMBOL_NETWORK, type SymbolNetworkItem, type SymbolRelation } from '@/lib/symbols';
 
 type SymbolNodeData = SymbolNetworkItem & {
   isActive: boolean;
@@ -25,6 +25,10 @@ const NODE_POSITIONS: Record<string, { x: number; y: number }> = {
   quelle: { x: 640, y: 140 },
   taufe: { x: 180, y: 370 },
   geist: { x: 625, y: 370 },
+  tiefe: { x: 400, y: 120 },
+  exodus: { x: 115, y: 285 },
+  leben: { x: 720, y: 245 },
+  reinigung: { x: 395, y: 395 },
   licht: { x: 420, y: 50 },
   wueste: { x: 375, y: 470 },
   fels: { x: 90, y: 485 },
@@ -33,6 +37,89 @@ const NODE_POSITIONS: Record<string, { x: number; y: number }> = {
 };
 
 const SYMBOL_LOOKUP = new Map(SYMBOL_NETWORK.map((symbol) => [symbol.id, symbol]));
+
+type NetworkRelation = SymbolRelation & {
+  id: string;
+  sourceId: string;
+};
+
+function relationId(sourceId: string, targetId: string) {
+  return [sourceId, targetId].sort().join('-');
+}
+
+const SYMBOL_RELATIONS = Array.from(
+  SYMBOL_NETWORK.reduce((relations, symbol) => {
+    symbol.symbolRelations?.forEach((relation) => {
+      if (!SYMBOL_LOOKUP.has(relation.targetId) || relation.targetId === symbol.id) {
+        return;
+      }
+
+      const id = relationId(symbol.id, relation.targetId);
+      const existingRelation = relations.get(id);
+
+      if (!existingRelation || relation.strength > existingRelation.strength) {
+        relations.set(id, {
+          ...relation,
+          id,
+          sourceId: symbol.id,
+        });
+      }
+    });
+
+    return relations;
+  }, new Map<string, NetworkRelation>())
+  .values()
+);
+
+function getRelatedIds(symbolId: string) {
+  return new Set(
+    SYMBOL_RELATIONS.flatMap((relation) => {
+      if (relation.sourceId === symbolId) {
+        return [relation.targetId];
+      }
+
+      if (relation.targetId === symbolId) {
+        return [relation.sourceId];
+      }
+
+      return [];
+    })
+  );
+}
+
+function getRelatedSymbols(symbolId: string) {
+  return Array.from(getRelatedIds(symbolId))
+    .map((id) => SYMBOL_LOOKUP.get(id))
+    .filter(Boolean) as SymbolNetworkItem[];
+}
+
+function getPrimaryRelation(symbolId: string) {
+  return SYMBOL_RELATIONS
+    .filter((relation) => relation.sourceId === symbolId || relation.targetId === symbolId)
+    .sort((a, b) => b.strength - a.strength)[0];
+}
+
+function getOtherRelationSymbol(relation: NetworkRelation, symbolId: string) {
+  const relatedId = relation.sourceId === symbolId ? relation.targetId : relation.sourceId;
+
+  return SYMBOL_LOOKUP.get(relatedId);
+}
+
+function getNodePosition(symbolId: string, index: number, total: number) {
+  const fixedPosition = NODE_POSITIONS[symbolId];
+
+  if (fixedPosition) {
+    return fixedPosition;
+  }
+
+  const radius = 300;
+  const angle = (Math.PI * 2 * index) / Math.max(total, 1) - Math.PI / 2;
+
+  return {
+    x: 445 + Math.cos(angle) * radius,
+    y: 305 + Math.sin(angle) * radius,
+  };
+}
 
 function SymbolNode({ data }: NodeProps<SymbolNodeData>) {
   return (
@@ -84,49 +171,45 @@ const nodeTypes = {
 };
 
 function buildEdges(activeId: string): Edge[] {
-  const edgeIds = new Set<string>();
-  const activeSymbol = SYMBOL_LOOKUP.get(activeId);
+  return SYMBOL_RELATIONS.map((relation) => {
+    const strength = Math.max(0, Math.min(relation.strength, 1));
+    const isActiveRelation = relation.sourceId === activeId || relation.targetId === activeId;
+    const opacity = isActiveRelation ? 0.08 + strength * 0.16 : 0.03 + strength * 0.07;
+    const strokeWidth = isActiveRelation ? 0.55 + strength * 0.85 : 0.35 + strength * 0.45;
 
-  return SYMBOL_NETWORK.flatMap((symbol) =>
-    symbol.relatedSymbols
-      .filter((target) => SYMBOL_LOOKUP.has(target))
-      .map((target) => {
-        const id = [symbol.id, target].sort().join('-');
-
-        if (edgeIds.has(id)) {
-          return null;
-        }
-
-        edgeIds.add(id);
-
-        const isActiveRelation =
-          symbol.id === activeId ||
-          target === activeId ||
-          activeSymbol?.relatedSymbols.includes(symbol.id) ||
-          activeSymbol?.relatedSymbols.includes(target);
-
-        return {
-          id,
-          source: symbol.id,
-          target,
-          type: 'default',
-          className: isActiveRelation ? 'is-awake' : 'is-dormant',
-          style: {
-            stroke: isActiveRelation ? 'rgba(189,160,109,0.16)' : 'rgba(127,184,201,0.07)',
-            strokeWidth: isActiveRelation ? 0.9 : 0.55,
-          },
-        } satisfies Edge;
-      })
-      .filter(Boolean)
-  ) as Edge[];
+    return {
+      id: relation.id,
+      source: relation.sourceId,
+      target: relation.targetId,
+      type: 'default',
+      className: isActiveRelation ? 'is-awake' : 'is-dormant',
+      data: {
+        relationType: relation.relationType,
+        strength: relation.strength,
+        explanation: relation.explanation,
+      },
+      style: {
+        stroke: isActiveRelation ? `rgba(189,160,109,${opacity})` : `rgba(127,184,201,${opacity})`,
+        strokeWidth,
+      },
+    } satisfies Edge;
+  });
 }
 
 export default function SymbolNetwork() {
   const [activeId, setActiveId] = useState('wasser');
   const activeSymbol = SYMBOL_LOOKUP.get(activeId) ?? SYMBOL_NETWORK[0];
+  const primaryRelation = getPrimaryRelation(activeSymbol.id);
+  const primaryRelationSymbol = primaryRelation
+    ? getOtherRelationSymbol(primaryRelation, activeSymbol.id)
+    : undefined;
   const relatedIds = useMemo(
-    () => new Set(activeSymbol.relatedSymbols),
-    [activeSymbol]
+    () => getRelatedIds(activeSymbol.id),
+    [activeSymbol.id]
+  );
+  const activeRelatedSymbols = useMemo(
+    () => getRelatedSymbols(activeSymbol.id),
+    [activeSymbol.id]
   );
   const mobileSymbols = useMemo(
     () => [
@@ -138,10 +221,10 @@ export default function SymbolNetwork() {
 
   const nodes = useMemo<Node<SymbolNodeData>[]>(
     () =>
-      SYMBOL_NETWORK.map((symbol) => ({
+      SYMBOL_NETWORK.map((symbol, index) => ({
         id: symbol.id,
         type: 'symbol',
-        position: NODE_POSITIONS[symbol.id] ?? { x: 0, y: 0 },
+        position: getNodePosition(symbol.id, index, SYMBOL_NETWORK.length),
         data: {
           ...symbol,
           isActive: symbol.id === activeId,
@@ -240,7 +323,7 @@ export default function SymbolNetwork() {
 
         <aside className="scroll-reveal symbol-detail-panel symbol-archive-fragment self-end p-7">
           <p className="symbol-kicker text-cyan-soft">
-            Aktiver Ort
+            Hebräisch
           </p>
           <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90">
             {activeSymbol.hebrew}
@@ -248,22 +331,24 @@ export default function SymbolNetwork() {
           <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">
             {activeSymbol.name}
           </h2>
+          {activeSymbol.transliteration ? (
+            <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">
+              {activeSymbol.transliteration}
+            </p>
+          ) : null}
+          <p className="symbol-kicker mt-8 text-cyan-soft">
+            Kurzdeutung
+          </p>
           <p className="symbol-copy mt-6 text-lg">
             {activeSymbol.shortMeaning}
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
-            {activeSymbol.relatedSymbols.map((id) => {
-              const related = SYMBOL_LOOKUP.get(id);
-
-              if (!related) {
-                return null;
-              }
-
+            {activeRelatedSymbols.map((related) => {
               return (
                 <button
-                  key={id}
+                  key={related.id}
                   type="button"
-                  onClick={() => setActiveId(id)}
+                  onClick={() => setActiveId(related.id)}
                   className="border-b border-white/[0.06] bg-transparent px-1 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/60 transition-colors duration-[1200ms] hover:border-gold/[0.15] hover:text-gold/70"
                 >
                   {related.name}
@@ -271,6 +356,17 @@ export default function SymbolNetwork() {
               );
             })}
           </div>
+          {primaryRelation ? (
+            <div className="mt-8 border-t border-white/[0.055] pt-6">
+              <p className="symbol-kicker text-cyan-soft">
+                Wichtigste Relation
+              </p>
+              <p className="symbol-copy mt-4 text-sm">
+                {primaryRelationSymbol ? `${primaryRelationSymbol.name}: ` : ''}
+                {primaryRelation.explanation}
+              </p>
+            </div>
+          ) : null}
           {activeSymbol.roomHref === '/raeume/wasser' ? (
             <RoomTransitionButton
               href={activeSymbol.roomHref}

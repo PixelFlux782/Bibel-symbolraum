@@ -1,3 +1,5 @@
+import { calculateGematria, getHebrewLetterValue } from './hebrew/gematria';
+
 export type SymbolItem = {
   slug: string;
   name: string;
@@ -6,6 +8,8 @@ export type SymbolItem = {
   outerLevel: string;
   symbolicLevel: string;
   bibleReferences: string[];
+  firstOccurrences?: FirstOccurrence[];
+  scriptureReferences?: SymbolScriptureReference[];
   hebrewTrace: string;
   numberMeaning: string;
   lifeQuestion: string;
@@ -13,22 +17,273 @@ export type SymbolItem = {
   connectedSymbols: string[];
 };
 
-export type SymbolNetworkItem = {
+export type SymbolRelationType =
+  | 'same_root'
+  | 'shared_letters'
+  | 'gematria_link'
+  | 'biblical_scene'
+  | 'thematic_link'
+  | 'contrast'
+  | 'transformation'
+  | 'sequence';
+
+export type SymbolRelation = {
+  targetId: string;
+  relationType: SymbolRelationType;
+  strength: number;
+  explanation: string;
+};
+
+export type LetterBreakdownItem = {
+  letter: string;
+  name: string;
+  transliteration?: string;
+  meaning?: string;
+  numericValue?: number;
+};
+
+export type GematriaInfo = {
+  value: number;
+  method?: string;
+  explanation?: string;
+};
+
+export type SymbolScriptureReference = {
+  reference: string;
+  book: string;
+  chapter: number;
+  verseRange: string;
+  shortNote: string;
+  symbolicRole: string;
+  relatedSymbols: string[];
+};
+
+export type FirstOccurrence = SymbolScriptureReference;
+
+export type SymbolVerse = SymbolScriptureReference & {
+  text?: string;
+  layer?: 'biblical' | 'hebrew' | 'life' | 'poetic';
+  note?: string;
+};
+
+export type SymbolImageAsset = {
+  src: string;
+  alt: string;
+  role?: 'hero' | 'background' | 'texture' | 'thumbnail' | 'icon';
+};
+
+export type SymbolData = {
   id: string;
   name: string;
+  hebrew?: string;
+  transliteration?: string;
+  root?: string;
+  category?: string;
+  shortMeaning?: string;
+  poeticIntro?: string;
+  biblicalLayer?: string;
+  hebrewLayer?: string;
+  lifeLayer?: string;
+  reflectionQuestion?: string;
+  letterBreakdown?: LetterBreakdownItem[];
+  gematria?: GematriaInfo;
+  firstOccurrences?: FirstOccurrence[];
+  scriptureReferences?: SymbolScriptureReference[];
+  verses?: SymbolVerse[];
+  relatedSymbols?: string[];
+  symbolRelations?: SymbolRelation[];
+  imageAssets?: SymbolImageAsset[];
+  roomHref?: string;
+};
+
+export type SymbolNetworkItem = SymbolData & {
   hebrew: string;
   shortMeaning: string;
   relatedSymbols: string[];
-  roomHref?: string;
 };
+
+const WATER_SCRIPTURE_REFERENCES: SymbolScriptureReference[] = [
+  {
+    reference: 'Genesis 1,2',
+    book: 'Genesis',
+    chapter: 1,
+    verseRange: '2',
+    shortNote: 'Der Geist Gottes schwebt ueber den Wassern am Anfang der Schoepfung.',
+    symbolicRole: 'Urtiefe, Anfangsraum und noch ungeordnete Schoepfung.',
+    relatedSymbols: ['geist', 'tiefe', 'schoepfung'],
+  },
+  {
+    reference: 'Genesis 1,6-10',
+    book: 'Genesis',
+    chapter: 1,
+    verseRange: '6-10',
+    shortNote: 'Die Wasser werden getrennt und gesammelt, sodass Himmel, Meer und trockenes Land unterscheidbar werden.',
+    symbolicRole: 'Ordnung, Grenze und Formwerdung aus der Tiefe.',
+    relatedSymbols: ['meer', 'himmel', 'erde', 'ordnung'],
+  },
+  {
+    reference: 'Exodus 14',
+    book: 'Exodus',
+    chapter: 14,
+    verseRange: '1-31',
+    shortNote: 'Israel zieht durch das Meer aus der Enge in die Freiheit.',
+    symbolicRole: 'Rettender Durchgang, Schwelle und Befreiung.',
+    relatedSymbols: ['meer', 'exodus', 'befreiung', 'weg'],
+  },
+  {
+    reference: 'Numeri 20,2-13',
+    book: 'Numeri',
+    chapter: 20,
+    verseRange: '2-13',
+    shortNote: 'In der Wueste kommt Wasser aus dem Felsen fuer die durstige Gemeinde.',
+    symbolicRole: 'Versorgung im Mangel, Gabe aus dem Widerstand und Pruefung des Vertrauens.',
+    relatedSymbols: ['fels', 'wueste', 'quelle', 'versorgung'],
+  },
+  {
+    reference: 'Josua 3',
+    book: 'Josua',
+    chapter: 3,
+    verseRange: '1-17',
+    shortNote: 'Beim Jordan-Uebergang oeffnet sich der Weg in das verheissene Land.',
+    symbolicRole: 'Uebergang, Eintritt und Schwelle in eine neue Lebensordnung.',
+    relatedSymbols: ['jordan', 'weg', 'uebergang', 'verheissung'],
+  },
+  {
+    reference: 'Matthaeus 3,13-17',
+    book: 'Matthaeus',
+    chapter: 3,
+    verseRange: '13-17',
+    shortNote: 'Jesus wird im Jordan getauft; Wasser, Geist und Stimme treten zusammen.',
+    symbolicRole: 'Taufe, Berufung, Offenbarung und neue Ausrichtung.',
+    relatedSymbols: ['taufe', 'geist', 'jordan', 'berufung'],
+  },
+  {
+    reference: 'Johannes 4,7-15',
+    book: 'Johannes',
+    chapter: 4,
+    verseRange: '7-15',
+    shortNote: 'Jesus spricht am Brunnen vom lebendigen Wasser.',
+    symbolicRole: 'Inneres Leben, Gabe, Durst und Erneuerung.',
+    relatedSymbols: ['quelle', 'leben', 'brunnen', 'erneuerung'],
+  },
+];
 
 export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
   {
     id: 'wasser',
     name: 'Wasser',
     hebrew: 'מים',
+    transliteration: 'Majim',
+    root: 'מים',
+    category: 'Schöpfung / Reinigung / Übergang',
     shortMeaning: 'Tiefe, Leben, Reinigung und Übergang.',
-    relatedSymbols: ['meer', 'quelle', 'taufe', 'geist', 'licht', 'wueste'],
+    poeticIntro:
+      'Wasser kann als bewegter Raum gelesen werden: als Tiefe, die Leben trägt, Grenzen markiert und Übergänge möglich macht.',
+    biblicalLayer:
+      'Biblisch begegnet Wasser unter anderem in Genesis 1,2, im Exodus am Meer, in Taufszenen am Jordan und im Bild vom Geist über den Wassern. Diese Motive lassen Wasser symbolisch als Tiefe, Grenze, Reinigung und Übergang lesen.',
+    hebrewLayer:
+      'Die Buchstaben מ י ם können symbolisch gelesen werden: מ als Tiefe, Wasser und Mutterraum; י als Punkt, Impuls oder Same; ם als geschlossenes finales Mem, das eine verborgene Tiefe andeuten kann.',
+    lifeLayer:
+      'Auf der Lebens-Ebene kann Wasser für innere Tiefe, Reinigung, Grenze, Übergang und neues Leben stehen.',
+    reflectionQuestion: 'Wo zeigt sich in deinem Leben gerade eine Grenze, die vielleicht auch ein Übergang werden kann?',
+    letterBreakdown: [
+      {
+        letter: 'מ',
+        name: 'Mem',
+        transliteration: 'm',
+        meaning: 'Kann symbolisch mit Tiefe, Wasser und Mutterraum verbunden werden.',
+        numericValue: getHebrewLetterValue('מ'),
+      },
+      {
+        letter: 'י',
+        name: 'Jod',
+        transliteration: 'y',
+        meaning: 'Kann als Punkt, Impuls oder Same gelesen werden.',
+        numericValue: getHebrewLetterValue('י'),
+      },
+      {
+        letter: 'ם',
+        name: 'Mem Sofit',
+        transliteration: 'm',
+        meaning: 'Geschlossenes finales Mem; kann verborgene Tiefe andeuten.',
+        numericValue: getHebrewLetterValue('ם'),
+      },
+    ],
+    gematria: {
+      value: calculateGematria('מים'),
+      method: 'Standardgematria',
+      explanation: 'Mem (40) + Jod (10) + Mem Sofit (40) = 90.',
+    },
+    firstOccurrences: WATER_SCRIPTURE_REFERENCES,
+    scriptureReferences: WATER_SCRIPTURE_REFERENCES,
+    verses: WATER_SCRIPTURE_REFERENCES.map((scriptureReference) => ({
+      ...scriptureReference,
+      layer: scriptureReference.reference.startsWith('Johannes') ? 'life' : 'biblical',
+      note: scriptureReference.shortNote,
+    })),
+    relatedSymbols: ['meer', 'quelle', 'taufe', 'geist', 'tiefe', 'exodus', 'leben', 'reinigung'],
+    symbolRelations: [
+      {
+        targetId: 'meer',
+        relationType: 'thematic_link',
+        strength: 0.9,
+        explanation: 'Das Meer erweitert Wasser zum Bild von Tiefe, Grenze und möglichem Übergang.',
+      },
+      {
+        targetId: 'quelle',
+        relationType: 'thematic_link',
+        strength: 0.86,
+        explanation: 'Die Quelle zeigt Wasser eher als Ursprung, Gabe und hervortretendes Leben.',
+      },
+      {
+        targetId: 'taufe',
+        relationType: 'transformation',
+        strength: 0.94,
+        explanation: 'Taufe kann Wasser als Zeichen von Reinigung, Übergang und neuer Ausrichtung lesen.',
+      },
+      {
+        targetId: 'geist',
+        relationType: 'biblical_scene',
+        strength: 0.78,
+        explanation: 'Genesis 1,2 verbindet Wasser mit dem Bild vom Geist über den Wassern.',
+      },
+      {
+        targetId: 'tiefe',
+        relationType: 'thematic_link',
+        strength: 0.88,
+        explanation: 'Wasser kann als Bild innerer und kosmischer Tiefe gelesen werden.',
+      },
+      {
+        targetId: 'exodus',
+        relationType: 'biblical_scene',
+        strength: 0.84,
+        explanation: 'Die Exodus-Erzählung am Meer macht Wasser zu einem Raum von Grenze und Durchzug.',
+      },
+      {
+        targetId: 'leben',
+        relationType: 'thematic_link',
+        strength: 0.82,
+        explanation: 'Wasser steht in vielen biblischen und lebensweltlichen Bildern nahe bei Leben und Lebendigkeit.',
+      },
+      {
+        targetId: 'reinigung',
+        relationType: 'thematic_link',
+        strength: 0.8,
+        explanation: 'Wasser kann symbolisch als Zeichen von Waschung, Klärung und Neubeginn gelesen werden.',
+      },
+    ],
+    imageAssets: [
+      {
+        src: '/Visuals/water-symbolraum.png',
+        alt: 'Dunkler Wasserraum mit bewegter Oberfläche',
+        role: 'hero',
+      },
+      {
+        src: '/Visuals/symbolnetz_backround.png',
+        alt: 'Atmosphärischer Hintergrund des Symbolnetzes',
+        role: 'background',
+      },
+    ],
     roomHref: '/raeume/wasser',
   },
   {
@@ -58,6 +313,34 @@ export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
     hebrew: 'רוח',
     shortMeaning: 'Atem, Wind und unsichtbare Bewegung, die Leben trägt.',
     relatedSymbols: ['wasser', 'taufe', 'licht', 'quelle'],
+  },
+  {
+    id: 'tiefe',
+    name: 'Tiefe',
+    hebrew: 'תהום',
+    shortMeaning: 'Der verborgene Raum unter der Oberfläche, offen für Deutung und Wandlung.',
+    relatedSymbols: ['wasser', 'meer', 'quelle'],
+  },
+  {
+    id: 'exodus',
+    name: 'Exodus',
+    hebrew: 'יציאה',
+    shortMeaning: 'Auszug, Befreiung und der Gang durch eine Grenze hindurch.',
+    relatedSymbols: ['wasser', 'meer', 'wueste'],
+  },
+  {
+    id: 'leben',
+    name: 'Leben',
+    hebrew: 'חיים',
+    shortMeaning: 'Lebendigkeit, Gabe und die Kraft, neu aufzubrechen.',
+    relatedSymbols: ['wasser', 'quelle', 'baum'],
+  },
+  {
+    id: 'reinigung',
+    name: 'Reinigung',
+    hebrew: 'טהרה',
+    shortMeaning: 'Klärung, Waschung und symbolischer Neubeginn.',
+    relatedSymbols: ['wasser', 'taufe', 'licht'],
   },
   {
     id: 'licht',
@@ -108,6 +391,8 @@ export const SYMBOLS: SymbolItem[] = [
     outerLevel: 'Fluss, Regen, Tau, Quelle',
     symbolicLevel: 'Reinigung, Leben, Erneuerung, Übergang',
     bibleReferences: ['Johannes 4,14', 'Psalm 23,2', 'Ezechiel 47,1-12'],
+    firstOccurrences: WATER_SCRIPTURE_REFERENCES,
+    scriptureReferences: WATER_SCRIPTURE_REFERENCES,
     hebrewTrace: 'Wasser als Lebensquelle und heilige Reinigung im biblischen Vokabular.',
     numberMeaning: '2 – Dualität, Paarung, Verbindung von Ursprung und Erneuerung.',
     lifeQuestion: 'Wo in dir braucht es jetzt ein langsam fließendes Ja?',
