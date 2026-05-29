@@ -396,13 +396,15 @@ function getFallbackJourneyPanel(symbol: SymbolEntry, index: number) {
 export default function WaterRoom() {
   const [activeDepthId, setActiveDepthId] = useState<WaterDepthId>("surface");
   const activeDepth = getWaterDepthLevel(activeDepthId);
+  const activeDepthIndex = WATER_DEPTH_LEVELS.findIndex((depthLevel) => depthLevel.id === activeDepthId);
 
   return (
     <div
       className="symbol-page water-room bg-[#02050b] transition-colors duration-1000"
       style={{
-        backgroundColor: `rgb(${Math.max(0, 2 - activeDepth.graphDepthLevel)} ${Math.max(2, 5 - activeDepth.graphDepthLevel)} ${Math.max(7, 11 + activeDepth.graphDepthLevel * 2)})`,
-      }}
+        backgroundColor: `rgb(${Math.max(0, 3 - activeDepthIndex)} ${Math.max(1, 7 - activeDepthIndex)} ${Math.max(8, 15 - activeDepthIndex)})`,
+        "--water-depth-pressure": activeDepthIndex,
+      } as CSSProperties}
     >
       <WaterOpening symbol={WATER_ROOM_SYMBOL} />
       <WaterGlyphChamber symbol={WATER_ROOM_SYMBOL} />
@@ -576,23 +578,31 @@ function WaterDepthNavigator({
         }}
       />
       <div className="pointer-events-none absolute inset-x-[14%] top-10 h-px bg-gradient-to-r from-transparent via-cyan-soft/20 to-transparent" />
-      <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-[minmax(13rem,0.32fr)_minmax(0,0.68fr)] lg:items-center">
-        <div>
-          <p className="symbol-kicker text-cyan-soft">
-            Z-Achsen-Navigation
+      <div className="pointer-events-none absolute inset-0 opacity-60 water-depth-current" aria-hidden="true" />
+      <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-[minmax(14rem,0.34fr)_minmax(0,0.66fr)] lg:items-center">
+        <div className="water-depth-gauge">
+          <p className="symbol-kicker text-cyan-soft/80">
+            Tiefenlinie im Wasser
           </p>
           <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong sm:text-5xl">
-            Tiefe {activeIndex + 1} / {activeDepth.displayLabel}
+            {activeIndex === 0 ? "Licht an der Oberfläche" : `Stille unter ${activeDepth.label}`}
+          </p>
+          <p className="symbol-copy mt-5 max-w-sm text-sm italic text-foreground-muted sm:text-base">
+            {activeIndex < 2
+              ? "Die oberen Schichten tragen noch Glanz und Bewegung."
+              : activeIndex < 4
+                ? "Das Wasser wird dichter; Zeichen treiben langsamer vorbei."
+                : "Weiter unten bleibt nur ein leises Leuchten im Druck."}
           </p>
 
-          <div className="relative mt-12 flex flex-col gap-3 border-l border-cyan-soft/15 pl-7">
-            <span
-              className="absolute -left-px top-0 h-12 w-px bg-gradient-to-b from-gold/80 to-cyan-soft/70 transition-all duration-700"
-              style={{ transform: `translateY(${activeIndex * 4.25}rem)` }}
-              aria-hidden="true"
-            />
+          <div
+            className="water-depth-gauge__shaft mt-12"
+            aria-label="Tiefenmesser im Wasser"
+            style={{ "--active-depth-offset": `${(activeIndex / (WATER_DEPTH_LEVELS.length - 1)) * 100}%` } as CSSProperties}
+          >
             {WATER_DEPTH_LEVELS.map((depthLevel, index) => {
               const isActive = depthLevel.id === activeDepthId;
+              const distance = Math.abs(activeIndex - index);
 
               return (
                 <button
@@ -600,23 +610,20 @@ function WaterDepthNavigator({
                   type="button"
                   onClick={() => onDepthChange(depthLevel.id)}
                   aria-pressed={isActive}
-                  className={`group relative flex min-h-14 items-center gap-4 text-left transition duration-500 ${
-                    isActive ? "translate-x-2 text-foreground-strong" : "text-foreground-muted hover:translate-x-1 hover:text-cyan-soft"
-                  }`}
+                  className={`water-depth-mark group ${isActive ? "is-active" : ""}`}
+                  style={{
+                    "--mark-depth": index,
+                    "--mark-distance": distance,
+                    top: `${(index / (WATER_DEPTH_LEVELS.length - 1)) * 100}%`,
+                  } as CSSProperties}
                 >
-                  <span
-                    className={`absolute -left-[2.05rem] h-3 w-3 rounded-full border transition duration-500 ${
-                      isActive
-                        ? "border-gold bg-gold shadow-[0_0_24px_rgba(219,184,112,0.75)]"
-                        : "border-cyan-soft/35 bg-cyan-soft/15 shadow-[0_0_16px_rgba(84,210,235,0.22)]"
-                    }`}
-                    aria-hidden="true"
-                  />
-                  <span className="text-[11px] uppercase tracking-[0.28em] text-cyan-soft/70">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="font-serif text-2xl italic">
+                  <span className="water-depth-mark__sediment" aria-hidden="true" />
+                  <span className="water-depth-mark__light" aria-hidden="true" />
+                  <span className="water-depth-mark__label">
                     {depthLevel.label}
+                  </span>
+                  <span className="water-depth-mark__number" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                 </button>
               );
@@ -896,7 +903,7 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
               Symbolreise
             </p>
             <p className="symbol-copy mx-auto mt-5 max-w-2xl text-center text-base md:mx-0 md:text-left">
-              Tiefe {activeDepthIndex + 1} / {activeDepth.displayLabel}: passende Knoten treten näher, andere bleiben als dunkle Strömung im Raum.
+              Bei {activeDepth.label} treten passende Knoten näher; andere bleiben als dunkle Strömung im Raum.
             </p>
             <form className="water-semantic-echo mt-8" onSubmit={handleSemanticEchoSubmit}>
               <input
@@ -1013,25 +1020,41 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                 <div className={`absolute inset-0 transition duration-700 group-hover:opacity-100 group-focus:opacity-100 ${isRelevant ? "opacity-30" : "opacity-0"} bg-[radial-gradient(circle_at_50%_54%,rgba(87,210,235,0.16),transparent_28%),radial-gradient(circle_at_46%_46%,rgba(217,184,114,0.15),transparent_24%)]`} />
               </div>
               <div
-                className={`relative max-w-3xl pb-8 transition duration-700 ${
+                className={`relative max-w-4xl pb-8 transition duration-700 ${
                   index % 2 === 1 ? "md:ml-auto" : ""
                 }`}
               >
-                <div className="rounded border border-white/[0.08] bg-[#03101a]/55 p-6 shadow-[0_0_80px_rgba(0,0,0,0.34),0_0_54px_rgba(94,213,232,0.055)] backdrop-blur-xl transition duration-700 group-hover:border-cyan-soft/30 group-hover:bg-[#041827]/68 group-hover:shadow-[0_0_90px_rgba(76,204,228,0.13)] group-focus:border-cyan-soft/30 group-focus:bg-[#041827]/68">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <p className="symbol-kicker text-cyan-soft">
+                <div className="water-fragment-shell">
+                  <div className="water-fragment-trace" aria-hidden="true" />
+                  <div className="water-fragment-orbit" aria-label="Umliegende Zeichen">
+                    {panel.connectedNodes.slice(0, isRelevant ? 6 : 3).map((connectedNode, connectedIndex) => (
+                      <span
+                        key={connectedNode.id}
+                        className="water-fragment-sign"
+                        style={{
+                          "--sign-x": `${connectedIndex % 2 === 0 ? -0.35 : 0.35}rem`,
+                          "--sign-delay": `${connectedIndex * 160}ms`,
+                        } as CSSProperties}
+                      >
+                        <span lang={connectedNode.hebrew ? "he" : undefined} dir={connectedNode.hebrew ? "rtl" : undefined}>
+                          {connectedNode.hebrew ?? connectedNode.label}
+                        </span>
+                        <span>{connectedNode.label}</span>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                    <p className="water-fragment-index">
                       {String(index + 1).padStart(2, "0")}
                     </p>
                     {panel.strongestConnection ? (
-                      <span className={`rounded-full border bg-gold/[0.06] px-3 py-1 text-xs uppercase tracking-[0.28em] text-gold/80 ${
-                        isRelevant ? "border-gold/35 shadow-[0_0_26px_rgba(216,184,116,0.14)]" : "border-gold/15"
-                      }`}>
+                      <span className="water-meaning-quality">
                         {MEANING_QUALITY_LABELS[panel.strongestConnection.meaningQuality]}
                       </span>
                     ) : null}
                     {panelEdge ? (
                       <span className="water-resonance-weight">
-                        {Math.round(panelEdge.weight * 100)}% · {getResonanceLabel(panelResonanceKind)}
+                        {getResonanceLabel(panelResonanceKind)}
                       </span>
                     ) : null}
                     {isSemanticMatch ? (
@@ -1040,46 +1063,41 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                       </span>
                     ) : null}
                     {panel.node ? (
-                      <span className={`rounded-full border bg-cyan-soft/[0.055] px-3 py-1 text-xs uppercase tracking-[0.28em] text-cyan-soft/85 ${
-                        isRelevant ? "border-cyan-soft/30 shadow-[0_0_26px_rgba(84,210,235,0.12)]" : "border-cyan-soft/12"
-                      }`}>
+                      <span className="water-depth-inscription">
                         Tiefe {panel.node.depthLevel}
                       </span>
                     ) : null}
                   </div>
-                  <div className="mt-7 grid gap-7 md:grid-cols-[minmax(0,0.66fr)_minmax(13rem,0.34fr)] md:items-end">
+                  <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,0.68fr)_minmax(12rem,0.32fr)] md:items-end">
                     <div>
-                      <h2 className="font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
+                      <h2 className="water-light-inscription font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
                         {panel.node?.label ?? panel.title}
                       </h2>
-                      <p className="symbol-copy mt-8 text-xl italic sm:text-3xl">
+                      <p className="water-reflection-text mt-8 text-xl italic sm:text-3xl">
                         {panel.node?.shortMeaning ?? panel.text}
                       </p>
                     </div>
-                    <div className="border-l border-gold/[0.12] pl-5">
+                    <div className="water-glass-shard">
                       <p className="font-serif text-5xl leading-none text-gold/85 sm:text-6xl" lang="he" dir="rtl">
                         {panel.node?.hebrew ?? " "}
                       </p>
-                      <p className="symbol-kicker mt-4 text-cyan-soft">
+                      <p className="water-depth-inscription mt-4">
                         {panel.node?.transliteration ?? "Symbol"}
                       </p>
                     </div>
                   </div>
-                  <div className={`mt-8 grid gap-5 transition duration-700 group-hover:opacity-100 group-focus:opacity-100 md:grid-cols-[minmax(0,0.48fr)_minmax(0,0.52fr)] ${
+                  <div className={`mt-9 grid gap-5 transition duration-700 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100 md:grid-cols-[minmax(0,0.44fr)_minmax(0,0.56fr)] ${
                     isRelevant ? "opacity-80" : "opacity-0"
                   }`}>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="water-fragment-constellation">
                       {panel.connectedNodes.slice(0, isRelevant ? 5 : 2).map((connectedNode) => (
-                        <span
-                          key={connectedNode.id}
-                          className="border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs uppercase tracking-[0.24em] text-foreground-muted backdrop-blur-md"
-                        >
-                          {connectedNode.hebrew ? `${connectedNode.label} / ${connectedNode.hebrew}` : connectedNode.label}
+                        <span key={connectedNode.id}>
+                          {connectedNode.hebrew ?? connectedNode.label}
                         </span>
                       ))}
                     </div>
                     {panel.strongestConnection ? (
-                      <p className="symbol-copy text-sm text-cyan-soft md:text-base">
+                      <p className="water-whisper-line text-sm md:text-base">
                         {panel.strongestConnection.explanation}
                       </p>
                     ) : null}
@@ -1108,18 +1126,18 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                       </div>
                       <div className="grid gap-4">
                         <div>
-                          <p className="symbol-kicker text-gold/70">Bedeutungsqualitäten</p>
-                          <p className="symbol-copy mt-2 text-sm text-foreground-strong">
+                          <p className="water-depth-inscription text-gold/70">Bedeutungsqualitäten</p>
+                          <p className="water-quality-murmur mt-2">
                             {connectedQualityLabels.join(" / ")}
                           </p>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <p className="water-resonance-trait">
-                            <span>emotionalTone</span>
+                            <span>Ton</span>
                             {EMOTIONAL_TONE_LABELS[strongestConnection.emotionalTone]}
                           </p>
                           <p className="water-resonance-trait">
-                            <span>visualBehavior</span>
+                            <span>Bewegung</span>
                             {VISUAL_BEHAVIOR_LABELS[strongestConnection.visualBehavior]}
                           </p>
                         </div>
