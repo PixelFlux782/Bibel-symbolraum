@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { RoomTransitionButton } from '@/components/transitions/RoomTransition';
 import ReactFlow, {
@@ -12,98 +11,38 @@ import ReactFlow, {
   NodeProps,
   Position,
 } from 'reactflow';
-import { SYMBOL_NETWORK, type SymbolNetworkItem, type SymbolRelation } from '@/lib/symbols';
+import {
+  getConnectedNodes,
+  getEdgesForNode,
+  getMostImportantRelation,
+  getNodeById,
+  getPrimaryPath,
+  waterSymbolGraph,
+  type MeaningEdge,
+  type SymbolNode as EngineSymbolNode,
+} from '@/lib/symbolism';
 
-type SymbolNodeData = SymbolNetworkItem & {
+type SymbolNodeData = EngineSymbolNode & {
   isActive: boolean;
   isRelated: boolean;
 };
 
 const NODE_POSITIONS: Record<string, { x: number; y: number }> = {
-  wasser: { x: 400, y: 250 },
-  meer: { x: 155, y: 150 },
-  quelle: { x: 640, y: 140 },
-  taufe: { x: 180, y: 370 },
-  geist: { x: 625, y: 370 },
-  tiefe: { x: 400, y: 120 },
-  exodus: { x: 115, y: 285 },
-  leben: { x: 720, y: 245 },
-  reinigung: { x: 395, y: 395 },
-  licht: { x: 420, y: 50 },
-  wueste: { x: 375, y: 470 },
-  fels: { x: 90, y: 485 },
-  brot: { x: 675, y: 505 },
-  baum: { x: 825, y: 300 },
+  water: { x: 430, y: 310 },
+  mayim: { x: 430, y: 78 },
+  mem: { x: 245, y: 45 },
+  yod: { x: 615, y: 45 },
+  sea: { x: 104, y: 260 },
+  well: { x: 760, y: 210 },
+  spring: { x: 830, y: 430 },
+  baptism: { x: 235, y: 475 },
+  spirit: { x: 565, y: 475 },
+  desert: { x: 60, y: 560 },
+  rock: { x: 265, y: 650 },
+  light: { x: 650, y: 650 },
+  'genesis-1-2': { x: 770, y: 70 },
+  'exodus-14': { x: 40, y: 390 },
 };
-
-const SYMBOL_LOOKUP = new Map(SYMBOL_NETWORK.map((symbol) => [symbol.id, symbol]));
-
-type NetworkRelation = SymbolRelation & {
-  id: string;
-  sourceId: string;
-};
-
-function relationId(sourceId: string, targetId: string) {
-  return [sourceId, targetId].sort().join('-');
-}
-
-const SYMBOL_RELATIONS = Array.from(
-  SYMBOL_NETWORK.reduce((relations, symbol) => {
-    symbol.symbolRelations?.forEach((relation) => {
-      if (!SYMBOL_LOOKUP.has(relation.targetId) || relation.targetId === symbol.id) {
-        return;
-      }
-
-      const id = relationId(symbol.id, relation.targetId);
-      const existingRelation = relations.get(id);
-
-      if (!existingRelation || relation.strength > existingRelation.strength) {
-        relations.set(id, {
-          ...relation,
-          id,
-          sourceId: symbol.id,
-        });
-      }
-    });
-
-    return relations;
-  }, new Map<string, NetworkRelation>())
-  .values()
-);
-
-function getRelatedIds(symbolId: string) {
-  return new Set(
-    SYMBOL_RELATIONS.flatMap((relation) => {
-      if (relation.sourceId === symbolId) {
-        return [relation.targetId];
-      }
-
-      if (relation.targetId === symbolId) {
-        return [relation.sourceId];
-      }
-
-      return [];
-    })
-  );
-}
-
-function getRelatedSymbols(symbolId: string) {
-  return Array.from(getRelatedIds(symbolId))
-    .map((id) => SYMBOL_LOOKUP.get(id))
-    .filter(Boolean) as SymbolNetworkItem[];
-}
-
-function getPrimaryRelation(symbolId: string) {
-  return SYMBOL_RELATIONS
-    .filter((relation) => relation.sourceId === symbolId || relation.targetId === symbolId)
-    .sort((a, b) => b.strength - a.strength)[0];
-}
-
-function getOtherRelationSymbol(relation: NetworkRelation, symbolId: string) {
-  const relatedId = relation.sourceId === symbolId ? relation.targetId : relation.sourceId;
-
-  return SYMBOL_LOOKUP.get(relatedId);
-}
 
 function getNodePosition(symbolId: string, index: number, total: number) {
   const fixedPosition = NODE_POSITIONS[symbolId];
@@ -121,7 +60,46 @@ function getNodePosition(symbolId: string, index: number, total: number) {
   };
 }
 
-function SymbolNode({ data }: NodeProps<SymbolNodeData>) {
+function getRelationLabel(relation: MeaningEdge['relation']) {
+  const labels: Record<MeaningEdge['relation'], string> = {
+    contains: 'Enthält',
+    'unfolds-into': 'Entfaltet sich',
+    'letter-of': 'Buchstabenebene',
+    'scene-of': 'Biblische Szene',
+    transforms: 'Verwandelt',
+    contrasts: 'Kontrastiert',
+    reveals: 'Offenbart',
+    'moves-over': 'Bewegt sich über',
+    'breaks-through': 'Bricht hervor',
+    feeds: 'Speist',
+    'opens-path': 'Öffnet Weg',
+  };
+
+  return labels[relation];
+}
+
+function getLayerLabel(layer: MeaningEdge['layer']) {
+  const labels: Record<MeaningEdge['layer'], string> = {
+    surface: 'Symbol',
+    biblical: 'Biblisch',
+    hebrew: 'Hebräisch',
+    letter: 'Buchstabe',
+    spiritual: 'Geistlich',
+    existential: 'Existentiell',
+    visual: 'Visuell',
+  };
+
+  return labels[layer];
+}
+
+function getOtherNodeId(edge: MeaningEdge, nodeId: string) {
+  return edge.source === nodeId ? edge.target : edge.source;
+}
+
+function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
+  const nodeSize = data.id === waterSymbolGraph.centerId ? 'h-44 w-44' : 'h-36 w-36';
+  const displayMark = data.hebrew ?? (data.type === 'scripture' ? data.label.replace('Genesis ', 'Gen ') : data.label);
+
   return (
     <div className="group relative cursor-pointer">
       <Handle type="target" position={Position.Top} className="opacity-0" />
@@ -147,7 +125,7 @@ function SymbolNode({ data }: NodeProps<SymbolNodeData>) {
       />
 
       <div
-        className={`symbol-constellation-node relative min-w-32 px-6 py-5 text-center transition-colors duration-[1200ms] ${
+        className={`symbol-constellation-node relative grid ${nodeSize} place-items-center px-5 py-5 text-center transition-colors duration-[1200ms] ${
           data.isActive
             ? 'is-active'
             : data.isRelated
@@ -155,38 +133,44 @@ function SymbolNode({ data }: NodeProps<SymbolNodeData>) {
               : ''
         }`}
       >
-        <p className="symbol-breathe font-serif text-4xl leading-none transition-colors duration-1000">
-          {data.hebrew}
-        </p>
-        <p className="mt-3 text-[10px] uppercase tracking-[0.38em] transition-colors duration-1000">
-          {data.name}
-        </p>
+        <div>
+          <p
+            className="symbol-breathe font-serif text-4xl leading-none transition-colors duration-1000"
+            lang={data.hebrew ? 'he' : undefined}
+            dir={data.hebrew ? 'rtl' : undefined}
+          >
+            {displayMark}
+          </p>
+          <p className="mt-3 text-[10px] uppercase tracking-[0.34em] transition-colors duration-1000">
+            {data.label}
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
 const nodeTypes = {
-  symbol: SymbolNode,
+  symbol: SymbolGraphNode,
 };
 
 function buildEdges(activeId: string): Edge[] {
-  return SYMBOL_RELATIONS.map((relation) => {
-    const strength = Math.max(0, Math.min(relation.strength, 1));
-    const isActiveRelation = relation.sourceId === activeId || relation.targetId === activeId;
-    const opacity = isActiveRelation ? 0.08 + strength * 0.16 : 0.03 + strength * 0.07;
-    const strokeWidth = isActiveRelation ? 0.55 + strength * 0.85 : 0.35 + strength * 0.45;
+  return waterSymbolGraph.edges.map((edge, index) => {
+    const strength = Math.max(0, Math.min(edge.weight, 1));
+    const isActiveRelation = edge.source === activeId || edge.target === activeId;
+    const opacity = isActiveRelation ? 0.09 + strength * 0.24 : 0.025 + strength * 0.06;
+    const strokeWidth = isActiveRelation ? 0.85 + strength * 1.75 : 0.35 + strength * 0.42;
 
     return {
-      id: relation.id,
-      source: relation.sourceId,
-      target: relation.targetId,
+      id: `${edge.source}-${edge.target}-${index}`,
+      source: edge.source,
+      target: edge.target,
       type: 'default',
       className: isActiveRelation ? 'is-awake' : 'is-dormant',
       data: {
-        relationType: relation.relationType,
-        strength: relation.strength,
-        explanation: relation.explanation,
+        relationType: edge.relation,
+        strength: edge.weight,
+        explanation: edge.explanation,
       },
       style: {
         stroke: isActiveRelation ? `rgba(189,160,109,${opacity})` : `rgba(127,184,201,${opacity})`,
@@ -197,34 +181,46 @@ function buildEdges(activeId: string): Edge[] {
 }
 
 export default function SymbolNetwork() {
-  const [activeId, setActiveId] = useState('wasser');
-  const activeSymbol = SYMBOL_LOOKUP.get(activeId) ?? SYMBOL_NETWORK[0];
-  const primaryRelation = getPrimaryRelation(activeSymbol.id);
-  const primaryRelationSymbol = primaryRelation
-    ? getOtherRelationSymbol(primaryRelation, activeSymbol.id)
-    : undefined;
-  const relatedIds = useMemo(
-    () => getRelatedIds(activeSymbol.id),
+  const [activeId, setActiveId] = useState(waterSymbolGraph.centerId);
+  const activeSymbol = getNodeById(waterSymbolGraph, activeId) ?? waterSymbolGraph.nodes[0];
+  const activeEdges = useMemo(
+    () => getEdgesForNode(waterSymbolGraph, activeSymbol.id).sort((a, b) => b.weight - a.weight),
     [activeSymbol.id]
   );
+  const importantRelation = useMemo(
+    () => getMostImportantRelation(waterSymbolGraph, activeSymbol.id),
+    [activeSymbol.id]
+  );
+  const primaryPath = useMemo(
+    () => getPrimaryPath(waterSymbolGraph, activeSymbol.id),
+    [activeSymbol.id]
+  );
+  const meaningLayers = useMemo(
+    () => Array.from(new Set(activeEdges.map((edge) => edge.layer))),
+    [activeEdges]
+  );
+  const relatedIds = useMemo(
+    () => new Set(activeEdges.map((edge) => getOtherNodeId(edge, activeSymbol.id))),
+    [activeEdges, activeSymbol.id]
+  );
   const activeRelatedSymbols = useMemo(
-    () => getRelatedSymbols(activeSymbol.id),
+    () => getConnectedNodes(waterSymbolGraph, activeSymbol.id),
     [activeSymbol.id]
   );
   const mobileSymbols = useMemo(
     () => [
-      SYMBOL_LOOKUP.get('wasser'),
-      ...SYMBOL_NETWORK.filter((symbol) => symbol.id !== 'wasser'),
-    ].filter(Boolean) as SymbolNetworkItem[],
+      getNodeById(waterSymbolGraph, waterSymbolGraph.centerId),
+      ...waterSymbolGraph.nodes.filter((symbol) => symbol.id !== waterSymbolGraph.centerId),
+    ].filter(Boolean) as EngineSymbolNode[],
     []
   );
 
   const nodes = useMemo<Node<SymbolNodeData>[]>(
     () =>
-      SYMBOL_NETWORK.map((symbol, index) => ({
+      waterSymbolGraph.nodes.map((symbol, index) => ({
         id: symbol.id,
         type: 'symbol',
-        position: getNodePosition(symbol.id, index, SYMBOL_NETWORK.length),
+        position: getNodePosition(symbol.id, index, waterSymbolGraph.nodes.length),
         data: {
           ...symbol,
           isActive: symbol.id === activeId,
@@ -251,16 +247,16 @@ export default function SymbolNetwork() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.7)_72%,rgba(0,0,0,0.94)_100%)]" />
       </div>
 
-      <div className="symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-16 overflow-hidden lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-16 overflow-hidden lg:grid-cols-[minmax(0,1fr)_23rem]">
         <div className="min-w-0">
           <p className="symbol-kicker">
             Lebendiges Bedeutungsnetz
           </p>
           <h1 className="mt-6 max-w-4xl font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
-            Symbolnetz
+            {waterSymbolGraph.title}
           </h1>
           <p className="symbol-copy mt-6 max-w-[20rem] text-base sm:max-w-2xl sm:text-xl">
-            Ein stilles Archiv aus Beziehungen. Jeder Ort leuchtet aus den Zeichen, die ihn umgeben.
+            Bedeutung ist nicht nur Text. Sie bewegt sich zwischen Symbol, Hebräisch, Tiefe, Resonanz und biblischer Szene.
           </p>
 
           <div className="symbol-mobile-journey mt-10 md:hidden" aria-label="Gefuehrte Symbolauswahl">
@@ -280,10 +276,10 @@ export default function SymbolNetwork() {
                       {index === 0 ? 'Einstieg' : String(index + 1).padStart(2, '0')}
                     </span>
                     <span className="symbol-mobile-hebrew symbol-breathe">
-                      {symbol.hebrew}
+                      {symbol.hebrew ?? symbol.label}
                     </span>
                     <span className="symbol-mobile-name">
-                      {symbol.name}
+                      {symbol.label}
                     </span>
                     <span className="symbol-mobile-meaning">
                       {symbol.shortMeaning}
@@ -323,61 +319,127 @@ export default function SymbolNetwork() {
 
         <aside className="scroll-reveal symbol-detail-panel symbol-archive-fragment self-end p-7">
           <p className="symbol-kicker text-cyan-soft">
-            Hebräisch
+            Ausgewählter Knoten
           </p>
-          <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90">
-            {activeSymbol.hebrew}
+          <p
+            className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90"
+            lang={activeSymbol.hebrew ? 'he' : undefined}
+            dir={activeSymbol.hebrew ? 'rtl' : undefined}
+          >
+            {activeSymbol.hebrew ?? activeSymbol.label}
           </p>
           <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">
-            {activeSymbol.name}
+            {activeSymbol.label}
           </h2>
           {activeSymbol.transliteration ? (
             <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">
               {activeSymbol.transliteration}
             </p>
           ) : null}
+          {activeSymbol.gematria ? (
+            <p className="mt-3 text-[11px] uppercase tracking-[0.28em] text-gold/45">
+              Gematria {activeSymbol.gematria}
+            </p>
+          ) : null}
+
           <p className="symbol-kicker mt-8 text-cyan-soft">
             Kurzdeutung
           </p>
           <p className="symbol-copy mt-6 text-lg">
             {activeSymbol.shortMeaning}
           </p>
-          <div className="mt-8 flex flex-wrap gap-2">
-            {activeRelatedSymbols.map((related) => {
-              return (
-                <button
-                  key={related.id}
-                  type="button"
-                  onClick={() => setActiveId(related.id)}
-                  className="border-b border-white/[0.06] bg-transparent px-1 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/60 transition-colors duration-[1200ms] hover:border-gold/[0.15] hover:text-gold/70"
+
+          <div className="mt-8 border-t border-white/[0.055] pt-6">
+            <p className="symbol-kicker text-cyan-soft">
+              Bedeutungsebenen
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {meaningLayers.map((layer) => (
+                <span
+                  key={layer}
+                  className="border border-white/[0.055] bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/58"
                 >
-                  {related.name}
-                </button>
-              );
-            })}
+                  {getLayerLabel(layer)}
+                </span>
+              ))}
+            </div>
           </div>
-          {primaryRelation ? (
+
+          <div className="mt-8 border-t border-white/[0.055] pt-6">
+            <p className="symbol-kicker text-cyan-soft">
+              Verbundene Symbole
+            </p>
+            <div className="mt-5 grid gap-3">
+              {activeRelatedSymbols.map((related) => {
+                const edge = activeEdges.find(
+                  (item) =>
+                    (item.source === activeSymbol.id && item.target === related.id) ||
+                    (item.target === activeSymbol.id && item.source === related.id)
+                );
+
+                return (
+                  <button
+                    key={related.id}
+                    type="button"
+                    onClick={() => setActiveId(related.id)}
+                    className="group border-l border-cyan/[0.12] bg-white/[0.018] px-4 py-3 text-left transition-colors duration-[1200ms] hover:border-gold/[0.22] hover:bg-white/[0.035]"
+                  >
+                    <span className="block font-serif text-lg italic text-foreground-strong/80 group-hover:text-gold/80">
+                      {related.label}
+                      {edge ? (
+                        <span className="ml-3 align-middle text-[10px] uppercase tracking-[0.22em] text-cyan-soft/55">
+                          {Math.round(edge.weight * 100)}%
+                        </span>
+                      ) : null}
+                    </span>
+                    {edge ? (
+                      <span className="mt-1 block text-[10px] uppercase tracking-[0.22em] text-[#d8d1c2]/45">
+                        {getRelationLabel(edge.relation)}
+                      </span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-8 border-t border-white/[0.055] pt-6">
+            <p className="symbol-kicker text-cyan-soft">
+              Bibelpfad
+            </p>
+            <div className="mt-5 flex flex-wrap gap-x-3 gap-y-2 text-sm text-[#d8d1c2]/62">
+              {primaryPath.map((pathNode, index) => (
+                <button
+                  key={`${pathNode.id}-${index}`}
+                  type="button"
+                  onClick={() => setActiveId(pathNode.id)}
+                  className="font-serif italic transition-colors duration-700 hover:text-gold/80"
+                >
+                  {index > 0 ? <span className="mr-3 text-cyan-soft/35">/</span> : null}
+                  {pathNode.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {importantRelation ? (
             <div className="mt-8 border-t border-white/[0.055] pt-6">
               <p className="symbol-kicker text-cyan-soft">
                 Wichtigste Relation
               </p>
               <p className="symbol-copy mt-4 text-sm">
-                {primaryRelationSymbol ? `${primaryRelationSymbol.name}: ` : ''}
-                {primaryRelation.explanation}
+                {importantRelation.explanation}
               </p>
             </div>
           ) : null}
-          {activeSymbol.roomHref === '/raeume/wasser' ? (
+
+          {activeSymbol.roomHref ? (
             <RoomTransitionButton
               href={activeSymbol.roomHref}
               className="symbol-cta mt-10 w-full"
             >
-              Wasserraum betreten
-            </RoomTransitionButton>
-          ) : activeSymbol.roomHref ? (
-            <Link href={activeSymbol.roomHref} className="symbol-cta mt-10 w-full">
               Raum betreten
-            </Link>
+            </RoomTransitionButton>
           ) : (
             <div className="mt-10 border-y border-white/[0.055] bg-transparent px-5 py-4 text-center text-[11px] uppercase tracking-[0.28em] text-[#d8d1c2]/45">
               Raum in Vorbereitung

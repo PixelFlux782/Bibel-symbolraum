@@ -695,6 +695,272 @@ body {
   border-bottom: 1px solid rgba(var(--gold-rgb), 0.045);
 }
 
+.water-engine-panel-active {
+  animation: water-engine-panel-pulse 6.8s ease-in-out infinite;
+}
+
+.water-semantic-echo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  max-width: 38rem;
+  border: 1px solid rgba(var(--cyan-rgb), 0.16);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(var(--cyan-rgb), 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(4, 16, 26, 0.72), rgba(1, 7, 13, 0.82));
+  box-shadow:
+    0 0 48px rgba(var(--cyan-rgb), 0.075),
+    inset 0 0 34px rgba(var(--gold-rgb), 0.025);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.water-semantic-echo__input {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 1rem 1.1rem;
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: rgba(var(--foreground-rgb), 0.88);
+  outline: none;
+}
+
+.water-semantic-echo__input::placeholder {
+  color: rgba(var(--foreground-rgb), 0.42);
+}
+
+.water-semantic-echo__submit {
+  align-self: stretch;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.12);
+  padding: 0 1rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(var(--gold-rgb), 0.78);
+  transition:
+    background-color 300ms ease,
+    color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.water-semantic-echo__submit:hover,
+.water-semantic-echo__submit:focus-visible {
+  background: rgba(var(--gold-rgb), 0.075);
+  color: rgba(var(--foreground-rgb), 0.92);
+  box-shadow: inset 0 0 28px rgba(var(--gold-rgb), 0.05);
+}
+
+.water-semantic-echo__mark {
+  border: 1px solid rgba(var(--cyan-rgb), 0.3);
+  background: rgba(var(--cyan-rgb), 0.075);
+  padding: 0.26rem 0.72rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(var(--cyan-rgb), 0.86);
+  box-shadow: 0 0 24px rgba(var(--cyan-rgb), 0.12);
+}
+
+.water-semantic-echo-active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 8%, rgba(var(--cyan-rgb), 0.07), rgba(var(--gold-rgb), 0.055), transparent 68%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: water-semantic-echo-wave 4.8s ease-out 1;
+}
+
+.water-resonance-display {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.16);
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.12);
+  background:
+    radial-gradient(circle at 22% 0%, rgba(var(--gold-rgb), 0.09), transparent 42%),
+    radial-gradient(circle at 82% 72%, rgba(var(--cyan-rgb), 0.07), transparent 44%),
+    rgba(3, 12, 19, 0.5);
+  padding: 1.2rem 1.35rem;
+  box-shadow:
+    0 0 68px rgba(var(--cyan-rgb), 0.08),
+    inset 0 0 44px rgba(var(--gold-rgb), 0.025);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.water-resonance-display--echo {
+  border-top-color: rgba(var(--cyan-rgb), 0.24);
+  border-bottom-color: rgba(var(--gold-rgb), 0.18);
+  box-shadow:
+    0 0 82px rgba(var(--cyan-rgb), 0.12),
+    inset 0 0 52px rgba(var(--gold-rgb), 0.035);
+}
+
+.water-resonance-display::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb), 0.12), transparent);
+  opacity: 0.42;
+  animation: water-resonance-sweep 5.8s ease-in-out infinite;
+}
+
+.water-resonance-panel.is-semantic-echo .water-resonance-veil {
+  opacity: 0.66;
+  animation: water-resonance-pulse 5.2s ease-in-out infinite;
+  animation-delay: var(--resonance-delay);
+}
+
+.water-resonance-panel.is-semantic-echo {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--resonance-color) 24%, transparent),
+    0 0 96px color-mix(in srgb, var(--resonance-color) 18%, transparent);
+}
+
+.water-resonance-path {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.water-resonance-thread {
+  --thread-color: rgba(var(--cyan-rgb), 0.42);
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.8rem minmax(0, 1fr);
+  align-items: center;
+  min-height: 3.8rem;
+  overflow: hidden;
+  border-top: 1px solid color-mix(in srgb, var(--thread-color) 34%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--thread-color) 16%, transparent), transparent 70%),
+    rgba(2, 8, 14, 0.34);
+  padding: 0.75rem 1rem;
+  opacity: 0.82;
+  box-shadow: 0 0 54px color-mix(in srgb, var(--thread-color) 18%, transparent);
+  animation: water-resonance-thread 4.8s ease-in-out infinite;
+  animation-delay: var(--resonance-delay);
+}
+
+.water-resonance-thread--strong {
+  --thread-color: rgba(var(--gold-rgb), 0.72);
+}
+
+.water-resonance-thread--secondary {
+  --thread-color: rgba(var(--cyan-rgb), 0.62);
+}
+
+.water-resonance-thread--mist {
+  --thread-color: rgba(216, 209, 194, 0.2);
+}
+
+.water-resonance-thread__mark {
+  width: 1.8rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--thread-color));
+  box-shadow: 0 0 18px var(--thread-color);
+}
+
+.water-resonance-panel {
+  --resonance-color: rgba(216, 209, 194, 0.18);
+  --resonance-soft: rgba(216, 209, 194, 0.04);
+}
+
+.water-resonance-panel--strong {
+  --resonance-color: rgba(var(--gold-rgb), 0.58);
+  --resonance-soft: rgba(var(--gold-rgb), 0.08);
+}
+
+.water-resonance-panel--secondary {
+  --resonance-color: rgba(var(--cyan-rgb), 0.54);
+  --resonance-soft: rgba(var(--cyan-rgb), 0.075);
+}
+
+.water-resonance-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 44%, var(--resonance-soft), transparent 34%),
+    linear-gradient(90deg, transparent 8%, color-mix(in srgb, var(--resonance-color) 16%, transparent), transparent 74%);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.water-resonance-panel.is-resonating .water-resonance-veil,
+.water-resonance-panel.is-resonance-origin .water-resonance-veil {
+  opacity: 0.52;
+  animation: water-resonance-pulse 6.2s ease-in-out infinite;
+  animation-delay: var(--resonance-delay);
+}
+
+.water-resonance-panel.is-resonating {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--resonance-color) 18%, transparent),
+    0 0 82px color-mix(in srgb, var(--resonance-color) 16%, transparent);
+}
+
+.water-resonance-weight {
+  border: 1px solid color-mix(in srgb, var(--resonance-color) 34%, transparent);
+  background: color-mix(in srgb, var(--resonance-color) 10%, transparent);
+  padding: 0.26rem 0.75rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--resonance-color) 86%, rgba(var(--foreground-rgb), 0.7));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--resonance-color) 14%, transparent);
+}
+
+.water-resonance-detail {
+  display: grid;
+  gap: 1.5rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.12);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(var(--gold-rgb), 0.075), transparent 42%),
+    radial-gradient(circle at 90% 100%, rgba(var(--cyan-rgb), 0.055), transparent 46%),
+    rgba(1, 8, 14, 0.36);
+  padding-top: 1.35rem;
+}
+
+.water-resonance-trait {
+  display: grid;
+  gap: 0.35rem;
+  border-left: 1px solid rgba(var(--cyan-rgb), 0.18);
+  padding-left: 0.9rem;
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: rgba(var(--foreground-rgb), 0.82);
+}
+
+.water-resonance-trait span {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(var(--cyan-rgb), 0.62);
+}
+
+.water-resonance-whisper {
+  max-width: 34rem;
+  border-left: 1px solid color-mix(in srgb, var(--resonance-color) 28%, transparent);
+  padding-left: 1rem;
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: rgba(216, 209, 194, 0.62);
+  opacity: 0.72;
+}
+
 @keyframes water-chamber-breath {
   0%, 100% {
     opacity: 0.34;
@@ -707,6 +973,64 @@ body {
 }
 
 /* Animationen für den Ersatz von Framer Motion */
+@keyframes water-engine-panel-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 rgba(var(--cyan-rgb), 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 34px rgba(var(--cyan-rgb), 0.16));
+  }
+}
+
+@keyframes water-resonance-sweep {
+  0%, 100% {
+    transform: translateX(-70%);
+    opacity: 0;
+  }
+  45%, 58% {
+    opacity: 0.42;
+  }
+  100% {
+    transform: translateX(70%);
+  }
+}
+
+@keyframes water-resonance-thread {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+  50% {
+    transform: translate3d(0.35rem, 0, 0);
+    filter: blur(0.2px);
+  }
+}
+
+@keyframes water-resonance-pulse {
+  0%, 100% {
+    transform: scale(0.985);
+    filter: blur(0.4px);
+  }
+  50% {
+    transform: scale(1.018);
+    filter: blur(1.4px);
+  }
+}
+
+@keyframes water-semantic-echo-wave {
+  0% {
+    opacity: 0;
+    transform: translateX(-34%);
+  }
+  18% {
+    opacity: 0.62;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(34%);
+  }
+}
+
 @keyframes symbol-fade-in {
   from {
     opacity: 0;
@@ -1174,13 +1498,19 @@ body {
 }
 
 .react-flow__accessibility-description,
+.react-flow__aria-live,
 .react-flow__screenreader-only,
 .react-flow__sr-only,
+[class*="accessibility"],
+[class*="react-flow"][class*="aria-live"],
+[aria-live][class*="react-flow"],
 [id^="react-flow__node-desc"],
 [id^="react-flow__edge-desc"],
 [id^="react-flow__aria-live"] {
   display: block !important;
   position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 1px !important;
   height: 1px !important;
   max-width: 1px !important;
@@ -1193,6 +1523,7 @@ body {
   white-space: nowrap !important;
   border: 0 !important;
   pointer-events: none !important;
+  opacity: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1211,6 +1542,13 @@ body {
   .symbol-portal-breath,
   .symbol-portal-title,
   .water-chamber-breath,
+  .water-engine-panel-active,
+  .water-resonance-display::before,
+  .water-resonance-thread,
+  .water-resonance-panel.is-resonating .water-resonance-veil,
+  .water-resonance-panel.is-resonance-origin .water-resonance-veil,
+  .water-resonance-panel.is-semantic-echo .water-resonance-veil,
+  .water-semantic-echo-active::before,
   .room-transition,
   .room-transition__dark,
   .room-transition__cyan,

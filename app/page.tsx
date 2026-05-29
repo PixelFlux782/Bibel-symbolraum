@@ -35,11 +35,11 @@ export default function StartPage() {
           <span className="symbol-portal-glyph bottom-[18%] right-[16%] hidden md:block">א</span>
         </div>
 
-        <div className="symbol-fade-in relative z-10 mx-auto grid w-full max-w-[21rem] justify-items-center text-center sm:max-w-6xl">
+        <div className="symbol-fade-in relative z-10 mx-auto grid w-full max-w-full justify-items-center text-center sm:max-w-6xl">
           <p className="symbol-kicker mb-7 text-gold/55">
             Archiv der Zeichen
           </p>
-          <h1 className="symbol-portal-title max-w-full overflow-hidden font-serif text-[clamp(3rem,17vw,13rem)] italic leading-[0.78] text-foreground-strong">
+          <h1 className="symbol-portal-title max-w-full overflow-visible font-serif text-[clamp(3rem,17vw,13rem)] italic leading-[0.78] text-foreground-strong">
             SYMBOLRAUM
           </h1>
           <p className="symbol-copy mx-auto mt-9 max-w-[16rem] text-base italic text-muted-soft sm:max-w-xl sm:text-xl">

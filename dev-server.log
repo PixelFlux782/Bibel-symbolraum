@@ -1,0 +1,17 @@
+
+> bibel-symbolraum@0.1.0 dev
+> next dev -p 3001
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.2.46:3001
+✓ Ready in 1278ms
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          27164
+- Dir:          C:\Users\flori\Documents\BiBel WEBTOOL\bibel-symbolraum
+- Log:          .next\dev\logs\next-development.log
+
+Run taskkill /PID 27164 /F to stop it.
+[?25h
