@@ -190,7 +190,7 @@ const WATER_DEPTH_LEVELS = [
     label: "Bibelpfad",
     displayLabel: "Bibelpfad",
     graphDepthLevel: 2,
-    focusLabel: "Genesis 1,2 → Exodus 14 → Taufe",
+    focusLabel: "Genesis 1,2 · Exodus 14 · Taufe",
     focusTitle: "Der Weg durch das Wasser",
     focusText: "Am Anfang schwebt der Geist über den Wassern. Im Exodus wird das Meer zum Durchgang. In der Taufe wird Untertauchen zum Neubeginn.",
     nodeIds: ["genesis-1-2", "exodus-14", "baptism", "spirit", "sea"],
@@ -279,29 +279,6 @@ const MEANING_QUALITY_LABELS: Record<MeaningEdge["meaningQuality"], string> = {
   impulse: "Impuls",
   movement: "Bewegung",
   resistance: "Widerstand",
-};
-
-const EMOTIONAL_TONE_LABELS: Record<MeaningEdge["emotionalTone"], string> = {
-  still: "still",
-  deep: "tief",
-  tender: "zart",
-  awe: "ehrfürchtig",
-  tension: "gespannt",
-  hope: "hoffnungsvoll",
-  thirst: "durstig",
-  release: "lösend",
-  awakening: "erwachend",
-};
-
-const VISUAL_BEHAVIOR_LABELS: Record<MeaningEdge["visualBehavior"], string> = {
-  breathing: "atmend",
-  "slow-current": "langsame Strömung",
-  hovering: "schwebend",
-  ripple: "Wellenkreis",
-  emerging: "auftauchend",
-  parting: "sich teilend",
-  stillness: "still",
-  spark: "Funke",
 };
 
 const LOCAL_WATER_ROOM_IMAGES = new Set([
@@ -466,18 +443,6 @@ function getResonanceKind(weight: number): ResonanceKind {
   return "mist";
 }
 
-function getResonanceLabel(kind: ResonanceKind) {
-  if (kind === "strong") {
-    return "starke goldene Resonanz";
-  }
-
-  if (kind === "secondary") {
-    return "cyanfarbene Nebenresonanz";
-  }
-
-  return "subtiler Nebel";
-}
-
 function getPrimaryQualities(edges: MeaningEdge[]) {
   const preferredQualities = ["purification", "transition", "depth"] satisfies MeaningEdge["meaningQuality"][];
   const availableQualities = new Set(edges.map((edge) => edge.meaningQuality));
@@ -491,6 +456,10 @@ function getPrimaryQualities(edges: MeaningEdge[]) {
   return [...preferredLabels, ...edgeLabels]
     .filter((label, index, labels) => labels.indexOf(label) === index)
     .slice(0, 3);
+}
+
+function getPoeticExplanation(explanation: string) {
+  return explanation.split(/(?<=[.!?])\s+/)[0];
 }
 
 function normalizeEchoQuery(query: string) {
@@ -525,7 +494,7 @@ function createSemanticEcho(query: string): SemanticEcho {
     waterSymbolGraph.centerId;
   const pathLabel = matchedNodes
     .map((nodeId) => getNodeById(waterSymbolGraph, nodeId)?.label ?? nodeId)
-    .join(" \u2192 ");
+    .join(" · ");
 
   return {
     query: query.trim(),
@@ -856,8 +825,7 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
   const activeEdges = activeNodeId
     ? getEdgesForNode(waterSymbolGraph, activeNodeId).sort((a, b) => b.weight - a.weight)
     : [];
-  const strongestEdges = activeEdges.filter((edge) => edge.weight > 0.8);
-  const resonancePath = strongestEdges.slice(0, 4);
+  const resonancePath = activeEdges.slice(0, 4);
   const resonanceNodeIds = new Set([
     ...activeEdges.map((edge) => getOtherNodeId(edge, activeNodeId)),
     ...(semanticEcho?.matchedNodes ?? []),
@@ -903,7 +871,7 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
               Symbolreise
             </p>
             <p className="symbol-copy mx-auto mt-5 max-w-2xl text-center text-base md:mx-0 md:text-left">
-              Bei {activeDepth.label} treten passende Knoten näher; andere bleiben als dunkle Strömung im Raum.
+              Bei {activeDepth.label} treten einige Zeichen näher; andere bleiben als dunkle Strömung im Raum.
             </p>
             <form className="water-semantic-echo mt-8" onSubmit={handleSemanticEchoSubmit}>
               <input
@@ -921,19 +889,19 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
           </div>
           {activePanel?.node ? (
             <div className={`water-resonance-display md:max-w-md ${semanticEcho ? "water-resonance-display--echo" : ""}`}>
-              <p className="symbol-kicker text-cyan-soft">
-                {semanticEcho ? "Semantic Echo" : "Resonanzfeld aktiv"}
+              <p className="water-oracle-kicker">
+                {semanticEcho ? "Der Raum antwortet" : "Das Wasser lauscht"}
               </p>
               <p className="mt-3 font-serif text-2xl italic leading-tight text-foreground-strong">
-                {semanticEcho ? `Der Raum antwortet über: ${semanticEcho.pathLabel}` : `${strongestEdges.length} starke Verbindungen`}
+                {semanticEcho ? semanticEcho.pathLabel : "Bedeutung steigt als Licht aus der Tiefe."}
               </p>
               {semanticEcho ? (
                 <p className="symbol-copy mt-3 text-sm text-gold/80">
                   {semanticEcho.interpretation}
                 </p>
               ) : null}
-              <p className={`symbol-copy mt-3 text-sm text-gold/80 ${semanticEcho ? "hidden" : ""}`}>
-                Primäre Qualität: {primaryQualities.length ? primaryQualities.join(" / ") : "Reinigung / Übergang / Tiefe"}
+              <p className={`water-oracle-murmur mt-3 ${semanticEcho ? "hidden" : ""}`}>
+                {(primaryQualities.length ? primaryQualities : ["Reinigung", "Übergang", "Tiefe"]).join(" · ")}
               </p>
             </div>
           ) : null}
@@ -950,13 +918,15 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                   className={`water-resonance-thread water-resonance-thread--${kind}`}
                   style={{ "--resonance-strength": edge.weight, "--resonance-delay": `${index * 180}ms` } as CSSProperties}
                 >
-                  <span className="water-resonance-thread__mark" aria-hidden="true" />
+                  <span className="water-resonance-thread__mist" aria-hidden="true" />
+                  <span className="water-resonance-thread__vein" aria-hidden="true" />
+                  <span className="water-resonance-thread__ripple" aria-hidden="true" />
                   <span className="min-w-0">
                     <span className="block truncate font-serif text-lg italic text-foreground-strong">
-                      {activePanel?.node?.label} → {targetNode?.label ?? getOtherNodeId(edge, activeNodeId)}
+                      {targetNode?.label ?? getOtherNodeId(edge, activeNodeId)}
                     </span>
-                    <span className="symbol-copy mt-1 block text-xs text-cyan-soft/80">
-                      {getResonanceLabel(kind)} · {MEANING_QUALITY_LABELS[edge.meaningQuality]} · {Math.round(edge.weight * 100)}%
+                    <span className="water-oracle-murmur mt-1 block">
+                      {MEANING_QUALITY_LABELS[edge.meaningQuality]}
                     </span>
                   </span>
                 </div>
@@ -1000,6 +970,8 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                 } as CSSProperties}
               >
               <div className="water-resonance-veil" aria-hidden="true" />
+              <div className="water-resonance-ripples" aria-hidden="true" />
+              <div className="water-resonance-veins" aria-hidden="true" />
               <div className="absolute inset-0 shadow-[0_34px_120px_rgba(0,0,0,0.34)]">
                 <Image
                   src={panel.src}
@@ -1044,27 +1016,14 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                     ))}
                   </div>
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                    <p className="water-fragment-index">
-                      {String(index + 1).padStart(2, "0")}
-                    </p>
                     {panel.strongestConnection ? (
                       <span className="water-meaning-quality">
                         {MEANING_QUALITY_LABELS[panel.strongestConnection.meaningQuality]}
                       </span>
                     ) : null}
-                    {panelEdge ? (
-                      <span className="water-resonance-weight">
-                        {getResonanceLabel(panelResonanceKind)}
-                      </span>
-                    ) : null}
                     {isSemanticMatch ? (
                       <span className="water-semantic-echo__mark">
-                        Echo
-                      </span>
-                    ) : null}
-                    {panel.node ? (
-                      <span className="water-depth-inscription">
-                        Tiefe {panel.node.depthLevel}
+                        eine Antwort
                       </span>
                     ) : null}
                   </div>
@@ -1098,7 +1057,7 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                     </div>
                     {panel.strongestConnection ? (
                       <p className="water-whisper-line text-sm md:text-base">
-                        {panel.strongestConnection.explanation}
+                        {getPoeticExplanation(panel.strongestConnection.explanation)}
                       </p>
                     ) : null}
                   </div>
@@ -1116,36 +1075,23 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                             </p>
                           </div>
                         ) : null}
-                        <p className="symbol-kicker text-cyan-soft">Stärkste Verbindung</p>
+                        <p className="water-oracle-kicker">Eine Inschrift steigt auf</p>
                         <p className="mt-3 font-serif text-2xl italic text-foreground-strong">
                           {getNodeById(waterSymbolGraph, getOtherNodeId(strongestConnection, activeNodeId))?.label ?? getOtherNodeId(strongestConnection, activeNodeId)}
                         </p>
-                        <p className="symbol-copy mt-3 text-sm">
-                          {strongestConnection.explanation}
+                        <p className="water-oracle-text mt-3">
+                          {getPoeticExplanation(strongestConnection.explanation)}
                         </p>
                       </div>
-                      <div className="grid gap-4">
-                        <div>
-                          <p className="water-depth-inscription text-gold/70">Bedeutungsqualitäten</p>
-                          <p className="water-quality-murmur mt-2">
-                            {connectedQualityLabels.join(" / ")}
-                          </p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <p className="water-resonance-trait">
-                            <span>Ton</span>
-                            {EMOTIONAL_TONE_LABELS[strongestConnection.emotionalTone]}
-                          </p>
-                          <p className="water-resonance-trait">
-                            <span>Bewegung</span>
-                            {VISUAL_BEHAVIOR_LABELS[strongestConnection.visualBehavior]}
-                          </p>
-                        </div>
+                      <div className="water-oracle-qualities">
+                        <p className="water-quality-murmur">
+                          {connectedQualityLabels.join(" · ")}
+                        </p>
                       </div>
                     </div>
                   ) : panelEdge ? (
                     <p className="water-resonance-whisper mt-7">
-                      {panelEdge.explanation}
+                      {getPoeticExplanation(panelEdge.explanation)}
                     </p>
                   ) : null}
                 </div>

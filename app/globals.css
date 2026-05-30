@@ -936,12 +936,10 @@ body {
 .water-resonance-display {
   position: relative;
   overflow: hidden;
-  border-top: 1px solid rgba(var(--gold-rgb), 0.16);
-  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.12);
   background:
     radial-gradient(circle at 22% 0%, rgba(var(--gold-rgb), 0.09), transparent 42%),
     radial-gradient(circle at 82% 72%, rgba(var(--cyan-rgb), 0.07), transparent 44%),
-    rgba(3, 12, 19, 0.5);
+    rgba(3, 12, 19, 0.26);
   padding: 1.2rem 1.35rem;
   box-shadow:
     0 0 68px rgba(var(--cyan-rgb), 0.08),
@@ -982,45 +980,80 @@ body {
 
 .water-resonance-path {
   display: grid;
-  gap: 0.7rem;
+  gap: 1.1rem;
 }
 
 .water-resonance-thread {
   --thread-color: rgba(var(--cyan-rgb), 0.42);
+  --thread-breath: 4.8s;
   position: relative;
-  display: grid;
-  grid-template-columns: 2.8rem minmax(0, 1fr);
-  align-items: center;
   min-height: 3.8rem;
   overflow: hidden;
-  border-top: 1px solid color-mix(in srgb, var(--thread-color) 34%, transparent);
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--thread-color) 16%, transparent), transparent 70%),
-    rgba(2, 8, 14, 0.34);
-  padding: 0.75rem 1rem;
+    radial-gradient(ellipse at 18% 50%, color-mix(in srgb, var(--thread-color) 18%, transparent), transparent 62%),
+    rgba(2, 8, 14, 0.16);
+  padding: 0.75rem 1rem 0.75rem 4.2rem;
   opacity: 0.82;
   box-shadow: 0 0 54px color-mix(in srgb, var(--thread-color) 18%, transparent);
-  animation: water-resonance-thread 4.8s ease-in-out infinite;
+  animation: water-resonance-thread var(--thread-breath) ease-in-out infinite;
   animation-delay: var(--resonance-delay);
 }
 
 .water-resonance-thread--strong {
   --thread-color: rgba(var(--gold-rgb), 0.72);
+  --thread-breath: 7.6s;
+  opacity: 0.96;
+  box-shadow: 0 0 76px rgba(var(--gold-rgb), 0.16);
 }
 
 .water-resonance-thread--secondary {
   --thread-color: rgba(var(--cyan-rgb), 0.62);
+  --thread-breath: 4.4s;
 }
 
 .water-resonance-thread--mist {
   --thread-color: rgba(216, 209, 194, 0.2);
+  --thread-breath: 6.4s;
+  opacity: 0.42;
+  filter: blur(0.7px);
 }
 
-.water-resonance-thread__mark {
-  width: 1.8rem;
+.water-resonance-thread__mist,
+.water-resonance-thread__vein,
+.water-resonance-thread__ripple {
+  position: absolute;
+  pointer-events: none;
+}
+
+.water-resonance-thread__mist {
+  inset: 14% 18% 10% 0;
+  background: radial-gradient(ellipse at left, color-mix(in srgb, var(--thread-color) 34%, transparent), transparent 68%);
+  filter: blur(12px);
+}
+
+.water-resonance-thread__vein {
+  left: 0.8rem;
+  top: 50%;
+  width: 2.5rem;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--thread-color));
+  background: linear-gradient(90deg, transparent, var(--thread-color), transparent);
   box-shadow: 0 0 18px var(--thread-color);
+}
+
+.water-resonance-thread__ripple {
+  left: 1.45rem;
+  top: 50%;
+  width: 1.3rem;
+  height: 1.3rem;
+  border: 1px solid color-mix(in srgb, var(--thread-color) 52%, transparent);
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  animation: water-resonance-ripple var(--thread-breath) ease-out infinite;
+}
+
+.water-resonance-thread--mist .water-resonance-thread__vein,
+.water-resonance-thread--mist .water-resonance-thread__ripple {
+  opacity: 0;
 }
 
 .water-resonance-panel {
@@ -1030,12 +1063,17 @@ body {
 
 .water-resonance-panel--strong {
   --resonance-color: rgba(var(--gold-rgb), 0.58);
-  --resonance-soft: rgba(var(--gold-rgb), 0.08);
+  --resonance-soft: rgba(var(--gold-rgb), 0.13);
 }
 
 .water-resonance-panel--secondary {
   --resonance-color: rgba(var(--cyan-rgb), 0.54);
   --resonance-soft: rgba(var(--cyan-rgb), 0.075);
+}
+
+.water-resonance-panel--mist {
+  --resonance-color: rgba(216, 209, 194, 0.16);
+  --resonance-soft: rgba(216, 209, 194, 0.045);
 }
 
 .water-resonance-veil {
@@ -1061,6 +1099,47 @@ body {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--resonance-color) 18%, transparent),
     0 0 82px color-mix(in srgb, var(--resonance-color) 16%, transparent);
+}
+
+.water-resonance-ripples,
+.water-resonance-veins {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.water-resonance-ripples {
+  background: repeating-radial-gradient(ellipse at 48% 58%, transparent 0 8%, color-mix(in srgb, var(--resonance-color) 13%, transparent) 8.3%, transparent 8.8% 16%);
+  opacity: 0.28;
+  animation: water-resonance-waterline 8s ease-in-out infinite;
+  animation-delay: var(--resonance-delay);
+}
+
+.water-resonance-veins {
+  background:
+    linear-gradient(112deg, transparent 8%, color-mix(in srgb, var(--resonance-color) 30%, transparent) 22%, transparent 22.5%),
+    linear-gradient(68deg, transparent 56%, color-mix(in srgb, var(--resonance-color) 20%, transparent) 69%, transparent 69.5%);
+  opacity: 0.24;
+  filter: blur(0.35px);
+}
+
+.water-resonance-panel--strong .water-resonance-ripples {
+  animation-duration: 11s;
+}
+
+.water-resonance-panel--strong .water-resonance-veins {
+  opacity: 0.46;
+}
+
+.water-resonance-panel--mist .water-resonance-ripples {
+  opacity: 0.08;
+  filter: blur(3px);
+}
+
+.water-resonance-panel--mist .water-resonance-veins {
+  opacity: 0;
 }
 
 .water-fragment-shell {
@@ -1248,6 +1327,33 @@ body {
   color: rgba(var(--gold-rgb), 0.76);
 }
 
+.water-oracle-kicker,
+.water-oracle-murmur {
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: rgba(var(--cyan-rgb), 0.76);
+  text-shadow: 0 0 20px rgba(var(--cyan-rgb), 0.16);
+}
+
+.water-oracle-kicker {
+  font-size: 0.98rem;
+}
+
+.water-oracle-murmur {
+  font-size: 0.86rem;
+  color: rgba(var(--gold-rgb), 0.72);
+}
+
+.water-oracle-text {
+  max-width: 38rem;
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.04rem;
+  font-style: italic;
+  line-height: 1.72;
+  color: rgba(var(--foreground-rgb), 0.72);
+}
+
 .water-semantic-echo__mark {
   border: 0;
   background: transparent;
@@ -1265,31 +1371,18 @@ body {
 .water-resonance-detail {
   display: grid;
   gap: 1.5rem;
-  border-top: 1px solid rgba(var(--gold-rgb), 0.12);
   background:
     radial-gradient(circle at 0% 0%, rgba(var(--gold-rgb), 0.075), transparent 42%),
     radial-gradient(circle at 90% 100%, rgba(var(--cyan-rgb), 0.055), transparent 46%),
-    rgba(1, 8, 14, 0.36);
-  padding-top: 1.35rem;
+    linear-gradient(104deg, rgba(1, 8, 14, 0.32), transparent 82%);
+  padding: 1.35rem 1.2rem 1.15rem;
+  clip-path: polygon(0 6%, 96% 0, 100% 88%, 4% 100%);
 }
 
-.water-resonance-trait {
-  display: grid;
-  gap: 0.35rem;
-  border-left: 1px solid rgba(var(--cyan-rgb), 0.18);
-  padding-left: 0.9rem;
-  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
-  font-size: 1rem;
-  line-height: 1.45;
-  color: rgba(var(--foreground-rgb), 0.82);
-}
-
-.water-resonance-trait span {
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 0.58rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(var(--cyan-rgb), 0.62);
+.water-oracle-qualities {
+  align-self: end;
+  padding: 0.8rem 0 0.35rem 1rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.18);
 }
 
 .water-resonance-whisper {
@@ -1378,6 +1471,31 @@ body {
   50% {
     transform: scale(1.018);
     filter: blur(1.4px);
+  }
+}
+
+@keyframes water-resonance-ripple {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.62);
+  }
+  24% {
+    opacity: 0.72;
+  }
+  72%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.35);
+  }
+}
+
+@keyframes water-resonance-waterline {
+  0%, 100% {
+    transform: scale(0.98);
+    opacity: 0.18;
+  }
+  50% {
+    transform: scale(1.025);
+    opacity: 0.42;
   }
 }
 
@@ -1920,6 +2038,8 @@ body {
   .water-engine-panel-active,
   .water-resonance-display::before,
   .water-resonance-thread,
+  .water-resonance-thread__ripple,
+  .water-resonance-ripples,
   .water-resonance-panel.is-resonating .water-resonance-veil,
   .water-resonance-panel.is-resonance-origin .water-resonance-veil,
   .water-resonance-panel.is-semantic-echo .water-resonance-veil,
