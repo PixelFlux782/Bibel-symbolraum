@@ -12,7 +12,6 @@ import {
   getEdgesForNode,
   getMostImportantRelation,
   getNodeById,
-  getNodesByDepth,
   getStrongestConnections,
   waterSymbolGraph,
   type MeaningEdge,
@@ -81,24 +80,6 @@ const WATER_ROOM_SYMBOL = {
   imageAssets: WATER_SYMBOL?.imageAssets ?? FALLBACK_SYMBOL.imageAssets,
 };
 
-const FALLBACK_MEANING_LAYERS = [
-  {
-    title: "Biblisch",
-    terms: "Urflut · Schöpfung · Exodus · Taufe",
-    text: FALLBACK_SYMBOL.biblicalLayer,
-  },
-  {
-    title: "Hebräisch",
-    terms: "מים · מ י ם",
-    text: FALLBACK_SYMBOL.hebrewLayer,
-  },
-  {
-    title: "Persönlich",
-    terms: "Tiefe · Reinigung · Übergang · neues Leben",
-    text: FALLBACK_SYMBOL.lifeLayer,
-  },
-];
-
 const FALLBACK_JOURNEY_IMAGES = [
   {
     src: "/Visuals/wasser_tiefenbild.png",
@@ -121,84 +102,20 @@ const FALLBACK_JOURNEY_IMAGES = [
 ];
 
 const WATER_JOURNEY_NODE_IDS = [
-  "water",
-  "mayim",
-  "mem",
-  "yod",
-  "sea",
+  "spirit",
   "well",
   "spring",
-  "baptism",
-  "spirit",
-  "genesis-1-2",
   "exodus-14",
+  "baptism",
 ];
 
-const WATER_DEPTH_LEVELS = [
-  {
-    id: "surface",
-    label: "Oberfläche",
-    displayLabel: "Oberflächenebene",
-    graphDepthLevel: 0,
-    focusLabel: "Kurzdeutung",
-    focusTitle: "Wasser als Schwelle",
-    focusText: "Tiefe, Leben, Reinigung, Grenze, Übergang und neue Geburt.",
-    nodeIds: ["water"],
-  },
-  {
-    id: "hebrew",
-    label: "Hebräisch",
-    displayLabel: "Hebräische Ebene",
-    graphDepthLevel: 1,
-    focusLabel: "מים / Majim",
-    focusTitle: "Das Wort steigt auf",
-    focusText: "מים / Majim hält offene Tiefe, einen kleinen Impuls und geschlossene Tiefe zusammen.",
-    nodeIds: ["mayim"],
-  },
-  {
-    id: "letters",
-    label: "Buchstaben",
-    displayLabel: "Buchstabenebene",
-    graphDepthLevel: 2,
-    focusLabel: "מ י ם",
-    focusTitle: "Die Zeichen im Wasser",
-    focusText: "Mem öffnet Tiefe. Jod setzt den Punkt. Finales Mem schließt den inneren Raum.",
-    nodeIds: ["mem", "yod", "mayim"],
-  },
-  {
-    id: "root",
-    label: "Wurzel",
-    displayLabel: "Wurzelebene",
-    graphDepthLevel: 2,
-    focusLabel: "Mem / Ursprung / Tiefe",
-    focusTitle: "Ursprung unter der Oberfläche",
-    focusText: "Mem berührt Wasser, Mutterschoß, Chaos und Geburt: nicht als Erklärung, sondern als Ursprungston.",
-    nodeIds: ["mem", "spring", "well"],
-  },
-  {
-    id: "resonance",
-    label: "Resonanz",
-    displayLabel: "Resonanzebene",
-    graphDepthLevel: 1,
-    focusLabel: "Verbundene Symbole",
-    focusTitle: "Was mitklingt",
-    focusText: "Meer, Brunnen, Quelle, Taufe, Geist, Wüste, Fels und Licht bilden ein leises Feld um das Wasser.",
-    nodeIds: ["sea", "well", "spring", "baptism", "spirit", "desert", "rock", "light"],
-  },
-  {
-    id: "biblePath",
-    label: "Bibelpfad",
-    displayLabel: "Bibelpfad",
-    graphDepthLevel: 2,
-    focusLabel: "Genesis 1,2 · Exodus 14 · Taufe",
-    focusTitle: "Der Weg durch das Wasser",
-    focusText: "Am Anfang schwebt der Geist über den Wassern. Im Exodus wird das Meer zum Durchgang. In der Taufe wird Untertauchen zum Neubeginn.",
-    nodeIds: ["genesis-1-2", "exodus-14", "baptism", "spirit", "sea"],
-  },
-] as const;
-
-type WaterDepthLevel = (typeof WATER_DEPTH_LEVELS)[number];
-type WaterDepthId = WaterDepthLevel["id"];
+const WATER_JOURNEY_INSIGHTS: Record<string, string> = {
+  spirit: "Ein Atem über dem Wasser.",
+  well: "Tiefe wird zugänglich.",
+  spring: "Leben tritt hervor.",
+  "exodus-14": "Die Grenze öffnet sich.",
+  baptism: "Untertauchen wird Neubeginn.",
+};
 
 type WaterJourneyPanel = {
   src: string;
@@ -306,26 +223,6 @@ function getImageAsset(role: NonNullable<SymbolEntry["imageAssets"]>[number]["ro
   };
 }
 
-function getMeaningLayers(symbol: SymbolEntry) {
-  const letters = getLetters(symbol);
-
-  return [
-    {
-      ...FALLBACK_MEANING_LAYERS[0],
-      text: symbol.biblicalLayer ?? FALLBACK_MEANING_LAYERS[0].text,
-    },
-    {
-      ...FALLBACK_MEANING_LAYERS[1],
-      terms: `${symbol.hebrew ?? FALLBACK_SYMBOL.hebrew} · ${letters.map((item) => item.letter).join(" ")}`,
-      text: symbol.hebrewLayer ?? FALLBACK_MEANING_LAYERS[1].text,
-    },
-    {
-      ...FALLBACK_MEANING_LAYERS[2],
-      text: symbol.lifeLayer ?? FALLBACK_MEANING_LAYERS[2].text,
-    },
-  ];
-}
-
 function getLetters(symbol: SymbolEntry) {
   return symbol.letterBreakdown ?? (symbol as WaterSymbolEntry).letters ?? FALLBACK_SYMBOL.letterBreakdown ?? [];
 }
@@ -345,7 +242,7 @@ function getJourneyPanels(symbol: SymbolEntry): WaterJourneyPanel[] {
       src: resolveLocalImage(backgroundAsset?.src, fallbackPanel.src),
       alt: backgroundAsset?.alt ?? fallbackPanel.alt,
       title: node?.label ?? fallbackPanel.title,
-      text: node?.shortMeaning ?? fallbackPanel.text,
+      text: WATER_JOURNEY_INSIGHTS[nodeId] ?? fallbackPanel.text,
       node,
       strongestConnection,
       connectedNodes,
@@ -371,60 +268,17 @@ function getFallbackJourneyPanel(symbol: SymbolEntry, index: number) {
 }
 
 export default function WaterRoom() {
-  const [activeDepthId, setActiveDepthId] = useState<WaterDepthId>("surface");
-  const activeDepth = getWaterDepthLevel(activeDepthId);
-  const activeDepthIndex = WATER_DEPTH_LEVELS.findIndex((depthLevel) => depthLevel.id === activeDepthId);
-
   return (
     <div
-      className="symbol-page water-room bg-[#02050b] transition-colors duration-1000"
-      style={{
-        backgroundColor: `rgb(${Math.max(0, 3 - activeDepthIndex)} ${Math.max(1, 7 - activeDepthIndex)} ${Math.max(8, 15 - activeDepthIndex)})`,
-        "--water-depth-pressure": activeDepthIndex,
-      } as CSSProperties}
+      className="symbol-page water-room bg-[#02050b]"
     >
       <WaterOpening symbol={WATER_ROOM_SYMBOL} />
+      <SymbolJourney symbol={WATER_ROOM_SYMBOL} />
       <WaterGlyphChamber symbol={WATER_ROOM_SYMBOL} />
-      <WaterDepthNavigator
-        activeDepthId={activeDepthId}
-        onDepthChange={setActiveDepthId}
-        symbol={WATER_ROOM_SYMBOL}
-      />
-      <MeaningLayers symbol={WATER_ROOM_SYMBOL} />
       <HebrewReveal symbol={WATER_ROOM_SYMBOL} />
-      <SymbolJourney symbol={WATER_ROOM_SYMBOL} activeDepth={activeDepth} />
       <ReflectionRoom symbol={WATER_ROOM_SYMBOL} />
     </div>
   );
-}
-
-function getWaterDepthLevel(depthId: WaterDepthId) {
-  return WATER_DEPTH_LEVELS.find((level) => level.id === depthId) ?? WATER_DEPTH_LEVELS[0];
-}
-
-function getDepthGraphNodes(depthLevel: WaterDepthLevel) {
-  const preferredNodes = depthLevel.nodeIds
-    .map((nodeId) => getNodeById(waterSymbolGraph, nodeId))
-    .filter((node): node is SymbolNode => Boolean(node));
-  const graphDepthNodes = getNodesByDepth(waterSymbolGraph, depthLevel.graphDepthLevel);
-  const seenIds = new Set<string>();
-
-  return [...preferredNodes, ...graphDepthNodes].filter((node) => {
-    if (seenIds.has(node.id)) {
-      return false;
-    }
-
-    seenIds.add(node.id);
-    return true;
-  });
-}
-
-function isPanelRelevantToDepth(panel: WaterJourneyPanel, depthLevel: WaterDepthLevel) {
-  if (!panel.node) {
-    return false;
-  }
-
-  return (depthLevel.nodeIds as readonly string[]).includes(panel.node.id) || panel.node.depthLevel === depthLevel.graphDepthLevel;
 }
 
 function getOtherNodeId(edge: MeaningEdge, nodeId: string) {
@@ -505,155 +359,6 @@ function createSemanticEcho(query: string): SemanticEcho {
   };
 }
 
-function getDepthFocus(symbol: SymbolEntry, depthLevel: WaterDepthLevel) {
-  if (depthLevel.id === "surface") {
-    return {
-      ...depthLevel,
-      focusText: symbol.shortMeaning ?? depthLevel.focusText,
-    };
-  }
-
-  return depthLevel;
-}
-
-function WaterDepthNavigator({
-  activeDepthId,
-  onDepthChange,
-  symbol,
-}: {
-  activeDepthId: WaterDepthId;
-  onDepthChange: (depthId: WaterDepthId) => void;
-  symbol: SymbolEntry;
-}) {
-  const activeDepth = getWaterDepthLevel(activeDepthId);
-  const activeIndex = WATER_DEPTH_LEVELS.findIndex((depthLevel) => depthLevel.id === activeDepthId);
-  const focus = getDepthFocus(symbol, activeDepth);
-  const focusNodes = getDepthGraphNodes(activeDepth).slice(0, 6);
-  const focusEdges = focusNodes
-    .flatMap((node) => getEdgesForNode(waterSymbolGraph, node.id))
-    .filter((edge, index, edges) => edges.findIndex((item) => item.source === edge.source && item.target === edge.target) === index)
-    .sort((a, b) => b.weight - a.weight)
-    .slice(0, 3);
-
-  return (
-    <section id="tiefe" className="symbol-section water-chamber relative overflow-hidden py-24 md:py-32">
-      <div
-        className="pointer-events-none absolute inset-0 transition duration-1000"
-        style={{
-          background:
-            `radial-gradient(circle at 30% ${24 + activeIndex * 8}%, rgba(84, 210, 235, ${0.08 + activeIndex * 0.012}), transparent 28%), ` +
-            `radial-gradient(circle at 68% ${18 + activeIndex * 9}%, rgba(219, 184, 112, ${0.07 + activeIndex * 0.01}), transparent 24%), ` +
-            `linear-gradient(180deg, rgba(2,5,12,${0.45 + activeIndex * 0.06}), rgba(0,2,7,${0.76 + activeIndex * 0.035}))`,
-        }}
-      />
-      <div className="pointer-events-none absolute inset-x-[14%] top-10 h-px bg-gradient-to-r from-transparent via-cyan-soft/20 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 opacity-60 water-depth-current" aria-hidden="true" />
-      <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-[minmax(14rem,0.34fr)_minmax(0,0.66fr)] lg:items-center">
-        <div className="water-depth-gauge">
-          <p className="symbol-kicker text-cyan-soft/80">
-            Tiefenlinie im Wasser
-          </p>
-          <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong sm:text-5xl">
-            {activeIndex === 0 ? "Licht an der Oberfläche" : `Stille unter ${activeDepth.label}`}
-          </p>
-          <p className="symbol-copy mt-5 max-w-sm text-sm italic text-foreground-muted sm:text-base">
-            {activeIndex < 2
-              ? "Die oberen Schichten tragen noch Glanz und Bewegung."
-              : activeIndex < 4
-                ? "Das Wasser wird dichter; Zeichen treiben langsamer vorbei."
-                : "Weiter unten bleibt nur ein leises Leuchten im Druck."}
-          </p>
-
-          <div
-            className="water-depth-gauge__shaft mt-12"
-            aria-label="Tiefenmesser im Wasser"
-            style={{ "--active-depth-offset": `${(activeIndex / (WATER_DEPTH_LEVELS.length - 1)) * 100}%` } as CSSProperties}
-          >
-            {WATER_DEPTH_LEVELS.map((depthLevel, index) => {
-              const isActive = depthLevel.id === activeDepthId;
-              const distance = Math.abs(activeIndex - index);
-
-              return (
-                <button
-                  key={depthLevel.id}
-                  type="button"
-                  onClick={() => onDepthChange(depthLevel.id)}
-                  aria-pressed={isActive}
-                  className={`water-depth-mark group ${isActive ? "is-active" : ""}`}
-                  style={{
-                    "--mark-depth": index,
-                    "--mark-distance": distance,
-                    top: `${(index / (WATER_DEPTH_LEVELS.length - 1)) * 100}%`,
-                  } as CSSProperties}
-                >
-                  <span className="water-depth-mark__sediment" aria-hidden="true" />
-                  <span className="water-depth-mark__light" aria-hidden="true" />
-                  <span className="water-depth-mark__label">
-                    {depthLevel.label}
-                  </span>
-                  <span className="water-depth-mark__number" aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <aside className="relative overflow-hidden border-y border-white/[0.07] bg-[#020a12]/50 p-7 shadow-[0_0_110px_rgba(0,0,0,0.4),0_0_70px_rgba(74,205,232,0.07)] backdrop-blur-xl transition duration-700 md:p-10">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_76%_24%,rgba(216,184,116,0.12),transparent_24%),radial-gradient(circle_at_24%_72%,rgba(80,205,232,0.1),transparent_30%)]" />
-          <div className="relative grid gap-10 md:grid-cols-[minmax(0,0.62fr)_minmax(12rem,0.38fr)] md:items-end">
-            <div>
-              <p className="symbol-kicker text-cyan-soft">
-                {focus.focusLabel}
-              </p>
-              <h2 className="mt-7 font-serif text-4xl italic leading-tight text-foreground-strong sm:text-6xl">
-                {focus.focusTitle}
-              </h2>
-              <p className="symbol-copy mt-8 max-w-2xl text-lg italic sm:text-2xl">
-                {focus.focusText}
-              </p>
-            </div>
-            <div className="grid gap-4">
-              {focusNodes.map((node) => (
-                <div
-                  key={node.id}
-                  className="border border-white/[0.07] bg-white/[0.035] px-4 py-3 shadow-[0_0_28px_rgba(80,205,232,0.045)]"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-serif text-2xl leading-none text-gold/90" lang={node.hebrew ? "he" : undefined} dir={node.hebrew ? "rtl" : undefined}>
-                      {node.hebrew ?? node.label}
-                    </p>
-                    <span className="text-[10px] uppercase tracking-[0.22em] text-cyan-soft/70">
-                      D{node.depthLevel}
-                    </span>
-                  </div>
-                  <p className="symbol-kicker mt-3 text-cyan-soft">
-                    {node.transliteration ?? node.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {focusEdges.length ? (
-            <div className="relative mt-8 grid gap-3 md:grid-cols-3">
-              {focusEdges.map((edge) => (
-                <p
-                  key={`${edge.source}-${edge.target}`}
-                  className="border border-gold/15 bg-gold/[0.045] px-4 py-3 text-xs uppercase tracking-[0.18em] text-gold/75 shadow-[0_0_30px_rgba(216,184,116,0.07)]"
-                >
-                  {edge.meaningQuality}
-                </p>
-              ))}
-            </div>
-          ) : null}
-        </aside>
-      </div>
-    </section>
-  );
-}
-
 function WaterOpening({ symbol }: { symbol: SymbolEntry }) {
   const heroImage = getImageAsset("hero", "/Visuals/wasser_cinema_hero.png", "Dunkler cineastischer Wasserraum");
   const backgroundImage = getImageAsset("background", "/Visuals/wasser_interface_backround.png", "");
@@ -698,10 +403,10 @@ function WaterOpening({ symbol }: { symbol: SymbolEntry }) {
             {symbol.transliteration ?? FALLBACK_SYMBOL.transliteration} · {symbol.name ?? FALLBACK_SYMBOL.name}
           </p>
           <p className="symbol-copy mt-7 text-lg sm:text-3xl">
-            {symbol.poeticIntro ?? symbol.shortMeaning ?? FALLBACK_SYMBOL.poeticIntro}
+            Wasser trägt. Wasser trennt. Wasser öffnet.
           </p>
           <a
-            href="#tiefe"
+            href="#symbolreise"
             className="symbol-cta mt-14 gap-4"
           >
             In die Tiefe gehen
@@ -722,63 +427,29 @@ function WaterGlyphChamber({ symbol }: { symbol: SymbolEntry }) {
         <p className="symbol-breathe font-serif text-[clamp(8rem,32vw,24rem)] leading-none text-gold/85">
           {symbol.hebrew ?? FALLBACK_SYMBOL.hebrew}
         </p>
-      </div>
-    </section>
-  );
-}
-
-function MeaningLayers({ symbol }: { symbol: SymbolEntry }) {
-  const meaningLayers = getMeaningLayers(symbol);
-
-  return (
-    <section className="symbol-section water-chamber relative py-24 md:py-32">
-      <div className="pointer-events-none absolute inset-x-[10%] top-0 h-px bg-gradient-to-r from-transparent via-gold/[0.08] to-transparent" />
-      <div className="mx-auto max-w-5xl">
-        <p className="symbol-kicker text-center md:text-left">
-          Bedeutungs-Ebenen
+        <p className="symbol-kicker mt-10 text-cyan-soft">
+          {symbol.transliteration ?? FALLBACK_SYMBOL.transliteration}
         </p>
-        <div className="mt-16 grid gap-24 md:gap-32">
-          {meaningLayers.map((layer) => (
-            <article
-              key={layer.title}
-              className="scroll-reveal water-statement relative grid min-h-[72svh] content-center border-y border-white/[0.035] py-20 md:min-h-[78vh] md:py-28"
-            >
-              <div className="water-chamber-breath absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-55" />
-              <div className="relative mx-auto max-w-3xl text-center">
-                <p className="symbol-kicker text-cyan-soft">
-                  {layer.terms}
-                </p>
-                <h2 className="mt-9 font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
-                  {layer.title}
-                </h2>
-                <p className="symbol-copy mx-auto mt-12 max-w-2xl text-xl italic sm:text-3xl">
-                  {layer.text}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
       </div>
     </section>
   );
 }
 
 function HebrewReveal({ symbol }: { symbol: SymbolEntry }) {
-  const letters = getLetters(symbol);
+  const mem = getLetters(symbol).find((item) => item.name === "Mem") ?? getLetters(symbol)[0];
 
   return (
     <section className="symbol-section water-chamber relative py-24 md:py-32">
       <div className="absolute left-1/2 top-1/2 h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(189,160,109,0.07),transparent_62%)]" />
       <div className="relative mx-auto max-w-4xl">
         <p className="symbol-kicker text-center">
-          Hebräische Buchstaben
+          Mem
         </p>
         <div className="mt-16 grid gap-20 md:gap-28">
-          {letters.map((item, index) => (
+          {mem ? [mem].map((item) => (
             <article
               key={item.letter}
               className="scroll-reveal water-letter-station relative grid min-h-[76svh] place-items-center border-y border-gold/[0.055] py-20 text-center md:min-h-[82vh]"
-              style={{ animationDelay: `${index * 140}ms` }}
             >
               <div className="water-chamber-breath absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45" />
               <div className="relative">
@@ -789,38 +460,25 @@ function HebrewReveal({ symbol }: { symbol: SymbolEntry }) {
                   {item.name}
                 </h3>
                 <p className="symbol-copy mx-auto mt-10 max-w-xl text-xl italic sm:text-2xl">
-                  {item.meaning ?? item.transliteration ?? ""}
+                  Mem öffnet die Tiefe.
                 </p>
               </div>
             </article>
-          ))}
+          )) : null}
         </div>
       </div>
     </section>
   );
 }
 
-function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDepth: WaterDepthLevel }) {
+function SymbolJourney({ symbol }: { symbol: SymbolEntry }) {
   const [echoQuery, setEchoQuery] = useState("");
   const [semanticEcho, setSemanticEcho] = useState<SemanticEcho | null>(null);
   const journeyPanels = getJourneyPanels(symbol);
-  const prioritizedPanels = [...journeyPanels].sort((leftPanel, rightPanel) => {
-    const leftRelevant = isPanelRelevantToDepth(leftPanel, activeDepth) ? 1 : 0;
-    const rightRelevant = isPanelRelevantToDepth(rightPanel, activeDepth) ? 1 : 0;
-
-    if (leftRelevant !== rightRelevant) {
-      return rightRelevant - leftRelevant;
-    }
-
-    return (rightPanel.node?.importance ?? 0) - (leftPanel.node?.importance ?? 0);
-  });
-  const firstActiveNodeId =
-    activeDepth.nodeIds.find((nodeId) => journeyPanels.some((panel) => panel.node?.id === nodeId)) ??
-    prioritizedPanels[0]?.node?.id ??
-    "water";
+  const firstActiveNodeId = journeyPanels[0]?.node?.id ?? "spirit";
   const [activePanelId, setActivePanelId] = useState(firstActiveNodeId);
-  const activePanel = prioritizedPanels.find((panel) => panel.node?.id === activePanelId) ?? prioritizedPanels[0];
-  const activeDepthIndex = WATER_DEPTH_LEVELS.findIndex((depthLevel) => depthLevel.id === activeDepth.id);
+  const activePanel = journeyPanels.find((panel) => panel.node?.id === activePanelId) ?? journeyPanels[0];
+  const activeDepthIndex = 1;
   const activeNodeId = activePanel?.node?.id ?? firstActiveNodeId;
   const activeEdges = activeNodeId
     ? getEdgesForNode(waterSymbolGraph, activeNodeId).sort((a, b) => b.weight - a.weight)
@@ -854,7 +512,7 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
   };
 
   return (
-    <section className={`symbol-section water-chamber relative overflow-hidden py-24 md:py-32 ${semanticEcho ? "water-semantic-echo-active" : ""}`}>
+    <section id="symbolreise" className={`symbol-section water-chamber relative overflow-hidden py-24 md:py-32 ${semanticEcho ? "water-semantic-echo-active" : ""}`}>
       <div
         className="pointer-events-none absolute inset-0 transition duration-1000"
         style={{
@@ -871,7 +529,7 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
               Symbolreise
             </p>
             <p className="symbol-copy mx-auto mt-5 max-w-2xl text-center text-base md:mx-0 md:text-left">
-              Bei {activeDepth.label} treten einige Zeichen näher; andere bleiben als dunkle Strömung im Raum.
+              Fünf Bewegungen im Wasser.
             </p>
             <form className="water-semantic-echo mt-8" onSubmit={handleSemanticEchoSubmit}>
               <input
@@ -935,8 +593,8 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
           </div>
         ) : null}
         <div className="mt-16 grid gap-32 md:gap-44">
-          {prioritizedPanels.map((panel, index) => {
-            const isRelevant = isPanelRelevantToDepth(panel, activeDepth);
+          {journeyPanels.map((panel, index) => {
+            const isRelevant = true;
             const isActive = activePanelId === panel.node?.id;
             const panelEdge = panel.node?.id
               ? activeEdges.find(
@@ -1033,7 +691,7 @@ function SymbolJourney({ symbol, activeDepth }: { symbol: SymbolEntry; activeDep
                         {panel.node?.label ?? panel.title}
                       </h2>
                       <p className="water-reflection-text mt-8 text-xl italic sm:text-3xl">
-                        {panel.node?.shortMeaning ?? panel.text}
+                        {panel.text}
                       </p>
                     </div>
                     <div className="water-glass-shard">
@@ -1155,9 +813,6 @@ function ReflectionRoom({ symbol }: { symbol: SymbolEntry }) {
         <h2 className="mx-auto mt-8 max-w-3xl font-serif text-4xl italic leading-tight text-foreground-strong sm:text-6xl">
           {reflectionQuestion}
         </h2>
-        <p className="symbol-copy mx-auto mt-7 max-w-2xl text-lg sm:text-xl">
-          {symbol.shortMeaning ?? FALLBACK_SYMBOL.shortMeaning}
-        </p>
         <textarea
           aria-label="Reflexion zum Wasserraum"
           placeholder="Still notieren..."
