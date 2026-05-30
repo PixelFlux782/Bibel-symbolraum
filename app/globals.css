@@ -101,6 +101,249 @@ body {
   letter-spacing: 0.05em;
 }
 
+/* WaterRoom vertical slice: one stage, four transformations. */
+.water-journey {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #01040a;
+  color: rgba(var(--foreground-rgb), 0.94);
+}
+
+.water-journey__scenes,
+.water-journey__scene,
+.water-journey__veil,
+.water-journey__current {
+  position: absolute;
+  inset: 0;
+}
+
+.water-journey__scene {
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 1600ms ease, transform 5200ms ease;
+}
+
+.water-journey__scene.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.water-journey__image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.water-journey--depth .water-journey__image,
+.water-journey--light .water-journey__image {
+  object-position: center 44%;
+}
+
+.water-journey__veil {
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(0, 3, 8, 0.92), rgba(0, 3, 8, 0.5) 45%, rgba(0, 3, 8, 0.18) 72%, rgba(0, 3, 8, 0.54)),
+    linear-gradient(180deg, rgba(0, 3, 8, 0.48), transparent 32%, rgba(0, 3, 8, 0.62));
+  transition: background 1400ms ease;
+}
+
+.water-journey--exodus .water-journey__veil,
+.water-journey--light .water-journey__veil {
+  background:
+    linear-gradient(90deg, rgba(0, 3, 8, 0.84), rgba(0, 3, 8, 0.48) 48%, rgba(0, 3, 8, 0.12) 74%, rgba(0, 3, 8, 0.42)),
+    linear-gradient(180deg, rgba(0, 3, 8, 0.34), transparent 42%, rgba(0, 3, 8, 0.54));
+}
+
+.water-journey__current {
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 68% 26%, rgba(127, 184, 201, 0.12), transparent 28%),
+    linear-gradient(112deg, transparent 22%, rgba(127, 184, 201, 0.07) 22.3%, transparent 23%);
+  mix-blend-mode: screen;
+  animation: water-journey-current 16s ease-in-out infinite;
+}
+
+.water-journey__trail {
+  position: absolute;
+  top: clamp(1.25rem, 4vw, 3.5rem);
+  left: clamp(1.25rem, 6vw, 6rem);
+  z-index: 4;
+}
+
+.water-journey__trail-label,
+.water-journey__eyebrow,
+.water-journey__inscription,
+.water-journey__hint {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.water-journey__trail-label {
+  color: rgba(var(--gold-rgb), 0.82);
+}
+
+.water-journey__trail ol {
+  display: flex;
+  gap: clamp(0.7rem, 2.4vw, 2.2rem);
+  margin-top: 1rem;
+}
+
+.water-journey__trail-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(var(--foreground-rgb), 0.38);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: color 800ms ease;
+}
+
+.water-journey__trail-mark {
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid rgba(var(--cyan-rgb), 0.36);
+  border-radius: 999px;
+  transition: background 800ms ease, box-shadow 800ms ease, transform 800ms ease;
+}
+
+.water-journey__trail-step.is-passed,
+.water-journey__trail-step.is-active {
+  color: rgba(var(--foreground-rgb), 0.84);
+}
+
+.water-journey__trail-step.is-passed .water-journey__trail-mark {
+  background: rgba(var(--cyan-rgb), 0.52);
+}
+
+.water-journey__trail-step.is-active .water-journey__trail-mark {
+  background: rgba(var(--gold-rgb), 0.94);
+  box-shadow: 0 0 1.5rem rgba(var(--gold-rgb), 0.7);
+  transform: scale(1.35);
+}
+
+.water-journey__content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  min-height: 100svh;
+  max-width: 44rem;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 8rem clamp(1.25rem, 6vw, 6rem) clamp(4.5rem, 9vh, 7.5rem);
+  animation: water-journey-arrive 1100ms ease both;
+}
+
+.water-journey__eyebrow {
+  color: rgba(var(--cyan-rgb), 0.88);
+}
+
+.water-journey__glyph {
+  margin-bottom: -1.25rem;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(7rem, 20vw, 13rem);
+  line-height: 0.9;
+  color: rgba(var(--gold-rgb), 0.82);
+  text-shadow: 0 0 3rem rgba(var(--gold-rgb), 0.2);
+}
+
+.water-journey__title {
+  margin-top: 1rem;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(3.3rem, 7vw, 6.4rem);
+  font-style: italic;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.water-journey__text {
+  max-width: 36rem;
+  margin-top: 1.5rem;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  font-style: italic;
+  line-height: 1.6;
+  color: rgba(var(--foreground-rgb), 0.78);
+}
+
+.water-journey__inscription {
+  margin-top: 1.5rem;
+  color: rgba(var(--gold-rgb), 0.78);
+}
+
+.water-journey__actions {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: 2.2rem;
+}
+
+.water-journey__action,
+.water-journey__back {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.water-journey__action {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.56);
+  padding: 0.8rem 0 0.9rem;
+  color: rgba(242, 222, 174, 0.94);
+}
+
+.water-journey__action span {
+  width: 2.7rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.88), transparent);
+  transition: width 600ms ease;
+}
+
+.water-journey__action:hover span,
+.water-journey__action:focus-visible span {
+  width: 4rem;
+}
+
+.water-journey__back {
+  color: rgba(var(--foreground-rgb), 0.52);
+}
+
+.water-journey__hint {
+  position: absolute;
+  right: clamp(1.25rem, 5vw, 5rem);
+  bottom: 2rem;
+  z-index: 3;
+  color: rgba(var(--foreground-rgb), 0.46);
+}
+
+@keyframes water-journey-arrive {
+  from { opacity: 0; transform: translateY(1.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes water-journey-current {
+  0%, 100% { opacity: 0.54; transform: scale(1); }
+  50% { opacity: 0.86; transform: scale(1.04); }
+}
+
+@media (max-width: 640px) {
+  .water-journey__trail-step {
+    font-size: 0;
+  }
+
+  .water-journey__hint {
+    display: none;
+  }
+}
+
 ::selection {
   background: rgba(197, 163, 107, 0.3);
   color: #fff;
