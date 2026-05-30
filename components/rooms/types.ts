@@ -72,15 +72,36 @@ export type RoomEchoConfig = {
   inscriptionKicker: string;
 };
 
+export type MotionPattern = "flow" | "ascending" | "radiant";
+
+export type ParticlePattern = "mist" | "dust" | "sparks";
+
+export type LightBehavior = "refraction" | "emission" | "beam";
+
+export type Materiality = "fluid-glass" | "luminous-air" | "warm-ash";
+
+export type Rhythm = "tidal" | "still" | "pulsing";
+
+export type AtmosphereProfile = {
+  id: string;
+  motion: MotionPattern;
+  particles: ParticlePattern;
+  light: LightBehavior;
+  materiality: Materiality;
+  rhythm: Rhythm;
+};
+
 export type RoomTheme = {
   id: string;
   colors: {
     background: string;
     accentRgb: string;
     ambientRgb: string;
+    shadowRgb: string;
+    veilRgb: string;
+    depthRgb: string;
   };
-  atmosphere: string;
-  motion: string;
+  atmosphereProfile: AtmosphereProfile;
   overlayStyle: CSSProperties;
   encounterImage: RoomImageAsset;
   journeyKicker: string;

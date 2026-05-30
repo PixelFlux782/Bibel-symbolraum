@@ -249,9 +249,18 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
       background: "#030712",
       accentRgb: "189, 160, 109",
       ambientRgb: "232, 220, 188",
+      shadowRgb: "2, 4, 10",
+      veilRgb: "16, 16, 18",
+      depthRgb: "6, 10, 22",
     },
-    atmosphere: "clear",
-    motion: "vertical-axis",
+    atmosphereProfile: {
+      id: "clear",
+      motion: "radiant",
+      particles: "dust",
+      light: "beam",
+      materiality: "luminous-air",
+      rhythm: "still",
+    },
     overlayStyle: {
       background:
         "linear-gradient(116deg, transparent 18%, rgba(var(--symbol-room-accent-rgb), 0.075) 18.2%, transparent 18.7%), linear-gradient(64deg, transparent 70%, rgba(245, 241, 232, 0.045) 70.2%, transparent 70.7%), radial-gradient(circle at 50% 18%, rgba(var(--symbol-room-accent-rgb), 0.12), transparent 30%), var(--symbol-room-background)",

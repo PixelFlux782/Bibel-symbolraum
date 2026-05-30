@@ -22,7 +22,12 @@ import {
   RoomExperience,
   RoomTransitionStage,
 } from "@/components/rooms/RoomGrammar";
-import type { RoomEchoConfig, RoomEncounter, SymbolRoomDefinition } from "@/components/rooms/types";
+import type {
+  AtmosphereProfile,
+  RoomEchoConfig,
+  RoomEncounter,
+  SymbolRoomDefinition,
+} from "@/components/rooms/types";
 
 const FALLBACK_SYMBOL = {
   id: "missing-symbol",
@@ -54,6 +59,54 @@ type SemanticEcho = {
   pathLabel: string;
 };
 
+function getAtmosphereRendererHooks(profile: AtmosphereProfile) {
+  return {
+    className: [
+      `symbol-room-atmosphere--${profile.id}`,
+      `symbol-room-motion--${profile.motion}`,
+      `symbol-room-particles--${profile.particles}`,
+      `symbol-room-light--${profile.light}`,
+      `symbol-room-materiality--${profile.materiality}`,
+      `symbol-room-rhythm--${profile.rhythm}`,
+    ].join(" "),
+    dataAttributes: {
+      "data-atmosphere": profile.id,
+      "data-motion": profile.motion,
+      "data-particles": profile.particles,
+      "data-light": profile.light,
+      "data-materiality": profile.materiality,
+      "data-rhythm": profile.rhythm,
+    },
+  };
+}
+
+function MotionField({ motion, rhythm }: Pick<AtmosphereProfile, "motion" | "rhythm">) {
+  return <div className={`symbol-room-motion-field symbol-room-motion-field--${motion} symbol-room-atmosphere-rhythm--${rhythm}`} />;
+}
+
+function ParticleField({ particles, rhythm }: Pick<AtmosphereProfile, "particles" | "rhythm">) {
+  return <div className={`symbol-room-particle-field symbol-room-particle-field--${particles} symbol-room-atmosphere-rhythm--${rhythm}`} />;
+}
+
+function LightField({ light, rhythm }: Pick<AtmosphereProfile, "light" | "rhythm">) {
+  return <div className={`symbol-room-light-field symbol-room-light-field--${light} symbol-room-atmosphere-rhythm--${rhythm}`} />;
+}
+
+function MaterialVeil({ materiality }: Pick<AtmosphereProfile, "materiality">) {
+  return <div className={`symbol-room-material-veil symbol-room-material-veil--${materiality}`} />;
+}
+
+function SymbolRoomAtmosphere({ profile }: { profile: AtmosphereProfile }) {
+  return (
+    <div className="symbol-room-atmosphere" aria-hidden="true">
+      <MotionField motion={profile.motion} rhythm={profile.rhythm} />
+      <ParticleField particles={profile.particles} rhythm={profile.rhythm} />
+      <LightField light={profile.light} rhythm={profile.rhythm} />
+      <MaterialVeil materiality={profile.materiality} />
+    </div>
+  );
+}
+
 function getEncounters(definition: SymbolRoomDefinition): ResolvedEncounter[] {
   return definition.encounters.map((roomEncounter) => {
     const nodeId = roomEncounter.symbolNodeId;
@@ -80,19 +133,23 @@ export function SymbolRoom({ definition }: { definition: SymbolRoomDefinition })
   const entranceSymbol = getNodeById(definition.graph, definition.entrance.symbolNodeId) ?? FALLBACK_SYMBOL;
   const transitionSymbol = getNodeById(definition.graph, definition.transition.symbolNodeId) ?? entranceSymbol;
   const { theme } = definition;
+  const atmosphereHooks = getAtmosphereRendererHooks(theme.atmosphereProfile);
 
   return (
     <div
-      className={`symbol-page symbol-room symbol-room--${theme.id}`}
-      data-atmosphere={theme.atmosphere}
-      data-motion={theme.motion}
+      className={`symbol-page symbol-room symbol-room--${theme.id} ${atmosphereHooks.className}`}
+      {...atmosphereHooks.dataAttributes}
       style={{
         "--symbol-room-background": theme.colors.background,
         "--symbol-room-accent-rgb": theme.colors.accentRgb,
         "--symbol-room-ambient-rgb": theme.colors.ambientRgb,
+        "--symbol-room-shadow-rgb": theme.colors.shadowRgb,
+        "--symbol-room-veil-rgb": theme.colors.veilRgb,
+        "--symbol-room-depth-rgb": theme.colors.depthRgb,
         ...theme.overlayStyle,
       } as CSSProperties}
     >
+      <SymbolRoomAtmosphere profile={theme.atmosphereProfile} />
       <SymbolRoomEntrance definition={definition} symbol={entranceSymbol} />
       <SymbolRoomExperience definition={definition} />
       <SymbolRoomTransition symbol={transitionSymbol} />
@@ -203,9 +260,9 @@ function SymbolRoomEntrance({ definition, symbol }: { definition: SymbolRoomDefi
       />
 
       <div className="light-pulse symbol-room-entrance-glow absolute inset-0 mix-blend-screen" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,5,12,0.5),rgba(2,5,12,0.24)_36%,rgba(2,5,12,0.94))]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(1,3,8,0.9),rgba(1,3,8,0.2)_52%,rgba(1,3,8,0.8))]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_32%,rgba(0,0,0,0.58)_78%,rgba(0,0,0,0.9)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(var(--symbol-room-depth-rgb),0.5),rgba(var(--symbol-room-depth-rgb),0.24)_36%,rgba(var(--symbol-room-shadow-rgb),0.94))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(var(--symbol-room-veil-rgb),0.9),rgba(var(--symbol-room-veil-rgb),0.2)_52%,rgba(var(--symbol-room-veil-rgb),0.8))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_32%,rgba(var(--symbol-room-shadow-rgb),0.58)_78%,rgba(var(--symbol-room-shadow-rgb),0.9)_100%)]" />
       <div className="absolute inset-x-[8%] top-[48%] h-px bg-gradient-to-r from-transparent via-gold/35 to-transparent" />
 
       <div className="symbol-fade-in relative z-10 mx-auto flex w-full max-w-6xl min-w-0 flex-col gap-16 lg:grid lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
@@ -345,7 +402,7 @@ function SymbolRoomExperience({ definition }: { definition: SymbolRoomDefinition
           background:
             `radial-gradient(circle_at_${30 + activeDepthIndex * 5}%_${18 + activeDepthIndex * 6}%,rgba(var(--symbol-room-ambient-rgb),${0.06 + activeDepthIndex * 0.012}),transparent_28%),` +
             `radial-gradient(circle_at_${72 - activeDepthIndex * 4}%_${64 + activeDepthIndex * 4}%,rgba(var(--symbol-room-accent-rgb),${0.055 + activeDepthIndex * 0.012}),transparent_34%),` +
-            `linear-gradient(180deg,rgba(2,5,12,${0.12 + activeDepthIndex * 0.08}),rgba(0,2,8,${0.55 + activeDepthIndex * 0.06}))`,
+            `linear-gradient(180deg,rgba(var(--symbol-room-depth-rgb),${0.12 + activeDepthIndex * 0.08}),rgba(var(--symbol-room-shadow-rgb),${0.55 + activeDepthIndex * 0.06}))`,
         }}
       />
       <div className="mx-auto max-w-6xl">
@@ -460,9 +517,9 @@ function SymbolRoomExperience({ definition }: { definition: SymbolRoomDefinition
                 } as CSSProperties}
               >
               <div className="symbol-room-resonance-veil" aria-hidden="true" />
-              <div className="symbol-room-motion-field" aria-hidden="true" />
+              <div className="symbol-room-encounter-motion-field" aria-hidden="true" />
               <div className="symbol-room-resonance-veins" aria-hidden="true" />
-              <div className="absolute inset-0 shadow-[0_34px_120px_rgba(0,0,0,0.34)]">
+              <div className="symbol-room-encounter-image absolute inset-0">
                 <Image
                   src={encounter.src}
                   alt={encounter.alt}
@@ -475,10 +532,10 @@ function SymbolRoomExperience({ definition }: { definition: SymbolRoomDefinition
                   style={{
                     background:
                       `radial-gradient(circle_at_62%_34%,rgba(var(--symbol-room-ambient-rgb),${isRelevant ? 0.17 : 0.07}),transparent_30%),` +
-                      `linear-gradient(180deg,rgba(2,5,12,${0.18 + activeDepthIndex * 0.07}),rgba(2,5,12,${0.7 + activeDepthIndex * 0.035})_70%,rgba(0,1,6,0.97))`,
+                      `linear-gradient(180deg,rgba(var(--symbol-room-depth-rgb),${0.18 + activeDepthIndex * 0.07}),rgba(var(--symbol-room-depth-rgb),${0.7 + activeDepthIndex * 0.035})_70%,rgba(var(--symbol-room-shadow-rgb),0.97))`,
                   }}
                 />
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(1,3,8,0.82),rgba(1,3,8,0.22)_54%,rgba(1,3,8,0.72))]" />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(var(--symbol-room-veil-rgb),0.82),rgba(var(--symbol-room-veil-rgb),0.22)_54%,rgba(var(--symbol-room-veil-rgb),0.72))]" />
                 <div className={`symbol-room-encounter-glow absolute inset-0 transition duration-700 group-hover:opacity-100 group-focus:opacity-100 ${isRelevant ? "opacity-30" : "opacity-0"}`} />
               </div>
               <div

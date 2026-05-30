@@ -634,7 +634,150 @@ body {
 .symbol-room {
   --cyan-rgb: var(--symbol-room-ambient-rgb);
   --gold-rgb: var(--symbol-room-accent-rgb);
+  --symbol-room-depth-overlay:
+    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(var(--symbol-room-shadow-rgb), 0.34) 72%, rgba(var(--symbol-room-shadow-rgb), 0.72) 100%),
+    linear-gradient(180deg, rgba(var(--symbol-room-depth-rgb), 0.24), rgba(var(--symbol-room-depth-rgb), 0.7));
   background-color: var(--symbol-room-background);
+}
+
+.symbol-page > .symbol-room-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.symbol-room-motion-field,
+.symbol-room-particle-field,
+.symbol-room-light-field,
+.symbol-room-material-veil {
+  position: absolute;
+  inset: -4%;
+  pointer-events: none;
+}
+
+.symbol-room-motion-field,
+.symbol-room-particle-field,
+.symbol-room-light-field {
+  mix-blend-mode: screen;
+}
+
+.symbol-room-atmosphere-rhythm--tidal {
+  --symbol-room-atmosphere-duration: 34s;
+}
+
+.symbol-room-atmosphere-rhythm--still {
+  --symbol-room-atmosphere-duration: 48s;
+}
+
+.symbol-room-atmosphere-rhythm--pulsing {
+  --symbol-room-atmosphere-duration: 18s;
+}
+
+.symbol-room-motion-field {
+  inset: -8%;
+  opacity: 0.22;
+}
+
+.symbol-room-motion-field--flow {
+  background: repeating-linear-gradient(176deg, transparent 0 8%, rgba(var(--symbol-room-ambient-rgb), 0.055) 8.4%, transparent 9.1% 17%);
+  filter: blur(8px);
+  animation: symbol-room-atmosphere-flow var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-motion-field--ascending {
+  background:
+    radial-gradient(ellipse at 28% 72%, rgba(var(--symbol-room-accent-rgb), 0.075), transparent 22%),
+    radial-gradient(ellipse at 66% 84%, rgba(var(--symbol-room-ambient-rgb), 0.07), transparent 20%);
+  filter: blur(12px);
+  animation: symbol-room-atmosphere-ascending var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-motion-field--radiant {
+  background: repeating-radial-gradient(circle at 50% 18%, transparent 0 8%, rgba(var(--symbol-room-accent-rgb), 0.048) 8.4%, transparent 9.2% 17%);
+  filter: blur(4px);
+  animation: symbol-room-atmosphere-radiant var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-particle-field {
+  opacity: 0.2;
+}
+
+.symbol-room-particle-field--mist {
+  background:
+    radial-gradient(ellipse at 18% 32%, rgba(var(--symbol-room-ambient-rgb), 0.12), transparent 24%),
+    radial-gradient(ellipse at 78% 64%, rgba(var(--symbol-room-ambient-rgb), 0.085), transparent 28%);
+  filter: blur(32px);
+  animation: symbol-room-atmosphere-mist var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-particle-field--sparks {
+  background-image:
+    radial-gradient(circle, rgba(var(--symbol-room-accent-rgb), 0.68) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(var(--symbol-room-ambient-rgb), 0.54) 0 0.8px, transparent 1.6px);
+  background-position: 0 0, 2.6rem 4.4rem;
+  background-size: 8.5rem 11rem, 11rem 14rem;
+  filter: blur(0.25px);
+  animation: symbol-room-atmosphere-particles-rise var(--symbol-room-atmosphere-duration) linear infinite;
+}
+
+.symbol-room-particle-field--dust {
+  background-image:
+    radial-gradient(circle, rgba(var(--symbol-room-accent-rgb), 0.54) 0 0.7px, transparent 1.5px),
+    radial-gradient(circle, rgba(var(--symbol-room-ambient-rgb), 0.42) 0 0.6px, transparent 1.4px);
+  background-position: 0 0, 4rem 6rem;
+  background-size: 12rem 15rem, 16rem 19rem;
+  filter: blur(0.35px);
+  animation: symbol-room-atmosphere-dust var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-light-field {
+  opacity: 0.3;
+}
+
+.symbol-room-light-field--refraction {
+  background:
+    linear-gradient(116deg, transparent 18%, rgba(var(--symbol-room-ambient-rgb), 0.065) 18.4%, transparent 19.4%),
+    linear-gradient(72deg, transparent 67%, rgba(var(--symbol-room-accent-rgb), 0.05) 67.4%, transparent 68.5%);
+  filter: blur(2px);
+  animation: symbol-room-atmosphere-refraction var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-light-field--emission {
+  background:
+    radial-gradient(ellipse at 50% 82%, rgba(var(--symbol-room-ambient-rgb), 0.15), transparent 30%),
+    radial-gradient(circle at 52% 58%, rgba(var(--symbol-room-accent-rgb), 0.09), transparent 24%);
+  filter: blur(10px);
+  animation: symbol-room-atmosphere-emission var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-light-field--beam {
+  background:
+    linear-gradient(90deg, transparent 18%, rgba(var(--symbol-room-accent-rgb), 0.065) 20%, transparent 23%),
+    linear-gradient(90deg, transparent 56%, rgba(var(--symbol-room-ambient-rgb), 0.07) 58%, transparent 61%),
+    linear-gradient(90deg, transparent 78%, rgba(var(--symbol-room-accent-rgb), 0.045) 79%, transparent 81%);
+  filter: blur(5px);
+  animation: symbol-room-atmosphere-beam var(--symbol-room-atmosphere-duration) ease-in-out infinite;
+}
+
+.symbol-room-material-veil {
+  opacity: 0.18;
+}
+
+.symbol-room-material-veil--fluid-glass {
+  background: repeating-linear-gradient(174deg, transparent 0 10%, rgba(var(--symbol-room-ambient-rgb), 0.045) 10.3%, transparent 10.9% 20%);
+  filter: blur(5px);
+}
+
+.symbol-room-material-veil--luminous-air {
+  background: radial-gradient(ellipse at 50% 24%, rgba(var(--symbol-room-accent-rgb), 0.08), transparent 54%);
+  filter: blur(8px);
+}
+
+.symbol-room-material-veil--warm-ash {
+  background: linear-gradient(180deg, transparent 38%, rgba(var(--symbol-room-ambient-rgb), 0.06));
+  filter: blur(12px);
 }
 
 .symbol-room-ambient-text {
@@ -657,18 +800,18 @@ body {
   background: linear-gradient(90deg, transparent, rgba(var(--symbol-room-ambient-rgb), 0.12), transparent);
 }
 
-.symbol-room--water {
+.symbol-room-materiality--fluid-glass {
   --symbol-room-depth-overlay:
-    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(0, 0, 0, 0.34) 72%, rgba(0, 0, 0, 0.72) 100%),
-    linear-gradient(180deg, rgba(2, 5, 12, 0.3), rgba(2, 5, 12, 0.72));
+    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(var(--symbol-room-shadow-rgb), 0.34) 72%, rgba(var(--symbol-room-shadow-rgb), 0.72) 100%),
+    linear-gradient(180deg, rgba(var(--symbol-room-depth-rgb), 0.3), rgba(var(--symbol-room-depth-rgb), 0.72));
 }
 
-.symbol-room--light {
+.symbol-room-materiality--luminous-air {
   --symbol-room-depth-overlay:
     linear-gradient(112deg, transparent 14%, rgba(var(--gold-rgb), 0.08) 14.2%, transparent 14.7%),
     linear-gradient(68deg, transparent 76%, rgba(245, 241, 232, 0.055) 76.2%, transparent 76.7%),
-    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(0, 0, 0, 0.34) 72%, rgba(0, 0, 0, 0.72) 100%),
-    linear-gradient(180deg, rgba(3, 7, 18, 0.18), rgba(2, 5, 12, 0.68));
+    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(var(--symbol-room-shadow-rgb), 0.34) 72%, rgba(var(--symbol-room-shadow-rgb), 0.72) 100%),
+    linear-gradient(180deg, rgba(var(--symbol-room-depth-rgb), 0.18), rgba(var(--symbol-room-depth-rgb), 0.68));
 }
 
 .symbol-room-depth {
@@ -689,12 +832,12 @@ body {
   z-index: 1;
 }
 
-.symbol-room--light .symbol-room-motion-field,
-.symbol-room--light .symbol-room-resonance-thread__motion-field {
+.symbol-room-light--beam .symbol-room-encounter-motion-field,
+.symbol-room-light--beam .symbol-room-resonance-thread__motion-field {
   display: none;
 }
 
-.symbol-room--light .symbol-room-resonance-veins {
+.symbol-room-light--beam .symbol-room-resonance-veins {
   background:
     linear-gradient(112deg, transparent 8%, color-mix(in srgb, var(--resonance-color) 36%, transparent) 22%, transparent 22.4%),
     linear-gradient(68deg, transparent 56%, color-mix(in srgb, var(--resonance-color) 26%, transparent) 69%, transparent 69.4%);
@@ -865,7 +1008,7 @@ body {
 .symbol-room-glyph-chamber {
   background:
     radial-gradient(circle at 50% 50%, rgba(var(--gold-rgb), 0.052), transparent 26%),
-    linear-gradient(180deg, rgba(2, 5, 12, 0.86), rgba(2, 5, 12, 0.96));
+    linear-gradient(180deg, rgba(var(--symbol-room-depth-rgb), 0.86), rgba(var(--symbol-room-shadow-rgb), 0.96));
 }
 
 .symbol-room-statement,
@@ -892,6 +1035,10 @@ body {
   border-bottom: 1px solid rgba(var(--gold-rgb), 0.045);
 }
 
+.symbol-room-encounter-image {
+  box-shadow: 0 34px 120px rgba(var(--symbol-room-shadow-rgb), 0.34);
+}
+
 .symbol-room-engine-encounter-active {
   animation: symbol-room-engine-encounter-pulse 6.8s ease-in-out infinite;
 }
@@ -904,7 +1051,7 @@ body {
   border: 1px solid rgba(var(--cyan-rgb), 0.16);
   background:
     radial-gradient(circle at 8% 0%, rgba(var(--cyan-rgb), 0.08), transparent 34%),
-    linear-gradient(180deg, rgba(4, 16, 26, 0.72), rgba(1, 7, 13, 0.82));
+    linear-gradient(180deg, rgba(var(--symbol-room-depth-rgb), 0.72), rgba(var(--symbol-room-shadow-rgb), 0.82));
   box-shadow:
     0 0 48px rgba(var(--cyan-rgb), 0.075),
     inset 0 0 34px rgba(var(--gold-rgb), 0.025);
@@ -981,7 +1128,7 @@ body {
   background:
     radial-gradient(circle at 22% 0%, rgba(var(--gold-rgb), 0.09), transparent 42%),
     radial-gradient(circle at 82% 72%, rgba(var(--cyan-rgb), 0.07), transparent 44%),
-    rgba(3, 12, 19, 0.26);
+    rgba(var(--symbol-room-veil-rgb), 0.26);
   padding: 1.2rem 1.35rem;
   box-shadow:
     0 0 68px rgba(var(--cyan-rgb), 0.08),
@@ -1033,7 +1180,7 @@ body {
   overflow: hidden;
   background:
     radial-gradient(ellipse at 18% 50%, color-mix(in srgb, var(--thread-color) 18%, transparent), transparent 62%),
-    rgba(2, 8, 14, 0.16);
+    rgba(var(--symbol-room-depth-rgb), 0.16);
   padding: 0.75rem 1rem 0.75rem 4.2rem;
   opacity: 0.82;
   box-shadow: 0 0 54px color-mix(in srgb, var(--thread-color) 18%, transparent);
@@ -1143,7 +1290,7 @@ body {
     0 0 82px color-mix(in srgb, var(--resonance-color) 16%, transparent);
 }
 
-.symbol-room-motion-field,
+.symbol-room-encounter-motion-field,
 .symbol-room-resonance-veins {
   position: absolute;
   inset: 0;
@@ -1152,10 +1299,10 @@ body {
   mix-blend-mode: screen;
 }
 
-.symbol-room-motion-field {
+.symbol-room-encounter-motion-field {
   background: repeating-radial-gradient(ellipse at 48% 58%, transparent 0 8%, color-mix(in srgb, var(--resonance-color) 13%, transparent) 8.3%, transparent 8.8% 16%);
   opacity: 0.28;
-  animation: symbol-room-motion-field 8s ease-in-out infinite;
+  animation: symbol-room-encounter-motion-field 8s ease-in-out infinite;
   animation-delay: var(--resonance-delay);
 }
 
@@ -1167,7 +1314,7 @@ body {
   filter: blur(0.35px);
 }
 
-.symbol-room-encounter--strong .symbol-room-motion-field {
+.symbol-room-encounter--strong .symbol-room-encounter-motion-field {
   animation-duration: 11s;
 }
 
@@ -1175,7 +1322,7 @@ body {
   opacity: 0.46;
 }
 
-.symbol-room-encounter--mist .symbol-room-motion-field {
+.symbol-room-encounter--mist .symbol-room-encounter-motion-field {
   opacity: 0.08;
   filter: blur(3px);
 }
@@ -1438,6 +1585,99 @@ body {
   opacity: 0.72;
 }
 
+@keyframes symbol-room-atmosphere-flow {
+  0%, 100% {
+    transform: translate3d(-2%, 0, 0);
+  }
+  50% {
+    transform: translate3d(2%, 0.8%, 0);
+  }
+}
+
+@keyframes symbol-room-atmosphere-ascending {
+  0%, 100% {
+    transform: translate3d(0, 3%, 0) scale(0.98);
+    opacity: 0.16;
+  }
+  50% {
+    transform: translate3d(0, -3%, 0) scale(1.04);
+    opacity: 0.3;
+  }
+}
+
+@keyframes symbol-room-atmosphere-radiant {
+  0%, 100% {
+    transform: scale(0.96);
+    opacity: 0.16;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.28;
+  }
+}
+
+@keyframes symbol-room-atmosphere-mist {
+  0%, 100% {
+    transform: translate3d(-2%, 0, 0);
+  }
+  50% {
+    transform: translate3d(2%, 1%, 0);
+  }
+}
+
+@keyframes symbol-room-atmosphere-particles-rise {
+  from {
+    background-position: 0 0, 2.6rem 4.4rem;
+  }
+  to {
+    background-position: 0 -22rem, 2.6rem -23.6rem;
+  }
+}
+
+@keyframes symbol-room-atmosphere-dust {
+  0%, 100% {
+    transform: translate3d(-0.5%, 0, 0);
+    opacity: 0.16;
+  }
+  50% {
+    transform: translate3d(0.5%, -0.6%, 0);
+    opacity: 0.28;
+  }
+}
+
+@keyframes symbol-room-atmosphere-refraction {
+  0%, 100% {
+    transform: translate3d(-1%, 0, 0);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate3d(1%, 0, 0);
+    opacity: 0.36;
+  }
+}
+
+@keyframes symbol-room-atmosphere-emission {
+  0%, 100% {
+    transform: scale(0.98);
+    opacity: 0.22;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.38;
+  }
+}
+
+@keyframes symbol-room-atmosphere-beam {
+  0%, 100% {
+    transform: translate3d(-0.8%, 0, 0);
+    opacity: 0.22;
+  }
+  50% {
+    transform: translate3d(0.8%, 0, 0);
+    opacity: 0.34;
+  }
+}
+
 @keyframes symbol-room-depth-breath {
   0%, 100% {
     opacity: 0.34;
@@ -1530,7 +1770,7 @@ body {
   }
 }
 
-@keyframes symbol-room-motion-field {
+@keyframes symbol-room-encounter-motion-field {
   0%, 100% {
     transform: scale(0.98);
     opacity: 0.18;
@@ -2081,7 +2321,7 @@ body {
   .symbol-room-resonance-display::before,
   .symbol-room-resonance-thread,
   .symbol-room-resonance-thread__motion-field,
-  .symbol-room-motion-field,
+  .symbol-room-encounter-motion-field,
   .symbol-room-encounter.is-resonating .symbol-room-resonance-veil,
   .symbol-room-encounter.is-resonance-origin .symbol-room-resonance-veil,
   .symbol-room-encounter.is-semantic-echo .symbol-room-resonance-veil,
@@ -2097,6 +2337,12 @@ body {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
+  }
+
+  .symbol-room-motion-field,
+  .symbol-room-particle-field,
+  .symbol-room-light-field {
+    animation: none !important;
   }
 
   .room-transition__cyan {

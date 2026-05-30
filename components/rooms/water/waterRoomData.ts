@@ -160,9 +160,18 @@ export const waterRoomDefinition: SymbolRoomDefinition = {
       background: "#02050b",
       accentRgb: "189, 160, 109",
       ambientRgb: "127, 184, 201",
+      shadowRgb: "0, 1, 6",
+      veilRgb: "1, 5, 12",
+      depthRgb: "2, 8, 16",
     },
-    atmosphere: "deep-mist",
-    motion: "wave",
+    atmosphereProfile: {
+      id: "deep-mist",
+      motion: "flow",
+      particles: "mist",
+      light: "refraction",
+      materiality: "fluid-glass",
+      rhythm: "tidal",
+    },
     overlayStyle: {
       background:
         "radial-gradient(circle at 50% 12%, rgba(var(--symbol-room-ambient-rgb), 0.045), transparent 28%), radial-gradient(circle at 48% 52%, rgba(var(--symbol-room-accent-rgb), 0.035), transparent 38%), var(--symbol-room-background)",

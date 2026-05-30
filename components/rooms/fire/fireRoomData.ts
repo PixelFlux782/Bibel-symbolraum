@@ -249,12 +249,21 @@ export const fireRoomDefinition: SymbolRoomDefinition = {
       background: "#100603",
       accentRgb: "232, 178, 82",
       ambientRgb: "217, 119, 42",
+      shadowRgb: "8, 2, 1",
+      veilRgb: "24, 8, 3",
+      depthRgb: "42, 16, 5",
     },
-    atmosphere: "warm-light-particles",
-    motion: "ascending",
+    atmosphereProfile: {
+      id: "warm-light-particles",
+      motion: "ascending",
+      particles: "sparks",
+      light: "emission",
+      materiality: "warm-ash",
+      rhythm: "pulsing",
+    },
     overlayStyle: {
       background:
-        "radial-gradient(circle at 50% 78%, rgba(var(--symbol-room-ambient-rgb), 0.16), transparent 34%), radial-gradient(circle at 52% 42%, rgba(var(--symbol-room-accent-rgb), 0.1), transparent 28%), linear-gradient(180deg, #090302, var(--symbol-room-background))",
+        "radial-gradient(circle at 50% 78%, rgba(var(--symbol-room-ambient-rgb), 0.16), transparent 34%), radial-gradient(circle at 52% 42%, rgba(var(--symbol-room-accent-rgb), 0.1), transparent 28%), linear-gradient(180deg, rgba(var(--symbol-room-shadow-rgb), 0.96), var(--symbol-room-background))",
     },
     encounterImage: {
       src: "/Visuals/cinem_lichtraum_backround.png",
