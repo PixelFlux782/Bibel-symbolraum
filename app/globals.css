@@ -631,62 +631,104 @@ body {
   background: linear-gradient(180deg, transparent, rgba(var(--gold-rgb), 0.34), transparent);
 }
 
-.water-room {
-  background:
-    radial-gradient(circle at 50% 12%, rgba(var(--cyan-rgb), 0.045), transparent 28%),
-    radial-gradient(circle at 48% 52%, rgba(var(--gold-rgb), 0.035), transparent 38%),
-    #02050b;
+.symbol-room {
+  --cyan-rgb: var(--symbol-room-ambient-rgb);
+  --gold-rgb: var(--symbol-room-accent-rgb);
+  background-color: var(--symbol-room-background);
 }
 
-.water-chamber {
+.symbol-room-ambient-text {
+  color: rgba(var(--symbol-room-ambient-rgb), 0.72);
+}
+
+.symbol-room-entrance-glow {
+  background:
+    radial-gradient(circle at 46% 24%, rgba(var(--symbol-room-accent-rgb), 0.12), transparent 26%),
+    radial-gradient(circle at 70% 66%, rgba(var(--symbol-room-ambient-rgb), 0.11), transparent 32%);
+}
+
+.symbol-room-encounter-glow {
+  background:
+    radial-gradient(circle at 50% 54%, rgba(var(--symbol-room-ambient-rgb), 0.16), transparent 28%),
+    radial-gradient(circle at 46% 46%, rgba(var(--symbol-room-accent-rgb), 0.15), transparent 24%);
+}
+
+.symbol-room-decision-line {
+  background: linear-gradient(90deg, transparent, rgba(var(--symbol-room-ambient-rgb), 0.12), transparent);
+}
+
+.symbol-room--water {
+  --symbol-room-depth-overlay:
+    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(0, 0, 0, 0.34) 72%, rgba(0, 0, 0, 0.72) 100%),
+    linear-gradient(180deg, rgba(2, 5, 12, 0.3), rgba(2, 5, 12, 0.72));
+}
+
+.symbol-room--light {
+  --symbol-room-depth-overlay:
+    linear-gradient(112deg, transparent 14%, rgba(var(--gold-rgb), 0.08) 14.2%, transparent 14.7%),
+    linear-gradient(68deg, transparent 76%, rgba(245, 241, 232, 0.055) 76.2%, transparent 76.7%),
+    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(0, 0, 0, 0.34) 72%, rgba(0, 0, 0, 0.72) 100%),
+    linear-gradient(180deg, rgba(3, 7, 18, 0.18), rgba(2, 5, 12, 0.68));
+}
+
+.symbol-room-depth {
   isolation: isolate;
 }
 
-.water-chamber::before {
+.symbol-room-depth::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(0, 0, 0, 0.34) 72%, rgba(0, 0, 0, 0.72) 100%),
-    linear-gradient(180deg, rgba(2, 5, 12, 0.3), rgba(2, 5, 12, 0.72));
+  background: var(--symbol-room-depth-overlay);
 }
 
-.water-chamber > * {
+.symbol-room-depth > * {
   position: relative;
   z-index: 1;
 }
 
-.water-chamber-breath {
+.symbol-room--light .symbol-room-motion-field,
+.symbol-room--light .symbol-room-resonance-thread__motion-field {
+  display: none;
+}
+
+.symbol-room--light .symbol-room-resonance-veins {
+  background:
+    linear-gradient(112deg, transparent 8%, color-mix(in srgb, var(--resonance-color) 36%, transparent) 22%, transparent 22.4%),
+    linear-gradient(68deg, transparent 56%, color-mix(in srgb, var(--resonance-color) 26%, transparent) 69%, transparent 69.4%);
+}
+
+.symbol-room-depth-breath {
   background:
     radial-gradient(circle, rgba(var(--gold-rgb), 0.09), rgba(var(--cyan-rgb), 0.035) 34%, transparent 68%);
   filter: blur(2px);
-  animation: water-chamber-breath 42s ease-in-out infinite;
+  animation: symbol-room-depth-breath 42s ease-in-out infinite;
 }
 
-.water-depth-current {
+.symbol-room-depth-current {
   background:
     linear-gradient(110deg, transparent 8%, rgba(var(--cyan-rgb), 0.035), transparent 46%),
-    radial-gradient(ellipse at 18% calc(22% + var(--water-depth-pressure, 0) * 8%), rgba(var(--cyan-rgb), 0.08), transparent 30%),
-    radial-gradient(ellipse at 70% calc(18% + var(--water-depth-pressure, 0) * 10%), rgba(var(--gold-rgb), 0.055), transparent 26%);
+    radial-gradient(ellipse at 18% calc(22% + var(--symbol-room-depth-pressure, 0) * 8%), rgba(var(--cyan-rgb), 0.08), transparent 30%),
+    radial-gradient(ellipse at 70% calc(18% + var(--symbol-room-depth-pressure, 0) * 10%), rgba(var(--gold-rgb), 0.055), transparent 26%);
   mix-blend-mode: screen;
-  animation: water-depth-current 18s ease-in-out infinite;
+  animation: symbol-room-depth-current 18s ease-in-out infinite;
 }
 
-.water-depth-gauge {
+.symbol-room-depth-gauge {
   position: relative;
   min-height: 34rem;
 }
 
-.water-depth-gauge__shaft {
+.symbol-room-depth-gauge__shaft {
   position: relative;
   min-height: 27rem;
   margin-left: 1.25rem;
 }
 
-.water-depth-gauge__shaft::before,
-.water-depth-gauge__shaft::after {
+.symbol-room-depth-gauge__shaft::before,
+.symbol-room-depth-gauge__shaft::after {
   content: "";
   position: absolute;
   left: 0;
@@ -697,14 +739,14 @@ body {
   pointer-events: none;
 }
 
-.water-depth-gauge__shaft::before {
+.symbol-room-depth-gauge__shaft::before {
   background:
     linear-gradient(180deg, transparent, rgba(var(--cyan-rgb), 0.28) 12%, rgba(var(--gold-rgb), 0.17) 48%, rgba(var(--cyan-rgb), 0.08) 82%, transparent),
     repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0 1px, transparent 1px 3.8rem);
   box-shadow: 0 0 34px rgba(var(--cyan-rgb), 0.16);
 }
 
-.water-depth-gauge__shaft::after {
+.symbol-room-depth-gauge__shaft::after {
   height: 5.6rem;
   top: var(--active-depth-offset);
   transform: translate(-50%, -50%);
@@ -716,7 +758,7 @@ body {
   transition: top 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.water-depth-mark {
+.symbol-room-depth-mark {
   position: absolute;
   left: 0;
   display: grid;
@@ -739,9 +781,9 @@ body {
     transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.water-depth-mark:hover,
-.water-depth-mark:focus-visible,
-.water-depth-mark.is-active {
+.symbol-room-depth-mark:hover,
+.symbol-room-depth-mark:focus-visible,
+.symbol-room-depth-mark.is-active {
   color: rgba(var(--foreground-rgb), 0.94);
   filter: blur(0);
   opacity: 1;
@@ -749,13 +791,13 @@ body {
   outline: none;
 }
 
-.water-depth-mark:focus-visible .water-depth-mark__label {
+.symbol-room-depth-mark:focus-visible .symbol-room-depth-mark__label {
   text-shadow:
     0 0 18px rgba(var(--cyan-rgb), 0.38),
     0 0 34px rgba(var(--gold-rgb), 0.18);
 }
 
-.water-depth-mark__sediment {
+.symbol-room-depth-mark__sediment {
   position: relative;
   width: 2rem;
   height: 1px;
@@ -763,7 +805,7 @@ body {
   box-shadow: 0 0 16px rgba(var(--cyan-rgb), 0.12);
 }
 
-.water-depth-mark__sediment::after {
+.symbol-room-depth-mark__sediment::after {
   content: "";
   position: absolute;
   left: 0;
@@ -774,7 +816,7 @@ body {
   opacity: 0.7;
 }
 
-.water-depth-mark__light {
+.symbol-room-depth-mark__light {
   position: absolute;
   left: -0.42rem;
   width: 0.85rem;
@@ -790,17 +832,17 @@ body {
     transform 700ms ease;
 }
 
-.water-depth-mark.is-active .water-depth-mark__light {
+.symbol-room-depth-mark.is-active .symbol-room-depth-mark__light {
   background: rgba(var(--gold-rgb), 0.94);
   box-shadow:
     0 0 24px rgba(var(--gold-rgb), 0.82),
     0 0 64px rgba(var(--cyan-rgb), 0.34),
     0 0 110px rgba(var(--gold-rgb), 0.2);
   transform: scale(1.25);
-  animation: water-depth-glow 4.8s ease-in-out infinite;
+  animation: symbol-room-depth-glow 4.8s ease-in-out infinite;
 }
 
-.water-depth-mark__label {
+.symbol-room-depth-mark__label {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: clamp(1.35rem, 2vw, 1.85rem);
   font-style: italic;
@@ -808,7 +850,7 @@ body {
   text-shadow: 0 0 22px rgba(var(--cyan-rgb), 0.08);
 }
 
-.water-depth-mark__number {
+.symbol-room-depth-mark__number {
   justify-self: end;
   font-size: 0.58rem;
   letter-spacing: 0.22em;
@@ -816,26 +858,26 @@ body {
   opacity: 0.42;
 }
 
-.water-depth-mark.is-active .water-depth-mark__number {
+.symbol-room-depth-mark.is-active .symbol-room-depth-mark__number {
   color: rgba(var(--gold-rgb), 0.44);
 }
 
-.water-glyph-chamber {
+.symbol-room-glyph-chamber {
   background:
     radial-gradient(circle at 50% 50%, rgba(var(--gold-rgb), 0.052), transparent 26%),
     linear-gradient(180deg, rgba(2, 5, 12, 0.86), rgba(2, 5, 12, 0.96));
 }
 
-.water-statement,
-.water-letter-station,
-.water-journey-station {
+.symbol-room-statement,
+.symbol-room-letter-station,
+.symbol-room-journey-station {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.018),
     inset 0 -1px 0 rgba(255, 255, 255, 0.014);
 }
 
-.water-statement::after,
-.water-letter-station::after {
+.symbol-room-statement::after,
+.symbol-room-letter-station::after {
   content: "";
   position: absolute;
   inset: 12% 8%;
@@ -845,16 +887,16 @@ body {
   opacity: 0.62;
 }
 
-.water-journey-station {
+.symbol-room-journey-station {
   border-top: 1px solid rgba(255, 255, 255, 0.035);
   border-bottom: 1px solid rgba(var(--gold-rgb), 0.045);
 }
 
-.water-engine-panel-active {
-  animation: water-engine-panel-pulse 6.8s ease-in-out infinite;
+.symbol-room-engine-encounter-active {
+  animation: symbol-room-engine-encounter-pulse 6.8s ease-in-out infinite;
 }
 
-.water-semantic-echo {
+.symbol-room-semantic-echo {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -870,7 +912,7 @@ body {
   backdrop-filter: blur(18px);
 }
 
-.water-semantic-echo__input {
+.symbol-room-semantic-echo__input {
   min-width: 0;
   border: 0;
   background: transparent;
@@ -883,11 +925,11 @@ body {
   outline: none;
 }
 
-.water-semantic-echo__input::placeholder {
+.symbol-room-semantic-echo__input::placeholder {
   color: rgba(var(--foreground-rgb), 0.42);
 }
 
-.water-semantic-echo__submit {
+.symbol-room-semantic-echo__submit {
   align-self: stretch;
   border-left: 1px solid rgba(var(--gold-rgb), 0.12);
   padding: 0 1rem;
@@ -902,14 +944,14 @@ body {
     box-shadow 300ms ease;
 }
 
-.water-semantic-echo__submit:hover,
-.water-semantic-echo__submit:focus-visible {
+.symbol-room-semantic-echo__submit:hover,
+.symbol-room-semantic-echo__submit:focus-visible {
   background: rgba(var(--gold-rgb), 0.075);
   color: rgba(var(--foreground-rgb), 0.92);
   box-shadow: inset 0 0 28px rgba(var(--gold-rgb), 0.05);
 }
 
-.water-semantic-echo__mark {
+.symbol-room-semantic-echo__mark {
   border: 1px solid rgba(var(--cyan-rgb), 0.3);
   background: rgba(var(--cyan-rgb), 0.075);
   padding: 0.26rem 0.72rem;
@@ -921,7 +963,7 @@ body {
   box-shadow: 0 0 24px rgba(var(--cyan-rgb), 0.12);
 }
 
-.water-semantic-echo-active::before {
+.symbol-room-semantic-echo-active::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -930,10 +972,10 @@ body {
   background: linear-gradient(105deg, transparent 8%, rgba(var(--cyan-rgb), 0.07), rgba(var(--gold-rgb), 0.055), transparent 68%);
   opacity: 0;
   mix-blend-mode: screen;
-  animation: water-semantic-echo-wave 4.8s ease-out 1;
+  animation: symbol-room-semantic-echo-wave 4.8s ease-out 1;
 }
 
-.water-resonance-display {
+.symbol-room-resonance-display {
   position: relative;
   overflow: hidden;
   background:
@@ -948,7 +990,7 @@ body {
   backdrop-filter: blur(16px);
 }
 
-.water-resonance-display--echo {
+.symbol-room-resonance-display--echo {
   border-top-color: rgba(var(--cyan-rgb), 0.24);
   border-bottom-color: rgba(var(--gold-rgb), 0.18);
   box-shadow:
@@ -956,34 +998,34 @@ body {
     inset 0 0 52px rgba(var(--gold-rgb), 0.035);
 }
 
-.water-resonance-display::before {
+.symbol-room-resonance-display::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb), 0.12), transparent);
   opacity: 0.42;
-  animation: water-resonance-sweep 5.8s ease-in-out infinite;
+  animation: symbol-room-resonance-sweep 5.8s ease-in-out infinite;
 }
 
-.water-resonance-panel.is-semantic-echo .water-resonance-veil {
+.symbol-room-encounter.is-semantic-echo .symbol-room-resonance-veil {
   opacity: 0.66;
-  animation: water-resonance-pulse 5.2s ease-in-out infinite;
+  animation: symbol-room-resonance-pulse 5.2s ease-in-out infinite;
   animation-delay: var(--resonance-delay);
 }
 
-.water-resonance-panel.is-semantic-echo {
+.symbol-room-encounter.is-semantic-echo {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--resonance-color) 24%, transparent),
     0 0 96px color-mix(in srgb, var(--resonance-color) 18%, transparent);
 }
 
-.water-resonance-path {
+.symbol-room-resonance-path {
   display: grid;
   gap: 1.1rem;
 }
 
-.water-resonance-thread {
+.symbol-room-resonance-thread {
   --thread-color: rgba(var(--cyan-rgb), 0.42);
   --thread-breath: 4.8s;
   position: relative;
@@ -995,43 +1037,43 @@ body {
   padding: 0.75rem 1rem 0.75rem 4.2rem;
   opacity: 0.82;
   box-shadow: 0 0 54px color-mix(in srgb, var(--thread-color) 18%, transparent);
-  animation: water-resonance-thread var(--thread-breath) ease-in-out infinite;
+  animation: symbol-room-resonance-thread var(--thread-breath) ease-in-out infinite;
   animation-delay: var(--resonance-delay);
 }
 
-.water-resonance-thread--strong {
+.symbol-room-resonance-thread--strong {
   --thread-color: rgba(var(--gold-rgb), 0.72);
   --thread-breath: 7.6s;
   opacity: 0.96;
   box-shadow: 0 0 76px rgba(var(--gold-rgb), 0.16);
 }
 
-.water-resonance-thread--secondary {
+.symbol-room-resonance-thread--secondary {
   --thread-color: rgba(var(--cyan-rgb), 0.62);
   --thread-breath: 4.4s;
 }
 
-.water-resonance-thread--mist {
+.symbol-room-resonance-thread--mist {
   --thread-color: rgba(216, 209, 194, 0.2);
   --thread-breath: 6.4s;
   opacity: 0.42;
   filter: blur(0.7px);
 }
 
-.water-resonance-thread__mist,
-.water-resonance-thread__vein,
-.water-resonance-thread__ripple {
+.symbol-room-resonance-thread__mist,
+.symbol-room-resonance-thread__vein,
+.symbol-room-resonance-thread__motion-field {
   position: absolute;
   pointer-events: none;
 }
 
-.water-resonance-thread__mist {
+.symbol-room-resonance-thread__mist {
   inset: 14% 18% 10% 0;
   background: radial-gradient(ellipse at left, color-mix(in srgb, var(--thread-color) 34%, transparent), transparent 68%);
   filter: blur(12px);
 }
 
-.water-resonance-thread__vein {
+.symbol-room-resonance-thread__vein {
   left: 0.8rem;
   top: 50%;
   width: 2.5rem;
@@ -1040,7 +1082,7 @@ body {
   box-shadow: 0 0 18px var(--thread-color);
 }
 
-.water-resonance-thread__ripple {
+.symbol-room-resonance-thread__motion-field {
   left: 1.45rem;
   top: 50%;
   width: 1.3rem;
@@ -1048,35 +1090,35 @@ body {
   border: 1px solid color-mix(in srgb, var(--thread-color) 52%, transparent);
   border-radius: 999px;
   transform: translate(-50%, -50%);
-  animation: water-resonance-ripple var(--thread-breath) ease-out infinite;
+  animation: symbol-room-resonance-motion-field var(--thread-breath) ease-out infinite;
 }
 
-.water-resonance-thread--mist .water-resonance-thread__vein,
-.water-resonance-thread--mist .water-resonance-thread__ripple {
+.symbol-room-resonance-thread--mist .symbol-room-resonance-thread__vein,
+.symbol-room-resonance-thread--mist .symbol-room-resonance-thread__motion-field {
   opacity: 0;
 }
 
-.water-resonance-panel {
+.symbol-room-encounter {
   --resonance-color: rgba(216, 209, 194, 0.18);
   --resonance-soft: rgba(216, 209, 194, 0.04);
 }
 
-.water-resonance-panel--strong {
+.symbol-room-encounter--strong {
   --resonance-color: rgba(var(--gold-rgb), 0.58);
   --resonance-soft: rgba(var(--gold-rgb), 0.13);
 }
 
-.water-resonance-panel--secondary {
+.symbol-room-encounter--secondary {
   --resonance-color: rgba(var(--cyan-rgb), 0.54);
   --resonance-soft: rgba(var(--cyan-rgb), 0.075);
 }
 
-.water-resonance-panel--mist {
+.symbol-room-encounter--mist {
   --resonance-color: rgba(216, 209, 194, 0.16);
   --resonance-soft: rgba(216, 209, 194, 0.045);
 }
 
-.water-resonance-veil {
+.symbol-room-resonance-veil {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -1088,21 +1130,21 @@ body {
   mix-blend-mode: screen;
 }
 
-.water-resonance-panel.is-resonating .water-resonance-veil,
-.water-resonance-panel.is-resonance-origin .water-resonance-veil {
+.symbol-room-encounter.is-resonating .symbol-room-resonance-veil,
+.symbol-room-encounter.is-resonance-origin .symbol-room-resonance-veil {
   opacity: 0.52;
-  animation: water-resonance-pulse 6.2s ease-in-out infinite;
+  animation: symbol-room-resonance-pulse 6.2s ease-in-out infinite;
   animation-delay: var(--resonance-delay);
 }
 
-.water-resonance-panel.is-resonating {
+.symbol-room-encounter.is-resonating {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--resonance-color) 18%, transparent),
     0 0 82px color-mix(in srgb, var(--resonance-color) 16%, transparent);
 }
 
-.water-resonance-ripples,
-.water-resonance-veins {
+.symbol-room-motion-field,
+.symbol-room-resonance-veins {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -1110,14 +1152,14 @@ body {
   mix-blend-mode: screen;
 }
 
-.water-resonance-ripples {
+.symbol-room-motion-field {
   background: repeating-radial-gradient(ellipse at 48% 58%, transparent 0 8%, color-mix(in srgb, var(--resonance-color) 13%, transparent) 8.3%, transparent 8.8% 16%);
   opacity: 0.28;
-  animation: water-resonance-waterline 8s ease-in-out infinite;
+  animation: symbol-room-motion-field 8s ease-in-out infinite;
   animation-delay: var(--resonance-delay);
 }
 
-.water-resonance-veins {
+.symbol-room-resonance-veins {
   background:
     linear-gradient(112deg, transparent 8%, color-mix(in srgb, var(--resonance-color) 30%, transparent) 22%, transparent 22.5%),
     linear-gradient(68deg, transparent 56%, color-mix(in srgb, var(--resonance-color) 20%, transparent) 69%, transparent 69.5%);
@@ -1125,24 +1167,24 @@ body {
   filter: blur(0.35px);
 }
 
-.water-resonance-panel--strong .water-resonance-ripples {
+.symbol-room-encounter--strong .symbol-room-motion-field {
   animation-duration: 11s;
 }
 
-.water-resonance-panel--strong .water-resonance-veins {
+.symbol-room-encounter--strong .symbol-room-resonance-veins {
   opacity: 0.46;
 }
 
-.water-resonance-panel--mist .water-resonance-ripples {
+.symbol-room-encounter--mist .symbol-room-motion-field {
   opacity: 0.08;
   filter: blur(3px);
 }
 
-.water-resonance-panel--mist .water-resonance-veins {
+.symbol-room-encounter--mist .symbol-room-resonance-veins {
   opacity: 0;
 }
 
-.water-fragment-shell {
+.symbol-room-fragment-shell {
   position: relative;
   isolation: isolate;
   padding: clamp(1.25rem, 3vw, 2.9rem);
@@ -1154,7 +1196,7 @@ body {
     opacity 700ms ease;
 }
 
-.water-fragment-shell::before {
+.symbol-room-fragment-shell::before {
   content: "";
   position: absolute;
   inset: -0.9rem -0.4rem;
@@ -1167,7 +1209,7 @@ body {
   filter: blur(0.2px);
 }
 
-.water-fragment-shell::after {
+.symbol-room-fragment-shell::after {
   content: "";
   position: absolute;
   inset: 8% 0 0;
@@ -1183,18 +1225,18 @@ body {
   clip-path: polygon(0 5%, 76% 0, 100% 18%, 94% 100%, 8% 92%);
 }
 
-.water-resonance-panel.is-resonance-origin .water-fragment-shell {
+.symbol-room-encounter.is-resonance-origin .symbol-room-fragment-shell {
   filter:
     drop-shadow(0 0 28px color-mix(in srgb, var(--resonance-color) 22%, transparent))
     drop-shadow(0 0 58px rgba(var(--cyan-rgb), 0.06));
 }
 
-.water-resonance-panel:hover .water-fragment-shell,
-.water-resonance-panel:focus-visible .water-fragment-shell {
+.symbol-room-encounter:hover .symbol-room-fragment-shell,
+.symbol-room-encounter:focus-visible .symbol-room-fragment-shell {
   transform: translate3d(0, -0.55rem, 0) scale(1.012);
 }
 
-.water-fragment-trace {
+.symbol-room-fragment-trace {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -1207,7 +1249,7 @@ body {
   transform: skewY(-2deg);
 }
 
-.water-fragment-orbit {
+.symbol-room-fragment-orbit {
   position: absolute;
   inset: -2rem -1.2rem auto auto;
   display: grid;
@@ -1216,7 +1258,7 @@ body {
   pointer-events: none;
 }
 
-.water-fragment-sign {
+.symbol-room-fragment-sign {
   display: grid;
   gap: 0.12rem;
   min-width: 4rem;
@@ -1226,17 +1268,17 @@ body {
   text-align: right;
   text-shadow: 0 0 18px rgba(var(--cyan-rgb), 0.16);
   opacity: 0.64;
-  animation: water-fragment-drift 8s ease-in-out infinite;
+  animation: symbol-room-fragment-drift 8s ease-in-out infinite;
   animation-delay: var(--sign-delay);
 }
 
-.water-fragment-sign span:first-child {
+.symbol-room-fragment-sign span:first-child {
   font-size: clamp(1.45rem, 2.4vw, 2.25rem);
   line-height: 1;
   color: rgba(var(--cyan-rgb), 0.68);
 }
 
-.water-fragment-sign span:last-child {
+.symbol-room-fragment-sign span:last-child {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.56rem;
   letter-spacing: 0.18em;
@@ -1244,11 +1286,11 @@ body {
   color: rgba(var(--gold-rgb), 0.48);
 }
 
-.water-fragment-index,
-.water-depth-inscription,
-.water-meaning-quality,
-.water-resonance-weight,
-.water-semantic-echo__mark {
+.symbol-room-fragment-index,
+.symbol-room-depth-inscription,
+.symbol-room-meaning-quality,
+.symbol-room-resonance-weight,
+.symbol-room-semantic-echo__mark {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.62rem;
   letter-spacing: 0.22em;
@@ -1256,12 +1298,12 @@ body {
   text-transform: uppercase;
 }
 
-.water-fragment-index {
+.symbol-room-fragment-index {
   color: rgba(var(--cyan-rgb), 0.7);
   text-shadow: 0 0 18px rgba(var(--cyan-rgb), 0.16);
 }
 
-.water-meaning-quality {
+.symbol-room-meaning-quality {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: 0.98rem;
   font-style: italic;
@@ -1271,32 +1313,32 @@ body {
   text-shadow: 0 0 24px rgba(var(--gold-rgb), 0.12);
 }
 
-.water-depth-inscription {
+.symbol-room-depth-inscription {
   color: rgba(var(--cyan-rgb), 0.66);
   text-shadow: 0 0 18px rgba(var(--cyan-rgb), 0.14);
 }
 
-.water-light-inscription {
+.symbol-room-light-inscription {
   text-shadow:
     0 0 18px rgba(var(--cyan-rgb), 0.13),
     0 0 46px color-mix(in srgb, var(--resonance-color) 16%, transparent);
 }
 
-.water-reflection-text,
-.water-whisper-line,
-.water-quality-murmur {
+.symbol-room-reflection-text,
+.symbol-room-whisper-line,
+.symbol-room-quality-murmur {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   line-height: 1.55;
   color: rgba(var(--foreground-rgb), 0.72);
   text-shadow: 0 0 24px rgba(var(--cyan-rgb), 0.09);
 }
 
-.water-glass-shard {
+.symbol-room-glass-shard {
   position: relative;
   padding: 1rem 0 1rem 1.2rem;
 }
 
-.water-glass-shard::before {
+.symbol-room-glass-shard::before {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
@@ -1305,14 +1347,14 @@ body {
   box-shadow: 0 0 24px rgba(var(--gold-rgb), 0.14);
 }
 
-.water-fragment-constellation {
+.symbol-room-fragment-constellation {
   display: flex;
   flex-wrap: wrap;
   gap: 0.7rem 1rem;
   align-items: center;
 }
 
-.water-fragment-constellation span {
+.symbol-room-fragment-constellation span {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: clamp(1.1rem, 2vw, 1.55rem);
   line-height: 1;
@@ -1322,13 +1364,13 @@ body {
     0 0 1px rgba(var(--foreground-rgb), 0.28);
 }
 
-.water-quality-murmur {
+.symbol-room-quality-murmur {
   font-size: 0.98rem;
   color: rgba(var(--gold-rgb), 0.76);
 }
 
-.water-oracle-kicker,
-.water-oracle-murmur {
+.symbol-room-oracle-kicker,
+.symbol-room-oracle-murmur {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-style: italic;
   letter-spacing: 0.04em;
@@ -1336,16 +1378,16 @@ body {
   text-shadow: 0 0 20px rgba(var(--cyan-rgb), 0.16);
 }
 
-.water-oracle-kicker {
+.symbol-room-oracle-kicker {
   font-size: 0.98rem;
 }
 
-.water-oracle-murmur {
+.symbol-room-oracle-murmur {
   font-size: 0.86rem;
   color: rgba(var(--gold-rgb), 0.72);
 }
 
-.water-oracle-text {
+.symbol-room-oracle-text {
   max-width: 38rem;
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: 1.04rem;
@@ -1354,7 +1396,7 @@ body {
   color: rgba(var(--foreground-rgb), 0.72);
 }
 
-.water-semantic-echo__mark {
+.symbol-room-semantic-echo__mark {
   border: 0;
   background: transparent;
   padding: 0;
@@ -1363,12 +1405,12 @@ body {
   text-shadow: 0 0 22px rgba(var(--cyan-rgb), 0.18);
 }
 
-.water-resonance-weight {
+.symbol-room-resonance-weight {
   color: color-mix(in srgb, var(--resonance-color) 82%, rgba(var(--foreground-rgb), 0.58));
   text-shadow: 0 0 22px color-mix(in srgb, var(--resonance-color) 20%, transparent);
 }
 
-.water-resonance-detail {
+.symbol-room-resonance-detail {
   display: grid;
   gap: 1.5rem;
   background:
@@ -1379,13 +1421,13 @@ body {
   clip-path: polygon(0 6%, 96% 0, 100% 88%, 4% 100%);
 }
 
-.water-oracle-qualities {
+.symbol-room-oracle-qualities {
   align-self: end;
   padding: 0.8rem 0 0.35rem 1rem;
   border-left: 1px solid rgba(var(--gold-rgb), 0.18);
 }
 
-.water-resonance-whisper {
+.symbol-room-resonance-whisper {
   max-width: 34rem;
   border-left: 1px solid color-mix(in srgb, var(--resonance-color) 28%, transparent);
   padding-left: 1rem;
@@ -1396,7 +1438,7 @@ body {
   opacity: 0.72;
 }
 
-@keyframes water-chamber-breath {
+@keyframes symbol-room-depth-breath {
   0%, 100% {
     opacity: 0.34;
     transform: translate3d(-50%, -50%, 0) scale(0.94);
@@ -1408,7 +1450,7 @@ body {
 }
 
 /* Animationen für den Ersatz von Framer Motion */
-@keyframes water-depth-current {
+@keyframes symbol-room-depth-current {
   0%, 100% {
     opacity: 0.38;
     transform: translate3d(-0.45rem, 0, 0);
@@ -1419,7 +1461,7 @@ body {
   }
 }
 
-@keyframes water-depth-glow {
+@keyframes symbol-room-depth-glow {
   0%, 100% {
     filter: blur(0);
     transform: scale(1.16);
@@ -1430,7 +1472,7 @@ body {
   }
 }
 
-@keyframes water-engine-panel-pulse {
+@keyframes symbol-room-engine-encounter-pulse {
   0%, 100% {
     filter: drop-shadow(0 0 0 rgba(var(--cyan-rgb), 0));
   }
@@ -1439,7 +1481,7 @@ body {
   }
 }
 
-@keyframes water-resonance-sweep {
+@keyframes symbol-room-resonance-sweep {
   0%, 100% {
     transform: translateX(-70%);
     opacity: 0;
@@ -1452,7 +1494,7 @@ body {
   }
 }
 
-@keyframes water-resonance-thread {
+@keyframes symbol-room-resonance-thread {
   0%, 100% {
     transform: translate3d(0, 0, 0);
     filter: blur(0);
@@ -1463,7 +1505,7 @@ body {
   }
 }
 
-@keyframes water-resonance-pulse {
+@keyframes symbol-room-resonance-pulse {
   0%, 100% {
     transform: scale(0.985);
     filter: blur(0.4px);
@@ -1474,7 +1516,7 @@ body {
   }
 }
 
-@keyframes water-resonance-ripple {
+@keyframes symbol-room-resonance-motion-field {
   0% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.62);
@@ -1488,7 +1530,7 @@ body {
   }
 }
 
-@keyframes water-resonance-waterline {
+@keyframes symbol-room-motion-field {
   0%, 100% {
     transform: scale(0.98);
     opacity: 0.18;
@@ -1499,7 +1541,7 @@ body {
   }
 }
 
-@keyframes water-fragment-drift {
+@keyframes symbol-room-fragment-drift {
   0%, 100% {
     opacity: 0.48;
     transform: translate3d(var(--sign-x), 0, 0);
@@ -1510,7 +1552,7 @@ body {
   }
 }
 
-@keyframes water-semantic-echo-wave {
+@keyframes symbol-room-semantic-echo-wave {
   0% {
     opacity: 0;
     transform: translateX(-34%);
@@ -2034,19 +2076,19 @@ body {
   .symbol-node-pulse,
   .symbol-portal-breath,
   .symbol-portal-title,
-  .water-chamber-breath,
-  .water-engine-panel-active,
-  .water-resonance-display::before,
-  .water-resonance-thread,
-  .water-resonance-thread__ripple,
-  .water-resonance-ripples,
-  .water-resonance-panel.is-resonating .water-resonance-veil,
-  .water-resonance-panel.is-resonance-origin .water-resonance-veil,
-  .water-resonance-panel.is-semantic-echo .water-resonance-veil,
-  .water-depth-current,
-  .water-depth-mark.is-active .water-depth-mark__light,
-  .water-fragment-sign,
-  .water-semantic-echo-active::before,
+  .symbol-room-depth-breath,
+  .symbol-room-engine-encounter-active,
+  .symbol-room-resonance-display::before,
+  .symbol-room-resonance-thread,
+  .symbol-room-resonance-thread__motion-field,
+  .symbol-room-motion-field,
+  .symbol-room-encounter.is-resonating .symbol-room-resonance-veil,
+  .symbol-room-encounter.is-resonance-origin .symbol-room-resonance-veil,
+  .symbol-room-encounter.is-semantic-echo .symbol-room-resonance-veil,
+  .symbol-room-depth-current,
+  .symbol-room-depth-mark.is-active .symbol-room-depth-mark__light,
+  .symbol-room-fragment-sign,
+  .symbol-room-semantic-echo-active::before,
   .room-transition,
   .room-transition__dark,
   .room-transition__cyan,
@@ -2173,19 +2215,19 @@ body {
     inset: -0.95rem;
   }
 
-  .water-statement {
+  .symbol-room-statement {
     min-height: 82svh;
     padding-top: 5rem;
     padding-bottom: 5rem;
   }
 
-  .water-letter-station {
+  .symbol-room-letter-station {
     min-height: 82svh;
     padding-top: 5rem;
     padding-bottom: 5rem;
   }
 
-  .water-journey-station {
+  .symbol-room-journey-station {
     min-height: 92svh;
     margin-left: -1.25rem;
     margin-right: -1.25rem;
@@ -2193,7 +2235,7 @@ body {
     padding-right: 1.25rem;
   }
 
-  .water-chamber-breath {
+  .symbol-room-depth-breath {
     height: 24rem;
     width: 24rem;
   }
