@@ -1,10 +1,11 @@
-import WaterRoom from "@/components/rooms/water/WaterRoom";
+import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import { waterEngineData } from "@/components/rooms/water/waterEngineData";
 
 export const metadata = {
   title: "Wasserraum",
-  description: "Ein cineastischer Symbolraum zu מים / Majim / Wasser.",
+  description: "Ein cineastischer Symbolraum zu \u05de\u05d9\u05dd / Majim / Wasser.",
 };
 
 export default function WasserRaumPage() {
-  return <WaterRoom />;
+  return <SymbolEngineRoom data={waterEngineData} />;
 }

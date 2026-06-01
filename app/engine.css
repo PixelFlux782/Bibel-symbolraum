@@ -1,0 +1,242 @@
+/* Generic symbol engine: data changes the room, the visual language stays shared. */
+.symbol-engine {
+  --symbol-engine-density: 0.5;
+  --symbol-engine-image-opacity: 1;
+  --symbol-engine-veil-opacity: 0.65;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #01040a;
+  color: rgba(var(--foreground-rgb), 0.94);
+}
+
+.symbol-engine__scenes,
+.symbol-engine__scene,
+.symbol-engine__veil,
+.symbol-engine__current {
+  position: absolute;
+  inset: 0;
+}
+
+.symbol-engine__scene { animation: symbol-engine-scene-arrive 1800ms ease both; }
+.symbol-engine__image,
+.symbol-engine__background-image { object-fit: cover; object-position: center; }
+.symbol-engine__image { opacity: var(--symbol-engine-image-opacity); }
+.symbol-engine__background-image { opacity: 0.18; mix-blend-mode: screen; }
+
+.symbol-engine__veil {
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(0, 3, 8, var(--symbol-engine-veil-opacity)), rgba(0, 3, 8, 0.54) 44%, rgba(0, 3, 8, 0.22) 72%, rgba(0, 3, 8, 0.66)),
+    linear-gradient(180deg, rgba(0, 3, 8, 0.62), transparent 34%, rgba(0, 3, 8, 0.76));
+}
+
+.symbol-engine__current {
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 68% 26%, rgba(var(--cyan-rgb), calc(0.05 + var(--symbol-engine-density) * 0.1)), transparent 28%),
+    linear-gradient(112deg, transparent 22%, rgba(var(--cyan-rgb), 0.07) 22.3%, transparent 23%);
+  mix-blend-mode: screen;
+  animation: water-journey-current 16s ease-in-out infinite;
+}
+
+.symbol-engine__navigation {
+  position: absolute;
+  left: clamp(1.25rem, 5vw, 5rem);
+  right: clamp(1.25rem, 5vw, 5rem);
+  top: clamp(5.4rem, 10vh, 7.2rem);
+  z-index: 5;
+}
+
+.symbol-engine__navigation-label,
+.symbol-engine__navigation-step,
+.symbol-engine__eyebrow,
+.symbol-engine__inscription,
+.symbol-engine__layer-kicker,
+.symbol-engine__layer-heading p,
+.symbol-engine__reflection p {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.symbol-engine__navigation-label { color: rgba(var(--gold-rgb), 0.86); }
+.symbol-engine__navigation ol { display: flex; flex-wrap: wrap; gap: 0.7rem clamp(0.85rem, 2vw, 1.8rem); margin-top: 0.9rem; }
+
+.symbol-engine__navigation-step {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(var(--foreground-rgb), 0.4);
+  transition: color 700ms ease;
+}
+
+.symbol-engine__navigation-mark {
+  width: 0.38rem;
+  height: 0.38rem;
+  border: 1px solid rgba(var(--cyan-rgb), 0.4);
+  border-radius: 999px;
+  transition: background 700ms ease, box-shadow 700ms ease, transform 700ms ease;
+}
+
+.symbol-engine__navigation-step.is-passed,
+.symbol-engine__navigation-step.is-active { color: rgba(var(--foreground-rgb), 0.82); }
+.symbol-engine__navigation-step.is-passed .symbol-engine__navigation-mark { background: rgba(var(--cyan-rgb), 0.48); }
+.symbol-engine__navigation-step.is-active .symbol-engine__navigation-mark {
+  background: rgba(var(--gold-rgb), 0.94);
+  box-shadow: 0 0 1.4rem rgba(var(--gold-rgb), 0.7);
+  transform: scale(1.4);
+}
+
+.symbol-engine__content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  min-height: 100svh;
+  max-width: min(50rem, 60vw);
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 10rem clamp(1.25rem, 5vw, 5rem) clamp(3rem, 8vh, 6rem);
+  animation: water-journey-arrive 1100ms ease both;
+}
+
+.symbol-engine__eyebrow { color: rgba(var(--cyan-rgb), 0.9); }
+.symbol-engine__glyph {
+  margin-bottom: -1.6rem;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(5rem, 12vw, 9rem);
+  line-height: 0.9;
+  color: rgba(var(--gold-rgb), 0.82);
+  text-shadow: 0 0 3rem rgba(var(--gold-rgb), 0.2);
+}
+
+.symbol-engine__content h1 {
+  margin-top: 1rem;
+  max-width: 42rem;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(2.8rem, 5.4vw, 5.7rem);
+  font-style: italic;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.symbol-engine__text {
+  max-width: 38rem;
+  margin-top: 1.25rem;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-style: italic;
+  line-height: 1.58;
+  color: rgba(var(--foreground-rgb), 0.78);
+}
+
+.symbol-engine__inscription { margin-top: 1.15rem; color: rgba(var(--gold-rgb), 0.78); }
+.symbol-engine__actions { display: flex; align-items: center; gap: 1.4rem; margin-top: 1.6rem; }
+.symbol-engine__action,
+.symbol-engine__back {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.symbol-engine__action {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.56);
+  padding: 0.72rem 0 0.82rem;
+  color: rgba(242, 222, 174, 0.94);
+}
+
+.symbol-engine__action span {
+  width: 2.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.88), transparent);
+  transition: width 600ms ease;
+}
+
+.symbol-engine__action:hover span,
+.symbol-engine__action:focus-visible span { width: 3.8rem; }
+.symbol-engine__back { color: rgba(var(--foreground-rgb), 0.52); }
+
+.symbol-engine__layers {
+  position: absolute;
+  right: clamp(1.25rem, 5vw, 5rem);
+  bottom: clamp(2.8rem, 7vh, 5rem);
+  z-index: 4;
+  display: grid;
+  width: min(30rem, 34vw);
+  gap: 0.55rem;
+}
+
+.symbol-engine__layer,
+.symbol-engine__reflection {
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  background: linear-gradient(135deg, rgba(2, 6, 13, 0.74), rgba(2, 6, 13, 0.38));
+  padding: 0.82rem 0.95rem;
+  box-shadow: inset 0 0 2rem rgba(var(--cyan-rgb), 0.02);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.symbol-engine__layer-heading { display: flex; align-items: baseline; gap: 0.7rem; }
+.symbol-engine__layer-heading p,
+.symbol-engine__layer-kicker,
+.symbol-engine__reflection p { color: rgba(var(--cyan-rgb), 0.78); }
+.symbol-engine__layer-heading span { color: rgba(var(--gold-rgb), 0.9); font-family: var(--font-serif), serif; font-size: 1.7rem; line-height: 1; }
+.symbol-engine__layer-heading i { color: rgba(var(--foreground-rgb), 0.62); font-family: var(--font-serif), serif; font-size: 0.92rem; }
+.symbol-engine__hebrew-letters { display: flex; flex-wrap: wrap; gap: 0.65rem 1.05rem; margin-top: 0.65rem; }
+.symbol-engine__hebrew-letters article { display: flex; align-items: center; gap: 0.42rem; }
+.symbol-engine__hebrew-letters span { color: rgba(var(--gold-rgb), 0.82); font-family: var(--font-serif), serif; font-size: 1.55rem; line-height: 1; }
+.symbol-engine__hebrew-letters h3,
+.symbol-engine__biblical-layer h3 { color: rgba(var(--foreground-rgb), 0.88); font-family: var(--font-serif), serif; font-size: 0.94rem; font-style: italic; }
+.symbol-engine__hebrew-letters p,
+.symbol-engine__layer-copy,
+.symbol-engine__biblical-layer article p:last-child { color: rgba(var(--foreground-rgb), 0.58); font-family: var(--font-serif), serif; font-size: 0.78rem; line-height: 1.45; }
+.symbol-engine__layer-copy { margin-top: 0.62rem; }
+.symbol-engine__biblical-layer { display: grid; gap: 0.48rem; }
+.symbol-engine__biblical-layer article + article { border-top: 1px solid rgba(var(--gold-rgb), 0.08); padding-top: 0.46rem; }
+.symbol-engine__scene-reference { color: rgba(var(--gold-rgb), 0.72); font-family: var(--font-sans), system-ui, sans-serif; font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.symbol-engine__connections ul { display: flex; flex-wrap: wrap; gap: 0.42rem; margin-top: 0.55rem; }
+.symbol-engine__connections li { border: 1px solid rgba(var(--gold-rgb), 0.13); padding: 0.35rem 0.5rem; }
+.symbol-engine__connections span,
+.symbol-engine__connections i { display: block; font-family: var(--font-sans), system-ui, sans-serif; font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.symbol-engine__connections span { color: rgba(var(--foreground-rgb), 0.76); }
+.symbol-engine__connections i { margin-top: 0.12rem; color: rgba(var(--cyan-rgb), 0.62); }
+.symbol-engine__reflection blockquote { margin-top: 0.5rem; color: rgba(var(--foreground-rgb), 0.84); font-family: var(--font-serif), serif; font-size: 1rem; font-style: italic; line-height: 1.42; }
+
+@keyframes symbol-engine-scene-arrive {
+  from { opacity: 0; transform: scale(1.045); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 1023px) {
+  .symbol-engine__content { max-width: 78vw; padding-bottom: 15.5rem; }
+  .symbol-engine__layers { right: 1.25rem; bottom: 1.15rem; left: 1.25rem; grid-template-columns: 1.2fr 1fr; width: auto; }
+  .symbol-engine__biblical-layer article:nth-of-type(n + 2),
+  .symbol-engine__layer-copy { display: none; }
+  .symbol-engine__reflection { grid-column: span 2; }
+}
+
+@media (max-width: 640px) {
+  .symbol-engine__navigation { top: 5.6rem; }
+  .symbol-engine__navigation ol { gap: 0.74rem; }
+  .symbol-engine__navigation-step { font-size: 0; }
+  .symbol-engine__content { max-width: none; padding-bottom: 18.5rem; }
+  .symbol-engine__glyph { margin-bottom: -1.2rem; font-size: 4.8rem; }
+  .symbol-engine__content h1 { font-size: clamp(2.5rem, 12vw, 3.65rem); }
+  .symbol-engine__text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+  .symbol-engine__layers { gap: 0.42rem; }
+  .symbol-engine__layer,
+  .symbol-engine__reflection { padding: 0.68rem 0.72rem; }
+  .symbol-engine__biblical-layer article p:last-child,
+  .symbol-engine__hebrew-letters p { display: none; }
+  .symbol-engine__hebrew-letters { gap: 0.45rem 0.65rem; }
+  .symbol-engine__connections { display: none; }
+  .symbol-engine__reflection { grid-column: span 1; }
+  .symbol-engine__reflection blockquote { font-size: 0.88rem; }
+}
