@@ -1,5 +1,6 @@
 export type HebrewLetterMeaning = {
   id: string;
+  hebrewLetterId?: string;
   letter: string;
   name: string;
   position: string;
@@ -8,6 +9,9 @@ export type HebrewLetterMeaning = {
 };
 
 export type HebrewLogic = {
+  hebrewWordId?: string;
+  hebrewLetterIds?: string[];
+  hebrewMeaningFieldIds?: string[];
   word: string;
   transliteration: string;
   translation: string;
@@ -63,6 +67,8 @@ export type SymbolJourneyState = {
   inscription: string;
   visual: VisualState;
   hebrewLetterIds: string[];
+  hebrewCodexLetterIds?: string[];
+  hebrewMeaningFieldIds?: string[];
   hebrewSummary: string;
   biblicalSceneIds: string[];
   connectionIds: string[];
