@@ -1,4 +1,5 @@
-import LightRoom from "@/components/rooms/light/LightRoom";
+import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import { lightEngineData } from "@/components/rooms/light/lightEngineData";
 
 export const metadata = {
   title: "Lichtraum",
@@ -6,5 +7,5 @@ export const metadata = {
 };
 
 export default function LichtRaumPage() {
-  return <LightRoom />;
+  return <SymbolEngineRoom data={lightEngineData} />;
 }

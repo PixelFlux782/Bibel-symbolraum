@@ -18,6 +18,20 @@ export const hebrewMeaningLinks: HebrewMeaningLink[] = [
     transliteration: "majim",
     nodeIds: ["depth", "birth", "hiddenness"],
   },
+  {
+    id: "hebrew-or",
+    hebrewWordId: "or",
+    hebrew: "\u05d0\u05d5\u05e8",
+    transliteration: "or",
+    nodeIds: ["light", "revelation", "awareness"],
+  },
+  {
+    id: "hebrew-esh",
+    hebrewWordId: "esh",
+    hebrew: "\u05d0\u05e9",
+    transliteration: "esch",
+    nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
+  },
 ];
 
 export const symbolMeaningLinks: SymbolMeaningLink[] = [
@@ -27,6 +41,20 @@ export const symbolMeaningLinks: SymbolMeaningLink[] = [
     label: "Wasser",
     aliases: ["water"],
     nodeIds: ["depth", "transition", "purification"],
+  },
+  {
+    id: "symbol-light",
+    symbolId: "licht",
+    label: "Licht",
+    aliases: ["light"],
+    nodeIds: ["light", "revelation", "guidance"],
+  },
+  {
+    id: "symbol-fire",
+    symbolId: "feuer",
+    label: "Feuer",
+    aliases: ["fire"],
+    nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
   },
 ];
 
@@ -49,6 +77,39 @@ export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
     label: "Taufe",
     aliases: ["baptism"],
     nodeIds: ["purification", "life"],
+  },
+  {
+    id: "biblical-genesis-1-light",
+    biblicalReferenceId: "genesis-1-3",
+    label: "Genesis 1 Licht",
+    aliases: ["Genesis 1"],
+    nodeIds: ["revelation", "life"],
+  },
+  {
+    id: "biblical-john-1",
+    biblicalReferenceId: "john-1-4-5",
+    label: "Johannes 1",
+    nodeIds: ["light", "revelation"],
+  },
+  {
+    id: "biblical-exodus-3-fire",
+    biblicalReferenceId: "exodus-3-2",
+    label: "Brennender Dornbusch",
+    aliases: ["Dornbusch"],
+    nodeIds: ["fire", "presence", "calling"],
+  },
+  {
+    id: "biblical-exodus-13-fire",
+    biblicalReferenceId: "exodus-13-21",
+    label: "Feuersaeule",
+    nodeIds: ["fire", "presence", "guidance"],
+  },
+  {
+    id: "biblical-malachi-3",
+    biblicalReferenceId: "malachi-3-2-3",
+    label: "Laeuterndes Feuer",
+    aliases: ["Maleachi 3"],
+    nodeIds: ["fire", "transformation", "purification"],
   },
 ];
 

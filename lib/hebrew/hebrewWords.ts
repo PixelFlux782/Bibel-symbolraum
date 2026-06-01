@@ -96,11 +96,19 @@ export const hebrewWords: HebrewWord[] = [
     letterIds: ["aleph", "vav", "resh"],
     possibleRootIds: ["root-or"],
     meaningFields: [
-      meaningField("or-orientation", "Orientierung", "Licht macht einen nächsten Schritt sichtbar.", ["Klarheit", "Hoffnung"]),
+      meaningField("or-light", "Licht", "Licht macht sichtbar und unterscheidbar.", ["Helligkeit", "Klarheit"]),
+      meaningField("or-revelation", "Offenbarung", "Licht kann Verborgenes hervortreten lassen.", ["Offenheit", "Erkenntnis"]),
+      meaningField("or-awareness", "Erkenntnis", "Licht kann Wahrnehmung und Bewusstsein oeffnen.", ["Bewusstsein", "Klarheit"]),
+      meaningField("or-orientation", "Orientierung", "Licht macht einen naechsten Schritt sichtbar.", ["Klarheit", "Hoffnung"]),
+      meaningField("or-presence", "Gegenwart", "Licht kann eine gegenwaertige Wirklichkeit erfahrbar machen.", ["Gegenwart", "Nahe"]),
+      meaningField("or-visibility", "Sichtbarkeit", "Licht laesst Konturen und Unterschiede hervortreten.", ["Wahrnehmung", "Unterscheidung"]),
+      meaningField("or-life", "Leben", "Licht kann mit Lebendigkeit und tragender Gegenwart verbunden werden.", ["Lebendigkeit", "Hoffnung"]),
     ],
     relatedSymbolSlugs: ["licht"],
     biblicalReferences: [
       reference("or-genesis-1-3", "Genesis 1,3", "Gott spricht: Es werde Licht.", "Schöpfung, Unterscheidung und Orientierung"),
+      reference("or-exodus-13-21", "Exodus 13,21", "Die Feuersaeule leuchtet Israel auf dem Weg.", "Orientierung und Fuehrung"),
+      reference("or-john-1-4-5", "Johannes 1,4-5", "Das Leben ist das Licht der Menschen.", "Licht, Leben und Gegenwart"),
     ],
   },
   {
@@ -113,11 +121,17 @@ export const hebrewWords: HebrewWord[] = [
     possibleRootIds: [],
     rootNote: "Die lexikalische Einordnung wird in einer späteren Corpus-Phase ergänzt.",
     meaningFields: [
+      meaningField("esh-fire", "Feuer", "Feuer kann als verborgene und sichtbare Energie gelesen werden.", ["Potential", "Energie"]),
       meaningField("esh-transformation", "Verwandlung", "Feuer kann Wärme, Läuterung und Veränderung sichtbar machen.", ["Energie", "Läuterung"]),
+      meaningField("esh-presence", "Gegenwart", "Feuer kann eine wirksame und tragende Gegenwart sichtbar machen.", ["Nähe", "Offenbarung"]),
+      meaningField("esh-purification", "Reinigung", "Feuer kann als Bild von Klärung und Läuterung gelesen werden.", ["Läuterung", "Erneuerung"]),
+      meaningField("esh-calling", "Ruf", "Das Feuer des Dornbuschs verbindet Gegenwart mit persönlicher Ansprache.", ["Berufung", "Ausrichtung"]),
     ],
     relatedSymbolSlugs: ["feuer"],
     biblicalReferences: [
       reference("esh-exodus-3", "Exodus 3,2", "Der Dornbusch brennt und verbrennt nicht.", "Gegenwart, Ruf und Verwandlung"),
+      reference("esh-exodus-13-21", "Exodus 13,21", "Die Feuersaeule begleitet Israel durch die Nacht.", "Fuehrung, Gegenwart und Weg"),
+      reference("esh-malachi-3", "Maleachi 3,2-3", "Das Feuer des Schmelzers laeutert.", "Reinigung und Verwandlung"),
     ],
   },
   {

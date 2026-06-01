@@ -36,6 +36,46 @@ export const meaningNodes: MeaningNode[] = [
     label: "Verborgenheit",
     description: "Eine Wirklichkeit, die gegenwaertig ist, ohne ganz sichtbar zu sein.",
   },
+  {
+    id: "light",
+    label: "Licht",
+    description: "Sichtbarkeit, die Konturen hervortreten und Unterscheidung moeglich werden laesst.",
+  },
+  {
+    id: "revelation",
+    label: "Offenbarung",
+    description: "Das Hervortreten dessen, was zuvor verborgen oder noch nicht lesbar war.",
+  },
+  {
+    id: "awareness",
+    label: "Bewusstsein",
+    description: "Innere Wahrnehmung, in der Sichtbarkeit zu Erkenntnis werden kann.",
+  },
+  {
+    id: "guidance",
+    label: "Orientierung",
+    description: "Eine sichtbare Richtung fuer den naechsten Schritt.",
+  },
+  {
+    id: "fire",
+    label: "Feuer",
+    description: "Eine wirksame Energie, die glimmt, leuchtet und Gestalt veraendert.",
+  },
+  {
+    id: "transformation",
+    label: "Verwandlung",
+    description: "Eine Bewegung, in der etwas eine neue Gestalt gewinnt.",
+  },
+  {
+    id: "presence",
+    label: "Gegenwart",
+    description: "Eine tragende Naehe, die im Augenblick erfahrbar wird.",
+  },
+  {
+    id: "calling",
+    label: "Ruf",
+    description: "Eine persoenliche Ansprache, die in Bewegung und Verantwortung fuehrt.",
+  },
 ];
 
 export const meaningFields: MeaningField[] = [
@@ -43,6 +83,18 @@ export const meaningFields: MeaningField[] = [
     id: "water",
     label: "Wasser",
     description: "Archetypische Bedeutungsraeume, die sich im Symbol Wasser verdichten.",
-    nodeIds: meaningNodes.map((node) => node.id),
+    nodeIds: ["depth", "chaos", "birth", "transition", "purification", "life", "hiddenness"],
+  },
+  {
+    id: "light",
+    label: "Licht",
+    description: "Archetypische Bedeutungsraeume, die sich im Symbol Licht verdichten.",
+    nodeIds: ["light", "revelation", "awareness", "guidance", "life"],
+  },
+  {
+    id: "fire",
+    label: "Feuer",
+    description: "Archetypische Bedeutungsraeume, die sich im Symbol Feuer verdichten.",
+    nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
   },
 ];

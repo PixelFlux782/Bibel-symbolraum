@@ -5,7 +5,15 @@ export type MeaningNodeId =
   | "transition"
   | "purification"
   | "life"
-  | "hiddenness";
+  | "hiddenness"
+  | "light"
+  | "revelation"
+  | "awareness"
+  | "guidance"
+  | "fire"
+  | "transformation"
+  | "presence"
+  | "calling";
 
 export interface MeaningNode {
   id: MeaningNodeId;

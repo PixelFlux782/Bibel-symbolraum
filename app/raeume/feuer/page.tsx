@@ -1,4 +1,5 @@
-import FireRoom from "@/components/rooms/fire/FireRoom";
+import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import { fireEngineData } from "@/components/rooms/fire/fireEngineData";
 
 export const metadata = {
   title: "Feuerraum",
@@ -6,5 +7,5 @@ export const metadata = {
 };
 
 export default function FeuerRaumPage() {
-  return <FireRoom />;
+  return <SymbolEngineRoom data={fireEngineData} />;
 }
