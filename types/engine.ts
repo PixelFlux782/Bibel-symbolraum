@@ -52,6 +52,8 @@ export type ReflectionPrompt = {
   question: string;
 };
 
+export type EngineDimension = "hebrew" | "biblical" | "connections";
+
 export type SymbolJourneyState = {
   id: string;
   navigationLabel: string;

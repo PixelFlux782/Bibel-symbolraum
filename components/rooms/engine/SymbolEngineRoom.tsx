@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { SymbolEngineData } from "@/types/engine";
 import { BiblicalSceneLayer } from "./BiblicalSceneLayer";
 import { EngineNavigation } from "./EngineNavigation";
@@ -8,25 +7,19 @@ import { EngineStage } from "./EngineStage";
 import { HebrewLayer } from "./HebrewLayer";
 import { ReflectionOverlay } from "./ReflectionOverlay";
 import { SymbolConnectionPanel } from "./SymbolConnectionPanel";
+import { useSymbolEngine } from "./useSymbolEngine";
 
 export function SymbolEngineRoom({ data }: { data: SymbolEngineData }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeState = data.states[activeIndex];
-  const isFirst = activeIndex === 0;
-  const isLast = activeIndex === data.states.length - 1;
-  const letters = data.hebrew.letters.filter((letter) => activeState.hebrewLetterIds.includes(letter.id));
-  const scenes = data.scenes.filter((scene) => activeState.biblicalSceneIds.includes(scene.id));
-  const connections = data.connections.filter((connection) => activeState.connectionIds.includes(connection.id));
-
-  const advance = () => setActiveIndex(isLast ? 0 : activeIndex + 1);
+  const engine = useSymbolEngine(data);
+  const { activeState } = engine;
 
   return (
     <EngineStage state={activeState}>
-      <EngineNavigation states={data.states} activeIndex={activeIndex} onSelect={setActiveIndex} />
+      <EngineNavigation states={data.states} activeIndex={engine.activeIndex} onSelect={engine.selectState} />
 
       <section className="symbol-engine__content" key={`${activeState.id}-content`}>
         <p className="symbol-engine__eyebrow">
-          {String(activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
+          {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
           {activeState.eyebrow}
         </p>
         <p className="symbol-engine__glyph" lang="he" dir="rtl">{data.hebrew.word}</p>
@@ -34,28 +27,43 @@ export function SymbolEngineRoom({ data }: { data: SymbolEngineData }) {
         <p className="symbol-engine__text">{activeState.text}</p>
         <p className="symbol-engine__inscription">{activeState.inscription}</p>
         <div className="symbol-engine__actions">
-          {!isFirst ? (
-            <button type="button" className="symbol-engine__back" onClick={() => setActiveIndex(activeIndex - 1)}>
+          {!engine.isFirst ? (
+            <button type="button" className="symbol-engine__back" onClick={engine.retreat}>
               Zurueck
             </button>
           ) : null}
-          <button type="button" className="symbol-engine__action" onClick={advance}>
-            {isLast ? "Reise erneut beginnen" : "Naechste Station"}
+          <button type="button" className="symbol-engine__action" onClick={engine.advance}>
+            {engine.isLast ? "Reise erneut beginnen" : "Naechste Station"}
             <span aria-hidden="true" />
           </button>
         </div>
       </section>
 
       <aside className="symbol-engine__layers">
-        <HebrewLayer
-          word={data.hebrew.word}
-          transliteration={data.hebrew.transliteration}
-          letters={letters}
-          summary={activeState.hebrewSummary}
-        />
-        <BiblicalSceneLayer scenes={scenes} />
-        <SymbolConnectionPanel connections={connections} />
-        <ReflectionOverlay reflection={activeState.reflection} />
+        <div className="symbol-engine__dimension-bar">
+          <p>Bedeutungsebene</p>
+          <div>
+            <button type="button" className={engine.activeDimension === "hebrew" ? "is-active" : ""} onClick={() => engine.setActiveDimension("hebrew")}>Hebraeisch</button>
+            <button type="button" className={engine.activeDimension === "biblical" ? "is-active" : ""} onClick={() => engine.setActiveDimension("biblical")}>Bibelstelle</button>
+            <button type="button" className={engine.activeDimension === "connections" ? "is-active" : ""} onClick={() => engine.setActiveDimension("connections")}>Symbolnetz</button>
+          </div>
+        </div>
+        <div className="symbol-engine__active-layer" key={`${activeState.id}-${engine.activeDimension}`}>
+          {engine.activeDimension === "hebrew" ? (
+            <HebrewLayer
+              activeLetter={engine.activeHebrewLetter}
+              letters={data.hebrew.letters}
+              onSelect={engine.selectHebrewLetter}
+              stateLetterIds={activeState.hebrewLetterIds}
+              summary={activeState.hebrewSummary}
+              transliteration={data.hebrew.transliteration}
+              word={data.hebrew.word}
+            />
+          ) : null}
+          {engine.activeDimension === "biblical" ? <BiblicalSceneLayer scenes={engine.biblicalScenes} /> : null}
+          {engine.activeDimension === "connections" ? <SymbolConnectionPanel connections={engine.symbolConnections} /> : null}
+        </div>
+        <ReflectionOverlay reflection={engine.reflectionQuestion} />
       </aside>
     </EngineStage>
   );

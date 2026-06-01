@@ -42,6 +42,24 @@
   animation: water-journey-current 16s ease-in-out infinite;
 }
 
+.symbol-engine[data-atmosphere="depth"] .symbol-engine__current {
+  background: radial-gradient(ellipse at 64% 18%, rgba(73, 128, 170, 0.2), transparent 34%);
+}
+
+.symbol-engine[data-atmosphere="exodus"] .symbol-engine__current {
+  background:
+    linear-gradient(104deg, transparent 47%, rgba(var(--gold-rgb), 0.24) 49%, transparent 52%),
+    radial-gradient(ellipse at 58% 32%, rgba(var(--gold-rgb), 0.2), transparent 30%);
+}
+
+.symbol-engine[data-atmosphere="baptism"] .symbol-engine__current,
+.symbol-engine[data-atmosphere="living-water"] .symbol-engine__current,
+.symbol-engine[data-atmosphere="source"] .symbol-engine__current {
+  background:
+    radial-gradient(ellipse at 70% 20%, rgba(var(--gold-rgb), 0.16), transparent 28%),
+    radial-gradient(ellipse at 58% 74%, rgba(var(--cyan-rgb), 0.16), transparent 36%);
+}
+
 .symbol-engine__navigation {
   position: absolute;
   left: clamp(1.25rem, 5vw, 5rem);
@@ -173,6 +191,27 @@
   gap: 0.55rem;
 }
 
+.symbol-engine__dimension-bar {
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.12);
+  padding: 0 0.2rem 0.65rem;
+}
+
+.symbol-engine__dimension-bar p,
+.symbol-engine__dimension-bar button {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.symbol-engine__dimension-bar p { color: rgba(var(--cyan-rgb), 0.72); }
+.symbol-engine__dimension-bar div { display: flex; flex-wrap: wrap; gap: 0.45rem 0.9rem; margin-top: 0.5rem; }
+.symbol-engine__dimension-bar button { color: rgba(var(--foreground-rgb), 0.42); transition: color 500ms ease; }
+.symbol-engine__dimension-bar button:hover,
+.symbol-engine__dimension-bar button:focus-visible,
+.symbol-engine__dimension-bar button.is-active { color: rgba(var(--gold-rgb), 0.94); }
+.symbol-engine__active-layer { animation: water-journey-arrive 700ms ease both; }
+
 .symbol-engine__layer,
 .symbol-engine__reflection {
   border: 1px solid rgba(255, 255, 255, 0.045);
@@ -189,14 +228,34 @@
 .symbol-engine__reflection p { color: rgba(var(--cyan-rgb), 0.78); }
 .symbol-engine__layer-heading span { color: rgba(var(--gold-rgb), 0.9); font-family: var(--font-serif), serif; font-size: 1.7rem; line-height: 1; }
 .symbol-engine__layer-heading i { color: rgba(var(--foreground-rgb), 0.62); font-family: var(--font-serif), serif; font-size: 0.92rem; }
-.symbol-engine__hebrew-letters { display: flex; flex-wrap: wrap; gap: 0.65rem 1.05rem; margin-top: 0.65rem; }
-.symbol-engine__hebrew-letters article { display: flex; align-items: center; gap: 0.42rem; }
+.symbol-engine__hebrew-letters { display: flex; flex-wrap: wrap; gap: 0.52rem; margin-top: 0.65rem; }
+.symbol-engine__hebrew-letters button {
+  display: grid;
+  min-width: 3.2rem;
+  justify-items: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.1);
+  padding: 0.42rem 0.52rem 0.34rem;
+  opacity: 0.48;
+  transition: border-color 500ms ease, box-shadow 500ms ease, opacity 500ms ease, transform 500ms ease;
+}
+.symbol-engine__hebrew-letters button.is-related { border-color: rgba(var(--cyan-rgb), 0.34); opacity: 0.82; }
+.symbol-engine__hebrew-letters button.is-active {
+  border-color: rgba(var(--gold-rgb), 0.68);
+  box-shadow: 0 0 1.4rem rgba(var(--gold-rgb), 0.12);
+  opacity: 1;
+  transform: translateY(-0.18rem);
+}
 .symbol-engine__hebrew-letters span { color: rgba(var(--gold-rgb), 0.82); font-family: var(--font-serif), serif; font-size: 1.55rem; line-height: 1; }
+.symbol-engine__hebrew-letters i { margin-top: 0.18rem; color: rgba(var(--foreground-rgb), 0.46); font-family: var(--font-sans), system-ui, sans-serif; font-size: 0.42rem; letter-spacing: 0.14em; text-transform: uppercase; }
 .symbol-engine__hebrew-letters h3,
 .symbol-engine__biblical-layer h3 { color: rgba(var(--foreground-rgb), 0.88); font-family: var(--font-serif), serif; font-size: 0.94rem; font-style: italic; }
 .symbol-engine__hebrew-letters p,
 .symbol-engine__layer-copy,
 .symbol-engine__biblical-layer article p:last-child { color: rgba(var(--foreground-rgb), 0.58); font-family: var(--font-serif), serif; font-size: 0.78rem; line-height: 1.45; }
+.symbol-engine__hebrew-explanation { margin-top: 0.72rem; }
+.symbol-engine__hebrew-explanation h3 { color: rgba(var(--foreground-rgb), 0.9); font-family: var(--font-serif), serif; font-size: 1rem; font-style: italic; }
+.symbol-engine__hebrew-explanation p { color: rgba(var(--foreground-rgb), 0.62); font-family: var(--font-serif), serif; font-size: 0.78rem; line-height: 1.42; }
+.symbol-engine__hebrew-explanation p + p { margin-top: 0.25rem; }
 .symbol-engine__layer-copy { margin-top: 0.62rem; }
 .symbol-engine__biblical-layer { display: grid; gap: 0.48rem; }
 .symbol-engine__biblical-layer article + article { border-top: 1px solid rgba(var(--gold-rgb), 0.08); padding-top: 0.46rem; }
@@ -207,6 +266,7 @@
 .symbol-engine__connections i { display: block; font-family: var(--font-sans), system-ui, sans-serif; font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase; }
 .symbol-engine__connections span { color: rgba(var(--foreground-rgb), 0.76); }
 .symbol-engine__connections i { margin-top: 0.12rem; color: rgba(var(--cyan-rgb), 0.62); }
+.symbol-engine__connections p { max-width: 16rem; margin-top: 0.28rem; color: rgba(var(--foreground-rgb), 0.56); font-family: var(--font-serif), serif; font-size: 0.74rem; line-height: 1.35; }
 .symbol-engine__reflection blockquote { margin-top: 0.5rem; color: rgba(var(--foreground-rgb), 0.84); font-family: var(--font-serif), serif; font-size: 1rem; font-style: italic; line-height: 1.42; }
 
 @keyframes symbol-engine-scene-arrive {
@@ -217,9 +277,9 @@
 @media (max-width: 1023px) {
   .symbol-engine__content { max-width: 78vw; padding-bottom: 15.5rem; }
   .symbol-engine__layers { right: 1.25rem; bottom: 1.15rem; left: 1.25rem; grid-template-columns: 1.2fr 1fr; width: auto; }
+  .symbol-engine__dimension-bar { grid-column: span 2; }
   .symbol-engine__biblical-layer article:nth-of-type(n + 2),
   .symbol-engine__layer-copy { display: none; }
-  .symbol-engine__reflection { grid-column: span 2; }
 }
 
 @media (max-width: 640px) {
@@ -231,12 +291,12 @@
   .symbol-engine__content h1 { font-size: clamp(2.5rem, 12vw, 3.65rem); }
   .symbol-engine__text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
   .symbol-engine__layers { gap: 0.42rem; }
+  .symbol-engine__dimension-bar { grid-column: span 2; }
   .symbol-engine__layer,
   .symbol-engine__reflection { padding: 0.68rem 0.72rem; }
   .symbol-engine__biblical-layer article p:last-child,
   .symbol-engine__hebrew-letters p { display: none; }
   .symbol-engine__hebrew-letters { gap: 0.45rem 0.65rem; }
-  .symbol-engine__connections { display: none; }
-  .symbol-engine__reflection { grid-column: span 1; }
+  .symbol-engine__connections p { display: none; }
   .symbol-engine__reflection blockquote { font-size: 0.88rem; }
 }
