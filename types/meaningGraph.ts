@@ -13,7 +13,15 @@ export type MeaningNodeId =
   | "fire"
   | "transformation"
   | "presence"
-  | "calling";
+  | "calling"
+  | "desert"
+  | "lack"
+  | "testing"
+  | "dependence"
+  | "trust"
+  | "voice"
+  | "word"
+  | "path";
 
 export interface MeaningNode {
   id: MeaningNodeId;

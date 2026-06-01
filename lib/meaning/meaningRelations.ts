@@ -73,4 +73,46 @@ export const meaningRelations: MeaningRelation[] = [
     toNodeId: "purification",
     description: "Verwandlung kann als Laeuterung und Reinigung erfahren werden.",
   },
+  {
+    id: "lack-dependence",
+    fromNodeId: "lack",
+    toNodeId: "dependence",
+    description: "Mangel macht sichtbar, worauf Leben angewiesen ist.",
+  },
+  {
+    id: "dependence-trust",
+    fromNodeId: "dependence",
+    toNodeId: "trust",
+    description: "Erkannte Abhaengigkeit kann zu Vertrauen werden.",
+  },
+  {
+    id: "testing-revelation",
+    fromNodeId: "testing",
+    toNodeId: "revelation",
+    description: "In der Pruefung kann sichtbar werden, was zuvor verborgen blieb.",
+  },
+  {
+    id: "desert-guidance",
+    fromNodeId: "desert",
+    toNodeId: "guidance",
+    description: "In der Wueste wird Fuehrung fuer den naechsten Schritt sichtbar.",
+  },
+  {
+    id: "hiddenness-voice",
+    fromNodeId: "hiddenness",
+    toNodeId: "voice",
+    description: "In der Verborgenheit kann eine leise Stimme hoerbar werden.",
+  },
+  {
+    id: "voice-word",
+    fromNodeId: "voice",
+    toNodeId: "word",
+    description: "Die gehoerte Stimme kann als Wort Orientierung geben.",
+  },
+  {
+    id: "guidance-path",
+    fromNodeId: "guidance",
+    toNodeId: "path",
+    description: "Fuehrung macht einen Weg fuer den naechsten Schritt begehbar.",
+  },
 ];

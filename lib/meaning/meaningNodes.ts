@@ -76,6 +76,46 @@ export const meaningNodes: MeaningNode[] = [
     label: "Ruf",
     description: "Eine persoenliche Ansprache, die in Bewegung und Verantwortung fuehrt.",
   },
+  {
+    id: "desert",
+    label: "Wueste",
+    description: "Ein leerer Raum, in dem Sicherheiten schwinden und der naechste Schritt neu gesucht werden muss.",
+  },
+  {
+    id: "lack",
+    label: "Mangel",
+    description: "Das spuerbare Fehlen dessen, was sonst selbstverstaendlich traegt.",
+  },
+  {
+    id: "testing",
+    label: "Pruefung",
+    description: "Eine Erfahrung, in der Verborgenes hervortritt und Vertrauen Gestalt gewinnen kann.",
+  },
+  {
+    id: "dependence",
+    label: "Abhaengigkeit",
+    description: "Die Einsicht, dass Leben nicht allein aus eigener Verfuegbarkeit getragen wird.",
+  },
+  {
+    id: "trust",
+    label: "Vertrauen",
+    description: "Eine innere Ausrichtung, die auch ohne vollstaendige Sicherheit den naechsten Schritt wagt.",
+  },
+  {
+    id: "voice",
+    label: "Stimme",
+    description: "Eine leise Ansprache, die in der Stille hoerbar werden kann.",
+  },
+  {
+    id: "word",
+    label: "Wort",
+    description: "Gesprochener Sinn, der Orientierung gibt, ohne die ganze Zukunft vorwegzunehmen.",
+  },
+  {
+    id: "path",
+    label: "Weg",
+    description: "Eine begehbare Richtung durch einen noch nicht vollstaendig sichtbaren Raum.",
+  },
 ];
 
 export const meaningFields: MeaningField[] = [
@@ -96,5 +136,11 @@ export const meaningFields: MeaningField[] = [
     label: "Feuer",
     description: "Archetypische Bedeutungsraeume, die sich im Symbol Feuer verdichten.",
     nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
+  },
+  {
+    id: "desert",
+    label: "Wueste",
+    description: "Archetypische Bedeutungsraeume, die sich im Symbol Wueste verdichten.",
+    nodeIds: ["desert", "lack", "testing", "dependence", "trust", "voice", "word", "path", "transition", "guidance", "hiddenness", "revelation"],
   },
 ];

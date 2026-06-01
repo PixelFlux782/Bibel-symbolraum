@@ -690,7 +690,7 @@ export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
         explanation: 'Brot und Wüste verbinden Mangel, Versorgung und tägliche Gabe.',
       },
     ],
-    roomHref: '/symbole/wueste',
+    roomHref: '/raeume/wueste',
   },
   {
     id: 'felsen',

@@ -1,450 +1,330 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useMemo, useState } from 'react';
-import { RoomTransitionButton } from '@/components/transitions/RoomTransition';
-import ReactFlow, {
-  ConnectionMode,
-  Edge,
-  Handle,
-  Node,
-  NodeProps,
-  Position,
-} from 'reactflow';
+import Image from "next/image";
+import { useMemo, useState } from "react";
+import ReactFlow, { Edge, Handle, Node, NodeProps, Position } from "reactflow";
+
+import { RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import {
-  getConnectedNodes,
-  getEdgesForNode,
-  getMostImportantRelation,
-  getNodeById,
-  getPrimaryPath,
-  waterSymbolGraph,
-  type MeaningEdge,
-  type SymbolNode as EngineSymbolNode,
-} from '@/lib/symbolism';
+  buildSymbolMeaningNetwork,
+  type SymbolMeaningSatellite,
+  type SymbolMeaningNetworkNode,
+  type SymbolMeaningPath,
+} from "@/lib/meaning/buildSymbolMeaningNetwork";
 
-type SymbolNodeData = EngineSymbolNode & {
+type SymbolNodeData = SymbolMeaningNetworkNode & {
+  kind: "symbol";
   isActive: boolean;
   isRelated: boolean;
+  isDimmed: boolean;
 };
 
-const NODE_POSITIONS: Record<string, { x: number; y: number }> = {
-  water: { x: 430, y: 310 },
-  mayim: { x: 430, y: 78 },
-  mem: { x: 245, y: 45 },
-  yod: { x: 615, y: 45 },
-  sea: { x: 104, y: 260 },
-  well: { x: 760, y: 210 },
-  spring: { x: 830, y: 430 },
-  baptism: { x: 235, y: 475 },
-  spirit: { x: 565, y: 475 },
-  desert: { x: 60, y: 560 },
-  rock: { x: 265, y: 650 },
-  light: { x: 650, y: 650 },
-  'genesis-1-2': { x: 770, y: 70 },
-  'exodus-14': { x: 40, y: 390 },
+type MeaningNodeData = SymbolMeaningSatellite & {
+  kind: "meaning";
+  isRelated: boolean;
+  isDimmed: boolean;
 };
 
-function getNodePosition(symbolId: string, index: number, total: number) {
-  const fixedPosition = NODE_POSITIONS[symbolId];
+const network = buildSymbolMeaningNetwork();
+const positions: Record<string, { x: number; y: number }> = {
+  wasser: { x: 90, y: 280 },
+  licht: { x: 610, y: 90 },
+  feuer: { x: 610, y: 470 },
+  wueste: { x: 300, y: 300 },
+  depth: { x: 0, y: 80 },
+  transition: { x: 0, y: 500 },
+  purification: { x: 350, y: 500 },
+  light: { x: 820, y: 0 },
+  revelation: { x: 860, y: 210 },
+  guidance: { x: 840, y: 360 },
+  fire: { x: 820, y: 610 },
+  transformation: { x: 470, y: 650 },
+  presence: { x: 300, y: 80 },
+  calling: { x: 470, y: 0 },
+  testing: { x: 170, y: 560 },
+  dependence: { x: 80, y: 440 },
+};
 
-  if (fixedPosition) {
-    return fixedPosition;
-  }
-
-  const radius = 300;
-  const angle = (Math.PI * 2 * index) / Math.max(total, 1) - Math.PI / 2;
-
-  return {
-    x: 445 + Math.cos(angle) * radius,
-    y: 305 + Math.sin(angle) * radius,
-  };
+function getOtherSymbolId(path: SymbolMeaningPath, symbolId: string) {
+  return path.from === symbolId ? path.to : path.from;
 }
 
-function getRelationLabel(relation: MeaningEdge['relation']) {
-  const labels: Record<MeaningEdge['relation'], string> = {
-    contains: 'Enthält',
-    'unfolds-into': 'Entfaltet sich',
-    'letter-of': 'Buchstabenebene',
-    'scene-of': 'Biblische Szene',
-    transforms: 'Verwandelt',
-    contrasts: 'Kontrastiert',
-    reveals: 'Offenbart',
-    'moves-over': 'Bewegt sich über',
-    'breaks-through': 'Bricht hervor',
-    feeds: 'Speist',
-    'opens-path': 'Öffnet Weg',
-  };
-
-  return labels[relation];
-}
-
-function getLayerLabel(layer: MeaningEdge['layer']) {
-  const labels: Record<MeaningEdge['layer'], string> = {
-    surface: 'Symbol',
-    biblical: 'Biblisch',
-    hebrew: 'Hebräisch',
-    letter: 'Buchstabe',
-    spiritual: 'Geistlich',
-    existential: 'Existentiell',
-    visual: 'Visuell',
-  };
-
-  return labels[layer];
-}
-
-function getOtherNodeId(edge: MeaningEdge, nodeId: string) {
-  return edge.source === nodeId ? edge.target : edge.source;
+function getSymbolLabel(symbolId: string) {
+  return network.nodes.find((node) => node.id === symbolId)?.label ?? symbolId;
 }
 
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
-  const nodeSize = data.id === waterSymbolGraph.centerId ? 'h-44 w-44' : 'h-36 w-36';
-  const displayMark = data.hebrew ?? (data.type === 'scripture' ? data.label.replace('Genesis ', 'Gen ') : data.label);
-
   return (
-    <div className="group relative cursor-pointer">
-      <Handle type="target" position={Position.Top} className="opacity-0" />
-      <Handle type="source" position={Position.Bottom} className="opacity-0" />
-
+    <div className={`group relative cursor-pointer transition-opacity duration-700 ${data.isDimmed ? "opacity-25" : "opacity-100"}`}>
+      <Handle type="target" position={Position.Left} className="opacity-0" />
+      <Handle type="source" position={Position.Right} className="opacity-0" />
       <div
-        className={`light-pulse absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl transition-opacity duration-1000 ${
-          data.isActive
-            ? 'bg-gold/[0.22] opacity-75'
-            : data.isRelated
-              ? 'bg-[#6dc8df]/[0.12] opacity-[0.48]'
-              : 'bg-[#6dc8df]/[0.08] opacity-20'
-        }`}
-      />
-      <div
-        className={`absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-opacity duration-1000 ${
-          data.isActive
-            ? 'border-gold/10 opacity-60 shadow-[0_0_48px_rgba(189,160,109,0.07)]'
-            : data.isRelated
-              ? 'border-cyan/10 opacity-[0.34] shadow-[0_0_38px_rgba(127,184,201,0.045)]'
-              : 'border-white/0 opacity-0'
-        }`}
-      />
-
-      <div
-        className={`symbol-constellation-node relative grid ${nodeSize} place-items-center px-5 py-5 text-center transition-colors duration-[1200ms] ${
-          data.isActive
-            ? 'is-active'
-            : data.isRelated
-              ? 'is-related'
-              : ''
+        className={`symbol-constellation-node relative grid h-44 w-44 place-items-center px-5 py-5 text-center transition-colors duration-700 ${
+          data.isActive ? "is-active" : data.isRelated ? "is-related" : ""
         }`}
       >
         <div>
-          <p
-            className="symbol-breathe font-serif text-4xl leading-none transition-colors duration-1000"
-            lang={data.hebrew ? 'he' : undefined}
-            dir={data.hebrew ? 'rtl' : undefined}
-          >
-            {displayMark}
+          <p className="symbol-breathe font-serif text-5xl leading-none" lang="he" dir="rtl">
+            {data.hebrew}
           </p>
-          <p className="mt-3 text-[10px] uppercase tracking-[0.34em] transition-colors duration-1000">
-            {data.label}
-          </p>
+          <p className="mt-4 text-[10px] uppercase tracking-[0.34em]">{data.label}</p>
         </div>
       </div>
     </div>
   );
 }
 
-const nodeTypes = {
-  symbol: SymbolGraphNode,
-};
-
-function buildEdges(activeId: string): Edge[] {
-  return waterSymbolGraph.edges.map((edge, index) => {
-    const strength = Math.max(0, Math.min(edge.weight, 1));
-    const isActiveRelation = edge.source === activeId || edge.target === activeId;
-    const opacity = isActiveRelation ? 0.09 + strength * 0.24 : 0.025 + strength * 0.06;
-    const strokeWidth = isActiveRelation ? 0.85 + strength * 1.75 : 0.35 + strength * 0.42;
-
-    return {
-      id: `${edge.source}-${edge.target}-${index}`,
-      source: edge.source,
-      target: edge.target,
-      type: 'default',
-      className: isActiveRelation ? 'is-awake' : 'is-dormant',
-      data: {
-        relationType: edge.relation,
-        strength: edge.weight,
-        explanation: edge.explanation,
-      },
-      style: {
-        stroke: isActiveRelation ? `rgba(189,160,109,${opacity})` : `rgba(127,184,201,${opacity})`,
-        strokeWidth,
-      },
-    } satisfies Edge;
-  });
+function MeaningGraphNode({ data }: NodeProps<MeaningNodeData>) {
+  return (
+    <div
+      className={`group relative transition-opacity duration-700 ${data.isDimmed ? "opacity-20" : "opacity-100"}`}
+      tabIndex={0}
+      aria-label={`${data.label}: ${data.shortMeaning}`}
+    >
+      <Handle type="target" position={Position.Left} className="opacity-0" />
+      <div className={`grid h-24 w-24 place-items-center rounded-full border px-3 text-center transition-colors ${
+        data.isRelated ? "border-cyan/25 bg-cyan/[0.06] text-cyan-soft" : "border-white/[0.06] bg-black/15 text-[#d8d1c2]/45"
+      }`}>
+        <p className="font-serif text-sm italic leading-tight">{data.label}</p>
+      </div>
+      <div className="pointer-events-none absolute left-1/2 top-full z-20 mt-3 hidden w-48 -translate-x-1/2 border border-cyan/15 bg-[#02050c]/95 px-4 py-3 text-center group-hover:block group-focus:block">
+        <p className="font-serif text-sm italic leading-relaxed text-[#d8d1c2]/80">{data.shortMeaning}</p>
+      </div>
+    </div>
+  );
 }
 
-export default function SymbolNetwork() {
-  const [activeId, setActiveId] = useState(waterSymbolGraph.centerId);
-  const activeSymbol = getNodeById(waterSymbolGraph, activeId) ?? waterSymbolGraph.nodes[0];
-  const activeEdges = useMemo(
-    () => getEdgesForNode(waterSymbolGraph, activeSymbol.id).sort((a, b) => b.weight - a.weight),
-    [activeSymbol.id]
-  );
-  const importantRelation = useMemo(
-    () => getMostImportantRelation(waterSymbolGraph, activeSymbol.id),
-    [activeSymbol.id]
-  );
-  const primaryPath = useMemo(
-    () => getPrimaryPath(waterSymbolGraph, activeSymbol.id),
-    [activeSymbol.id]
-  );
-  const meaningLayers = useMemo(
-    () => Array.from(new Set(activeEdges.map((edge) => edge.layer))),
-    [activeEdges]
-  );
-  const relatedIds = useMemo(
-    () => new Set(activeEdges.map((edge) => getOtherNodeId(edge, activeSymbol.id))),
-    [activeEdges, activeSymbol.id]
-  );
-  const activeRelatedSymbols = useMemo(
-    () => getConnectedNodes(waterSymbolGraph, activeSymbol.id),
-    [activeSymbol.id]
-  );
-  const mobileSymbols = useMemo(
-    () => [
-      getNodeById(waterSymbolGraph, waterSymbolGraph.centerId),
-      ...waterSymbolGraph.nodes.filter((symbol) => symbol.id !== waterSymbolGraph.centerId),
-    ].filter(Boolean) as EngineSymbolNode[],
-    []
-  );
+const nodeTypes = { symbol: SymbolGraphNode, meaning: MeaningGraphNode };
 
-  const nodes = useMemo<Node<SymbolNodeData>[]>(
+export default function SymbolNetwork() {
+  const [activeId, setActiveId] = useState("wasser");
+  const [activePathId, setActivePathId] = useState<string | null>(null);
+  const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
+  const activePath = network.paths.find((path) => path.id === activePathId);
+  const alephJoint = network.paths.find((path) => path.id === "revelation")?.joint;
+  const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
+  const relatedIds = useMemo(
+    () => new Set([
+      ...connectedPaths.map((path) => getOtherSymbolId(path, activeId)),
+      ...network.meaningLinks.filter((link) => link.symbolId === activeId).map((link) => link.meaningId),
+    ]),
+    [activeId, connectedPaths]
+  );
+  const nodes = useMemo<Node<SymbolNodeData | MeaningNodeData>[]>(
     () =>
-      waterSymbolGraph.nodes.map((symbol, index) => ({
-        id: symbol.id,
-        type: 'symbol',
-        position: getNodePosition(symbol.id, index, waterSymbolGraph.nodes.length),
-        data: {
-          ...symbol,
-          isActive: symbol.id === activeId,
-          isRelated: relatedIds.has(symbol.id),
-        },
-      })),
+      [
+        ...network.nodes.map((node) => ({
+          id: node.id,
+          type: "symbol",
+          position: positions[node.id],
+          data: {
+            ...node,
+            kind: "symbol" as const,
+            isActive: node.id === activeId,
+            isRelated: relatedIds.has(node.id),
+            isDimmed: node.id !== activeId && !relatedIds.has(node.id),
+          },
+        })),
+        ...network.meaningNodes.map((node) => ({
+          id: node.id,
+          type: "meaning",
+          position: positions[node.id],
+          selectable: false,
+          data: {
+            ...node,
+            kind: "meaning" as const,
+            isRelated: relatedIds.has(node.id),
+            isDimmed: !relatedIds.has(node.id),
+          },
+        })),
+      ],
     [activeId, relatedIds]
   );
+  const edges: Edge[] = [
+    ...network.paths.map((path) => {
+        const isFocused = path.from === activeId || path.to === activeId;
+        const isSelected = path.id === activePathId;
 
-  const edges = useMemo(() => buildEdges(activeId), [activeId]);
+        return {
+          id: path.id,
+          source: path.from,
+          target: path.to,
+          className: isSelected ? "is-selected-path" : isFocused ? "is-awake" : "is-dormant",
+          style: {
+            stroke: isSelected ? "rgba(189,160,109,0.9)" : isFocused ? "rgba(127,184,201,0.55)" : "rgba(127,184,201,0.12)",
+            strokeWidth: isSelected ? 3 : isFocused ? 1.8 : 0.7,
+          },
+        };
+    }),
+    ...network.meaningLinks.map((link) => {
+      const isFocused = link.symbolId === activeId;
+
+      return {
+        id: `${link.symbolId}-${link.meaningId}`,
+        source: link.symbolId,
+        target: link.meaningId,
+        className: isFocused ? "is-awake" : "is-dormant",
+        style: {
+          stroke: isFocused ? "rgba(127,184,201,0.42)" : "rgba(127,184,201,0.07)",
+          strokeWidth: isFocused ? 1.3 : 0.5,
+        },
+      };
+    }),
+  ];
+
+  function focusSymbol(symbolId: string) {
+    setActiveId(symbolId);
+    setActivePathId(null);
+  }
+
+  function followPath(path: SymbolMeaningPath) {
+    setActivePathId(path.id);
+    setActiveId(path.from === activeId ? path.to : path.to === activeId ? path.from : path.to);
+  }
 
   return (
     <section className="symbol-page symbol-section relative min-h-screen pb-32 pt-40 md:pt-36">
       <div className="absolute inset-0">
-        <Image
-          src="/Visuals/symbolnetz_backround.png"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="sacred-drift object-cover opacity-[0.18]"
-        />
-        <div className="light-pulse absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(189,160,109,0.055),transparent_25%),linear-gradient(180deg,rgba(2,5,12,0.9),rgba(2,5,12,0.64)_44%,rgba(2,5,12,0.98))]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.7)_72%,rgba(0,0,0,0.94)_100%)]" />
+        <Image src="/Visuals/symbolnetz_backround.png" alt="" fill priority sizes="100vw" className="sacred-drift object-cover opacity-[0.18]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.78)_78%,rgba(0,0,0,0.95)_100%)]" />
       </div>
 
-      <div className="symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-16 overflow-hidden lg:grid-cols-[minmax(0,1fr)_23rem]">
+      <div className="symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,1fr)_23rem]">
         <div className="min-w-0">
-          <p className="symbol-kicker">
-            Lebendiges Bedeutungsnetz
-          </p>
+          <p className="symbol-kicker">Symbolnetz als Bedeutungsnetz</p>
           <h1 className="mt-6 max-w-4xl font-serif text-5xl italic leading-tight text-foreground-strong sm:text-7xl">
-            {waterSymbolGraph.title}
+            Warum haengen Wasser, Licht, Feuer und Wueste zusammen?
           </h1>
-          <p className="symbol-copy mt-6 max-w-[20rem] text-base sm:max-w-2xl sm:text-xl">
-            Bedeutung ist nicht nur Text. Sie bewegt sich zwischen Symbol, Hebräisch, Tiefe, Resonanz und biblischer Szene.
+          <p className="symbol-copy mt-6 max-w-2xl text-base sm:text-xl">
+            Wähle ein Symbol. Folge danach einer Verbindung, um ihren Bedeutungsweg zu öffnen.
           </p>
 
-          <div className="symbol-mobile-journey mt-10 md:hidden" aria-label="Gefuehrte Symbolauswahl">
-            {mobileSymbols.map((symbol, index) => {
-              const isActive = symbol.id === activeId;
-              const isRelated = relatedIds.has(symbol.id);
-
-              return (
-                <div key={symbol.id} className="symbol-mobile-step">
-                  <button
-                    type="button"
-                    onClick={() => setActiveId(symbol.id)}
-                    aria-pressed={isActive}
-                    className={`symbol-mobile-seal ${isActive ? 'is-active' : ''} ${isRelated ? 'is-related' : ''}`}
-                  >
-                    <span className="symbol-mobile-index">
-                      {index === 0 ? 'Einstieg' : String(index + 1).padStart(2, '0')}
-                    </span>
-                    <span className="symbol-mobile-hebrew symbol-breathe">
-                      {symbol.hebrew ?? symbol.label}
-                    </span>
-                    <span className="symbol-mobile-name">
-                      {symbol.label}
-                    </span>
-                    <span className="symbol-mobile-meaning">
-                      {symbol.shortMeaning}
-                    </span>
-                  </button>
-                  {index < mobileSymbols.length - 1 ? (
-                    <span className="symbol-mobile-thread" aria-hidden="true" />
-                  ) : null}
-                </div>
-              );
-            })}
+          <div className="mt-8 flex flex-wrap gap-3 max-md:hidden" aria-label="Symbol fokussieren">
+            {network.nodes.map((node) => (
+              <button
+                key={node.id}
+                type="button"
+                onClick={() => focusSymbol(node.id)}
+                aria-pressed={activeId === node.id}
+                className={`border px-4 py-3 text-[10px] uppercase tracking-[0.28em] transition-colors ${
+                  activeId === node.id ? "border-gold/30 bg-gold/[0.08] text-gold" : "border-white/[0.06] text-[#d8d1c2]/55 hover:border-cyan/25"
+                }`}
+              >
+                {node.label}
+              </button>
+            ))}
           </div>
 
-          <div className="symbol-constellation-field relative mt-16 h-[620px] overflow-hidden max-md:absolute max-md:left-[-9999px] max-md:top-0 max-md:mt-0 max-md:h-px max-md:w-px max-md:opacity-0 sm:h-[700px]">
-            <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_44%,transparent_30%,rgba(2,5,12,0.78)_100%)]" />
+          <div className="symbol-constellation-field relative mt-12 h-[650px] overflow-hidden max-md:hidden">
             <ReactFlow
               nodes={nodes}
               edges={edges}
               nodeTypes={nodeTypes}
-              connectionMode={ConnectionMode.Loose}
               fitView
-              fitViewOptions={{ padding: 0.22 }}
-              minZoom={0.62}
-              maxZoom={1.15}
-              proOptions={{ hideAttribution: true }}
+              fitViewOptions={{ padding: 0.2 }}
               nodesDraggable={false}
               nodesConnectable={false}
               zoomOnScroll={false}
               panOnScroll={false}
-              panOnDrag
+              panOnDrag={false}
               preventScrolling={false}
-              onNodeClick={(_, node) => setActiveId(node.id)}
+              onNodeClick={(_, node) => {
+                if (node.type === "symbol") focusSymbol(node.id);
+              }}
+              onEdgeClick={(_, edge) => {
+                const path = network.paths.find((item) => item.id === edge.id);
+                if (path) followPath(path);
+              }}
               className="symbol-network-flow bg-transparent"
             />
+            <div className="pointer-events-none absolute right-[14%] top-[42%] border border-gold/20 bg-[#02050c]/85 px-4 py-3 text-center">
+              <p className="font-serif text-3xl text-gold/90" lang="he">א</p>
+              <p className="mt-1 text-[9px] uppercase tracking-[0.28em] text-cyan-soft">gemeinsames Aleph</p>
+              <p className="mt-2 max-w-32 font-serif text-xs italic leading-relaxed text-[#d8d1c2]/65">
+                {alephJoint?.meanings.join(". ")}.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 border-y border-white/[0.055] py-6 md:hidden">
+            <p className="symbol-kicker text-cyan-soft">Vier Symbole, ein Netz</p>
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              {network.nodes.map((node) => (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => focusSymbol(node.id)}
+                  aria-pressed={activeId === node.id}
+                  className={`border px-2 py-4 text-center transition-colors ${
+                    activeId === node.id ? "border-gold/30 bg-gold/[0.08]" : "border-white/[0.06] bg-white/[0.02]"
+                  }`}
+                >
+                  <span className="block font-serif text-3xl text-gold/85" lang="he" dir="rtl">{node.hebrew}</span>
+                  <span className="mt-2 block text-[9px] uppercase tracking-[0.2em] text-[#d8d1c2]/70">{node.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 border-l border-gold/20 pl-3">
+              <p className="font-serif text-2xl text-gold/85" lang="he">א</p>
+              <p className="text-[9px] uppercase tracking-[0.24em] text-cyan-soft">Aleph in Licht und Feuer</p>
+              <p className="symbol-copy mt-1 text-xs">{alephJoint?.meanings.join(". ")}.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:hidden">
+            {network.paths.map((path) => (
+              <button key={path.id} type="button" onClick={() => followPath(path)} className="border border-white/[0.06] bg-white/[0.02] px-5 py-4 text-left">
+                <span className="symbol-kicker text-cyan-soft">{path.label}</span>
+                <span className="mt-2 block font-serif text-xl italic text-foreground-strong">{getSymbolLabel(path.from)} → {getSymbolLabel(path.to)}</span>
+                <span className="symbol-copy mt-2 block text-sm">{path.summary}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        <aside className="scroll-reveal symbol-detail-panel symbol-archive-fragment self-end p-7">
-          <p className="symbol-kicker text-cyan-soft">
-            Ausgewählter Knoten
-          </p>
-          <p
-            className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90"
-            lang={activeSymbol.hebrew ? 'he' : undefined}
-            dir={activeSymbol.hebrew ? 'rtl' : undefined}
-          >
-            {activeSymbol.hebrew ?? activeSymbol.label}
-          </p>
-          <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">
-            {activeSymbol.label}
-          </h2>
-          {activeSymbol.transliteration ? (
-            <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">
-              {activeSymbol.transliteration}
-            </p>
-          ) : null}
-          {activeSymbol.gematria ? (
-            <p className="mt-3 text-[11px] uppercase tracking-[0.28em] text-gold/45">
-              Gematria {activeSymbol.gematria}
-            </p>
-          ) : null}
+        <aside className="symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40">
+          <p className="symbol-kicker text-cyan-soft">{activePath ? "Bedeutungsweg" : "Fokus"}</p>
+          {activePath ? (
+            <>
+              <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activePath.label}</h2>
+              <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-gold/70">{activePath.evidence}</p>
+              <p className="symbol-copy mt-5 text-lg">{activePath.fromMeaning}<br /><span className="text-gold/65">→</span> {activePath.toMeaning}</p>
+              <p className="mt-5 font-serif text-lg italic leading-relaxed text-foreground-strong/85">{activePath.summary}</p>
+              {activePath.joint ? (
+                <div className="mt-7 border-l border-gold/25 pl-4">
+                  <p className="font-serif text-4xl text-gold/85" lang="he">{activePath.joint.letter}</p>
+                  <p className="symbol-copy mt-2 text-sm">{activePath.joint.note}</p>
+                  <p className="mt-2 font-serif text-sm italic leading-relaxed text-gold/75">
+                    {activePath.joint.meanings.join(". ")}.
+                  </p>
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeSymbol.hebrew}</p>
+              <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeSymbol.label}</h2>
+              <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
+              <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
+            </>
+          )}
 
-          <p className="symbol-kicker mt-8 text-cyan-soft">
-            Kurzdeutung
-          </p>
-          <p className="symbol-copy mt-6 text-lg">
-            {activeSymbol.shortMeaning}
-          </p>
-
-          <div className="mt-8 border-t border-white/[0.055] pt-6">
-            <p className="symbol-kicker text-cyan-soft">
-              Bedeutungsebenen
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {meaningLayers.map((layer) => (
-                <span
-                  key={layer}
-                  className="border border-white/[0.055] bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.24em] text-[#d8d1c2]/58"
-                >
-                  {getLayerLabel(layer)}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-8 border-t border-white/[0.055] pt-6">
-            <p className="symbol-kicker text-cyan-soft">
-              Verbundene Symbole
-            </p>
-            <div className="mt-5 grid gap-3">
-              {activeRelatedSymbols.map((related) => {
-                const edge = activeEdges.find(
-                  (item) =>
-                    (item.source === activeSymbol.id && item.target === related.id) ||
-                    (item.target === activeSymbol.id && item.source === related.id)
-                );
-
-                return (
-                  <button
-                    key={related.id}
-                    type="button"
-                    onClick={() => setActiveId(related.id)}
-                    className="group border-l border-cyan/[0.12] bg-white/[0.018] px-4 py-3 text-left transition-colors duration-[1200ms] hover:border-gold/[0.22] hover:bg-white/[0.035]"
-                  >
-                    <span className="block font-serif text-lg italic text-foreground-strong/80 group-hover:text-gold/80">
-                      {related.label}
-                      {edge ? (
-                        <span className="ml-3 align-middle text-[10px] uppercase tracking-[0.22em] text-cyan-soft/55">
-                          {Math.round(edge.weight * 100)}%
-                        </span>
-                      ) : null}
-                    </span>
-                    {edge ? (
-                      <span className="mt-1 block text-[10px] uppercase tracking-[0.22em] text-[#d8d1c2]/45">
-                        {getRelationLabel(edge.relation)}
-                      </span>
-                    ) : null}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="mt-8 border-t border-white/[0.055] pt-6">
-            <p className="symbol-kicker text-cyan-soft">
-              Bibelpfad
-            </p>
-            <div className="mt-5 flex flex-wrap gap-x-3 gap-y-2 text-sm text-[#d8d1c2]/62">
-              {primaryPath.map((pathNode, index) => (
-                <button
-                  key={`${pathNode.id}-${index}`}
-                  type="button"
-                  onClick={() => setActiveId(pathNode.id)}
-                  className="font-serif italic transition-colors duration-700 hover:text-gold/80"
-                >
-                  {index > 0 ? <span className="mr-3 text-cyan-soft/35">/</span> : null}
-                  {pathNode.label}
+          <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
+            <p className="symbol-kicker text-cyan-soft">Verbindungen folgen</p>
+            <div className="mt-4 grid gap-3">
+              {connectedPaths.map((path) => (
+                <button key={path.id} type="button" onClick={() => followPath(path)} className="border-l border-cyan/[0.18] bg-white/[0.018] px-4 py-3 text-left transition-colors hover:border-gold/30 hover:bg-white/[0.04]">
+                  <span className="block font-serif text-lg italic text-foreground-strong/85">{path.label}</span>
+                  <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">{path.evidence}</span>
+                  <span className="symbol-copy mt-2 block text-sm">{path.summary}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {importantRelation ? (
-            <div className="mt-8 border-t border-white/[0.055] pt-6">
-              <p className="symbol-kicker text-cyan-soft">
-                Wichtigste Relation
-              </p>
-              <p className="symbol-copy mt-4 text-sm">
-                {importantRelation.explanation}
-              </p>
-            </div>
-          ) : null}
-
-          {activeSymbol.roomHref ? (
-            <RoomTransitionButton
-              href={activeSymbol.roomHref}
-              className="symbol-cta mt-10 w-full"
-            >
-              Raum betreten
-            </RoomTransitionButton>
-          ) : (
-            <div className="mt-10 border-y border-white/[0.055] bg-transparent px-5 py-4 text-center text-[11px] uppercase tracking-[0.28em] text-[#d8d1c2]/45">
-              Raum in Vorbereitung
-            </div>
-          )}
+          <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta mt-8 w-full">
+            {activeSymbol.label}-Raum öffnen
+          </RoomTransitionButton>
         </aside>
       </div>
     </section>

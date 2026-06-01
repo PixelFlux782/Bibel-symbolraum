@@ -159,11 +159,18 @@ export const hebrewWords: HebrewWord[] = [
     letterIds: ["mem", "dalet", "bet", "resh"],
     possibleRootIds: ["root-d-b-r"],
     meaningFields: [
+      meaningField("midbar-desert", "Wueste", "Midbar bezeichnet die Wueste und kann als Raum der Leere und des Weges gelesen werden.", ["Wueste", "Leere", "Weg"]),
+      meaningField("midbar-testing", "Pruefung", "In der Wueste tritt hervor, worauf Vertrauen und Abhaengigkeit gerichtet sind.", ["Pruefung", "Abhaengigkeit", "Vertrauen"]),
+      meaningField("midbar-guidance", "Fuehrung", "Die Wueste kann zum Raum werden, in dem Fuehrung fuer den naechsten Schritt sichtbar wird.", ["Fuehrung", "Weg", "Uebergang"]),
+      meaningField("midbar-word", "Stimme und Wort", "Midbar kann in behutsamer Naehe zum Bedeutungsfeld von davar gelesen werden, ohne beide Woerter gleichzusetzen.", ["Stimme", "Wort", "Hoeren"]),
       meaningField("midbar-reduction", "Reduktion", "Die Wüste entzieht Gewohntes und macht Mangel erfahrbar.", ["Leere", "Prüfung"]),
       meaningField("midbar-listening", "Hören", "Die Wüste kann als Raum der Sammlung und des Hörens gelesen werden.", ["Stille", "Ausrichtung"]),
     ],
     relatedSymbolSlugs: ["wueste"],
     biblicalReferences: [
+      reference("midbar-exodus-16", "Exodus 16", "Israel zieht durch die Wueste und erlebt Mangel und Versorgung.", "Leere, Abhaengigkeit und Fuehrung"),
+      reference("midbar-deuteronomy-8", "Deuteronomium 8", "Der Weg durch die Wueste wird als Pruefung und Lernweg erinnert.", "Pruefung, Vertrauen und Uebergang"),
+      reference("midbar-matthew-4", "Matthaeus 4,1-11", "Jesus wird in der Wueste versucht.", "Pruefung und Vertrauen"),
       reference("midbar-exodus-3", "Exodus 3,1", "Mose hütet die Herde jenseits der Wüste.", "Stille, Schwelle und Ruf"),
     ],
   },

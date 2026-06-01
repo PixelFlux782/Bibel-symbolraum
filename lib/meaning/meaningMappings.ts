@@ -32,6 +32,13 @@ export const hebrewMeaningLinks: HebrewMeaningLink[] = [
     transliteration: "esch",
     nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
   },
+  {
+    id: "hebrew-midbar",
+    hebrewWordId: "midbar",
+    hebrew: "\u05de\u05d3\u05d1\u05e8",
+    transliteration: "midbar",
+    nodeIds: ["desert", "voice", "path", "dependence", "word"],
+  },
 ];
 
 export const symbolMeaningLinks: SymbolMeaningLink[] = [
@@ -55,6 +62,13 @@ export const symbolMeaningLinks: SymbolMeaningLink[] = [
     label: "Feuer",
     aliases: ["fire"],
     nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
+  },
+  {
+    id: "symbol-desert",
+    symbolId: "wueste",
+    label: "Wueste",
+    aliases: ["w\u00fcste", "desert"],
+    nodeIds: ["testing", "dependence", "transition", "guidance"],
   },
 ];
 
@@ -110,6 +124,24 @@ export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
     label: "Laeuterndes Feuer",
     aliases: ["Maleachi 3"],
     nodeIds: ["fire", "transformation", "purification"],
+  },
+  {
+    id: "biblical-exodus-wilderness",
+    biblicalReferenceId: "exodus-wilderness",
+    label: "Israel in der Wueste",
+    nodeIds: ["desert", "lack", "dependence", "guidance"],
+  },
+  {
+    id: "biblical-deuteronomy-8",
+    biblicalReferenceId: "deuteronomy-8",
+    label: "Deuteronomium 8",
+    nodeIds: ["desert", "testing", "dependence", "trust"],
+  },
+  {
+    id: "biblical-matthew-4",
+    biblicalReferenceId: "matthew-4",
+    label: "Matthaeus 4",
+    nodeIds: ["desert", "testing", "trust"],
   },
 ];
 

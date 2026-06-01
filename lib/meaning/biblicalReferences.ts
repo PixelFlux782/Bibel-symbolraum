@@ -45,4 +45,20 @@ export const biblicalReferences: BiblicalReference[] = [
     label: "Laeuterndes Feuer",
     aliases: ["Maleachi 3"],
   },
+  {
+    id: "exodus-wilderness",
+    reference: "Exodus 16",
+    label: "Israel in der Wueste",
+    aliases: ["Exodus Wueste"],
+  },
+  {
+    id: "deuteronomy-8",
+    reference: "Deuteronomium 8",
+    label: "Der Weg durch die Wueste",
+  },
+  {
+    id: "matthew-4",
+    reference: "Matthaeus 4,1-11",
+    label: "Versuchung Jesu",
+  },
 ];
