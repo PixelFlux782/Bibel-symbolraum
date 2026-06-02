@@ -2283,6 +2283,66 @@ body {
     drop-shadow(0 0 14px rgba(127, 184, 201, 0.035));
 }
 
+.symbol-network-flow .react-flow__edge.is-selected-path .react-flow__edge-path {
+  opacity: 0.92;
+  filter:
+    drop-shadow(0 0 8px rgba(189, 160, 109, 0.22))
+    drop-shadow(0 0 18px rgba(127, 184, 201, 0.1));
+  animation: light-pulse 3.8s ease-in-out infinite;
+}
+
+.symbol-network-flow .react-flow__edge.is-traveling-path .react-flow__edge-path {
+  stroke-dasharray: 5 10;
+  animation: light-pulse 450ms ease-in-out infinite;
+}
+
+.living-connection-foreign-object {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.living-connection-label {
+  display: grid;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.2);
+  background: rgba(2, 5, 12, 0.94);
+  box-shadow: 0 0 28px rgba(var(--gold-rgb), 0.09);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.35rem);
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+
+.react-flow__edge:hover .living-connection-label,
+.react-flow__edge:focus .living-connection-label,
+.living-connection-label.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.living-connection-label.is-traveling {
+  animation: symbol-room-resonance-thread 450ms ease-in-out infinite;
+}
+
+.living-connection-label p {
+  font-family: var(--font-serif);
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: rgba(216, 209, 194, 0.9);
+}
+
+.living-connection-label button {
+  justify-self: start;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--gold-rgb), 0.86);
+}
+
 .symbol-network-flow .react-flow__edge.selected .react-flow__edge-path,
 .symbol-network-flow .react-flow__edge:focus .react-flow__edge-path {
   stroke: rgba(189, 160, 109, 0.18);
@@ -2807,6 +2867,9 @@ body {
   .symbol-room-depth-mark.is-active .symbol-room-depth-mark__light,
   .symbol-room-fragment-sign,
   .symbol-room-semantic-echo-active::before,
+  .symbol-network-flow .react-flow__edge.is-selected-path .react-flow__edge-path,
+  .symbol-network-flow .react-flow__edge.is-traveling-path .react-flow__edge-path,
+  .living-connection-label.is-traveling,
   .room-transition,
   .room-transition__dark,
   .room-transition__cyan,

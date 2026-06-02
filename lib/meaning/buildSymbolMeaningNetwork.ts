@@ -299,10 +299,6 @@ function buildPath(definition: PathDefinition): SymbolMeaningPath {
   const fromMeaning = getMeaningNode(definition.fromMeaningId);
   const toMeaning = getMeaningNode(definition.toMeaningId);
   const relation = meaningRelations.find((item) => item.id === definition.relationId);
-  const hebrewMeaningField = [definition.from, definition.to]
-    .flatMap((slug) => getSymbolHebrewProfile(slug).meaningFields)
-    .find((field) => field.id === definition.hebrewMeaningFieldId);
-
   if (!relation) {
     throw new Error(`Meaning Relation "${definition.relationId}" fuer Verbindung "${definition.id}" fehlt.`);
   }
@@ -315,7 +311,7 @@ function buildPath(definition: PathDefinition): SymbolMeaningPath {
     evidence: findEvidence(definition),
     fromMeaning: fromMeaning.label,
     toMeaning: toMeaning.label,
-    summary: hebrewMeaningField?.description ?? relation?.description ?? `${fromMeaning.description} ${toMeaning.description}`,
+    summary: relation.description,
     bridgeDescription: relation.description,
     joint: buildJoint(definition),
   };

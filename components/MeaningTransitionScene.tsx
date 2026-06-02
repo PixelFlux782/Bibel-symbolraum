@@ -16,6 +16,7 @@ type MeaningTransitionSceneProps = {
   bridgeText?: string;
   journeyText?: string;
   meaningNodes: string[];
+  durationMs?: number;
   onComplete: () => void;
 };
 
@@ -25,6 +26,7 @@ export function MeaningTransitionScene({
   bridgeText,
   journeyText,
   meaningNodes,
+  durationMs = FULL_SCENE_DURATION_MS,
   onComplete,
 }: MeaningTransitionSceneProps) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(
@@ -55,11 +57,11 @@ export function MeaningTransitionScene({
   useEffect(() => {
     const timeout = window.setTimeout(
       complete,
-      prefersReducedMotion ? REDUCED_SCENE_DURATION_MS : FULL_SCENE_DURATION_MS,
+      prefersReducedMotion ? Math.min(durationMs, REDUCED_SCENE_DURATION_MS) : durationMs,
     );
 
     return () => window.clearTimeout(timeout);
-  }, [complete, prefersReducedMotion]);
+  }, [complete, durationMs, prefersReducedMotion]);
 
   return (
     <section className="meaning-transition-scene" aria-label="Bedeutungsbewegung" aria-live="polite">
