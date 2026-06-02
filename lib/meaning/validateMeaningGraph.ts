@@ -3,6 +3,7 @@ import type {
   BiblicalReference,
   HebrewMeaningLink,
   MeaningField,
+  MeaningJourney,
   MeaningNode,
   MeaningRelation,
   SymbolMeaningLink,
@@ -14,6 +15,7 @@ import { symbolHebrewMappings } from "@/lib/hebrew/symbolHebrewMappings";
 import { SYMBOLS, SYMBOL_NETWORK } from "@/lib/symbols";
 
 import { biblicalReferences } from "./biblicalReferences";
+import { meaningJourneys } from "./meaningJourneys";
 import { biblicalMeaningLinks, hebrewMeaningLinks, symbolMeaningLinks } from "./meaningMappings";
 import { meaningNodes, meaningFields } from "./meaningNodes";
 import { meaningRelations } from "./meaningRelations";
@@ -31,6 +33,7 @@ export interface MeaningGraphValidationResult {
     nodes: number;
     relations: number;
     mappings: number;
+    journeys: number;
   };
 }
 
@@ -44,6 +47,7 @@ export interface MeaningGraphValidationData {
   hebrewWords: HebrewWord[];
   symbolSlugs: string[];
   biblicalReferences: BiblicalReference[];
+  journeys: MeaningJourney[];
   availableBiblicalReferences: string[];
   symbolHebrewMappings: HebrewSymbolMapping[];
 }
@@ -58,6 +62,7 @@ const defaultData: MeaningGraphValidationData = {
   hebrewWords,
   symbolSlugs: Array.from(new Set([...SYMBOL_NETWORK.map((symbol) => symbol.id), ...SYMBOLS.map((symbol) => symbol.slug)])),
   biblicalReferences,
+  journeys: meaningJourneys,
   availableBiblicalReferences: Array.from(new Set([
     ...SYMBOL_NETWORK.flatMap((symbol) => symbol.scriptureReferences?.map((entry) => entry.reference) ?? []),
     ...SYMBOLS.flatMap((symbol) => symbol.bibleReferences),
@@ -166,6 +171,7 @@ export function validateMeaningGraph(
     ...findDuplicateIds(data.symbolLinks, "SymbolMeaningLink"),
     ...findDuplicateIds(data.biblicalLinks, "BiblicalMeaningLink"),
     ...findDuplicateIds(data.biblicalReferences, "BiblicalReference"),
+    ...findDuplicateIds(data.journeys, "MeaningJourney"),
   ];
   const warnings: string[] = [];
   const nodeIds = new Set<string>(data.nodes.map((node) => node.id));
@@ -224,6 +230,26 @@ export function validateMeaningGraph(
     }
   }
 
+  for (const journey of data.journeys) {
+    for (const symbolSlug of journey.symbolPath) {
+      if (!symbolSlugs.has(symbolSlug)) {
+        errors.push(`MeaningJourney "${journey.id}" referenziert den unbekannten Symbol-Slug "${symbolSlug}".`);
+      }
+    }
+
+    for (const nodeId of journey.meaningNodePath) {
+      if (!nodeIds.has(nodeId)) {
+        errors.push(`MeaningJourney "${journey.id}" referenziert den unbekannten MeaningNode "${nodeId}".`);
+      }
+    }
+
+    for (const biblicalReferenceId of journey.biblicalReferences) {
+      if (!biblicalReferenceIds.has(biblicalReferenceId)) {
+        errors.push(`MeaningJourney "${journey.id}" referenziert die unbekannte BiblicalReference-ID "${biblicalReferenceId}".`);
+      }
+    }
+  }
+
   warnings.push(...findCycles(data.relations, nodeIds));
 
   const usedNodeIds = new Set(mappings.flatMap((mapping) => mapping.nodeIds));
@@ -264,6 +290,7 @@ export function validateMeaningGraph(
       nodes: data.nodes.length,
       relations: data.relations.length,
       mappings: data.hebrewLinks.length + data.symbolLinks.length + data.biblicalLinks.length,
+      journeys: data.journeys.length,
     },
   };
 }

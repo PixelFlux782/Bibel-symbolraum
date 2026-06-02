@@ -69,6 +69,15 @@ export interface BiblicalReference {
   aliases?: string[];
 }
 
+export interface MeaningJourney {
+  id: string;
+  title: string;
+  description: string;
+  symbolPath: string[];
+  meaningNodePath: MeaningNodeId[];
+  biblicalReferences: string[];
+}
+
 export interface BiblicalMeaningLink {
   id: string;
   biblicalReferenceId: string;

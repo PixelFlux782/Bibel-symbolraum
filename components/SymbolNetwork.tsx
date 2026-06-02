@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import ReactFlow, { Edge, Handle, Node, NodeProps, Position } from "reactflow";
 
+import { MeaningBridge } from "@/components/MeaningBridge";
 import { RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import {
   buildSymbolMeaningNetwork,
+  type SymbolMeaningJourney,
   type SymbolMeaningSatellite,
   type SymbolMeaningNetworkNode,
   type SymbolMeaningPath,
@@ -51,6 +53,23 @@ function getOtherSymbolId(path: SymbolMeaningPath, symbolId: string) {
 
 function getSymbolLabel(symbolId: string) {
   return network.nodes.find((node) => node.id === symbolId)?.label ?? symbolId;
+}
+
+function getPathKey(from: string, to: string) {
+  return [from, to].sort().join(":");
+}
+
+function JourneySequence({ items }: { items: string[] }) {
+  return (
+    <>
+      {items.map((item, index) => (
+        <Fragment key={`${item}-${index}`}>
+          {index > 0 ? <span className="text-gold/60"> &rarr; </span> : null}
+          {item}
+        </Fragment>
+      ))}
+    </>
+  );
 }
 
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
@@ -99,16 +118,28 @@ const nodeTypes = { symbol: SymbolGraphNode, meaning: MeaningGraphNode };
 export default function SymbolNetwork() {
   const [activeId, setActiveId] = useState("wasser");
   const [activePathId, setActivePathId] = useState<string | null>(null);
+  const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
+  const [pendingPathId, setPendingPathId] = useState<string | null>(null);
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activePath = network.paths.find((path) => path.id === activePathId);
+  const activeJourney = network.journeys.find((journey) => journey.id === activeJourneyId);
+  const pendingPath = network.paths.find((path) => path.id === pendingPathId);
   const alephJoint = network.paths.find((path) => path.id === "revelation")?.joint;
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
+  const journeySymbolIds = useMemo(() => new Set(activeJourney?.symbolPath ?? []), [activeJourney]);
+  const journeyMeaningIds = useMemo(() => new Set(activeJourney?.meaningNodePath ?? []), [activeJourney]);
+  const journeyPathKeys = useMemo(
+    () => new Set(activeJourney?.symbolPath.slice(1).map((symbolId, index) => getPathKey(activeJourney.symbolPath[index], symbolId)) ?? []),
+    [activeJourney]
+  );
   const relatedIds = useMemo(
-    () => new Set([
-      ...connectedPaths.map((path) => getOtherSymbolId(path, activeId)),
-      ...network.meaningLinks.filter((link) => link.symbolId === activeId).map((link) => link.meaningId),
-    ]),
-    [activeId, connectedPaths]
+    () => activeJourney
+      ? new Set([...journeySymbolIds, ...journeyMeaningIds])
+      : new Set([
+        ...connectedPaths.map((path) => getOtherSymbolId(path, activeId)),
+        ...network.meaningLinks.filter((link) => link.symbolId === activeId).map((link) => link.meaningId),
+      ]),
+    [activeId, activeJourney, connectedPaths, journeyMeaningIds, journeySymbolIds]
   );
   const nodes = useMemo<Node<SymbolNodeData | MeaningNodeData>[]>(
     () =>
@@ -120,9 +151,9 @@ export default function SymbolNetwork() {
           data: {
             ...node,
             kind: "symbol" as const,
-            isActive: node.id === activeId,
+            isActive: activeJourney ? journeySymbolIds.has(node.id) : node.id === activeId,
             isRelated: relatedIds.has(node.id),
-            isDimmed: node.id !== activeId && !relatedIds.has(node.id),
+            isDimmed: activeJourney ? !journeySymbolIds.has(node.id) : node.id !== activeId && !relatedIds.has(node.id),
           },
         })),
         ...network.meaningNodes.map((node) => ({
@@ -138,26 +169,29 @@ export default function SymbolNetwork() {
           },
         })),
       ],
-    [activeId, relatedIds]
+    [activeId, activeJourney, journeySymbolIds, relatedIds]
   );
   const edges: Edge[] = [
     ...network.paths.map((path) => {
         const isFocused = path.from === activeId || path.to === activeId;
         const isSelected = path.id === activePathId;
+        const isJourneyPath = journeyPathKeys.has(getPathKey(path.from, path.to));
 
         return {
           id: path.id,
           source: path.from,
           target: path.to,
-          className: isSelected ? "is-selected-path" : isFocused ? "is-awake" : "is-dormant",
+          className: isJourneyPath || isSelected ? "is-selected-path" : isFocused && !activeJourney ? "is-awake" : "is-dormant",
           style: {
-            stroke: isSelected ? "rgba(189,160,109,0.9)" : isFocused ? "rgba(127,184,201,0.55)" : "rgba(127,184,201,0.12)",
-            strokeWidth: isSelected ? 3 : isFocused ? 1.8 : 0.7,
+            stroke: isJourneyPath || isSelected ? "rgba(189,160,109,0.9)" : isFocused && !activeJourney ? "rgba(127,184,201,0.55)" : "rgba(127,184,201,0.12)",
+            strokeWidth: isJourneyPath || isSelected ? 3 : isFocused && !activeJourney ? 1.8 : 0.7,
           },
         };
     }),
     ...network.meaningLinks.map((link) => {
-      const isFocused = link.symbolId === activeId;
+      const isFocused = activeJourney
+        ? journeySymbolIds.has(link.symbolId) && journeyMeaningIds.has(link.meaningId)
+        : link.symbolId === activeId;
 
       return {
         id: `${link.symbolId}-${link.meaningId}`,
@@ -175,11 +209,29 @@ export default function SymbolNetwork() {
   function focusSymbol(symbolId: string) {
     setActiveId(symbolId);
     setActivePathId(null);
+    setActiveJourneyId(null);
+  }
+
+  function previewPath(path: SymbolMeaningPath) {
+    setPendingPathId(path.id);
   }
 
   function followPath(path: SymbolMeaningPath) {
+    setPendingPathId(null);
     setActivePathId(path.id);
+    setActiveJourneyId(null);
     setActiveId(path.from === activeId ? path.to : path.to === activeId ? path.from : path.to);
+  }
+
+  function focusJourney(journey: SymbolMeaningJourney) {
+    setActiveJourneyId(journey.id);
+    setActivePathId(null);
+    setActiveId(journey.symbolPath[0]);
+  }
+
+  function focusJourneyStation(symbolId: string) {
+    setActiveId(symbolId);
+    setActivePathId(null);
   }
 
   return (
@@ -215,6 +267,65 @@ export default function SymbolNetwork() {
             ))}
           </div>
 
+          <div className="mt-10">
+            <p className="symbol-kicker text-cyan-soft">Meaning Journeys</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {network.journeys.map((journey) => (
+                <div
+                  key={journey.id}
+                  className={`border px-4 py-4 transition-colors ${
+                    activeJourneyId === journey.id
+                      ? "border-gold/30 bg-gold/[0.07]"
+                      : "border-white/[0.06] bg-white/[0.02]"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => focusJourney(journey)}
+                    aria-pressed={activeJourneyId === journey.id}
+                    className="block w-full text-left"
+                  >
+                    <span className="block font-serif text-xl italic text-foreground-strong">{journey.title}</span>
+                    <span className="mt-3 block text-[9px] uppercase tracking-[0.2em] text-gold/70">Warum diese Reise existiert</span>
+                    <span className="symbol-copy mt-2 block text-sm">{journey.description}</span>
+                    <span className="mt-3 block text-[10px] uppercase tracking-[0.16em] text-cyan-soft">
+                      <JourneySequence items={journey.symbolLabels} />
+                    </span>
+                    <span className="mt-2 block font-serif text-sm italic leading-relaxed text-[#d8d1c2]/60">
+                      <JourneySequence items={journey.meaningNodeLabels} />
+                    </span>
+                  </button>
+                  <RoomTransitionButton href={journey.firstRoomHref} className="symbol-cta mt-4 w-full px-3 py-3 text-[9px]">
+                    Reise beginnen
+                  </RoomTransitionButton>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {activeJourney ? (
+            <nav className="mt-5 border-y border-white/[0.055] py-4 md:hidden" aria-label={`Pfad: ${activeJourney.title}`}>
+              <p className="symbol-kicker text-cyan-soft">Dein Pfad</p>
+              <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-2">
+                {activeJourney.symbolPath.map((symbolId, index) => (
+                  <Fragment key={`${activeJourney.id}-${symbolId}-${index}`}>
+                    {index > 0 ? <span className="text-gold/55">&rarr;</span> : null}
+                    <button
+                      type="button"
+                      onClick={() => focusJourneyStation(symbolId)}
+                      aria-current={activeId === symbolId ? "step" : undefined}
+                      className={`text-[10px] uppercase tracking-[0.16em] transition-colors ${
+                        activeId === symbolId ? "text-gold underline decoration-gold/45 underline-offset-4" : "text-[#d8d1c2]/55"
+                      }`}
+                    >
+                      {getSymbolLabel(symbolId)}
+                    </button>
+                  </Fragment>
+                ))}
+              </div>
+            </nav>
+          ) : null}
+
           <div className="symbol-constellation-field relative mt-12 h-[650px] overflow-hidden max-md:hidden">
             <ReactFlow
               nodes={nodes}
@@ -233,7 +344,7 @@ export default function SymbolNetwork() {
               }}
               onEdgeClick={(_, edge) => {
                 const path = network.paths.find((item) => item.id === edge.id);
-                if (path) followPath(path);
+                if (path) previewPath(path);
               }}
               className="symbol-network-flow bg-transparent"
             />
@@ -273,7 +384,7 @@ export default function SymbolNetwork() {
 
           <div className="mt-5 grid gap-3 md:hidden">
             {network.paths.map((path) => (
-              <button key={path.id} type="button" onClick={() => followPath(path)} className="border border-white/[0.06] bg-white/[0.02] px-5 py-4 text-left">
+              <button key={path.id} type="button" onClick={() => previewPath(path)} className="border border-white/[0.06] bg-white/[0.02] px-5 py-4 text-left">
                 <span className="symbol-kicker text-cyan-soft">{path.label}</span>
                 <span className="mt-2 block font-serif text-xl italic text-foreground-strong">{getSymbolLabel(path.from)} → {getSymbolLabel(path.to)}</span>
                 <span className="symbol-copy mt-2 block text-sm">{path.summary}</span>
@@ -283,8 +394,19 @@ export default function SymbolNetwork() {
         </div>
 
         <aside className="symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40">
-          <p className="symbol-kicker text-cyan-soft">{activePath ? "Bedeutungsweg" : "Fokus"}</p>
-          {activePath ? (
+          <p className="symbol-kicker text-cyan-soft">{activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : "Fokus"}</p>
+          {activeJourney ? (
+            <>
+              <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activeJourney.title}</h2>
+              <p className="symbol-copy mt-5 text-lg">{activeJourney.description}</p>
+              <p className="mt-6 text-[10px] uppercase tracking-[0.18em] text-cyan-soft">
+                <JourneySequence items={activeJourney.symbolLabels} />
+              </p>
+              <p className="mt-4 font-serif text-base italic leading-relaxed text-gold/75">
+                <JourneySequence items={activeJourney.meaningNodeLabels} />
+              </p>
+            </>
+          ) : activePath ? (
             <>
               <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activePath.label}</h2>
               <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-gold/70">{activePath.evidence}</p>
@@ -309,24 +431,33 @@ export default function SymbolNetwork() {
             </>
           )}
 
-          <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
+          {!activeJourney ? <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
             <p className="symbol-kicker text-cyan-soft">Verbindungen folgen</p>
             <div className="mt-4 grid gap-3">
               {connectedPaths.map((path) => (
-                <button key={path.id} type="button" onClick={() => followPath(path)} className="border-l border-cyan/[0.18] bg-white/[0.018] px-4 py-3 text-left transition-colors hover:border-gold/30 hover:bg-white/[0.04]">
+                <button key={path.id} type="button" onClick={() => previewPath(path)} className="border-l border-cyan/[0.18] bg-white/[0.018] px-4 py-3 text-left transition-colors hover:border-gold/30 hover:bg-white/[0.04]">
                   <span className="block font-serif text-lg italic text-foreground-strong/85">{path.label}</span>
                   <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">{path.evidence}</span>
                   <span className="symbol-copy mt-2 block text-sm">{path.summary}</span>
                 </button>
               ))}
             </div>
-          </div>
+          </div> : null}
 
-          <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta mt-8 w-full">
+          {!activeJourney ? <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta mt-8 w-full">
             {activeSymbol.label}-Raum öffnen
-          </RoomTransitionButton>
+          </RoomTransitionButton> : null}
         </aside>
       </div>
+      {pendingPath ? (
+        <MeaningBridge
+          path={pendingPath}
+          fromLabel={getSymbolLabel(pendingPath.from)}
+          toLabel={getSymbolLabel(pendingPath.to)}
+          onClose={() => setPendingPathId(null)}
+          onFollow={() => followPath(pendingPath)}
+        />
+      ) : null}
     </section>
   );
 }

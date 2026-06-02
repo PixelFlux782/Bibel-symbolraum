@@ -7,6 +7,7 @@ import { lightEngineData } from "@/components/rooms/light/lightEngineData";
 import { waterEngineData } from "@/components/rooms/water/waterEngineData";
 import { wuesteEngineData } from "@/components/rooms/wueste/wuesteEngineData";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
+import { meaningJourneys } from "@/lib/meaning/meaningJourneys";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
 import { meaningRelations } from "@/lib/meaning/meaningRelations";
@@ -26,7 +27,7 @@ type PathDefinition = {
   to: string;
   fromMeaningId: MeaningNodeId;
   toMeaningId: MeaningNodeId;
-  relationId?: string;
+  relationId: string;
   hebrewMeaningFieldId?: string;
   preferredReference?: string;
   fallbackEvidence?: string;
@@ -60,6 +61,7 @@ const pathDefinitions: PathDefinition[] = [
     to: "licht",
     fromMeaningId: "fire",
     toMeaningId: "revelation",
+    relationId: "fire-presence",
     hebrewMeaningFieldId: "esh-fire",
     preferredReference: "Exodus 13,21",
   },
@@ -90,6 +92,7 @@ const pathDefinitions: PathDefinition[] = [
     to: "feuer",
     fromMeaningId: "guidance",
     toMeaningId: "presence",
+    relationId: "fire-presence",
     preferredReference: "Exodus 13,21",
   },
 ];
@@ -131,7 +134,19 @@ export type SymbolMeaningPath = {
   fromMeaning: string;
   toMeaning: string;
   summary: string;
+  bridgeDescription: string;
   joint?: SymbolMeaningJoint;
+};
+
+export type SymbolMeaningJourney = {
+  id: string;
+  title: string;
+  description: string;
+  symbolPath: string[];
+  symbolLabels: string[];
+  meaningNodePath: MeaningNodeId[];
+  meaningNodeLabels: string[];
+  firstRoomHref: string;
 };
 
 export type SymbolMeaningNetwork = {
@@ -139,6 +154,7 @@ export type SymbolMeaningNetwork = {
   meaningNodes: SymbolMeaningSatellite[];
   meaningLinks: SymbolMeaningSatelliteLink[];
   paths: SymbolMeaningPath[];
+  journeys: SymbolMeaningJourney[];
 };
 
 function getEngine(slug: string): SymbolEngineData {
@@ -199,8 +215,11 @@ function findSharedLetter(from: string, to: string): HebrewLetter | undefined {
 function getJointMeanings(definition: PathDefinition, letter: HebrewLetter): string[] {
   const engineLetter = getEngine(definition.from).hebrew.letters.find((item) => item.hebrewLetterId === letter.id)
     ?? getEngine(definition.to).hebrew.letters.find((item) => item.hebrewLetterId === letter.id);
+  const meanings = engineLetter?.meaning.split(",").map((meaning) => meaning.trim()) ?? letter.archetypalMeanings;
 
-  return engineLetter?.meaning.split(",").map((meaning) => meaning.trim()) ?? letter.archetypalMeanings;
+  return letter.id === "aleph"
+    ? meanings.filter((meaning) => meaning === "Ursprung" || meaning === "verborgene Gegenwart")
+    : meanings;
 }
 
 function buildJoint(definition: PathDefinition): SymbolMeaningJoint | undefined {
@@ -242,6 +261,10 @@ function buildPath(definition: PathDefinition): SymbolMeaningPath {
     .flatMap((slug) => getSymbolHebrewProfile(slug).meaningFields)
     .find((field) => field.id === definition.hebrewMeaningFieldId);
 
+  if (!relation) {
+    throw new Error(`Meaning Relation "${definition.relationId}" fuer Verbindung "${definition.id}" fehlt.`);
+  }
+
   return {
     id: definition.id,
     label: definition.label,
@@ -251,6 +274,7 @@ function buildPath(definition: PathDefinition): SymbolMeaningPath {
     fromMeaning: fromMeaning.label,
     toMeaning: toMeaning.label,
     summary: hebrewMeaningField?.description ?? relation?.description ?? `${fromMeaning.description} ${toMeaning.description}`,
+    bridgeDescription: relation.description,
     joint: buildJoint(definition),
   };
 }
@@ -261,9 +285,10 @@ export function buildSymbolMeaningNetwork(): SymbolMeaningNetwork {
     meaningIds: getSymbolLink(link.symbolId).nodeIds,
   }));
   const meaningNodeIds = new Set(links.flatMap((link) => link.meaningIds));
+  const nodes = symbolMeaningLinks.map(buildNode);
 
   return {
-    nodes: symbolMeaningLinks.map(buildNode),
+    nodes,
     meaningNodes: meaningNodes
       .filter((node) => meaningNodeIds.has(node.id))
       .map((node) => ({ id: node.id, label: node.label, shortMeaning: node.description })),
@@ -271,5 +296,15 @@ export function buildSymbolMeaningNetwork(): SymbolMeaningNetwork {
       link.meaningIds.map((meaningId) => ({ symbolId: link.symbolId, meaningId })),
     ),
     paths: pathDefinitions.map(buildPath),
+    journeys: meaningJourneys.map((journey) => ({
+      id: journey.id,
+      title: journey.title,
+      description: journey.description,
+      symbolPath: journey.symbolPath,
+      symbolLabels: journey.symbolPath.map((symbolId) => nodes.find((node) => node.id === symbolId)?.label ?? symbolId),
+      meaningNodePath: journey.meaningNodePath,
+      meaningNodeLabels: journey.meaningNodePath.map((nodeId) => getMeaningNode(nodeId).label),
+      firstRoomHref: nodes.find((node) => node.id === journey.symbolPath[0])?.roomHref ?? roomHrefs[journey.symbolPath[0]],
+    })),
   };
 }
