@@ -2458,9 +2458,132 @@ body {
   color: rgba(var(--gold-rgb), 0.88);
 }
 
+.meaning-transition-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(1, 3, 10, 0.91), rgba(1, 3, 10, 0.97)),
+    url("/Visuals/symbolnetz_backround.png") center / cover;
+  padding: 1.8rem;
+  text-align: center;
+  animation: meaning-transition-arrive 520ms ease both;
+}
+
+.meaning-transition-scene__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(var(--gold-rgb), 0.075), transparent 25rem),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.58), transparent 34%, transparent 66%, rgba(0, 0, 0, 0.58));
+}
+
+.meaning-transition-scene__content {
+  position: relative;
+  display: grid;
+  max-width: 52rem;
+  justify-items: center;
+}
+
+.meaning-transition-scene__kicker,
+.meaning-transition-scene__label,
+.meaning-transition-scene__skip {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+}
+
+.meaning-transition-scene__kicker {
+  color: rgba(var(--cyan-rgb), 0.72);
+}
+
+.meaning-transition-scene__path {
+  display: grid;
+  justify-items: center;
+  margin-top: 1.15rem;
+}
+
+.meaning-transition-scene__symbol {
+  display: grid;
+  justify-items: center;
+}
+
+.meaning-transition-scene__hebrew {
+  color: rgba(var(--gold-rgb), 0.92);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  line-height: 1;
+  text-shadow: 0 0 34px rgba(var(--gold-rgb), 0.15);
+}
+
+.meaning-transition-scene__label {
+  margin-top: 0.45rem;
+  color: rgba(var(--foreground-rgb), 0.86);
+}
+
+.meaning-transition-scene__arrow {
+  margin: 0.3rem 0;
+  color: rgba(var(--gold-rgb), 0.55);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.meaning-transition-scene__nodes {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.meaning-transition-scene__node {
+  color: rgba(var(--gold-rgb), 0.95);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(1.3rem, 2.8vw, 2rem);
+  font-style: italic;
+  line-height: 1.14;
+}
+
+.meaning-transition-scene__bridge {
+  margin-top: 1.1rem;
+  max-width: 44rem;
+  color: rgba(216, 209, 194, 0.82);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(0.98rem, 1.7vw, 1.2rem);
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.meaning-transition-scene__journey {
+  margin-top: 0.55rem;
+  max-width: 42rem;
+  color: rgba(216, 209, 194, 0.48);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.meaning-transition-scene__skip {
+  margin-top: 1.15rem;
+  color: rgba(216, 209, 194, 0.42);
+  transition: color 400ms ease;
+}
+
+.meaning-transition-scene__skip:hover,
+.meaning-transition-scene__skip:focus-visible {
+  color: rgba(var(--gold-rgb), 0.88);
+}
+
 @keyframes journey-gate-arrive {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes meaning-transition-arrive {
+  from { opacity: 0; filter: blur(5px); }
+  to { opacity: 1; filter: none; }
 }
 
 @keyframes journey-gate-breathe {
@@ -2695,7 +2818,8 @@ body {
   }
 
   .journey-gate,
-  .journey-gate__hebrew {
+  .journey-gate__hebrew,
+  .meaning-transition-scene {
     animation: none !important;
   }
 
@@ -2751,6 +2875,41 @@ body {
 
   .journey-gate__skip {
     margin-top: 1.6rem;
+  }
+
+  .meaning-transition-scene {
+    padding: 1.15rem;
+  }
+
+  .meaning-transition-scene__path {
+    margin-top: 0.85rem;
+  }
+
+  .meaning-transition-scene__hebrew {
+    font-size: 2.15rem;
+  }
+
+  .meaning-transition-scene__arrow {
+    margin: 0.2rem 0;
+    font-size: 1.1rem;
+  }
+
+  .meaning-transition-scene__node {
+    font-size: 1.28rem;
+  }
+
+  .meaning-transition-scene__bridge {
+    margin-top: 0.8rem;
+    font-size: 0.94rem;
+  }
+
+  .meaning-transition-scene__journey {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+  }
+
+  .meaning-transition-scene__skip {
+    margin-top: 0.9rem;
   }
 
   .symbol-archive-header {

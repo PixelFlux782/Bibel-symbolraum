@@ -6,8 +6,13 @@ import ReactFlow, { Edge, Handle, Node, NodeProps, Position } from "reactflow";
 
 import { JourneyGate } from "@/components/JourneyGate";
 import { MeaningBridge } from "@/components/MeaningBridge";
+import {
+  MeaningTransitionScene,
+  type MeaningTransitionSymbol,
+} from "@/components/MeaningTransitionScene";
 import { RoomTransition, RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import { useRoomTransition } from "@/hooks/useRoomTransition";
+import { getJourneyContext } from "@/lib/meaning/getJourneyContext";
 import {
   buildSymbolMeaningNetwork,
   type SymbolMeaningJourney,
@@ -34,6 +39,15 @@ type JourneyGateState = {
   bridgeText?: string;
   journeyText?: string;
   hebrew: string;
+  onComplete: () => void;
+};
+
+type MeaningTransitionSceneState = {
+  fromSymbol: MeaningTransitionSymbol;
+  toSymbol: MeaningTransitionSymbol;
+  bridgeText?: string;
+  journeyText?: string;
+  meaningNodes: string[];
   onComplete: () => void;
 };
 
@@ -83,6 +97,19 @@ function getOtherSymbolId(path: SymbolMeaningPath, symbolId: string) {
 
 function getSymbolLabel(symbolId: string) {
   return network.nodes.find((node) => node.id === symbolId)?.label ?? symbolId;
+}
+
+function getTransitionSymbol(symbolId: string): MeaningTransitionSymbol {
+  const symbol = network.nodes.find((node) => node.id === symbolId);
+
+  return {
+    label: symbol?.label ?? symbolId,
+    hebrew: symbol?.hebrew ?? "",
+  };
+}
+
+function getMeaningNodeLabel(meaningNodeId: string) {
+  return network.meaningNodes.find((node) => node.id === meaningNodeId)?.label ?? meaningNodeId;
 }
 
 function getPathKey(from: string, to: string) {
@@ -151,6 +178,7 @@ export default function SymbolNetwork() {
   const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
   const [pendingPathId, setPendingPathId] = useState<string | null>(null);
   const [journeyGate, setJourneyGate] = useState<JourneyGateState | null>(null);
+  const [meaningTransitionScene, setMeaningTransitionScene] = useState<MeaningTransitionSceneState | null>(null);
   const { isEntering, startRoomTransition } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activePath = network.paths.find((path) => path.id === activePathId);
@@ -264,12 +292,22 @@ export default function SymbolNetwork() {
       return;
     }
 
+    setPendingPathId(null);
     setJourneyGate({
       title: `${getSymbolLabel(activeId)} \u2192 ${target.label}`,
       bridgeText: path.bridgeDescription,
       journeyText: path.summary,
       hebrew: target.hebrew,
-      onComplete: () => followPath(path),
+      onComplete: () => setMeaningTransitionScene({
+        fromSymbol: getTransitionSymbol(activeId),
+        toSymbol: getTransitionSymbol(targetId),
+        bridgeText: path.bridgeDescription,
+        journeyText: path.summary,
+        meaningNodes: path.from === activeId
+          ? [path.fromMeaning, path.toMeaning]
+          : [path.toMeaning, path.fromMeaning],
+        onComplete: () => followPath(path),
+      }),
     });
   }
 
@@ -281,11 +319,24 @@ export default function SymbolNetwork() {
       return;
     }
 
+    const journeyContext = getJourneyContext({
+      journeyId: journey.id,
+      fromSymbolSlug: activeId,
+      toSymbolSlug: firstSymbol.id,
+    });
+
     setJourneyGate({
       title: journey.title,
       journeyText: journey.description,
       hebrew: firstSymbol.hebrew,
-      onComplete: () => startRoomTransition({ href: journey.firstRoomHref }),
+      onComplete: () => setMeaningTransitionScene({
+        fromSymbol: getTransitionSymbol(activeId),
+        toSymbol: getTransitionSymbol(firstSymbol.id),
+        bridgeText: journeyContext?.bridgeText,
+        journeyText: journey.description,
+        meaningNodes: (journeyContext?.meaningNodeIds ?? journey.meaningNodePath).map(getMeaningNodeLabel),
+        onComplete: () => startRoomTransition({ href: journey.firstRoomHref }),
+      }),
     });
   }
 
@@ -293,6 +344,13 @@ export default function SymbolNetwork() {
     const onComplete = journeyGate?.onComplete;
 
     setJourneyGate(null);
+    onComplete?.();
+  }
+
+  function completeMeaningTransitionScene() {
+    const onComplete = meaningTransitionScene?.onComplete;
+
+    setMeaningTransitionScene(null);
     onComplete?.();
   }
 
@@ -543,6 +601,16 @@ export default function SymbolNetwork() {
           journeyText={journeyGate.journeyText}
           hebrew={journeyGate.hebrew}
           onComplete={completeJourneyGate}
+        />
+      ) : null}
+      {meaningTransitionScene ? (
+        <MeaningTransitionScene
+          fromSymbol={meaningTransitionScene.fromSymbol}
+          toSymbol={meaningTransitionScene.toSymbol}
+          bridgeText={meaningTransitionScene.bridgeText}
+          journeyText={meaningTransitionScene.journeyText}
+          meaningNodes={meaningTransitionScene.meaningNodes}
+          onComplete={completeMeaningTransitionScene}
         />
       ) : null}
       <RoomTransition active={isEntering} />
