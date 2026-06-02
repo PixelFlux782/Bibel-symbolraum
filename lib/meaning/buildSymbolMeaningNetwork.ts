@@ -2,6 +2,7 @@ import type { SymbolEngineData } from "@/types/engine";
 import type { HebrewLetter, HebrewWord } from "@/types/hebrew";
 import type { MeaningNode, MeaningNodeId, SymbolMeaningLink } from "@/types/meaningGraph";
 
+import { breadEngineData } from "@/components/rooms/bread/breadEngineData";
 import { fireEngineData } from "@/components/rooms/fire/fireEngineData";
 import { lightEngineData } from "@/components/rooms/light/lightEngineData";
 import { waterEngineData } from "@/components/rooms/water/waterEngineData";
@@ -12,12 +13,13 @@ import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
 import { meaningRelations } from "@/lib/meaning/meaningRelations";
 
-const engines = [waterEngineData, lightEngineData, fireEngineData, wuesteEngineData];
+const engines = [waterEngineData, lightEngineData, fireEngineData, wuesteEngineData, breadEngineData];
 const roomHrefs: Record<string, string> = {
   wasser: "/raeume/wasser",
   licht: "/raeume/licht",
   feuer: "/raeume/feuer",
   wueste: "/raeume/wueste",
+  brot: "/raeume/brot",
 };
 
 type PathDefinition = {
@@ -94,6 +96,46 @@ const pathDefinitions: PathDefinition[] = [
     toMeaningId: "presence",
     relationId: "fire-presence",
     preferredReference: "Exodus 13,21",
+  },
+  {
+    id: "water-bread",
+    label: "Wachstum",
+    from: "wasser",
+    to: "brot",
+    fromMeaningId: "life",
+    toMeaningId: "nourishment",
+    relationId: "life-nourishment",
+    fallbackEvidence: "Markus 4,26-29",
+  },
+  {
+    id: "light-bread",
+    label: "Reifung",
+    from: "licht",
+    to: "brot",
+    fromMeaningId: "revelation",
+    toMeaningId: "nourishment",
+    relationId: "revelation-nourishment",
+    fallbackEvidence: "Markus 4,26-29",
+  },
+  {
+    id: "fire-bread",
+    label: "Backen und Verwandlung",
+    from: "feuer",
+    to: "brot",
+    fromMeaningId: "transformation",
+    toMeaningId: "nourishment",
+    relationId: "transformation-nourishment",
+    fallbackEvidence: "Verwandlung im Feuer",
+  },
+  {
+    id: "desert-bread",
+    label: "Manna",
+    from: "wueste",
+    to: "brot",
+    fromMeaningId: "lack",
+    toMeaningId: "gift",
+    relationId: "lack-gift",
+    fallbackEvidence: "Exodus 16,4",
   },
 ];
 

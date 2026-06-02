@@ -21,7 +21,11 @@ export type MeaningNodeId =
   | "trust"
   | "voice"
   | "word"
-  | "path";
+  | "path"
+  | "nourishment"
+  | "gift"
+  | "community"
+  | "breaking";
 
 export interface MeaningNode {
   id: MeaningNodeId;

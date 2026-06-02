@@ -61,4 +61,29 @@ export const biblicalReferences: BiblicalReference[] = [
     reference: "Matthaeus 4,1-11",
     label: "Versuchung Jesu",
   },
+  {
+    id: "mark-4-26-29",
+    reference: "Markus 4,26-29",
+    label: "Das verborgene Korn",
+  },
+  {
+    id: "exodus-16-4",
+    reference: "Exodus 16,4",
+    label: "Manna in der Wueste",
+  },
+  {
+    id: "deuteronomy-8-3",
+    reference: "Deuteronomium 8,3",
+    label: "Nicht vom Brot allein",
+  },
+  {
+    id: "luke-24-30-31",
+    reference: "Lukas 24,30-31",
+    label: "Brechen des Brotes",
+  },
+  {
+    id: "john-6-35",
+    reference: "Johannes 6,35",
+    label: "Brot des Lebens",
+  },
 ];

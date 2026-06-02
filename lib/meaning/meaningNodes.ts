@@ -116,6 +116,26 @@ export const meaningNodes: MeaningNode[] = [
     label: "Weg",
     description: "Eine begehbare Richtung durch einen noch nicht vollstaendig sichtbaren Raum.",
   },
+  {
+    id: "nourishment",
+    label: "Nahrung",
+    description: "Versorgung, die Leben erhaelt und Staerkung fuer den Weg schenkt.",
+  },
+  {
+    id: "gift",
+    label: "Gabe",
+    description: "Empfangene Versorgung, die sich nicht allein eigener Verfuegbarkeit verdankt.",
+  },
+  {
+    id: "community",
+    label: "Gemeinschaft",
+    description: "Geteiltes Leben, das am gemeinsamen Tisch Beziehung sichtbar macht.",
+  },
+  {
+    id: "breaking",
+    label: "Brechen",
+    description: "Eine Bewegung des Teilens, in der aus Nahrung eine gemeinsame Gabe wird.",
+  },
 ];
 
 export const meaningFields: MeaningField[] = [
@@ -142,5 +162,11 @@ export const meaningFields: MeaningField[] = [
     label: "Wueste",
     description: "Archetypische Bedeutungsraeume, die sich im Symbol Wueste verdichten.",
     nodeIds: ["desert", "lack", "testing", "dependence", "trust", "voice", "word", "path", "transition", "guidance", "hiddenness", "revelation"],
+  },
+  {
+    id: "bread",
+    label: "Brot",
+    description: "Archetypische Bedeutungsraeume, die sich im Symbol Brot verdichten.",
+    nodeIds: ["nourishment", "gift", "community", "breaking", "life", "word"],
   },
 ];

@@ -77,6 +77,45 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     biblicalReferenceIds: ["exodus-13-21"],
     bridgeText: "Die Feuersaeule verbindet die dunkle Weite mit tragender Gegenwart.",
   },
+  {
+    journeyId: "bread-path",
+    toSymbolSlug: "wasser",
+    suggestedStateId: "source",
+    meaningNodeIds: ["life"],
+    biblicalReferenceIds: ["mark-4-26-29"],
+  },
+  {
+    journeyId: "bread-path",
+    toSymbolSlug: "licht",
+    suggestedStateId: "let-there-be-light",
+    meaningNodeIds: ["revelation"],
+    biblicalReferenceIds: ["mark-4-26-29"],
+    bridgeText: "Wasser traegt das verborgene Wachstum; im Licht kann das Korn reifen.",
+  },
+  {
+    journeyId: "bread-path",
+    toSymbolSlug: "feuer",
+    suggestedStateId: "refining-fire",
+    meaningNodeIds: ["transformation"],
+    biblicalReferenceIds: ["mark-4-26-29"],
+    bridgeText: "Feuer gibt dem Gewachsenen eine neue Gestalt: Aus Korn kann Brot werden.",
+  },
+  {
+    journeyId: "bread-path",
+    toSymbolSlug: "wueste",
+    suggestedStateId: "emptiness",
+    meaningNodeIds: ["lack", "gift"],
+    biblicalReferenceIds: ["exodus-16-4"],
+    bridgeText: "In der Wueste wird Versorgung gerade im Mangel als Gabe sichtbar.",
+  },
+  {
+    journeyId: "bread-path",
+    toSymbolSlug: "brot",
+    suggestedStateId: "manna",
+    meaningNodeIds: ["gift", "nourishment"],
+    biblicalReferenceIds: ["exodus-16-4", "deuteronomy-8-3", "john-6-35"],
+    bridgeText: "Manna verbindet die Wueste mit Brot: Nahrung wird als taegliche Gabe fuer den Weg empfangen.",
+  },
 ];
 
 export function getJourneyEntryTarget(

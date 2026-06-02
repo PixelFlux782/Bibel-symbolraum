@@ -753,7 +753,7 @@ export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
         explanation: 'Wasser und Brot bilden elementare Zeichen von Versorgung.',
       },
     ],
-    roomHref: '/symbole/brot',
+    roomHref: '/raeume/brot',
   },
   {
     id: 'baum',

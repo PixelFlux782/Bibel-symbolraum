@@ -144,10 +144,19 @@ export const hebrewWords: HebrewWord[] = [
     possibleRootIds: ["root-l-ch-m"],
     meaningFields: [
       meaningField("lechem-nourishment", "Nahrung", "Brot steht für alltägliche Versorgung und geteilte Gabe.", ["Versorgung", "Gemeinschaft"]),
+      meaningField("lechem-gift", "Gabe", "Brot kann als empfangene Versorgung gelesen werden, die nicht allein aus eigener Verfuegbarkeit kommt.", ["Gabe", "Vertrauen"]),
+      meaningField("lechem-community", "Gemeinschaft", "Geteiltes Brot kann Gemeinschaft stiften und Beziehung sichtbar machen.", ["Gemeinschaft", "Teilen"]),
+      meaningField("lechem-breaking", "Brechen", "Im Brechen wird Brot zur teilbaren Gabe und zum Zeichen gemeinsamer Nahrung.", ["Teilen", "Gemeinschaft"]),
+      meaningField("lechem-life", "Leben", "Brot erhaelt Leben und kann auf eine innere Nahrung verweisen.", ["Leben", "Versorgung"]),
+      meaningField("lechem-word", "Wort", "Brot und Wort stehen in einer Spannung von aeusserer und innerer Nahrung.", ["Wort", "Ausrichtung"]),
     ],
     relatedSymbolSlugs: ["brot"],
     biblicalReferences: [
       reference("lechem-exodus-16", "Exodus 16,4", "Brot vom Himmel begleitet Israel durch die Wüste.", "Versorgung im Mangel"),
+      reference("lechem-mark-4", "Markus 4,26-29", "Aus dem verborgenen Wachstum des Samens reift Korn.", "Verborgenes Leben und Reifung"),
+      reference("lechem-deuteronomy-8", "Deuteronomium 8,3", "Der Mensch lebt nicht vom Brot allein.", "Brot und Wort als Nahrung"),
+      reference("lechem-luke-24", "Lukas 24,30-31", "Beim Brechen des Brotes erkennen die Juenger Jesus.", "Teilen, Gemeinschaft und Offenbarung"),
+      reference("lechem-john-6", "Johannes 6,35", "Jesus spricht vom Brot des Lebens.", "Christus-Bezug und innere Nahrung"),
     ],
   },
   {

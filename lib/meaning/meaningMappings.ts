@@ -39,6 +39,13 @@ export const hebrewMeaningLinks: HebrewMeaningLink[] = [
     transliteration: "midbar",
     nodeIds: ["desert", "voice", "path", "dependence", "word"],
   },
+  {
+    id: "hebrew-lechem",
+    hebrewWordId: "lechem",
+    hebrew: "\u05dc\u05d7\u05dd",
+    transliteration: "lechem",
+    nodeIds: ["nourishment", "gift", "community", "breaking", "life", "word"],
+  },
 ];
 
 export const symbolMeaningLinks: SymbolMeaningLink[] = [
@@ -69,6 +76,13 @@ export const symbolMeaningLinks: SymbolMeaningLink[] = [
     label: "Wueste",
     aliases: ["w\u00fcste", "desert"],
     nodeIds: ["testing", "dependence", "transition", "guidance"],
+  },
+  {
+    id: "symbol-bread",
+    symbolId: "brot",
+    label: "Brot",
+    aliases: ["bread"],
+    nodeIds: ["nourishment", "gift", "community", "breaking", "life", "word"],
   },
 ];
 
@@ -142,6 +156,36 @@ export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
     biblicalReferenceId: "matthew-4",
     label: "Matthaeus 4",
     nodeIds: ["desert", "testing", "trust"],
+  },
+  {
+    id: "biblical-mark-4-grain",
+    biblicalReferenceId: "mark-4-26-29",
+    label: "Das verborgene Korn",
+    nodeIds: ["hiddenness", "life", "nourishment"],
+  },
+  {
+    id: "biblical-exodus-16-manna",
+    biblicalReferenceId: "exodus-16-4",
+    label: "Manna in der Wueste",
+    nodeIds: ["desert", "lack", "gift", "nourishment"],
+  },
+  {
+    id: "biblical-deuteronomy-8-bread",
+    biblicalReferenceId: "deuteronomy-8-3",
+    label: "Nicht vom Brot allein",
+    nodeIds: ["nourishment", "word", "life"],
+  },
+  {
+    id: "biblical-luke-24-breaking",
+    biblicalReferenceId: "luke-24-30-31",
+    label: "Brechen des Brotes",
+    nodeIds: ["breaking", "community", "revelation"],
+  },
+  {
+    id: "biblical-john-6-bread",
+    biblicalReferenceId: "john-6-35",
+    label: "Brot des Lebens",
+    nodeIds: ["nourishment", "life", "word"],
   },
 ];
 

@@ -7,6 +7,7 @@ const journeyAliases: Record<string, string> = {
   reinigung: "purification",
   offenbarung: "revelation",
   "weg-durch-die-wueste": "wilderness-path",
+  "weg-zum-brot": "bread-path",
 };
 
 function resolveJourneyId(journeyId: string): string {

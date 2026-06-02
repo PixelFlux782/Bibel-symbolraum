@@ -33,6 +33,14 @@ export const meaningJourneys: MeaningJourney[] = [
     meaningNodePath: ["transition", "desert", "guidance", "presence"],
     biblicalReferences: ["exodus-14", "exodus-wilderness", "deuteronomy-8", "exodus-13-21"],
   },
+  {
+    id: "bread-path",
+    title: "Weg zum Brot",
+    description: "Wasser traegt Wachstum, Licht laesst reifen, Feuer verwandelt und in der Wueste wird Brot als Gabe fuer den Weg sichtbar.",
+    symbolPath: ["wasser", "licht", "feuer", "wueste", "brot"],
+    meaningNodePath: ["life", "revelation", "transformation", "lack", "gift", "nourishment"],
+    biblicalReferences: ["mark-4-26-29", "exodus-16-4", "deuteronomy-8-3", "john-6-35"],
+  },
 ];
 
 export function getMeaningJourney(id: string): MeaningJourney | undefined {

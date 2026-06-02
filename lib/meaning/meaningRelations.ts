@@ -115,4 +115,52 @@ export const meaningRelations: MeaningRelation[] = [
     toNodeId: "path",
     description: "Fuehrung macht einen Weg fuer den naechsten Schritt begehbar.",
   },
+  {
+    id: "life-nourishment",
+    fromNodeId: "life",
+    toNodeId: "nourishment",
+    description: "Lebendiges Wachstum kann zur Nahrung fuer den Weg reifen.",
+  },
+  {
+    id: "revelation-nourishment",
+    fromNodeId: "revelation",
+    toNodeId: "nourishment",
+    description: "Im Licht reift Nahrung; im Brot kann zugleich Verborgenes sichtbar werden.",
+  },
+  {
+    id: "transformation-nourishment",
+    fromNodeId: "transformation",
+    toNodeId: "nourishment",
+    description: "Im Feuer gewinnt das Gewachsene eine neue Gestalt und wird zu Brot.",
+  },
+  {
+    id: "lack-gift",
+    fromNodeId: "lack",
+    toNodeId: "gift",
+    description: "Im Mangel wird Versorgung als empfangene Gabe sichtbar.",
+  },
+  {
+    id: "gift-nourishment",
+    fromNodeId: "gift",
+    toNodeId: "nourishment",
+    description: "Die empfangene Gabe wird zur Nahrung fuer den heutigen Weg.",
+  },
+  {
+    id: "nourishment-breaking",
+    fromNodeId: "nourishment",
+    toNodeId: "breaking",
+    description: "Brot wird gebrochen, damit Nahrung geteilt werden kann.",
+  },
+  {
+    id: "breaking-community",
+    fromNodeId: "breaking",
+    toNodeId: "community",
+    description: "Im Brechen und Teilen des Brotes wird Gemeinschaft sichtbar.",
+  },
+  {
+    id: "nourishment-word",
+    fromNodeId: "nourishment",
+    toNodeId: "word",
+    description: "Brot verweist ueber aeussere Nahrung hinaus auf das Wort, von dem der Mensch lebt.",
+  },
 ];
