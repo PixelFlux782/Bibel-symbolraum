@@ -40,22 +40,42 @@ type JourneyGateState = {
 const network = buildSymbolMeaningNetwork();
 const positions: Record<string, { x: number; y: number }> = {
   wasser: { x: 90, y: 280 },
-  licht: { x: 610, y: 90 },
-  feuer: { x: 610, y: 470 },
-  wueste: { x: 300, y: 300 },
+  licht: { x: 700, y: 70 },
+  feuer: { x: 700, y: 500 },
+  wueste: { x: 260, y: 520 },
+  brot: { x: 450, y: 290 },
   depth: { x: 0, y: 80 },
-  transition: { x: 0, y: 500 },
-  purification: { x: 350, y: 500 },
-  light: { x: 820, y: 0 },
-  revelation: { x: 860, y: 210 },
-  guidance: { x: 840, y: 360 },
-  fire: { x: 820, y: 610 },
-  transformation: { x: 470, y: 650 },
-  presence: { x: 300, y: 80 },
-  calling: { x: 470, y: 0 },
-  testing: { x: 170, y: 560 },
-  dependence: { x: 80, y: 440 },
+  transition: { x: 0, y: 560 },
+  purification: { x: 410, y: 650 },
+  light: { x: 900, y: 0 },
+  revelation: { x: 930, y: 180 },
+  guidance: { x: 900, y: 350 },
+  fire: { x: 900, y: 650 },
+  transformation: { x: 650, y: 700 },
+  presence: { x: 420, y: 60 },
+  calling: { x: 600, y: 0 },
+  testing: { x: 180, y: 720 },
+  dependence: { x: 70, y: 600 },
+  nourishment: { x: 470, y: 170 },
+  gift: { x: 330, y: 210 },
+  community: { x: 660, y: 300 },
+  breaking: { x: 580, y: 430 },
+  life: { x: 470, y: 540 },
+  word: { x: 300, y: 390 },
 };
+const fallbackPosition = { x: 450, y: 290 };
+const missingPositionWarnings = new Set<string>();
+
+function getNodePosition(nodeId: string) {
+  const position = positions[nodeId];
+
+  if (!position && process.env.NODE_ENV !== "production" && !missingPositionWarnings.has(nodeId)) {
+    missingPositionWarnings.add(nodeId);
+    console.warn(`SymbolNetwork: Position fuer Node "${nodeId}" fehlt. Fallback wird verwendet.`);
+  }
+
+  return position ?? fallbackPosition;
+}
 
 function getOtherSymbolId(path: SymbolMeaningPath, symbolId: string) {
   return path.from === symbolId ? path.to : path.from;
@@ -159,7 +179,7 @@ export default function SymbolNetwork() {
         ...network.nodes.map((node) => ({
           id: node.id,
           type: "symbol",
-          position: positions[node.id],
+          position: getNodePosition(node.id),
           data: {
             ...node,
             kind: "symbol" as const,
@@ -171,7 +191,7 @@ export default function SymbolNetwork() {
         ...network.meaningNodes.map((node) => ({
           id: node.id,
           type: "meaning",
-          position: positions[node.id],
+          position: getNodePosition(node.id),
           selectable: false,
           data: {
             ...node,
