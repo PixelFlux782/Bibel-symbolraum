@@ -2301,6 +2301,66 @@ body {
   pointer-events: none;
 }
 
+.letter-bridge {
+  position: absolute;
+  top: 4.15rem;
+  left: 50%;
+  display: grid;
+  width: 2.15rem;
+  height: 2.15rem;
+  place-items: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.24);
+  border-radius: 999px;
+  background: rgba(2, 5, 12, 0.92);
+  color: rgba(var(--gold-rgb), 0.94);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.3rem;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.3rem);
+  transition: opacity 320ms ease, transform 320ms ease, border-color 320ms ease, box-shadow 320ms ease;
+}
+
+.react-flow__edge:hover .letter-bridge,
+.react-flow__edge:focus .letter-bridge,
+.letter-bridge.is-visible {
+  border-color: rgba(var(--gold-rgb), 0.56);
+  box-shadow: 0 0 1.25rem rgba(var(--gold-rgb), 0.15);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.letter-filter-trace {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.3);
+  padding-left: 0.75rem;
+}
+
+.letter-filter-trace span,
+.letter-filter-trace button {
+  color: rgba(var(--cyan-rgb), 0.76);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.letter-filter-trace strong {
+  color: rgba(var(--gold-rgb), 0.94);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.7rem;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.letter-filter-trace button {
+  color: rgba(var(--gold-rgb), 0.78);
+}
+
 .living-connection-label {
   display: grid;
   gap: 0.55rem;
@@ -2626,6 +2686,28 @@ body {
   gap: 0.15rem;
 }
 
+.meaning-transition-scene__letter-bridge {
+  display: grid;
+  justify-items: center;
+}
+
+.meaning-transition-scene__letter-bridge p {
+  color: rgba(var(--gold-rgb), 0.96);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(4.2rem, 11vw, 7rem);
+  line-height: 0.85;
+  text-shadow: 0 0 42px rgba(var(--gold-rgb), 0.22);
+}
+
+.meaning-transition-scene__letter-bridge span {
+  margin-top: 0.55rem;
+  color: rgba(var(--cyan-rgb), 0.76);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
 .meaning-transition-scene__node {
   color: rgba(var(--gold-rgb), 0.95);
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
@@ -2651,6 +2733,15 @@ body {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: 0.86rem;
   line-height: 1.55;
+}
+
+.meaning-transition-scene__letter-text {
+  margin-top: 0.55rem;
+  color: rgba(var(--gold-rgb), 0.74);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.5;
 }
 
 .meaning-transition-scene__skip {

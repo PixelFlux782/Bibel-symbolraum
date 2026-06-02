@@ -160,6 +160,7 @@ export type SymbolMeaningSatelliteLink = {
 };
 
 export type SymbolMeaningJoint = {
+  letterId: string;
   letter: string;
   letterName: string;
   symbolIds: string[];
@@ -272,6 +273,7 @@ function buildJoint(definition: PathDefinition): SymbolMeaningJoint | undefined 
   }
 
   return {
+    letterId: letter.id,
     letter: letter.glyph,
     letterName: letter.name,
     symbolIds: [definition.from, definition.to],

@@ -11,6 +11,11 @@ type MeaningTransitionSceneProps = {
   bridgeText?: string;
   journeyText?: string;
   meaningNodes: string[];
+  letterBridge?: {
+    glyph: string;
+    name: string;
+    text: string;
+  };
   onComplete: () => void;
 };
 
@@ -20,6 +25,7 @@ export function MeaningTransitionScene({
   bridgeText,
   journeyText,
   meaningNodes,
+  letterBridge,
   onComplete,
 }: MeaningTransitionSceneProps) {
   return (
@@ -33,11 +39,18 @@ export function MeaningTransitionScene({
             <p className="meaning-transition-scene__label">{fromSymbol.label}</p>
           </div>
           <span className="meaning-transition-scene__arrow" aria-hidden="true">&darr;</span>
-          <div className="meaning-transition-scene__nodes">
-            {meaningNodes.map((node, index) => (
-              <p className="meaning-transition-scene__node" key={`${node}-${index}`}>{node}</p>
-            ))}
-          </div>
+          {letterBridge ? (
+            <div className="meaning-transition-scene__letter-bridge">
+              <p lang="he" dir="rtl">{letterBridge.glyph}</p>
+              <span>{letterBridge.name}</span>
+            </div>
+          ) : (
+            <div className="meaning-transition-scene__nodes">
+              {meaningNodes.map((node, index) => (
+                <p className="meaning-transition-scene__node" key={`${node}-${index}`}>{node}</p>
+              ))}
+            </div>
+          )}
           <span className="meaning-transition-scene__arrow" aria-hidden="true">&darr;</span>
           <div className="meaning-transition-scene__symbol">
             <p className="meaning-transition-scene__hebrew" lang="he" dir="rtl">{toSymbol.hebrew}</p>
@@ -45,6 +58,7 @@ export function MeaningTransitionScene({
           </div>
         </div>
         {bridgeText ? <p className="meaning-transition-scene__bridge">{bridgeText}</p> : null}
+        {letterBridge ? <p className="meaning-transition-scene__letter-text">{letterBridge.text}</p> : null}
         {journeyText && journeyText !== bridgeText ? (
           <p className="meaning-transition-scene__journey">{journeyText}</p>
         ) : null}

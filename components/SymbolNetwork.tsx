@@ -14,12 +14,15 @@ import ReactFlow, {
 } from "reactflow";
 
 import { JourneyGate } from "@/components/JourneyGate";
+import { LetterOverlay } from "@/components/rooms/engine/LetterOverlay";
 import {
   MeaningTransitionScene,
   type MeaningTransitionSymbol,
 } from "@/components/MeaningTransitionScene";
 import { RoomTransition, RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import { useRoomTransition } from "@/hooks/useRoomTransition";
+import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
+import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { getJourneyContext } from "@/lib/meaning/getJourneyContext";
 import {
   buildSymbolMeaningNetwork,
@@ -56,15 +59,27 @@ type MeaningTransitionSceneState = {
   bridgeText?: string;
   journeyText?: string;
   meaningNodes: string[];
+  letterBridge?: {
+    glyph: string;
+    name: string;
+    text: string;
+  };
   onComplete: () => void;
+};
+
+type LetterBridgeContext = {
+  fromLabel: string;
+  toLabel: string;
 };
 
 type LivingConnectionData = {
   context: string;
   bridgeText: string;
   joint?: SymbolMeaningPath["joint"];
+  isBridgeVisible: boolean;
   isVisible: boolean;
   isTraveling: boolean;
+  onOpenLetter: () => void;
   onFollow: () => void;
 };
 
@@ -131,6 +146,17 @@ function getMeaningNodeLabel(meaningNodeId: string) {
 
 function getPathKey(from: string, to: string) {
   return [from, to].sort().join(":");
+}
+
+function getLetterBridgeText(path: SymbolMeaningPath) {
+  if (!path.joint) return undefined;
+
+  const fromLabel = getSymbolLabel(path.from);
+  const toLabel = getSymbolLabel(path.to);
+
+  return path.joint.meanings.includes("Ursprung")
+    ? `Ein gemeinsamer Ursprung verbindet ${fromLabel} und ${toLabel}.`
+    : `Gemeinsames ${path.joint.letterName} verbindet ${fromLabel} und ${toLabel}.`;
 }
 
 function JourneySequence({ items }: { items: string[] }) {
@@ -212,13 +238,26 @@ function LivingConnectionEdge({
       <BaseEdge id={id} path={edgePath} style={style} />
       {data ? (
         <foreignObject x={labelX - 145} y={labelY - 92} width="290" height="184" className="living-connection-foreign-object">
+          {data.joint ? (
+            <button
+              type="button"
+              className={`letter-bridge nodrag nopan ${data.isBridgeVisible ? "is-visible" : ""}`}
+              aria-label={`${data.joint.letterName}: verbindet ${data.context.replace(" \u2192 ", " und ")}`}
+              tabIndex={data.isBridgeVisible ? 0 : -1}
+              onClick={data.onOpenLetter}
+            >
+              <span lang="he" dir="rtl">{data.joint.letter}</span>
+            </button>
+          ) : null}
           <div className={`living-connection-label nodrag nopan ${data.isVisible ? "is-visible" : ""} ${data.isTraveling ? "is-traveling" : ""}`}>
             <span>{data.context}</span>
             <p>{data.bridgeText}</p>
-            {data.joint?.letterName === "Aleph" ? (
+            {data.joint ? (
               <div className="living-connection-joint">
-                <strong lang="he">{data.joint.letter}</strong>
-                <i>Gemeinsames Aleph von {data.context.replace(" \u2192 ", " und ")}</i>
+                <button type="button" onClick={data.onOpenLetter} aria-label={`${data.joint.letterName} im Hebrew Codex oeffnen`}>
+                  <strong lang="he" dir="rtl">{data.joint.letter}</strong>
+                </button>
+                <i>Gemeinsames {data.joint.letterName} von {data.context.replace(" \u2192 ", " und ")}</i>
               </div>
             ) : null}
             <button type="button" tabIndex={data.isVisible ? 0 : -1} onClick={data.onFollow}>
@@ -243,11 +282,21 @@ export default function SymbolNetwork() {
   const [travelingPathId, setTravelingPathId] = useState<string | null>(null);
   const [journeyGate, setJourneyGate] = useState<JourneyGateState | null>(null);
   const [meaningTransitionScene, setMeaningTransitionScene] = useState<MeaningTransitionSceneState | null>(null);
+  const [activeLetterId, setActiveLetterId] = useState<string | null>(null);
+  const [letterOverlayContext, setLetterOverlayContext] = useState<LetterBridgeContext | null>(null);
   const { isEntering, startRoomTransition } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
+  const letterSymbolIds = useMemo(
+    () => new Set(activeLetterId
+      ? network.nodes
+        .filter((node) => getSymbolHebrewProfile(node.id).letters.some((letter) => letter.id === activeLetterId))
+        .map((node) => node.id)
+      : []),
+    [activeLetterId],
+  );
   const journeySymbolIds = useMemo(() => new Set(activeJourney?.symbolPath ?? []), [activeJourney]);
   const journeyMeaningIds = useMemo(() => new Set(activeJourney?.meaningNodePath ?? []), [activeJourney]);
   const journeyPathKeys = useMemo(
@@ -273,9 +322,9 @@ export default function SymbolNetwork() {
           data: {
             ...node,
             kind: "symbol" as const,
-            isActive: activeJourney ? journeySymbolIds.has(node.id) : node.id === activeId,
-            isRelated: relatedIds.has(node.id),
-            isDimmed: activeJourney ? !journeySymbolIds.has(node.id) : node.id !== activeId && !relatedIds.has(node.id),
+            isActive: activeLetterId ? letterSymbolIds.has(node.id) : activeJourney ? journeySymbolIds.has(node.id) : node.id === activeId,
+            isRelated: activeLetterId ? letterSymbolIds.has(node.id) : relatedIds.has(node.id),
+            isDimmed: activeLetterId ? !letterSymbolIds.has(node.id) : activeJourney ? !journeySymbolIds.has(node.id) : node.id !== activeId && !relatedIds.has(node.id),
           },
         })),
         ...network.meaningNodes.map((node) => ({
@@ -291,7 +340,7 @@ export default function SymbolNetwork() {
           },
         })),
       ],
-    [activeId, activeJourney, journeySymbolIds, relatedIds]
+    [activeId, activeJourney, activeLetterId, journeySymbolIds, letterSymbolIds, relatedIds]
   );
 
   const edges: Edge[] = [
@@ -300,23 +349,29 @@ export default function SymbolNetwork() {
         const isSelected = path.id === activePathId || path.id === pendingPathId;
         const isJourneyPath = journeyPathKeys.has(getPathKey(path.from, path.to));
         const isTraveling = path.id === travelingPathId;
+        const isLetterPath = Boolean(activeLetterId)
+          && letterSymbolIds.has(path.from)
+          && letterSymbolIds.has(path.to);
+        const isBridgeVisible = Boolean(path.joint) && (isSelected || isFocused || isLetterPath);
 
         return {
           id: path.id,
           source: path.from,
           target: path.to,
           type: "living",
-          className: `${isJourneyPath || isSelected ? "is-selected-path" : isFocused && !activeJourney ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
+          className: `${isJourneyPath || isSelected || isLetterPath ? "is-selected-path" : isFocused && !activeJourney && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
           style: {
-            stroke: isJourneyPath || isSelected ? "rgba(189,160,109,0.9)" : isFocused && !activeJourney ? "rgba(127,184,201,0.55)" : "rgba(127,184,201,0.12)",
-            strokeWidth: isJourneyPath || isSelected ? 3 : isFocused && !activeJourney ? 1.8 : 0.7,
+            stroke: isJourneyPath || isSelected || isLetterPath ? "rgba(189,160,109,0.9)" : isFocused && !activeJourney && !activeLetterId ? "rgba(127,184,201,0.55)" : "rgba(127,184,201,0.12)",
+            strokeWidth: isJourneyPath || isSelected || isLetterPath ? 3 : isFocused && !activeJourney && !activeLetterId ? 1.8 : 0.7,
           },
           data: {
             context: `${getSymbolLabel(path.from)} \u2192 ${getSymbolLabel(path.to)}`,
             bridgeText: path.bridgeDescription,
             joint: path.joint,
+            isBridgeVisible,
             isVisible: isSelected,
             isTraveling,
+            onOpenLetter: () => openLetterBridge(path),
             onFollow: () => followPathWithTransition(path),
           },
         };
@@ -324,7 +379,7 @@ export default function SymbolNetwork() {
     ...network.meaningLinks.map((link) => {
       const isFocused = activeJourney
         ? journeySymbolIds.has(link.symbolId) && journeyMeaningIds.has(link.meaningId)
-        : link.symbolId === activeId;
+        : activeLetterId ? letterSymbolIds.has(link.symbolId) : link.symbolId === activeId;
 
       return {
         id: `${link.symbolId}-${link.meaningId}`,
@@ -346,6 +401,16 @@ export default function SymbolNetwork() {
     setPreviewJourneyId(null);
     setPendingPathId(null);
     setTravelingPathId(null);
+  }
+
+  function openLetterBridge(path: SymbolMeaningPath) {
+    if (!path.joint) return;
+
+    setActiveLetterId(path.joint.letterId);
+    setLetterOverlayContext({
+      fromLabel: getSymbolLabel(path.from),
+      toLabel: getSymbolLabel(path.to),
+    });
   }
 
   function previewPath(path: SymbolMeaningPath) {
@@ -383,6 +448,11 @@ export default function SymbolNetwork() {
       meaningNodes: path.from === activeId
         ? [path.fromMeaning, path.toMeaning]
         : [path.toMeaning, path.fromMeaning],
+      letterBridge: path.joint ? {
+        glyph: path.joint.letter,
+        name: path.joint.letterName,
+        text: getLetterBridgeText(path) ?? "",
+      } : undefined,
       onComplete: () => followPath(path),
     });
   }
@@ -483,6 +553,15 @@ export default function SymbolNetwork() {
               </button>
             ))}
           </div>
+          {activeLetterId ? (
+            <div className="letter-filter-trace mt-5">
+              <span>Aktive Letter-Ansicht</span>
+              <strong lang="he" dir="rtl">
+                {hebrewLetters.find((letter) => letter.id === activeLetterId)?.glyph}
+              </strong>
+              <button type="button" onClick={() => setActiveLetterId(null)}>Ansicht beenden</button>
+            </div>
+          ) : null}
 
           <div className="symbol-constellation-field relative mt-12 h-[650px] overflow-hidden max-md:hidden">
             <ReactFlow
@@ -535,7 +614,7 @@ export default function SymbolNetwork() {
 
           <div className="mt-5 grid gap-3 md:hidden">
             {network.paths.map((path) => (
-              <div key={path.id} className={`border px-5 py-4 ${pendingPathId === path.id ? "border-gold/30 bg-gold/[0.07]" : "border-white/[0.06] bg-white/[0.02]"}`}>
+              <div key={path.id} className={`border px-5 py-4 ${pendingPathId === path.id || (activeLetterId && path.joint?.letterId === activeLetterId) ? "border-gold/30 bg-gold/[0.07]" : "border-white/[0.06] bg-white/[0.02]"}`}>
               <button type="button" onClick={() => previewPath(path)} className="w-full text-left">
                 <span className="symbol-kicker text-cyan-soft">{path.label}</span>
                 <span className="mt-2 block font-serif text-xl italic text-foreground-strong">{getSymbolLabel(path.from)} → {getSymbolLabel(path.to)}</span>
@@ -543,11 +622,13 @@ export default function SymbolNetwork() {
               </button>
               {pendingPathId === path.id ? (
                 <>
-                  {path.joint?.letterName === "Aleph" ? (
+                  {path.joint ? (
                     <div className="mt-4 border-l border-gold/25 pl-3">
-                      <p className="font-serif text-3xl text-gold/85" lang="he">{path.joint.letter}</p>
+                      <button type="button" onClick={() => openLetterBridge(path)} aria-label={`${path.joint.letterName} im Hebrew Codex oeffnen`}>
+                        <span className="font-serif text-3xl text-gold/85" lang="he" dir="rtl">{path.joint.letter}</span>
+                      </button>
                       <p className="mt-1 text-[9px] uppercase tracking-[0.2em] text-cyan-soft">
-                        Gemeinsames Aleph von {getSymbolLabel(path.from)} und {getSymbolLabel(path.to)}
+                        Gemeinsames {path.joint.letterName} von {getSymbolLabel(path.from)} und {getSymbolLabel(path.to)}
                       </p>
                       <p className="symbol-copy mt-2 text-xs">{path.joint.meanings.join(". ")}.</p>
                     </div>
@@ -710,7 +791,16 @@ export default function SymbolNetwork() {
           bridgeText={meaningTransitionScene.bridgeText}
           journeyText={meaningTransitionScene.journeyText}
           meaningNodes={meaningTransitionScene.meaningNodes}
+          letterBridge={meaningTransitionScene.letterBridge}
           onComplete={completeMeaningTransitionScene}
+        />
+      ) : null}
+      {letterOverlayContext && activeLetterId ? (
+        <LetterOverlay
+          initialLetterId={activeLetterId}
+          bridgeContext={letterOverlayContext}
+          onActiveLetterChange={setActiveLetterId}
+          onClose={() => setLetterOverlayContext(null)}
         />
       ) : null}
       <RoomTransition active={isEntering} />

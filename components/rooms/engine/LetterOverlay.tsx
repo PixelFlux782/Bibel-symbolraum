@@ -11,6 +11,11 @@ import { getMeaningProfile } from "@/lib/meaning/meaningMappings";
 
 type LetterOverlayProps = {
   initialLetterId: string;
+  bridgeContext?: {
+    fromLabel: string;
+    toLabel: string;
+  };
+  onActiveLetterChange?: (letterId: string) => void;
   onClose: () => void;
 };
 
@@ -18,7 +23,7 @@ function uniqueById<T extends { id: string }>(items: T[]): T[] {
   return items.filter((item, index) => items.findIndex((candidate) => candidate.id === item.id) === index);
 }
 
-export function LetterOverlay({ initialLetterId, onClose }: LetterOverlayProps) {
+export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterChange, onClose }: LetterOverlayProps) {
   const [activeLetterId, setActiveLetterId] = useState(initialLetterId);
   const network = useMemo(() => buildSymbolMeaningNetwork(), []);
   const activeLetter = hebrewLetters.find((letter) => letter.id === activeLetterId) ?? hebrewLetters[0];
@@ -39,6 +44,7 @@ export function LetterOverlay({ initialLetterId, onClose }: LetterOverlayProps) 
     () => uniqueById(words.flatMap((word) => getMeaningProfile(word.id).nodes)),
     [words],
   );
+  const activeBridgeContext = activeLetter.id === initialLetterId ? bridgeContext : undefined;
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -50,6 +56,10 @@ export function LetterOverlay({ initialLetterId, onClose }: LetterOverlayProps) 
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [onClose]);
+
+  useEffect(() => {
+    onActiveLetterChange?.(activeLetter.id);
+  }, [activeLetter.id, onActiveLetterChange]);
 
   return createPortal(
     <div className="symbol-engine__letter-overlay" onMouseDown={onClose}>
@@ -63,7 +73,12 @@ export function LetterOverlay({ initialLetterId, onClose }: LetterOverlayProps) 
         <header className="symbol-engine__letter-dialog-header">
           <div>
             <p>Hebrew Codex</p>
-            <h2 id="letter-overlay-title">Wo erscheint dieser Buchstabe?</h2>
+            <h2 id="letter-overlay-title">{activeBridgeContext ? "Dieser Buchstabe verbindet." : "Wo erscheint dieser Buchstabe?"}</h2>
+            {activeBridgeContext ? (
+              <strong className="symbol-engine__letter-bridge-context">
+                Dieser Buchstabe verbindet {activeBridgeContext.fromLabel} und {activeBridgeContext.toLabel}.
+              </strong>
+            ) : null}
           </div>
           <button type="button" onClick={onClose} aria-label="Letter Overlay schliessen">Schliessen</button>
         </header>
@@ -123,7 +138,7 @@ export function LetterOverlay({ initialLetterId, onClose }: LetterOverlayProps) 
           </section>
 
           <section>
-            <h4>Woerter</h4>
+            <h4>Erscheint in: Woerter</h4>
             <div className="symbol-engine__letter-links">
               {words.map((word) => {
                 const room = symbols.find((symbol) => getSymbolHebrewProfile(symbol.id).hebrewWord?.id === word.id);
@@ -147,7 +162,7 @@ export function LetterOverlay({ initialLetterId, onClose }: LetterOverlayProps) 
           </section>
 
           <section>
-            <h4>Symbole</h4>
+            <h4>Fuehrt zu: Symbolraeume</h4>
             <div className="symbol-engine__letter-links">
               {symbols.map((symbol) => (
                 <Link key={symbol.id} href={symbol.roomHref}>
