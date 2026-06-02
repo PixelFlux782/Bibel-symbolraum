@@ -1,10 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-
-const FULL_SCENE_DURATION_MS = 1800;
-const REDUCED_SCENE_DURATION_MS = 600;
-
 export type MeaningTransitionSymbol = {
   label: string;
   hebrew: string;
@@ -16,7 +11,6 @@ type MeaningTransitionSceneProps = {
   bridgeText?: string;
   journeyText?: string;
   meaningNodes: string[];
-  durationMs?: number;
   onComplete: () => void;
 };
 
@@ -26,43 +20,8 @@ export function MeaningTransitionScene({
   bridgeText,
   journeyText,
   meaningNodes,
-  durationMs = FULL_SCENE_DURATION_MS,
   onComplete,
 }: MeaningTransitionSceneProps) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
-    () => typeof window !== "undefined"
-      && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
-  const hasCompletedRef = useRef(false);
-  const complete = useCallback(() => {
-    if (hasCompletedRef.current) {
-      return;
-    }
-
-    hasCompletedRef.current = true;
-    onComplete();
-  }, [onComplete]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handleChange = (event: MediaQueryListEvent) => {
-      setPrefersReducedMotion(event.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(
-      complete,
-      prefersReducedMotion ? Math.min(durationMs, REDUCED_SCENE_DURATION_MS) : durationMs,
-    );
-
-    return () => window.clearTimeout(timeout);
-  }, [complete, durationMs, prefersReducedMotion]);
-
   return (
     <section className="meaning-transition-scene" aria-label="Bedeutungsbewegung" aria-live="polite">
       <div className="meaning-transition-scene__veil" aria-hidden="true" />
@@ -89,8 +48,8 @@ export function MeaningTransitionScene({
         {journeyText && journeyText !== bridgeText ? (
           <p className="meaning-transition-scene__journey">{journeyText}</p>
         ) : null}
-        <button type="button" onClick={complete} className="meaning-transition-scene__skip">
-          Szene ueberspringen
+        <button type="button" onClick={onComplete} className="meaning-transition-scene__skip">
+          Weiter
         </button>
       </div>
     </section>

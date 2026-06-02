@@ -36,7 +36,9 @@ export function MeaningBridge({
         {path.joint?.letterName === "Aleph" ? (
           <div className="mt-7 border-l border-gold/25 pl-4">
             <p className="font-serif text-4xl text-gold/90" lang="he">{path.joint.letter}</p>
-            <p className="mt-2 text-[10px] uppercase tracking-[0.28em] text-cyan-soft">{path.joint.letterName}</p>
+            <p className="mt-2 text-[10px] uppercase tracking-[0.28em] text-cyan-soft">
+              Gemeinsames {path.joint.letterName} von {fromLabel} und {toLabel}
+            </p>
             <p className="mt-3 font-serif text-sm italic leading-relaxed text-gold/75">
               {path.joint.meanings.map((meaning) => <span className="block" key={meaning}>{meaning}.</span>)}
             </p>

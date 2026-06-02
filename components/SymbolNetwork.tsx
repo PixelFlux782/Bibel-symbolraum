@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
@@ -56,19 +56,18 @@ type MeaningTransitionSceneState = {
   bridgeText?: string;
   journeyText?: string;
   meaningNodes: string[];
-  durationMs?: number;
   onComplete: () => void;
 };
 
 type LivingConnectionData = {
+  context: string;
   bridgeText: string;
+  joint?: SymbolMeaningPath["joint"];
   isVisible: boolean;
   isTraveling: boolean;
   onFollow: () => void;
 };
 
-const PATH_FOLLOW_DURATION_MS = 450;
-const PATH_TRANSITION_DURATION_MS = 750;
 const network = buildSymbolMeaningNetwork();
 const positions: Record<string, { x: number; y: number }> = {
   wasser: { x: 90, y: 280 },
@@ -212,9 +211,16 @@ function LivingConnectionEdge({
     <>
       <BaseEdge id={id} path={edgePath} style={style} />
       {data ? (
-        <foreignObject x={labelX - 145} y={labelY - 62} width="290" height="124" className="living-connection-foreign-object">
+        <foreignObject x={labelX - 145} y={labelY - 92} width="290" height="184" className="living-connection-foreign-object">
           <div className={`living-connection-label nodrag nopan ${data.isVisible ? "is-visible" : ""} ${data.isTraveling ? "is-traveling" : ""}`}>
+            <span>{data.context}</span>
             <p>{data.bridgeText}</p>
+            {data.joint?.letterName === "Aleph" ? (
+              <div className="living-connection-joint">
+                <strong lang="he">{data.joint.letter}</strong>
+                <i>Gemeinsames Aleph von {data.context.replace(" \u2192 ", " und ")}</i>
+              </div>
+            ) : null}
             <button type="button" tabIndex={data.isVisible ? 0 : -1} onClick={data.onFollow}>
               Verbindung folgen
             </button>
@@ -235,14 +241,12 @@ export default function SymbolNetwork() {
   const [previewJourneyId, setPreviewJourneyId] = useState<string | null>(null);
   const [pendingPathId, setPendingPathId] = useState<string | null>(null);
   const [travelingPathId, setTravelingPathId] = useState<string | null>(null);
-  const [pathTransition, setPathTransition] = useState<MeaningTransitionSceneState | null>(null);
   const [journeyGate, setJourneyGate] = useState<JourneyGateState | null>(null);
   const [meaningTransitionScene, setMeaningTransitionScene] = useState<MeaningTransitionSceneState | null>(null);
   const { isEntering, startRoomTransition } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
-  const alephJoint = network.paths.find((path) => path.id === "revelation")?.joint;
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
   const journeySymbolIds = useMemo(() => new Set(activeJourney?.symbolPath ?? []), [activeJourney]);
   const journeyMeaningIds = useMemo(() => new Set(activeJourney?.meaningNodePath ?? []), [activeJourney]);
@@ -290,19 +294,6 @@ export default function SymbolNetwork() {
     [activeId, activeJourney, journeySymbolIds, relatedIds]
   );
 
-  useEffect(() => {
-    if (!pathTransition) {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      setMeaningTransitionScene(pathTransition);
-      setPathTransition(null);
-    }, PATH_FOLLOW_DURATION_MS);
-
-    return () => window.clearTimeout(timeout);
-  }, [pathTransition]);
-
   const edges: Edge[] = [
     ...network.paths.map((path) => {
         const isFocused = path.from === activeId || path.to === activeId;
@@ -321,7 +312,9 @@ export default function SymbolNetwork() {
             strokeWidth: isJourneyPath || isSelected ? 3 : isFocused && !activeJourney ? 1.8 : 0.7,
           },
           data: {
+            context: `${getSymbolLabel(path.from)} \u2192 ${getSymbolLabel(path.to)}`,
             bridgeText: path.bridgeDescription,
+            joint: path.joint,
             isVisible: isSelected,
             isTraveling,
             onFollow: () => followPathWithTransition(path),
@@ -350,10 +343,15 @@ export default function SymbolNetwork() {
     setActiveId(symbolId);
     setActivePathId(null);
     setActiveJourneyId(null);
+    setPreviewJourneyId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
   }
 
   function previewPath(path: SymbolMeaningPath) {
     setPendingPathId(path.id);
+    setActivePathId(path.id);
+    setActiveJourneyId(null);
   }
 
   function followPath(path: SymbolMeaningPath) {
@@ -377,7 +375,7 @@ export default function SymbolNetwork() {
     setTravelingPathId(path.id);
     setActivePathId(path.id);
     setActiveJourneyId(null);
-    setPathTransition({
+    setMeaningTransitionScene({
       fromSymbol: getTransitionSymbol(activeId),
       toSymbol: getTransitionSymbol(targetId),
       bridgeText: path.bridgeDescription,
@@ -385,7 +383,6 @@ export default function SymbolNetwork() {
       meaningNodes: path.from === activeId
         ? [path.fromMeaning, path.toMeaning]
         : [path.toMeaning, path.fromMeaning],
-      durationMs: PATH_TRANSITION_DURATION_MS,
       onComplete: () => followPath(path),
     });
   }
@@ -442,12 +439,16 @@ export default function SymbolNetwork() {
   function focusJourney(journey: SymbolMeaningJourney) {
     setActiveJourneyId(journey.id);
     setActivePathId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
     setActiveId(journey.symbolPath[0]);
   }
 
   function focusJourneyStation(symbolId: string) {
     setActiveId(symbolId);
     setActivePathId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
   }
 
   return (
@@ -483,8 +484,86 @@ export default function SymbolNetwork() {
             ))}
           </div>
 
-          <div className="mt-10">
+          <div className="symbol-constellation-field relative mt-12 h-[650px] overflow-hidden max-md:hidden">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              fitView
+              fitViewOptions={{ padding: 0.2 }}
+              nodesDraggable={false}
+              nodesConnectable={false}
+              zoomOnScroll={false}
+              panOnScroll={false}
+              panOnDrag={false}
+              preventScrolling={false}
+              onNodeClick={(_, node) => {
+                if (node.type === "symbol") focusSymbol(node.id);
+              }}
+              onEdgeClick={(_, edge) => {
+                const path = network.paths.find((item) => item.id === edge.id);
+                if (path) previewPath(path);
+              }}
+              onEdgeMouseEnter={(_, edge) => {
+                const path = network.paths.find((item) => item.id === edge.id);
+                if (path) previewPath(path);
+              }}
+              className="symbol-network-flow bg-transparent"
+            />
+          </div>
+
+          <div className="mt-10 border-y border-white/[0.055] py-6 md:hidden">
+            <p className="symbol-kicker text-cyan-soft">Vier Symbole, ein Netz</p>
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              {network.nodes.map((node) => (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => focusSymbol(node.id)}
+                  aria-pressed={activeId === node.id}
+                  className={`border px-2 py-4 text-center transition-colors ${
+                    activeId === node.id ? "border-gold/30 bg-gold/[0.08]" : "border-white/[0.06] bg-white/[0.02]"
+                  }`}
+                >
+                  <span className="block font-serif text-3xl text-gold/85" lang="he" dir="rtl">{node.hebrew}</span>
+                  <span className="mt-2 block text-[9px] uppercase tracking-[0.2em] text-[#d8d1c2]/70">{node.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:hidden">
+            {network.paths.map((path) => (
+              <div key={path.id} className={`border px-5 py-4 ${pendingPathId === path.id ? "border-gold/30 bg-gold/[0.07]" : "border-white/[0.06] bg-white/[0.02]"}`}>
+              <button type="button" onClick={() => previewPath(path)} className="w-full text-left">
+                <span className="symbol-kicker text-cyan-soft">{path.label}</span>
+                <span className="mt-2 block font-serif text-xl italic text-foreground-strong">{getSymbolLabel(path.from)} → {getSymbolLabel(path.to)}</span>
+                <span className="symbol-copy mt-2 block text-sm">{path.bridgeDescription}</span>
+              </button>
+              {pendingPathId === path.id ? (
+                <>
+                  {path.joint?.letterName === "Aleph" ? (
+                    <div className="mt-4 border-l border-gold/25 pl-3">
+                      <p className="font-serif text-3xl text-gold/85" lang="he">{path.joint.letter}</p>
+                      <p className="mt-1 text-[9px] uppercase tracking-[0.2em] text-cyan-soft">
+                        Gemeinsames Aleph von {getSymbolLabel(path.from)} und {getSymbolLabel(path.to)}
+                      </p>
+                      <p className="symbol-copy mt-2 text-xs">{path.joint.meanings.join(". ")}.</p>
+                    </div>
+                  ) : null}
+                  <button type="button" onClick={() => followPathWithTransition(path)} className="symbol-cta mt-4 w-full px-3 py-3 text-[9px]">
+                    Verbindung folgen
+                  </button>
+                </>
+              ) : null}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 border-t border-white/[0.055] pt-8">
             <p className="symbol-kicker text-cyan-soft">Meaning Journeys</p>
+            <p className="symbol-copy mt-3 max-w-2xl text-sm">Aus den entdeckten Verbindungen werden Wege durch das Netz.</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {network.journeys.map((journey) => (
                 <div
@@ -551,84 +630,6 @@ export default function SymbolNetwork() {
               </div>
             </nav>
           ) : null}
-
-          <div className="symbol-constellation-field relative mt-12 h-[650px] overflow-hidden max-md:hidden">
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-              fitView
-              fitViewOptions={{ padding: 0.2 }}
-              nodesDraggable={false}
-              nodesConnectable={false}
-              zoomOnScroll={false}
-              panOnScroll={false}
-              panOnDrag={false}
-              preventScrolling={false}
-              onNodeClick={(_, node) => {
-                if (node.type === "symbol") focusSymbol(node.id);
-              }}
-              onEdgeClick={(_, edge) => {
-                const path = network.paths.find((item) => item.id === edge.id);
-                if (path) previewPath(path);
-              }}
-              onEdgeMouseEnter={(_, edge) => {
-                const path = network.paths.find((item) => item.id === edge.id);
-                if (path) previewPath(path);
-              }}
-              className="symbol-network-flow bg-transparent"
-            />
-            <div className="pointer-events-none absolute right-[14%] top-[42%] border border-gold/20 bg-[#02050c]/85 px-4 py-3 text-center">
-              <p className="font-serif text-3xl text-gold/90" lang="he">א</p>
-              <p className="mt-1 text-[9px] uppercase tracking-[0.28em] text-cyan-soft">gemeinsames Aleph</p>
-              <p className="mt-2 max-w-32 font-serif text-xs italic leading-relaxed text-[#d8d1c2]/65">
-                {alephJoint?.meanings.join(". ")}.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-10 border-y border-white/[0.055] py-6 md:hidden">
-            <p className="symbol-kicker text-cyan-soft">Vier Symbole, ein Netz</p>
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              {network.nodes.map((node) => (
-                <button
-                  key={node.id}
-                  type="button"
-                  onClick={() => focusSymbol(node.id)}
-                  aria-pressed={activeId === node.id}
-                  className={`border px-2 py-4 text-center transition-colors ${
-                    activeId === node.id ? "border-gold/30 bg-gold/[0.08]" : "border-white/[0.06] bg-white/[0.02]"
-                  }`}
-                >
-                  <span className="block font-serif text-3xl text-gold/85" lang="he" dir="rtl">{node.hebrew}</span>
-                  <span className="mt-2 block text-[9px] uppercase tracking-[0.2em] text-[#d8d1c2]/70">{node.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className="mt-3 border-l border-gold/20 pl-3">
-              <p className="font-serif text-2xl text-gold/85" lang="he">א</p>
-              <p className="text-[9px] uppercase tracking-[0.24em] text-cyan-soft">Aleph in Licht und Feuer</p>
-              <p className="symbol-copy mt-1 text-xs">{alephJoint?.meanings.join(". ")}.</p>
-            </div>
-          </div>
-
-          <div className="mt-5 grid gap-3 md:hidden">
-            {network.paths.map((path) => (
-              <div key={path.id} className={`border px-5 py-4 ${pendingPathId === path.id ? "border-gold/30 bg-gold/[0.07]" : "border-white/[0.06] bg-white/[0.02]"}`}>
-              <button type="button" onClick={() => previewPath(path)} className="w-full text-left">
-                <span className="symbol-kicker text-cyan-soft">{path.label}</span>
-                <span className="mt-2 block font-serif text-xl italic text-foreground-strong">{getSymbolLabel(path.from)} → {getSymbolLabel(path.to)}</span>
-                <span className="symbol-copy mt-2 block text-sm">{path.bridgeDescription}</span>
-              </button>
-              {pendingPathId === path.id ? (
-                <button type="button" onClick={() => followPathWithTransition(path)} className="symbol-cta mt-4 w-full px-3 py-3 text-[9px]">
-                  Verbindung folgen
-                </button>
-              ) : null}
-              </div>
-            ))}
-          </div>
         </div>
 
         <aside className="symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40">
@@ -646,6 +647,9 @@ export default function SymbolNetwork() {
             </>
           ) : activePath ? (
             <>
+              <p className="mt-5 text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
+                {getSymbolLabel(activePath.from)} <span className="text-gold/65">&rarr;</span> {getSymbolLabel(activePath.to)}
+              </p>
               <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activePath.label}</h2>
               <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-gold/70">{activePath.evidence}</p>
               <p className="symbol-copy mt-5 text-lg">{activePath.fromMeaning}<br /><span className="text-gold/65">→</span> {activePath.toMeaning}</p>
@@ -653,6 +657,9 @@ export default function SymbolNetwork() {
               {activePath.joint ? (
                 <div className="mt-7 border-l border-gold/25 pl-4">
                   <p className="font-serif text-4xl text-gold/85" lang="he">{activePath.joint.letter}</p>
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
+                    Gemeinsames {activePath.joint.letterName} von {getSymbolLabel(activePath.from)} und {getSymbolLabel(activePath.to)}
+                  </p>
                   <p className="symbol-copy mt-2 text-sm">{activePath.joint.note}</p>
                   <p className="mt-2 font-serif text-sm italic leading-relaxed text-gold/75">
                     {activePath.joint.meanings.join(". ")}.
@@ -703,7 +710,6 @@ export default function SymbolNetwork() {
           bridgeText={meaningTransitionScene.bridgeText}
           journeyText={meaningTransitionScene.journeyText}
           meaningNodes={meaningTransitionScene.meaningNodes}
-          durationMs={meaningTransitionScene.durationMs}
           onComplete={completeMeaningTransitionScene}
         />
       ) : null}
