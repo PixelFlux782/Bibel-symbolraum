@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { BiblicalScene, HebrewLetterMeaning, SymbolEngineData, SymbolJourneyState } from "@/types/engine";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { buildSymbolMeaningNetwork } from "@/lib/meaning/buildSymbolMeaningNetwork";
 import { getMeaningProfile } from "@/lib/meaning/meaningMappings";
+import { LetterOverlay } from "./LetterOverlay";
 
 type HebrewLayerProps = {
   activeLetter: HebrewLetterMeaning;
@@ -18,6 +19,7 @@ function uniqueById<T extends { id: string }>(items: T[]): T[] {
 }
 
 export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: HebrewLayerProps) {
+  const [overlayLetterId, setOverlayLetterId] = useState<string>();
   const codex = useMemo(() => getSymbolHebrewProfile(data), [data]);
   const network = useMemo(() => buildSymbolMeaningNetwork(), []);
   const graphNodes = useMemo(() => {
@@ -50,6 +52,12 @@ export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: Heb
     })
     .filter((path) => path.symbol)
     .slice(0, 4), [data.slug, network]);
+  const activeCodexLetterId = activeLetter.hebrewLetterId ?? codex.letters[0]?.id ?? "aleph";
+
+  const openLetter = (letter: HebrewLetterMeaning) => {
+    onSelect(letter.id);
+    setOverlayLetterId(letter.hebrewLetterId ?? activeCodexLetterId);
+  };
 
   return (
     <section className="symbol-engine__layer symbol-engine__hebrew-layer symbol-engine__living-codex" aria-label="Lebendiger Hebrew Codex">
@@ -71,7 +79,7 @@ export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: Heb
               type="button"
               key={letter.id}
               className={`${letter.id === activeLetter.id ? "is-active" : ""} ${state.hebrewLetterIds.includes(letter.id) ? "is-related" : ""}`}
-              onClick={() => onSelect(letter.id)}
+              onClick={() => openLetter(letter)}
               aria-pressed={letter.id === activeLetter.id}
             >
               <span lang="he" dir="rtl">{letter.letter}</span>
@@ -85,6 +93,9 @@ export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: Heb
           <p>{activeLetter.meaning}</p>
           <p>{activeLetter.detail}</p>
         </article>
+        <button type="button" className="symbol-engine__codex-open" onClick={() => setOverlayLetterId(activeCodexLetterId)}>
+          Alle 22 Buchstaben erkunden
+        </button>
       </div>
 
       <div className="symbol-engine__codex-stage">
@@ -117,6 +128,7 @@ export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: Heb
       </div>
 
       <p className="symbol-engine__layer-copy">{state.hebrewSummary}</p>
+      {overlayLetterId ? <LetterOverlay initialLetterId={overlayLetterId} onClose={() => setOverlayLetterId(undefined)} /> : null}
     </section>
   );
 }
