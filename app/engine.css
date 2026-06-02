@@ -257,6 +257,77 @@
 .symbol-engine__hebrew-explanation p { color: rgba(var(--foreground-rgb), 0.62); font-family: var(--font-serif), serif; font-size: 0.78rem; line-height: 1.42; }
 .symbol-engine__hebrew-explanation p + p { margin-top: 0.25rem; }
 .symbol-engine__layer-copy { margin-top: 0.62rem; }
+.symbol-engine__living-codex {
+  position: relative;
+  max-height: min(68vh, 41rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.symbol-engine__codex-flow {
+  position: absolute;
+  top: 2.4rem;
+  bottom: 1.1rem;
+  left: 1.22rem;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(var(--gold-rgb), 0.4), rgba(var(--cyan-rgb), 0.32), transparent);
+  box-shadow: 0 0 1.2rem rgba(var(--cyan-rgb), 0.12);
+}
+.symbol-engine__codex-stage {
+  position: relative;
+  margin-top: 0.8rem;
+  padding-left: 1rem;
+}
+.symbol-engine__codex-stage::before {
+  position: absolute;
+  top: 0.28rem;
+  left: -0.03rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.56);
+  border-radius: 999px;
+  background: rgba(2, 6, 13, 0.9);
+  box-shadow: 0 0 0.9rem rgba(var(--gold-rgb), 0.2);
+  content: "";
+}
+.symbol-engine__codex-stage > p {
+  color: rgba(var(--cyan-rgb), 0.74);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.48rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.symbol-engine__codex-word { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.22rem 0.62rem; }
+.symbol-engine__codex-word p { flex-basis: 100%; }
+.symbol-engine__codex-word strong {
+  color: rgba(var(--foreground-rgb), 0.9);
+  font-family: var(--font-serif), serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: normal;
+}
+.symbol-engine__codex-word span { color: rgba(var(--gold-rgb), 0.92); font-family: var(--font-serif), serif; font-size: 1.8rem; line-height: 1; }
+.symbol-engine__codex-word i { color: rgba(var(--foreground-rgb), 0.58); font-family: var(--font-serif), serif; font-size: 0.86rem; }
+.symbol-engine__codex-cluster,
+.symbol-engine__codex-references,
+.symbol-engine__codex-connections { display: flex; flex-wrap: wrap; gap: 0.34rem; margin-top: 0.42rem; }
+.symbol-engine__codex-cluster span,
+.symbol-engine__codex-references span,
+.symbol-engine__codex-connections a {
+  border: 1px solid rgba(var(--gold-rgb), 0.15);
+  padding: 0.24rem 0.38rem;
+  color: rgba(var(--foreground-rgb), 0.72);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.46rem;
+  letter-spacing: 0.12em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+.symbol-engine__codex-cluster span.is-graph-node { border-color: rgba(var(--cyan-rgb), 0.2); color: rgba(var(--cyan-rgb), 0.76); }
+.symbol-engine__codex-references span { color: rgba(var(--gold-rgb), 0.78); }
+.symbol-engine__codex-connections a { display: flex; align-items: center; gap: 0.32rem; transition: border-color 500ms ease, color 500ms ease, box-shadow 500ms ease; }
+.symbol-engine__codex-connections a:hover,
+.symbol-engine__codex-connections a:focus-visible { border-color: rgba(var(--gold-rgb), 0.52); color: rgba(var(--foreground-rgb), 0.94); box-shadow: 0 0 1rem rgba(var(--gold-rgb), 0.1); }
+.symbol-engine__codex-connections span { color: rgba(var(--gold-rgb), 0.84); font-family: var(--font-serif), serif; font-size: 0.9rem; line-height: 1; }
 .symbol-engine__biblical-layer { display: grid; gap: 0.48rem; }
 .symbol-engine__biblical-layer article + article { border-top: 1px solid rgba(var(--gold-rgb), 0.08); padding-top: 0.46rem; }
 .symbol-engine__scene-reference { color: rgba(var(--gold-rgb), 0.72); font-family: var(--font-sans), system-ui, sans-serif; font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase; }
@@ -280,6 +351,7 @@
   .symbol-engine__dimension-bar { grid-column: span 2; }
   .symbol-engine__biblical-layer article:nth-of-type(n + 2),
   .symbol-engine__layer-copy { display: none; }
+  .symbol-engine__living-codex { max-height: 14.5rem; }
 }
 
 @media (max-width: 640px) {
@@ -297,6 +369,8 @@
   .symbol-engine__biblical-layer article p:last-child,
   .symbol-engine__hebrew-letters p { display: none; }
   .symbol-engine__hebrew-letters { gap: 0.45rem 0.65rem; }
+  .symbol-engine__living-codex { max-height: 11.25rem; }
+  .symbol-engine__hebrew-explanation { display: none; }
   .symbol-engine__connections p { display: none; }
   .symbol-engine__reflection blockquote { font-size: 0.88rem; }
 }

@@ -57,12 +57,10 @@ export function SymbolEngineRoom({ data, initialStateId }: SymbolEngineRoomProps
           {engine.activeDimension === "hebrew" ? (
             <HebrewLayer
               activeLetter={engine.activeHebrewLetter}
-              letters={data.hebrew.letters}
+              data={data}
               onSelect={engine.selectHebrewLetter}
-              stateLetterIds={activeState.hebrewLetterIds}
-              summary={activeState.hebrewSummary}
-              transliteration={data.hebrew.transliteration}
-              word={data.hebrew.word}
+              scenes={engine.biblicalScenes}
+              state={activeState}
             />
           ) : null}
           {engine.activeDimension === "biblical" ? <BiblicalSceneLayer scenes={engine.biblicalScenes} /> : null}
