@@ -9,8 +9,13 @@ import { ReflectionOverlay } from "./ReflectionOverlay";
 import { SymbolConnectionPanel } from "./SymbolConnectionPanel";
 import { useSymbolEngine } from "./useSymbolEngine";
 
-export function SymbolEngineRoom({ data }: { data: SymbolEngineData }) {
-  const engine = useSymbolEngine(data);
+type SymbolEngineRoomProps = {
+  data: SymbolEngineData;
+  initialStateId?: string;
+};
+
+export function SymbolEngineRoom({ data, initialStateId }: SymbolEngineRoomProps) {
+  const engine = useSymbolEngine(data, { initialStateId });
   const { activeState } = engine;
 
   return (

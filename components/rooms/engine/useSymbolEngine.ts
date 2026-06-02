@@ -3,10 +3,22 @@
 import { useState } from "react";
 import type { EngineDimension, SymbolEngineData } from "@/types/engine";
 
-export function useSymbolEngine(data: SymbolEngineData) {
-  const [activeIndex, setActiveIndex] = useState(0);
+type UseSymbolEngineOptions = {
+  initialStateId?: string;
+};
+
+function getInitialStateIndex(data: SymbolEngineData, initialStateId?: string): number {
+  const initialIndex = data.states.findIndex((state) => state.id === initialStateId);
+
+  return initialIndex >= 0 ? initialIndex : 0;
+}
+
+export function useSymbolEngine(data: SymbolEngineData, options?: UseSymbolEngineOptions) {
+  const [activeIndex, setActiveIndex] = useState(() => getInitialStateIndex(data, options?.initialStateId));
   const [activeDimension, setActiveDimension] = useState<EngineDimension>("hebrew");
-  const [activeHebrewLetterId, setActiveHebrewLetterId] = useState(data.states[0].hebrewLetterIds[0]);
+  const [activeHebrewLetterId, setActiveHebrewLetterId] = useState(
+    () => data.states[getInitialStateIndex(data, options?.initialStateId)].hebrewLetterIds[0],
+  );
 
   const activeState = data.states[activeIndex];
   const activeHebrewLetter =
