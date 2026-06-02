@@ -4,8 +4,10 @@ import Image from "next/image";
 import { Fragment, useMemo, useState } from "react";
 import ReactFlow, { Edge, Handle, Node, NodeProps, Position } from "reactflow";
 
+import { JourneyGate } from "@/components/JourneyGate";
 import { MeaningBridge } from "@/components/MeaningBridge";
-import { RoomTransitionButton } from "@/components/transitions/RoomTransition";
+import { RoomTransition, RoomTransitionButton } from "@/components/transitions/RoomTransition";
+import { useRoomTransition } from "@/hooks/useRoomTransition";
 import {
   buildSymbolMeaningNetwork,
   type SymbolMeaningJourney,
@@ -25,6 +27,14 @@ type MeaningNodeData = SymbolMeaningSatellite & {
   kind: "meaning";
   isRelated: boolean;
   isDimmed: boolean;
+};
+
+type JourneyGateState = {
+  title: string;
+  bridgeText?: string;
+  journeyText?: string;
+  hebrew: string;
+  onComplete: () => void;
 };
 
 const network = buildSymbolMeaningNetwork();
@@ -120,6 +130,8 @@ export default function SymbolNetwork() {
   const [activePathId, setActivePathId] = useState<string | null>(null);
   const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
   const [pendingPathId, setPendingPathId] = useState<string | null>(null);
+  const [journeyGate, setJourneyGate] = useState<JourneyGateState | null>(null);
+  const { isEntering, startRoomTransition } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activeJourney = network.journeys.find((journey) => journey.id === activeJourneyId);
@@ -223,6 +235,47 @@ export default function SymbolNetwork() {
     setActiveId(path.from === activeId ? path.to : path.to === activeId ? path.from : path.to);
   }
 
+  function openPathGate(path: SymbolMeaningPath) {
+    const targetId = getOtherSymbolId(path, activeId);
+    const target = network.nodes.find((node) => node.id === targetId);
+
+    if (!target) {
+      followPath(path);
+      return;
+    }
+
+    setJourneyGate({
+      title: `${getSymbolLabel(activeId)} \u2192 ${target.label}`,
+      bridgeText: path.bridgeDescription,
+      journeyText: path.summary,
+      hebrew: target.hebrew,
+      onComplete: () => followPath(path),
+    });
+  }
+
+  function openJourneyGate(journey: SymbolMeaningJourney) {
+    const firstSymbol = network.nodes.find((node) => node.id === journey.symbolPath[0]);
+
+    if (!firstSymbol) {
+      startRoomTransition({ href: journey.firstRoomHref });
+      return;
+    }
+
+    setJourneyGate({
+      title: journey.title,
+      journeyText: journey.description,
+      hebrew: firstSymbol.hebrew,
+      onComplete: () => startRoomTransition({ href: journey.firstRoomHref }),
+    });
+  }
+
+  function completeJourneyGate() {
+    const onComplete = journeyGate?.onComplete;
+
+    setJourneyGate(null);
+    onComplete?.();
+  }
+
   function focusJourney(journey: SymbolMeaningJourney) {
     setActiveJourneyId(journey.id);
     setActivePathId(null);
@@ -295,9 +348,14 @@ export default function SymbolNetwork() {
                       <JourneySequence items={journey.meaningNodeLabels} />
                     </span>
                   </button>
-                  <RoomTransitionButton href={journey.firstRoomHref} className="symbol-cta mt-4 w-full px-3 py-3 text-[9px]">
+                  <button
+                    type="button"
+                    disabled={isEntering || Boolean(journeyGate)}
+                    onClick={() => openJourneyGate(journey)}
+                    className="symbol-cta mt-4 w-full px-3 py-3 text-[9px]"
+                  >
                     Reise beginnen
-                  </RoomTransitionButton>
+                  </button>
                 </div>
               ))}
             </div>
@@ -455,9 +513,19 @@ export default function SymbolNetwork() {
           fromLabel={getSymbolLabel(pendingPath.from)}
           toLabel={getSymbolLabel(pendingPath.to)}
           onClose={() => setPendingPathId(null)}
-          onFollow={() => followPath(pendingPath)}
+          onFollow={() => openPathGate(pendingPath)}
         />
       ) : null}
+      {journeyGate ? (
+        <JourneyGate
+          title={journeyGate.title}
+          bridgeText={journeyGate.bridgeText}
+          journeyText={journeyGate.journeyText}
+          hebrew={journeyGate.hebrew}
+          onComplete={completeJourneyGate}
+        />
+      ) : null}
+      <RoomTransition active={isEntering} />
     </section>
   );
 }
