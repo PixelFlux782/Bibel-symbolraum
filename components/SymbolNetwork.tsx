@@ -24,6 +24,7 @@ import { useRoomTransition } from "@/hooks/useRoomTransition";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { getJourneyContext } from "@/lib/meaning/getJourneyContext";
+import { recordActivatedLetter, recordJourneyStart } from "@/lib/pathActivity";
 import {
   buildSymbolMeaningNetwork,
   type SymbolMeaningJourney,
@@ -446,6 +447,10 @@ export default function SymbolNetwork() {
   function openLetterBridge(path: SymbolMeaningPath) {
     if (!path.joint) return;
 
+    recordActivatedLetter({
+      letterId: path.joint.letterId,
+      pathId: path.id,
+    });
     setActiveLetterId(path.joint.letterId);
     setLetterOverlayContext({
       fromLabel: getSymbolLabel(path.from),
@@ -505,6 +510,7 @@ export default function SymbolNetwork() {
   }
 
   function openJourneyGate(journey: SymbolMeaningJourney) {
+    recordJourneyStart(journey.id);
     const firstSymbol = network.nodes.find((node) => node.id === journey.symbolPath[0]);
 
     if (!firstSymbol) {

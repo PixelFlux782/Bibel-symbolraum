@@ -1,35 +1,41 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getSymbolBySlug, getAllSymbols, SymbolItem } from '@/lib/symbols';
-
-const STORAGE_KEY = 'bibel-symbolraum-reflections';
+import { getSymbolBySlug, SymbolItem } from '@/lib/symbols';
+import {
+  parseStoredReflections,
+  REFLECTION_STORAGE_KEY,
+  saveStoredReflection,
+} from '@/lib/reflections';
 
 export default function SymbolDetailClient({ symbol }: { symbol: SymbolItem }) {
   const [value, setValue] = useState('');
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try {
-        const reflections = JSON.parse(raw) as Record<string, string>;
-        if (reflections[symbol.slug]) {
-          setValue(reflections[symbol.slug]);
-        }
-      } catch {
-        // ignore invalid data
-      }
+    const reflections = parseStoredReflections(
+      window.localStorage.getItem(REFLECTION_STORAGE_KEY)
+    );
+    const latestReflection = reflections.find((reflection) => reflection.symbolSlug === symbol.slug);
+
+    if (latestReflection) {
+      window.queueMicrotask(() => setValue(latestReflection.answer));
     }
   }, [symbol.slug]);
 
   const question = useMemo(() => symbol.lifeQuestion, [symbol.lifeQuestion]);
 
   function saveReflection() {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    const reflections = raw ? (JSON.parse(raw) as Record<string, string>) : {};
-    reflections[symbol.slug] = value;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reflections));
+    saveStoredReflection({
+      id: `reflection-${symbol.slug}-${Date.now()}`,
+      symbol: symbol.name,
+      symbolSlug: symbol.slug,
+      hebrew: symbol.hebrew,
+      question,
+      answer: value,
+      roomHref: `/symbole/${symbol.slug}`,
+      createdAt: new Date().toISOString(),
+    });
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1800);
   }

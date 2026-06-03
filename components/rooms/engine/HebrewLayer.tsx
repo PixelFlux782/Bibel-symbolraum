@@ -4,6 +4,7 @@ import type { BiblicalScene, HebrewLetterMeaning, SymbolEngineData, SymbolJourne
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { buildSymbolMeaningNetwork } from "@/lib/meaning/buildSymbolMeaningNetwork";
 import { getMeaningProfile } from "@/lib/meaning/meaningMappings";
+import { recordActivatedLetter } from "@/lib/pathActivity";
 import { LetterOverlay } from "./LetterOverlay";
 
 type HebrewLayerProps = {
@@ -56,6 +57,10 @@ export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: Heb
 
   const openLetter = (letter: HebrewLetterMeaning) => {
     onSelect(letter.id);
+    recordActivatedLetter({
+      letterId: letter.hebrewLetterId ?? activeCodexLetterId,
+      symbolId: data.slug,
+    });
     setOverlayLetterId(letter.hebrewLetterId ?? activeCodexLetterId);
   };
 

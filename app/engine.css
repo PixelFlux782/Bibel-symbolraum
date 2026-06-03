@@ -466,6 +466,33 @@
 .symbol-engine__connections i { margin-top: 0.12rem; color: rgba(var(--cyan-rgb), 0.62); }
 .symbol-engine__connections p { max-width: 16rem; margin-top: 0.28rem; color: rgba(var(--foreground-rgb), 0.56); font-family: var(--font-serif), serif; font-size: 0.74rem; line-height: 1.35; }
 .symbol-engine__reflection blockquote { margin-top: 0.5rem; color: rgba(var(--foreground-rgb), 0.84); font-family: var(--font-serif), serif; font-size: 1rem; font-style: italic; line-height: 1.42; }
+.symbol-engine__reflection-input {
+  min-height: 4.8rem;
+  width: 100%;
+  margin-top: 0.75rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.08);
+  background: rgba(1, 3, 8, 0.38);
+  padding: 0.65rem 0.7rem;
+  color: rgba(var(--foreground-rgb), 0.86);
+  font-family: var(--font-serif), serif;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  outline: none;
+  resize: vertical;
+}
+.symbol-engine__reflection-input:focus-visible { border-color: rgba(var(--gold-rgb), 0.24); box-shadow: 0 0 0 1px rgba(var(--gold-rgb), 0.08); }
+.symbol-engine__reflection-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-top: 0.55rem; }
+.symbol-engine__reflection-actions button,
+.symbol-engine__reflection-actions span {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.48rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.symbol-engine__reflection-actions button { color: rgba(var(--gold-rgb), 0.72); transition: color 400ms ease, opacity 400ms ease; }
+.symbol-engine__reflection-actions button:disabled { opacity: 0.34; }
+.symbol-engine__reflection-actions span { color: rgba(var(--cyan-rgb), 0.72); opacity: 0; transition: opacity 400ms ease; }
+.symbol-engine__reflection-actions span.is-visible { opacity: 1; }
 
 @keyframes symbol-engine-scene-arrive {
   from { opacity: 0; transform: scale(1.045); }

@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import type { SymbolEngineData } from "@/types/engine";
+import { recordRoomVisitForRoute } from "@/lib/pathActivity";
 import { BiblicalSceneLayer } from "./BiblicalSceneLayer";
 import { EngineNavigation } from "./EngineNavigation";
 import { EngineStage } from "./EngineStage";
@@ -17,6 +19,14 @@ type SymbolEngineRoomProps = {
 export function SymbolEngineRoom({ data, initialStateId }: SymbolEngineRoomProps) {
   const engine = useSymbolEngine(data, { initialStateId });
   const { activeState } = engine;
+
+  useEffect(() => {
+    recordRoomVisitForRoute({
+      symbolId: data.slug,
+      roomHref: `/raeume/${data.slug}`,
+      routeKey: `room:${data.slug}`,
+    });
+  }, [data.slug]);
 
   return (
     <EngineStage state={activeState}>
@@ -66,7 +76,11 @@ export function SymbolEngineRoom({ data, initialStateId }: SymbolEngineRoomProps
           {engine.activeDimension === "biblical" ? <BiblicalSceneLayer scenes={engine.biblicalScenes} /> : null}
           {engine.activeDimension === "connections" ? <SymbolConnectionPanel connections={engine.symbolConnections} /> : null}
         </div>
-        <ReflectionOverlay reflection={engine.reflectionQuestion} />
+        <ReflectionOverlay
+          data={data}
+          reflection={engine.reflectionQuestion}
+          state={activeState}
+        />
       </aside>
     </EngineStage>
   );
