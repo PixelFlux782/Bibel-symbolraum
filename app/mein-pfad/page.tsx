@@ -78,25 +78,55 @@ function getMostFrequent<T>(items: T[], getKey: (item: T) => string | undefined)
   return Array.from(counts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0];
 }
 
+function getMostFrequentLabels<T>(
+  items: T[],
+  getKey: (item: T) => string | undefined,
+  getLabel: (key: string) => string | undefined,
+  limit = 3
+) {
+  const counts = new Map<string, number>();
+
+  for (const item of items) {
+    const key = getKey(item);
+
+    if (!key) continue;
+
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([key]) => getLabel(key))
+    .filter((label): label is string => Boolean(label));
+}
+
+function formatList(items: string[]) {
+  if (items.length <= 1) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} und ${items[1]}`;
+
+  return `${items.slice(0, -1).join(", ")} und ${items[items.length - 1]}`;
+}
+
 function buildPathInsight(activity: StoredPathActivity, reflections: StoredReflection[]) {
   const letter = getLetter(getMostFrequent(activity.activatedLetters, (activation) => activation.letterId) ?? "");
-  const room = getSymbol(getMostFrequent(activity.roomVisits, (visit) => visit.symbolId));
+  const roomLabels = getMostFrequentLabels(
+    activity.roomVisits,
+    (visit) => visit.symbolId,
+    (symbolId) => getSymbol(symbolId)?.label
+  );
   const journeyStart = [...activity.journeyStarts].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )[0];
   const journey = journeyStart ? getJourney(journeyStart.journeyId) : undefined;
-  const signals = [
-    letter ? `Buchstabe: ${letter.name}` : null,
-    room ? `Raum: ${room.label}` : null,
-    journey ? `Journey: ${journey.title}` : null,
-    reflections.length > 0 ? `${reflections.length} Reflexion${reflections.length === 1 ? "" : "en"}` : null,
+  const sentences = [
+    letter ? `Deine Spur folgt dem Zeichen ${letter.name}.` : "Deine Spur beginnt sich zu formen.",
+    roomLabels.length > 0 ? `Sie fuehrt dich besonders durch ${formatList(roomLabels)}.` : null,
+    journey ? `Diese Bewegung verbindet sich mit der Reise ${journey.title}.` : null,
+    reflections.length > 0 ? "Deine Gedanken liegen als Erinnerung auf diesem Weg." : null,
   ].filter(Boolean);
 
-  if (signals.length === 0) {
-    return "Deine Spur deutet auf ...";
-  }
-
-  return `Deine Spur deutet auf ${signals.join(", ")}.`;
+  return sentences.join(" ");
 }
 
 function JourneySequence({ items }: { items: string[] }) {
@@ -119,7 +149,7 @@ function buildChronicle(activity: StoredPathActivity, reflections: StoredReflect
     return {
       id: visit.id,
       kind: "room",
-      title: `Im Raum: ${symbol?.label ?? visit.symbolId}`,
+      title: `${symbol?.label ?? visit.symbolId}-Raum geoeffnet`,
       detail: symbol?.shortMeaning ?? visit.roomHref,
       href: visit.roomHref,
       createdAt: visit.createdAt,
@@ -162,7 +192,7 @@ function buildChronicle(activity: StoredPathActivity, reflections: StoredReflect
   }));
 
   return [...roomItems, ...journeyItems, ...letterItems, ...reflectionItems].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 }
 
@@ -276,10 +306,10 @@ export default function MeinPfadPage() {
         <header className="symbol-fade-in mb-20 text-center">
           <p className="symbol-kicker mb-8">Mein Pfad</p>
           <h1 className="mx-auto max-w-5xl font-serif text-6xl italic leading-[0.94] text-foreground-strong hyphens-auto md:text-8xl">
-            Meine Reise im Symbolraum
+            Meine Bedeutungskarte
           </h1>
           <p className="symbol-copy mx-auto mt-10 max-w-3xl text-2xl italic md:text-3xl">
-            Besuchte Raeume, aktivierte Buchstaben, gestartete Journeys und Reflexionen werden hier zu deiner Spur.
+            Besuchte Raeume, aktivierte Buchstaben, gestartete Journeys und Reflexionen werden hier zur Geschichte im Symbolraum.
           </p>
           <p className="symbol-copy mx-auto mt-6 max-w-2xl text-base text-cyan-soft md:text-lg">
             Nur bestehende Daten. Nur dieses Geraet.
@@ -308,7 +338,7 @@ export default function MeinPfadPage() {
         ) : (
           <div className="grid gap-8">
             <section className="symbol-path-section">
-              <p className="symbol-kicker text-cyan-soft">Spur im Symbolraum</p>
+              <p className="symbol-kicker text-cyan-soft">Kompakte Zusammenfassung</p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {pathSummary.map((item) => (
                   <article key={item.label} className="symbol-archive-fragment px-5 py-4">
@@ -324,7 +354,7 @@ export default function MeinPfadPage() {
             </section>
 
             <section className="symbol-path-section">
-              <p className="symbol-kicker text-cyan-soft">Deine Spur deutet auf ...</p>
+              <p className="symbol-kicker text-cyan-soft">Die Essenz deiner Reise</p>
               <p className="mt-5 max-w-4xl font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
                 {pathInsight}
               </p>
@@ -418,17 +448,17 @@ export default function MeinPfadPage() {
               </div>
             </section>
 
-            <details className="symbol-path-section group mx-auto max-w-5xl opacity-80">
+            <details className="symbol-path-section group">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-                <span className="symbol-kicker text-muted-soft">Archiv der Reise</span>
+                <span className="symbol-kicker text-cyan-soft">Reisechronik</span>
                 <span className="symbol-archive-action">
-                  <span className="group-open:hidden">Archiv anzeigen</span>
-                  <span className="hidden group-open:inline">Archiv ausblenden</span>
+                  <span className="group-open:hidden">Chronik anzeigen</span>
+                  <span className="hidden group-open:inline">Chronik ausblenden</span>
                 </span>
               </summary>
-              <div className="symbol-path-list mt-5 space-y-3">
+              <div className="symbol-path-list mt-6 space-y-4">
                 {chronicle.map((item, index) => (
-                  <article key={item.id} className="symbol-path-fragment grid gap-4 px-5 py-4 md:grid-cols-[6rem_1fr]">
+                  <article key={item.id} className="symbol-path-fragment grid gap-5 px-5 py-5 md:grid-cols-[8rem_1fr]">
                     <div>
                       <span className="symbol-path-counter">{String(index + 1).padStart(2, "0")}</span>
                       <p className="symbol-copy mt-4 text-xs uppercase tracking-[0.2em] text-muted-soft">
@@ -437,7 +467,7 @@ export default function MeinPfadPage() {
                     </div>
                     <div>
                       <p className="symbol-kicker text-cyan-soft">{item.kind}</p>
-                      <h2 className="mt-3 font-serif text-2xl italic leading-tight text-foreground-strong">
+                      <h2 className="mt-3 font-serif text-3xl italic leading-tight text-foreground-strong">
                         {item.title}
                       </h2>
                       <p className="symbol-copy mt-3 text-base">{item.detail}</p>

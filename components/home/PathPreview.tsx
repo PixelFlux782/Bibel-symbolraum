@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import {
   parseStoredReflections,
   REFLECTION_STORAGE_KEY,
@@ -35,18 +34,22 @@ export function PathPreview() {
   const [reflections, setReflections] = useState<StoredReflection[] | null>(null);
 
   useEffect(() => {
-    const storedReflections = parseStoredReflections(
-      window.localStorage.getItem(REFLECTION_STORAGE_KEY)
-    );
-
-    setReflections(storedReflections);
-
-    if (storedReflections.length > 0) {
-      window.localStorage.setItem(
-        REFLECTION_STORAGE_KEY,
-        JSON.stringify(storedReflections)
+    const timeoutId = window.setTimeout(() => {
+      const storedReflections = parseStoredReflections(
+        window.localStorage.getItem(REFLECTION_STORAGE_KEY)
       );
-    }
+
+      setReflections(storedReflections);
+
+      if (storedReflections.length > 0) {
+        window.localStorage.setItem(
+          REFLECTION_STORAGE_KEY,
+          JSON.stringify(storedReflections)
+        );
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const sortedReflections = useMemo(
@@ -116,14 +119,14 @@ export function PathPreview() {
         ) : (
           <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-7 text-center md:flex-row md:text-left">
             <p className="symbol-copy max-w-2xl text-xl italic">
-              Noch keine gespeicherte Reflexion. Beginne im Wasserraum.
+              Noch keine gespeicherte Reflexion. Beginne im Symbolnetz und folge den Verbindungen.
             </p>
-            <RoomTransitionButton
-              href="/raeume/wasser"
+            <Link
+              href="/symbolnetz"
               className="symbol-cta mx-auto shrink-0 md:mx-0"
             >
-              Wasserraum betreten
-            </RoomTransitionButton>
+              Symbolnetz betreten
+            </Link>
           </div>
         )}
       </div>

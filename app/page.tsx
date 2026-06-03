@@ -1,20 +1,21 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PathPreview } from "@/components/home/PathPreview";
-import { RoomTransitionButton } from "@/components/transitions/RoomTransition";
 
-const WATER_LAYERS = [
-  {
-    title: "Biblisch",
-    text: "Wasser erscheint als Ursprung, Grenze und Weg durch das Unbekannte.",
-  },
-  {
-    title: "Hebräisch",
-    text: "מים trägt Bewegung, Mehrzahl und die Resonanz einer lebendigen Tiefe.",
-  },
-  {
-    title: "Persönlich",
-    text: "Ein innerer Raum für Reinigung, Erinnerung und sanften Übergang.",
-  },
+const MEANING_FLOW = [
+  "Hebräischer Buchstabe",
+  "Symbol",
+  "Bedeutungsraum",
+  "Journey",
+  "Mein Pfad",
+];
+
+const CURRENT_ROOMS = [
+  "Wasser",
+  "Licht",
+  "Feuer",
+  "Wüste",
+  "Brot",
 ];
 
 export default function StartPage() {
@@ -43,16 +44,23 @@ export default function StartPage() {
             SYMBOLRAUM
           </h1>
           <p className="symbol-copy mx-auto mt-9 max-w-[16rem] text-base italic text-muted-soft sm:max-w-xl sm:text-xl">
-            Ein stiller Raum biblischer Bilder.
+            Betritt ein Bedeutungsuniversum aus hebräischen Buchstaben, Symbolen und Wegen.
           </p>
 
-          <RoomTransitionButton
-            href="/raeume/wasser"
-            className="symbol-portal-entry group mt-16"
-          >
-            <span className="symbol-portal-entry-mark" aria-hidden="true" />
-            <span>Wasserraum betreten</span>
-          </RoomTransitionButton>
+          <p className="symbol-copy mx-auto mt-7 max-w-[18rem] text-sm text-muted-soft sm:max-w-2xl sm:text-lg">
+            Hebräische Buchstaben führen zu Symbolen. Symbole öffnen Räume.
+            Räume verbinden sich zu Wegen. Aus diesen Wegen entsteht dein persönlicher Pfad.
+          </p>
+
+          <div className="mt-16 flex flex-col items-center gap-7">
+            <Link href="/symbolnetz" className="symbol-portal-entry group">
+              <span className="symbol-portal-entry-mark" aria-hidden="true" />
+              <span>Symbolnetz betreten</span>
+            </Link>
+            <Link href="/mein-pfad" className="symbol-cta">
+              Mein Pfad
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -62,8 +70,8 @@ export default function StartPage() {
         <div className="mx-auto grid max-w-6xl items-end gap-14 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="scroll-reveal relative min-h-[28rem] overflow-hidden shadow-[0_34px_120px_rgba(0,0,0,0.34)]">
             <Image
-              src="/Visuals/wasser_cinema_hero.png"
-              alt="Cineastischer Wasserraum mit dunkler Tiefe und Licht"
+              src="/Visuals/symbolnetz_backround.png"
+              alt="Dunkles Symbolnetz mit leuchtenden Verbindungen"
               fill
               sizes="(min-width: 1024px) 54vw, 100vw"
               className="sacred-drift object-cover"
@@ -71,36 +79,46 @@ export default function StartPage() {
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,5,12,0.72),rgba(2,5,12,0.08)_52%,rgba(2,5,12,0.42))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
               <p className="symbol-kicker">
-                Erster Raum
+                Lebendige Karte
               </p>
               <h2 className="mt-3 font-serif text-5xl italic leading-none text-foreground-strong sm:text-7xl">
-                מים
+                אות
               </h2>
             </div>
           </div>
 
           <div className="scroll-reveal pb-2">
             <p className="symbol-kicker">
-              Majim / Wasser
+              Projektlogik
             </p>
             <h3 className="mt-5 font-serif text-4xl italic leading-tight text-foreground-strong sm:text-5xl">
-              Tiefe, Leben, Reinigung und Übergang.
+              Aus Zeichen werden Räume. Aus Räumen werden Wege.
             </h3>
 
-            <div className="mt-12 grid gap-7">
-              {WATER_LAYERS.map((layer) => (
+            <div className="mt-12 grid gap-4">
+              {MEANING_FLOW.map((step, index) => (
                 <article
-                  key={layer.title}
-                  className="border-t border-white/[0.045] pt-7"
+                  key={step}
+                  className="grid grid-cols-[2.4rem_1fr] items-center border-t border-white/[0.045] pt-4"
                 >
-                  <p className="symbol-kicker">
-                    {layer.title}
+                  <p className="font-serif text-2xl italic text-gold/55">
+                    {String(index + 1).padStart(2, "0")}
                   </p>
-                  <p className="symbol-copy mt-3 text-lg">
-                    {layer.text}
+                  <p className="symbol-copy text-lg">
+                    {step}
                   </p>
                 </article>
               ))}
+            </div>
+
+            <div className="mt-12 border-t border-gold/[0.08] pt-7">
+              <p className="symbol-kicker">Aktuelle Räume im Netz</p>
+              <p className="symbol-copy mt-4 text-lg">
+                {CURRENT_ROOMS.join(" · ")}
+              </p>
+              <Link href="/symbolnetz" className="symbol-cta mt-6">
+                Bedeutungsnetz öffnen
+              </Link>
             </div>
           </div>
         </div>

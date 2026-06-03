@@ -8,7 +8,6 @@ import SoundController from './audio/SoundController';
 const NAV_ITEMS = [
   { name: 'Start', path: '/' },
   { name: 'Symbolnetz', path: '/symbolnetz' },
-  { name: 'Wasser', path: '/raeume/wasser' },
   { name: 'Mein Pfad', path: '/mein-pfad' },
   { name: 'Archiv', path: '/archiv' },
 ];
