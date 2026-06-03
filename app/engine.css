@@ -413,6 +413,32 @@
 .symbol-engine__letter-symbolism p,
 .symbol-engine__letter-empty { color: rgba(var(--foreground-rgb), 0.58); font-family: var(--font-serif), serif; font-size: 0.78rem; line-height: 1.4; }
 .symbol-engine__letter-empty { margin-top: 0.48rem; }
+.symbol-engine__letter-emergence {
+  display: grid;
+  gap: 0.34rem;
+  margin-top: 0.58rem;
+}
+.symbol-engine__letter-emergence li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem;
+}
+.symbol-engine__letter-emergence span {
+  color: rgba(var(--cyan-rgb), 0.58);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.46rem;
+  letter-spacing: 0.14em;
+}
+.symbol-engine__letter-emergence strong {
+  border-left: 1px solid rgba(var(--gold-rgb), 0.16);
+  padding-left: 0.5rem;
+  color: rgba(var(--gold-rgb), 0.78);
+  font-family: var(--font-serif), serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: normal;
+}
 .symbol-engine__letter-cluster,
 .symbol-engine__letter-links { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-top: 0.58rem; }
 .symbol-engine__letter-cluster span,

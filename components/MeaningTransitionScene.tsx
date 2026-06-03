@@ -15,6 +15,7 @@ type MeaningTransitionSceneProps = {
     glyph: string;
     name: string;
     text: string;
+    symbols?: MeaningTransitionSymbol[];
   };
   onComplete: () => void;
 };
@@ -33,30 +34,45 @@ export function MeaningTransitionScene({
       <div className="meaning-transition-scene__veil" aria-hidden="true" />
       <div className="meaning-transition-scene__content">
         <p className="meaning-transition-scene__kicker">Bedeutungsbewegung</p>
-        <div className="meaning-transition-scene__path">
-          <div className="meaning-transition-scene__symbol">
-            <p className="meaning-transition-scene__hebrew" lang="he" dir="rtl">{fromSymbol.hebrew}</p>
-            <p className="meaning-transition-scene__label">{fromSymbol.label}</p>
-          </div>
-          <span className="meaning-transition-scene__arrow" aria-hidden="true">&darr;</span>
-          {letterBridge ? (
+        {letterBridge ? (
+          <div className="meaning-transition-scene__path meaning-transition-scene__path--letter">
             <div className="meaning-transition-scene__letter-bridge">
               <p lang="he" dir="rtl">{letterBridge.glyph}</p>
               <span>{letterBridge.name}</span>
             </div>
-          ) : (
+            <span className="meaning-transition-scene__arrow" aria-hidden="true">&darr;</span>
+            <div className="meaning-transition-scene__emergence-symbols">
+              {(letterBridge.symbols ?? [fromSymbol, toSymbol]).map((symbol, index) => (
+                <div
+                  className="meaning-transition-scene__symbol meaning-transition-scene__symbol--emerging"
+                  key={`${symbol.label}-${index}`}
+                  style={{ animationDelay: `${index * 220}ms` }}
+                >
+                  <p className="meaning-transition-scene__hebrew" lang="he" dir="rtl">{symbol.hebrew}</p>
+                  <p className="meaning-transition-scene__label">{symbol.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="meaning-transition-scene__path">
+            <div className="meaning-transition-scene__symbol">
+              <p className="meaning-transition-scene__hebrew" lang="he" dir="rtl">{fromSymbol.hebrew}</p>
+              <p className="meaning-transition-scene__label">{fromSymbol.label}</p>
+            </div>
+            <span className="meaning-transition-scene__arrow" aria-hidden="true">&darr;</span>
             <div className="meaning-transition-scene__nodes">
               {meaningNodes.map((node, index) => (
                 <p className="meaning-transition-scene__node" key={`${node}-${index}`}>{node}</p>
               ))}
             </div>
-          )}
-          <span className="meaning-transition-scene__arrow" aria-hidden="true">&darr;</span>
-          <div className="meaning-transition-scene__symbol">
-            <p className="meaning-transition-scene__hebrew" lang="he" dir="rtl">{toSymbol.hebrew}</p>
-            <p className="meaning-transition-scene__label">{toSymbol.label}</p>
+            <span className="meaning-transition-scene__arrow" aria-hidden="true">&darr;</span>
+            <div className="meaning-transition-scene__symbol">
+              <p className="meaning-transition-scene__hebrew" lang="he" dir="rtl">{toSymbol.hebrew}</p>
+              <p className="meaning-transition-scene__label">{toSymbol.label}</p>
+            </div>
           </div>
-        </div>
+        )}
         {bridgeText ? <p className="meaning-transition-scene__bridge">{bridgeText}</p> : null}
         {letterBridge ? <p className="meaning-transition-scene__letter-text">{letterBridge.text}</p> : null}
         {journeyText && journeyText !== bridgeText ? (

@@ -44,6 +44,13 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
     () => uniqueById(words.flatMap((word) => getMeaningProfile(word.id).nodes)),
     [words],
   );
+  const emergenceSequence = useMemo(
+    () => [
+      ...graphNodes.map((node) => node.label),
+      ...symbols.map((symbol) => symbol.label),
+    ],
+    [graphNodes, symbols],
+  );
   const activeBridgeContext = activeLetter.id === initialLetterId ? bridgeContext : undefined;
 
   useEffect(() => {
@@ -135,6 +142,20 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
               {graphNodes.map((node) => <span key={node.id} className="is-graph-node" title={node.description}>{node.label}</span>)}
               {!meaningFields.length && !graphNodes.length ? <p className="symbol-engine__letter-empty">Noch keine verknuepften Meaning Fields.</p> : null}
             </div>
+          </section>
+
+          <section>
+            <h4>Was entsteht aus diesem Buchstaben?</h4>
+            {emergenceSequence.length ? (
+              <ol className="symbol-engine__letter-emergence">
+                {emergenceSequence.map((item, index) => (
+                  <li key={`${item}-${index}`}>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <strong>{item}</strong>
+                  </li>
+                ))}
+              </ol>
+            ) : <p className="symbol-engine__letter-empty">Noch keine verknuepften Meaning Nodes oder Symbolraeume.</p>}
           </section>
 
           <section>

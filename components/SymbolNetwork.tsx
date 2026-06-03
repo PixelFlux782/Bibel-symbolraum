@@ -37,6 +37,7 @@ type SymbolNodeData = SymbolMeaningNetworkNode & {
   isActive: boolean;
   isRelated: boolean;
   isDimmed: boolean;
+  emergenceIndex?: number;
 };
 
 type MeaningNodeData = SymbolMeaningSatellite & {
@@ -63,6 +64,7 @@ type MeaningTransitionSceneState = {
     glyph: string;
     name: string;
     text: string;
+    symbols?: MeaningTransitionSymbol[];
   };
   onComplete: () => void;
 };
@@ -110,6 +112,13 @@ const positions: Record<string, { x: number; y: number }> = {
   word: { x: 300, y: 390 },
 };
 const fallbackPosition = { x: 450, y: 290 };
+const letterEmergencePositions = [
+  { x: 210, y: 180 },
+  { x: 690, y: 180 },
+  { x: 450, y: 520 },
+  { x: 180, y: 500 },
+  { x: 720, y: 500 },
+];
 const missingPositionWarnings = new Set<string>();
 
 function getNodePosition(nodeId: string) {
@@ -174,7 +183,10 @@ function JourneySequence({ items }: { items: string[] }) {
 
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
   return (
-    <div className={`group relative cursor-pointer transition-opacity duration-700 ${data.isDimmed ? "opacity-25" : "opacity-100"}`}>
+    <div
+      className={`group relative cursor-pointer transition-opacity duration-700 ${data.emergenceIndex !== undefined ? "letter-emergence-symbol" : ""} ${data.isDimmed ? "opacity-25" : "opacity-100"}`}
+      style={data.emergenceIndex !== undefined ? { animationDelay: `${data.emergenceIndex * 220}ms` } : undefined}
+    >
       <Handle type="target" position={Position.Left} className="opacity-0" />
       <Handle type="source" position={Position.Right} className="opacity-0" />
       <div
@@ -239,15 +251,25 @@ function LivingConnectionEdge({
       {data ? (
         <foreignObject x={labelX - 145} y={labelY - 92} width="290" height="184" className="living-connection-foreign-object">
           {data.joint ? (
-            <button
-              type="button"
+            <span
+              role="button"
               className={`letter-bridge nodrag nopan ${data.isBridgeVisible ? "is-visible" : ""}`}
               aria-label={`${data.joint.letterName}: verbindet ${data.context.replace(" \u2192 ", " und ")}`}
               tabIndex={data.isBridgeVisible ? 0 : -1}
-              onClick={data.onOpenLetter}
+              onClick={(event) => {
+                event.stopPropagation();
+                data.onOpenLetter();
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  data.onOpenLetter();
+                }
+              }}
             >
               <span lang="he" dir="rtl">{data.joint.letter}</span>
-            </button>
+            </span>
           ) : null}
           <div className={`living-connection-label nodrag nopan ${data.isVisible ? "is-visible" : ""} ${data.isTraveling ? "is-traveling" : ""}`}>
             <span>{data.context}</span>
@@ -289,6 +311,7 @@ export default function SymbolNetwork() {
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
+  const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
   const letterSymbolIds = useMemo(
     () => new Set(activeLetterId
       ? network.nodes
@@ -296,6 +319,18 @@ export default function SymbolNetwork() {
         .map((node) => node.id)
       : []),
     [activeLetterId],
+  );
+  const letterSymbols = useMemo(
+    () => network.nodes.filter((node) => letterSymbolIds.has(node.id)),
+    [letterSymbolIds],
+  );
+  const letterMeaningIds = useMemo(
+    () => new Set(activeLetterId
+      ? network.meaningLinks
+        .filter((link) => letterSymbolIds.has(link.symbolId))
+        .map((link) => link.meaningId)
+      : []),
+    [activeLetterId, letterSymbolIds],
   );
   const journeySymbolIds = useMemo(() => new Set(activeJourney?.symbolPath ?? []), [activeJourney]);
   const journeyMeaningIds = useMemo(() => new Set(activeJourney?.meaningNodePath ?? []), [activeJourney]);
@@ -318,13 +353,16 @@ export default function SymbolNetwork() {
         ...network.nodes.map((node) => ({
           id: node.id,
           type: "symbol",
-          position: getNodePosition(node.id),
+          position: activeLetterId && letterSymbolIds.has(node.id)
+            ? letterEmergencePositions[letterSymbols.findIndex((symbol) => symbol.id === node.id) % letterEmergencePositions.length]
+            : getNodePosition(node.id),
           data: {
             ...node,
             kind: "symbol" as const,
             isActive: activeLetterId ? letterSymbolIds.has(node.id) : activeJourney ? journeySymbolIds.has(node.id) : node.id === activeId,
             isRelated: activeLetterId ? letterSymbolIds.has(node.id) : relatedIds.has(node.id),
             isDimmed: activeLetterId ? !letterSymbolIds.has(node.id) : activeJourney ? !journeySymbolIds.has(node.id) : node.id !== activeId && !relatedIds.has(node.id),
+            emergenceIndex: activeLetterId && letterSymbolIds.has(node.id) ? letterSymbols.findIndex((symbol) => symbol.id === node.id) : undefined,
           },
         })),
         ...network.meaningNodes.map((node) => ({
@@ -335,12 +373,12 @@ export default function SymbolNetwork() {
           data: {
             ...node,
             kind: "meaning" as const,
-            isRelated: relatedIds.has(node.id),
-            isDimmed: !relatedIds.has(node.id),
+            isRelated: activeLetterId ? letterMeaningIds.has(node.id) : relatedIds.has(node.id),
+            isDimmed: activeLetterId ? !letterMeaningIds.has(node.id) : !relatedIds.has(node.id),
           },
         })),
       ],
-    [activeId, activeJourney, activeLetterId, journeySymbolIds, letterSymbolIds, relatedIds]
+    [activeId, activeJourney, activeLetterId, journeySymbolIds, letterMeaningIds, letterSymbolIds, letterSymbols, relatedIds]
   );
 
   const edges: Edge[] = [
@@ -401,6 +439,8 @@ export default function SymbolNetwork() {
     setPreviewJourneyId(null);
     setPendingPathId(null);
     setTravelingPathId(null);
+    setActiveLetterId(null);
+    setLetterOverlayContext(null);
   }
 
   function openLetterBridge(path: SymbolMeaningPath) {
@@ -452,6 +492,7 @@ export default function SymbolNetwork() {
         glyph: path.joint.letter,
         name: path.joint.letterName,
         text: getLetterBridgeText(path) ?? "",
+        symbols: [getTransitionSymbol(path.from), getTransitionSymbol(path.to)],
       } : undefined,
       onComplete: () => followPath(path),
     });
@@ -535,7 +576,7 @@ export default function SymbolNetwork() {
             Warum haengen Wasser, Licht, Feuer und Wueste zusammen?
           </h1>
           <p className="symbol-copy mt-6 max-w-2xl text-base sm:text-xl">
-            Wähle ein Symbol. Folge danach einer Verbindung, um ihren Bedeutungsweg zu öffnen.
+            Waehle ein Symbol. Oeffne eine Letter Bridge, um zu sehen, welche Raeume aus demselben Buchstaben hervorgehen.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3 max-md:hidden" aria-label="Symbol fokussieren">
@@ -559,6 +600,7 @@ export default function SymbolNetwork() {
               <strong lang="he" dir="rtl">
                 {hebrewLetters.find((letter) => letter.id === activeLetterId)?.glyph}
               </strong>
+              <i>{letterSymbols.map((symbol) => symbol.label).join(" + ")}</i>
               <button type="button" onClick={() => setActiveLetterId(null)}>Ansicht beenden</button>
             </div>
           ) : null}
@@ -590,26 +632,57 @@ export default function SymbolNetwork() {
               }}
               className="symbol-network-flow bg-transparent"
             />
+            {activeCodexLetter ? (
+              <div className="letter-emergence-field-center" aria-hidden="true">
+                <div className="letter-emergence-center">
+                  <p lang="he" dir="rtl">{activeCodexLetter.glyph}</p>
+                  <span>{activeCodexLetter.name}</span>
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="mt-10 border-y border-white/[0.055] py-6 md:hidden">
-            <p className="symbol-kicker text-cyan-soft">Vier Symbole, ein Netz</p>
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              {network.nodes.map((node) => (
-                <button
-                  key={node.id}
-                  type="button"
-                  onClick={() => focusSymbol(node.id)}
-                  aria-pressed={activeId === node.id}
-                  className={`border px-2 py-4 text-center transition-colors ${
-                    activeId === node.id ? "border-gold/30 bg-gold/[0.08]" : "border-white/[0.06] bg-white/[0.02]"
-                  }`}
-                >
-                  <span className="block font-serif text-3xl text-gold/85" lang="he" dir="rtl">{node.hebrew}</span>
-                  <span className="mt-2 block text-[9px] uppercase tracking-[0.2em] text-[#d8d1c2]/70">{node.label}</span>
-                </button>
-              ))}
-            </div>
+            <p className="symbol-kicker text-cyan-soft">{activeCodexLetter ? "Buchstabe als Ursprung" : "Vier Symbole, ein Netz"}</p>
+            {activeCodexLetter ? (
+              <div className="letter-emergence-mobile mt-5">
+                <div className="letter-emergence-mobile__center">
+                  <span lang="he" dir="rtl">{activeCodexLetter.glyph}</span>
+                  <strong>{activeCodexLetter.name}</strong>
+                </div>
+                <div className="letter-emergence-mobile__symbols">
+                  {letterSymbols.map((symbol, index) => (
+                    <button
+                      key={symbol.id}
+                      type="button"
+                      onClick={() => focusSymbol(symbol.id)}
+                      className="letter-emergence-mobile__symbol"
+                      style={{ animationDelay: `${index * 180}ms` }}
+                    >
+                      <span lang="he" dir="rtl">{symbol.hebrew}</span>
+                      <strong>{symbol.label}</strong>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="mt-5 grid grid-cols-2 gap-2">
+                {network.nodes.map((node) => (
+                  <button
+                    key={node.id}
+                    type="button"
+                    onClick={() => focusSymbol(node.id)}
+                    aria-pressed={activeId === node.id}
+                    className={`border px-2 py-4 text-center transition-colors ${
+                      activeId === node.id ? "border-gold/30 bg-gold/[0.08]" : "border-white/[0.06] bg-white/[0.02]"
+                    }`}
+                  >
+                    <span className="block font-serif text-3xl text-gold/85" lang="he" dir="rtl">{node.hebrew}</span>
+                    <span className="mt-2 block text-[9px] uppercase tracking-[0.2em] text-[#d8d1c2]/70">{node.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mt-5 grid gap-3 md:hidden">
@@ -714,7 +787,7 @@ export default function SymbolNetwork() {
         </div>
 
         <aside className="symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40">
-          <p className="symbol-kicker text-cyan-soft">{activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : "Fokus"}</p>
+          <p className="symbol-kicker text-cyan-soft">{activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}</p>
           {activeJourney ? (
             <>
               <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activeJourney.title}</h2>
@@ -737,7 +810,15 @@ export default function SymbolNetwork() {
               <p className="mt-5 font-serif text-lg italic leading-relaxed text-foreground-strong/85">{activePath.summary}</p>
               {activePath.joint ? (
                 <div className="mt-7 border-l border-gold/25 pl-4">
-                  <p className="font-serif text-4xl text-gold/85" lang="he">{activePath.joint.letter}</p>
+                  <button
+                    type="button"
+                    onClick={() => openLetterBridge(activePath)}
+                    className="font-serif text-4xl text-gold/85"
+                    lang="he"
+                    aria-label={`${activePath.joint.letterName} als Ursprung im Hebrew Codex oeffnen`}
+                  >
+                    {activePath.joint.letter}
+                  </button>
                   <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
                     Gemeinsames {activePath.joint.letterName} von {getSymbolLabel(activePath.from)} und {getSymbolLabel(activePath.to)}
                   </p>
@@ -747,6 +828,21 @@ export default function SymbolNetwork() {
                   </p>
                 </div>
               ) : null}
+            </>
+          ) : activeCodexLetter ? (
+            <>
+              <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeCodexLetter.glyph}</p>
+              <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeCodexLetter.name}</h2>
+              <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeCodexLetter.transcription}</p>
+              <div className="mt-7 border-t border-white/[0.055] pt-5">
+                <p className="symbol-kicker text-cyan-soft">Was entsteht aus diesem Buchstaben?</p>
+                <p className="mt-4 font-serif text-lg italic leading-relaxed text-gold/75">
+                  <JourneySequence items={[
+                    ...Array.from(letterMeaningIds).map(getMeaningNodeLabel),
+                    ...letterSymbols.map((symbol) => symbol.label),
+                  ]} />
+                </p>
+              </div>
             </>
           ) : (
             <>
