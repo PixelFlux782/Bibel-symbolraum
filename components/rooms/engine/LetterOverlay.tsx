@@ -16,6 +16,7 @@ type LetterOverlayProps = {
     toLabel: string;
   };
   onActiveLetterChange?: (letterId: string) => void;
+  visibleLetterIds?: string[];
   onClose: () => void;
 };
 
@@ -23,8 +24,9 @@ function uniqueById<T extends { id: string }>(items: T[]): T[] {
   return items.filter((item, index) => items.findIndex((candidate) => candidate.id === item.id) === index);
 }
 
-export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterChange, onClose }: LetterOverlayProps) {
+export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterChange, visibleLetterIds, onClose }: LetterOverlayProps) {
   const [activeLetterId, setActiveLetterId] = useState(initialLetterId);
+  const visibleLetterIdSet = useMemo(() => visibleLetterIds ? new Set(visibleLetterIds) : undefined, [visibleLetterIds]);
   const network = useMemo(() => buildSymbolMeaningNetwork(), []);
   const activeLetter = hebrewLetters.find((letter) => letter.id === activeLetterId) ?? hebrewLetters[0];
   const words = useMemo(
@@ -91,19 +93,24 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
         </header>
 
         <nav className="symbol-engine__letter-alphabet" aria-label="Hebraeische Buchstaben">
-          {hebrewLetters.map((letter) => (
-            <button
-              type="button"
-              key={letter.id}
-              className={letter.id === activeLetter.id ? "is-active" : ""}
-              onClick={() => setActiveLetterId(letter.id)}
-              aria-pressed={letter.id === activeLetter.id}
-              title={letter.name}
-            >
-              <span lang="he" dir="rtl">{letter.glyph}</span>
-              <i>{letter.name}</i>
-            </button>
-          ))}
+          {hebrewLetters.map((letter) => {
+            const isVisible = visibleLetterIdSet ? visibleLetterIdSet.has(letter.id) : true;
+
+            return (
+              <button
+                type="button"
+                key={letter.id}
+                className={letter.id === activeLetter.id ? "is-active" : ""}
+                onClick={() => setActiveLetterId(letter.id)}
+                aria-pressed={letter.id === activeLetter.id}
+                disabled={!isVisible}
+                title={isVisible ? letter.name : `${letter.name} ist im Archiv noch verborgen`}
+              >
+                <span lang="he" dir="rtl">{letter.glyph}</span>
+                <i>{isVisible ? letter.name : "verborgen"}</i>
+              </button>
+            );
+          })}
         </nav>
 
         <div className="symbol-engine__letter-detail">

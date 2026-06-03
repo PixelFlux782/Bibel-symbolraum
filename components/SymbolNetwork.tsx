@@ -805,59 +805,70 @@ export default function SymbolNetwork() {
                 <JourneySequence items={activeJourney.meaningNodeLabels} />
               </p>
             </>
-          ) : activePath ? (
-            <>
-              <p className="mt-5 text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
-                {getSymbolLabel(activePath.from)} <span className="text-gold/65">&rarr;</span> {getSymbolLabel(activePath.to)}
-              </p>
-              <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activePath.label}</h2>
-              <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-gold/70">{activePath.evidence}</p>
-              <p className="symbol-copy mt-5 text-lg">{activePath.fromMeaning}<br /><span className="text-gold/65">→</span> {activePath.toMeaning}</p>
-              <p className="mt-5 font-serif text-lg italic leading-relaxed text-foreground-strong/85">{activePath.summary}</p>
-              {activePath.joint ? (
-                <div className="mt-7 border-l border-gold/25 pl-4">
-                  <button
-                    type="button"
-                    onClick={() => openLetterBridge(activePath)}
-                    className="font-serif text-4xl text-gold/85"
-                    lang="he"
-                    aria-label={`${activePath.joint.letterName} als Ursprung im Hebrew Codex oeffnen`}
-                  >
-                    {activePath.joint.letter}
-                  </button>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
-                    Gemeinsames {activePath.joint.letterName} von {getSymbolLabel(activePath.from)} und {getSymbolLabel(activePath.to)}
-                  </p>
-                  <p className="symbol-copy mt-2 text-sm">{activePath.joint.note}</p>
-                  <p className="mt-2 font-serif text-sm italic leading-relaxed text-gold/75">
-                    {activePath.joint.meanings.join(". ")}.
-                  </p>
-                </div>
-              ) : null}
-            </>
-          ) : activeCodexLetter ? (
-            <>
-              <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeCodexLetter.glyph}</p>
-              <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeCodexLetter.name}</h2>
-              <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeCodexLetter.transcription}</p>
-              <div className="mt-7 border-t border-white/[0.055] pt-5">
-                <p className="symbol-kicker text-cyan-soft">Was entsteht aus diesem Buchstaben?</p>
-                <p className="mt-4 font-serif text-lg italic leading-relaxed text-gold/75">
-                  <JourneySequence items={[
-                    ...Array.from(letterMeaningIds).map(getMeaningNodeLabel),
-                    ...letterSymbols.map((symbol) => symbol.label),
-                  ]} />
-                </p>
-              </div>
-            </>
           ) : (
             <>
               <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeSymbol.hebrew}</p>
               <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeSymbol.label}</h2>
               <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
               <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
+              <div className="symbol-detail-panel__cta">
+                <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">
+                  {activeSymbol.label}-Raum öffnen
+                </RoomTransitionButton>
+              </div>
             </>
           )}
+
+          {!activeJourney && activePath ? (
+            <>
+              <div className="mt-8 border-t border-white/[0.055] pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
+                  {getSymbolLabel(activePath.from)} <span className="text-gold/65">&rarr;</span> {getSymbolLabel(activePath.to)}
+                </p>
+                <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activePath.label}</h2>
+                <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-gold/70">{activePath.evidence}</p>
+                <p className="symbol-copy mt-5 text-lg">{activePath.fromMeaning}<br /><span className="text-gold/65">→</span> {activePath.toMeaning}</p>
+                <p className="mt-5 font-serif text-lg italic leading-relaxed text-foreground-strong/85">{activePath.summary}</p>
+                {activePath.joint ? (
+                  <div className="mt-7 border-l border-gold/25 pl-4">
+                    <button
+                      type="button"
+                      onClick={() => openLetterBridge(activePath)}
+                      className="font-serif text-4xl text-gold/85"
+                      lang="he"
+                      aria-label={`${activePath.joint.letterName} als Ursprung im Hebrew Codex oeffnen`}
+                    >
+                      {activePath.joint.letter}
+                    </button>
+                    <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
+                      Gemeinsames {activePath.joint.letterName} von {getSymbolLabel(activePath.from)} und {getSymbolLabel(activePath.to)}
+                    </p>
+                    <p className="symbol-copy mt-2 text-sm">{activePath.joint.note}</p>
+                    <p className="mt-2 font-serif text-sm italic leading-relaxed text-gold/75">
+                      {activePath.joint.meanings.join(". ")}.
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+            </>
+          ) : !activeJourney && activeCodexLetter ? (
+            <>
+              <div className="mt-8 border-t border-white/[0.055] pt-6">
+                <p className="symbol-breathe font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeCodexLetter.glyph}</p>
+                <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeCodexLetter.name}</h2>
+                <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeCodexLetter.transcription}</p>
+                <div className="mt-7 border-t border-white/[0.055] pt-5">
+                  <p className="symbol-kicker text-cyan-soft">Was entsteht aus diesem Buchstaben?</p>
+                  <p className="mt-4 font-serif text-lg italic leading-relaxed text-gold/75">
+                    <JourneySequence items={[
+                      ...Array.from(letterMeaningIds).map(getMeaningNodeLabel),
+                      ...letterSymbols.map((symbol) => symbol.label),
+                    ]} />
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : null}
 
           {!activeJourney ? <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
             <p className="symbol-kicker text-cyan-soft">Verbindungen folgen</p>
@@ -871,10 +882,6 @@ export default function SymbolNetwork() {
               ))}
             </div>
           </div> : null}
-
-          {!activeJourney ? <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta mt-8 w-full">
-            {activeSymbol.label}-Raum öffnen
-          </RoomTransitionButton> : null}
         </aside>
       </div>
       {journeyGate ? (
