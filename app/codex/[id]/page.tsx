@@ -7,6 +7,7 @@ import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/type
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
+import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 
 type CodexDetailPageProps = {
   params: Promise<{
@@ -66,6 +67,11 @@ function getNearbyEntries(entry: CodexEntry) {
 
 function getMeaningFieldLabel(fieldId: string) {
   return meaningNodes.find((field) => field.id === fieldId)?.label ?? fieldId;
+}
+
+function getScriptureAnchorLabel(anchorId: string) {
+  const linkedEntry = resolveCodexEntry(anchorId);
+  return linkedEntry?.title ?? anchorId.replace(/-/g, " ");
 }
 
 function getLetterResonance(entry: CodexEntry) {
@@ -327,7 +333,8 @@ export default async function CodexDetailPage({ params }: CodexDetailPageProps) 
                   {entry.meaningFields.map((field) => {
                     const linkedEntry = resolveLinkedCodexEntry(field);
                     const className =
-                      "border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500";
+                      "border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs tracking-[0.18em] text-gold/80 transition-colors duration-500";
+                    const label = getMeaningFieldLabel(field);
 
                     return linkedEntry ? (
                       <Link
@@ -335,11 +342,11 @@ export default async function CodexDetailPage({ params }: CodexDetailPageProps) 
                         href={`/codex/${linkedEntry.id}`}
                         className={`${className} hover:border-gold/30 hover:bg-gold/[0.075] hover:text-gold`}
                       >
-                        {field}
+                        {label}
                       </Link>
                     ) : (
                       <span key={field} className={className}>
-                        {field}
+                        {label}
                       </span>
                     );
                   })}
@@ -411,28 +418,40 @@ function JourneyStepsSection({ entry }: { entry: CodexEntry }) {
           const linkedEntry = resolveLinkedCodexEntry(step.codexId);
 
           return (
-            <li key={step.id} className="grid gap-3 border border-white/[0.065] bg-black/10 p-4 sm:grid-cols-[auto_1fr]">
-              <span className="flex h-9 w-9 items-center justify-center border border-gold/20 font-serif text-lg text-gold/85">
-                {index + 1}
-              </span>
-              <div>
-                {linkedEntry ? (
-                  <Link
-                    href={`/codex/${linkedEntry.id}`}
-                    className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold"
-                  >
-                    {step.label}
-                  </Link>
-                ) : (
-                  <p className="font-serif text-xl italic text-foreground-strong">{step.label}</p>
-                )}
-                {step.description ? (
-                  <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{step.description}</p>
-                ) : null}
-                <p className="mt-3 text-[0.58rem] uppercase tracking-[0.24em] text-gold/60">
-                  {linkedEntry?.title ?? step.codexId}
-                </p>
+            <li key={step.id} className="grid gap-3">
+              <div className="grid gap-3 border border-white/[0.065] bg-black/10 p-4 sm:grid-cols-[auto_1fr]">
+                <span className="flex h-9 w-9 items-center justify-center border border-gold/20 font-serif text-lg text-gold/85">{index + 1}</span>
+                <div>
+                  {linkedEntry ? (
+                    <Link href={`/codex/${linkedEntry.id}`} className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold">{step.label}</Link>
+                  ) : (
+                    <p className="font-serif text-xl italic text-foreground-strong">{step.label}</p>
+                  )}
+                  {step.description ? <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{step.description}</p> : null}
+                  <p className="mt-3 text-[0.58rem] tracking-[0.24em] text-gold/60">{linkedEntry?.title ?? "Eintrag nicht gefunden"}</p>
+                </div>
               </div>
+
+              {/* Bridge between this step and the next, if found */}
+              {entry.steps && index < entry.steps.length - 1 ? (() => {
+                const next = entry.steps![index + 1];
+                const bridge = getBridgeBySourceAndTarget(step.codexId, next.codexId) ?? getBridgeBySourceAndTarget(next.codexId, step.codexId);
+
+                return bridge ? (
+                  <div className="mx-2 mt-2 rounded border border-gold/[0.14] bg-gold/[0.03] p-3">
+                    <div className="font-serif text-lg italic text-gold/85">{bridge.title}</div>
+                    <p className="symbol-copy mt-1 text-sm text-foreground-strong">{bridge.summary}</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {bridge.meaningFields.map((f) => (
+                        <span key={f} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-2 py-1 text-xs leading-tight text-muted-soft">{getMeaningFieldLabel(f)}</span>
+                      ))}
+                      {bridge.scriptureAnchors?.map((a) => (
+                        <span key={a} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-2 py-1 text-xs leading-tight text-muted-soft">{getScriptureAnchorLabel(a)}</span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null;
+              })() : null}
             </li>
           );
         })}

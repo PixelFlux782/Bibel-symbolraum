@@ -3,7 +3,9 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { codexRegistry } from "@/lib/codex/codexRegistry";
-import { searchCodexEntries } from "@/lib/codex/getCodexEntry";
+import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
+import { meaningNodes } from "@/lib/meaning/meaningNodes";
+import { resolveCodexEntry, searchCodexEntries } from "@/lib/codex/getCodexEntry";
 import type { CodexEntry, CodexEntryType } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
@@ -56,6 +58,19 @@ function formatType(type: CodexEntryType) {
     .split("-")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+function getMeaningFieldLabel(fieldId: string) {
+  return meaningNodes.find((node) => node.id === fieldId)?.label ?? fieldId;
+}
+
+function getScriptureAnchorLabel(anchorId: string) {
+  const linkedEntry = resolveCodexEntry(anchorId);
+  if (linkedEntry) {
+    return linkedEntry.title;
+  }
+
+  return anchorId.replace(/-/g, " ").replace(/\b(genesis|exodus|leviticus|numbers|deuteronomy|thora|scripture)\b/gi, "$1").trim() || anchorId;
 }
 
 function filterEntriesByView(entries: CodexEntry[], viewId: CodexViewId) {
@@ -382,14 +397,35 @@ function CodexCard({ entry }: { entry: CodexEntry }) {
         {entry.steps?.length ? (
           <ol className="mt-6 grid gap-2">
             {entry.steps.map((step, index) => (
-              <li
-                key={step.id}
-                className="flex items-center gap-3 border border-white/[0.055] bg-black/10 px-3 py-2"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center border border-gold/20 font-serif text-sm text-gold/80">
-                  {index + 1}
-                </span>
-                <span className="text-sm leading-snug text-foreground-strong">{step.label}</span>
+              <li key={step.id} className="grid gap-2">
+                <div className="flex items-center gap-3 border border-white/[0.055] bg-black/10 px-3 py-2">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center border border-gold/20 font-serif text-sm text-gold/80">{index + 1}</span>
+                  <span className="text-sm leading-snug text-foreground-strong">{step.label}</span>
+                </div>
+
+                {/* Bridge between this step and next, if present */}
+                {index < (entry.steps?.length ?? 0) - 1 ? (
+                  (() => {
+                    const next = entry.steps?.[index + 1];
+                    if (!next) return null;
+                    const bridge = getBridgeBySourceAndTarget(step.codexId, next.codexId) ?? getBridgeBySourceAndTarget(next.codexId, step.codexId);
+
+                    return bridge ? (
+                      <div className="mx-2 mt-1 rounded border border-gold/[0.14] bg-gold/[0.03] p-3 text-sm">
+                        <div className="font-serif text-base italic text-gold/85">{bridge.title}</div>
+                        <div className="symbol-copy mt-1 text-[0.85rem] text-foreground-strong">{bridge.summary}</div>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {bridge.meaningFields.map((f) => (
+                            <span key={f} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-2 py-1 text-xs leading-tight text-muted-soft">{getMeaningFieldLabel(f)}</span>
+                          ))}
+                          {bridge.scriptureAnchors?.map((a) => (
+                            <span key={a} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-2 py-1 text-xs leading-tight text-muted-soft">{getScriptureAnchorLabel(a)}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null;
+                  })()
+                ) : null}
               </li>
             ))}
           </ol>

@@ -81,3 +81,53 @@ Creating turbopack project {
 ✓ Compiled in 251ms
  GET /codex/wasser 200 in 917ms (next.js: 836ms, generate-params: 735ms, application-code: 80ms)
  GET /codex/wasser 200 in 869ms (next.js: 789ms, generate-params: 712ms, application-code: 80ms)
+ GET /codex/wasser 200 in 963ms (next.js: 802ms, generate-params: 702ms, application-code: 162ms)
+ GET /codex/wasser 200 in 76ms (next.js: 3ms, generate-params: 25µs, application-code: 73ms)
+ GET /codex/wasser 200 in 821ms (next.js: 752ms, generate-params: 680ms, application-code: 70ms)
+✓ Compiled in 192ms
+ GET /codex/wasser 200 in 832ms (next.js: 753ms, generate-params: 681ms, application-code: 79ms)
+ GET /codex/wasser 200 in 841ms (next.js: 760ms, generate-params: 682ms, application-code: 81ms)
+✓ Compiled in 195ms
+ GET /codex/wasser 200 in 846ms (next.js: 771ms, generate-params: 691ms, application-code: 75ms)
+✓ Compiled in 328ms
+ GET /codex/wasser 200 in 939ms (next.js: 782ms, generate-params: 704ms, application-code: 157ms)
+ GET /codex/wasser 200 in 85ms (next.js: 4ms, generate-params: 27µs, application-code: 82ms)
+✓ Compiled in 221ms
+ GET /codex/wasser 200 in 1023ms (next.js: 800ms, generate-params: 689ms, application-code: 224ms)
+ GET /codex/wasser 200 in 134ms (next.js: 2ms, generate-params: 18µs, application-code: 131ms)
+ GET /codex/wasser 200 in 78ms (next.js: 3ms, generate-params: 23µs, application-code: 75ms)
+✓ Compiled in 209ms
+ GET /codex/wasser 200 in 872ms (next.js: 797ms, generate-params: 721ms, application-code: 75ms)
+✓ Compiled in 398ms
+ GET /codex/wasser 200 in 983ms (next.js: 830ms, generate-params: 713ms, application-code: 153ms)
+ GET /codex/wasser 200 in 66ms (next.js: 3ms, generate-params: 24µs, application-code: 63ms)
+✓ Compiled in 233ms
+ GET /codex/wasser 200 in 853ms (next.js: 778ms, generate-params: 692ms, application-code: 75ms)
+✓ Compiled in 172ms
+ GET /codex/wasser 200 in 951ms (next.js: 799ms, generate-params: 690ms, application-code: 152ms)
+ GET /codex/wasser 200 in 65ms (next.js: 3ms, generate-params: 19µs, application-code: 63ms)
+ GET /codex/wasser 200 in 845ms (next.js: 771ms, generate-params: 697ms, application-code: 74ms)
+✓ Compiled in 203ms
+ GET /codex/wasser 200 in 889ms (next.js: 813ms, generate-params: 727ms, application-code: 76ms)
+ GET /codex/wasser 200 in 910ms (next.js: 799ms, generate-params: 704ms, application-code: 110ms)
+✓ Compiled in 202ms
+ GET /codex/wasser 200 in 850ms (next.js: 770ms, generate-params: 688ms, application-code: 80ms)
+ GET /codex/wasser 200 in 849ms (next.js: 763ms, generate-params: 684ms, application-code: 85ms)
+ GET /codex/wasser 200 in 843ms (next.js: 756ms, generate-params: 681ms, application-code: 86ms)
+ GET /codex/wasser 200 in 833ms (next.js: 762ms, generate-params: 688ms, application-code: 71ms)
+ GET /codex/wasser 200 in 830ms (next.js: 762ms, generate-params: 683ms, application-code: 68ms)
+ GET /codex/wasser 200 in 831ms (next.js: 759ms, generate-params: 686ms, application-code: 72ms)
+ GET /codex/wasser 200 in 836ms (next.js: 760ms, generate-params: 687ms, application-code: 76ms)
+ GET /codex/wasser 200 in 957ms (next.js: 776ms, generate-params: 695ms, application-code: 181ms)
+ GET /codex/wasser 200 in 75ms (next.js: 4ms, generate-params: 21µs, application-code: 71ms)
+ GET /codex/wasser 200 in 905ms (next.js: 765ms, generate-params: 691ms, application-code: 140ms)
+ GET /codex/wasser 200 in 67ms (next.js: 2ms, generate-params: 27µs, application-code: 64ms)
+ GET /codex/wasser 200 in 908ms (next.js: 775ms, generate-params: 699ms, application-code: 132ms)
+ GET /codex/wasser 200 in 58ms (next.js: 3ms, generate-params: 22µs, application-code: 55ms)
+ GET /codex/wasser 200 in 906ms (next.js: 775ms, generate-params: 700ms, application-code: 132ms)
+ GET /codex/wasser 200 in 90ms (next.js: 3ms, generate-params: 18µs, application-code: 87ms)
+ GET /codex/wasser 200 in 951ms (next.js: 802ms, generate-params: 721ms, application-code: 148ms)
+ GET /codex/wasser 200 in 69ms (next.js: 4ms, generate-params: 19µs, application-code: 65ms)
+ GET /codex/wasser 200 in 921ms (next.js: 766ms, generate-params: 687ms, application-code: 155ms)
+ GET /codex/wasser 200 in 83ms (next.js: 3ms, generate-params: 20µs, application-code: 80ms)
+ GET /codex/wasser 200 in 901ms (next.js: 809ms, generate-params: 723ms, application-code: 91ms)

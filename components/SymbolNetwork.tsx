@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo, useState, useRef, useEffect } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
@@ -28,6 +28,8 @@ import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { getJourneyContext } from "@/lib/meaning/getJourneyContext";
+import { getBridgeBySourceAndTarget, getBridgesByMeaningField } from "@/lib/meaning-bridges";
+import type { MeaningBridge } from "@/lib/meaning-bridges";
 import { recordActivatedLetter, recordJourneyStart } from "@/lib/pathActivity";
 import {
   buildSymbolMeaningNetwork,
@@ -388,7 +390,7 @@ function TorahRelationChip({ relation }: { relation: CodexRelation }) {
   );
 }
 
-function TorahGenesisSequence() {
+function TorahGenesisSequence({ activeId }: { activeId: string }) {
   const chapter = getCodexEntry("genesis-1");
   const verses = TORAH_GENESIS_SEQUENCE_IDS
     .map((id) => getCodexEntry(id))
@@ -417,15 +419,24 @@ function TorahGenesisSequence() {
       <ol className="mt-12 grid gap-0" aria-label="Genesis 1 Sequenz">
         {verses.map((verse, index) => {
           const relationChips = getTorahRelationChips(verse);
+          const hasActiveSymbolReference = verse.relations.some((relation) => getRelationTarget(relation) === activeId);
 
           return (
-            <li key={verse.id} className="relative grid gap-5 border-l border-gold/25 pb-12 pl-7 last:pb-0 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-8 sm:pl-9">
-              <div className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-gold shadow-[0_0_24px_rgba(189,160,109,0.75)]" aria-hidden="true" />
+            <li key={verse.id} className={`relative grid gap-5 border-l px-7 pb-12 pl-7 last:pb-0 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-8 sm:pl-9 transition-colors ${
+              hasActiveSymbolReference ? "border-gold/35 bg-gold/[0.04]" : "border-gold/25 bg-transparent"
+            }`}>
+              <div className={`absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full transition-all ${
+                hasActiveSymbolReference ? "bg-gold shadow-[0_0_24px_rgba(189,160,109,1)]" : "bg-gold shadow-[0_0_24px_rgba(189,160,109,0.75)]"
+              }`} aria-hidden="true" />
               <div className="pt-0.5">
                 <p className="font-serif text-2xl italic text-gold/85">0{index + 1}</p>
                 <p className="mt-2 text-[9px] uppercase tracking-[0.22em] text-[#d8d1c2]/45">Genesis 1</p>
               </div>
-              <article className="min-w-0 border border-white/[0.06] bg-white/[0.018] px-5 py-5 sm:px-6 sm:py-6">
+              <article className={`min-w-0 border px-5 py-5 transition-colors sm:px-6 sm:py-6 ${
+                hasActiveSymbolReference 
+                  ? "border-gold/30 bg-gold/[0.07]" 
+                  : "border-white/[0.06] bg-white/[0.018]"
+              }`}>
                 <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-soft">{verse.subtitle}</p>
                 <h3 className="mt-3 font-serif text-2xl italic leading-tight text-foreground-strong sm:text-3xl">{verse.title}</h3>
                 {verse.summary ? (
@@ -463,7 +474,7 @@ function TorahGenesisSequence() {
   );
 }
 
-function HebrewWordConstellation() {
+function HebrewWordConstellation({ activeId }: { activeId: string }) {
   const wordCenters = HEBREW_WORD_CENTER_IDS
     .map((wordId) => {
       const word = hebrewWords.find((entry) => entry.id === wordId);
@@ -495,16 +506,19 @@ function HebrewWordConstellation() {
       <div className="relative z-10 mt-10 grid gap-4 md:grid-cols-2">
         {wordCenters.map(({ word, symbol, symbolCodexEntry }) => {
           const glyphs = Array.from(word.hebrew);
+          const isActiveSymbol = symbol.id === activeId;
 
           return (
             <article
               key={word.id}
               className={`relative min-w-0 border px-5 py-6 transition-colors sm:px-6 ${
-                word.id === "or" || word.id === "esh"
-                  ? "border-gold/18 bg-gold/[0.035]"
-                  : word.id === "majim" || word.id === "midbar"
-                    ? "border-cyan/16 bg-cyan/[0.025]"
-                    : "border-white/[0.06] bg-white/[0.018]"
+                isActiveSymbol
+                  ? "border-gold/30 bg-gold/[0.07]"
+                  : word.id === "or" || word.id === "esh"
+                    ? "border-gold/18 bg-gold/[0.035]"
+                    : word.id === "majim" || word.id === "midbar"
+                      ? "border-cyan/16 bg-cyan/[0.025]"
+                      : "border-white/[0.06] bg-white/[0.018]"
               }`}
             >
               <div className="flex items-start justify-between gap-5">
@@ -593,7 +607,7 @@ function HebrewWordConstellation() {
   );
 }
 
-function MeaningResonanceSpaces() {
+function MeaningResonanceSpaces({ activeId }: { activeId: string }) {
   const meaningEntries = MEANING_ENTRY_IDS
     .map((entryId) => getCodexEntry(entryId))
     .filter((entry): entry is CodexEntry => Boolean(entry));
@@ -620,6 +634,7 @@ function MeaningResonanceSpaces() {
               return symbol ? { relation, symbol, codexEntry } : null;
             })
             .filter((item): item is NonNullable<typeof item> => Boolean(item));
+          const hasActiveSymbol = symbolRelations.some((rel) => rel.symbol.id === activeId);
           const scriptureAnchors = [
             ...entry.scriptureAnchors,
             ...entry.relations
@@ -644,7 +659,11 @@ function MeaningResonanceSpaces() {
           return (
             <article
               key={entry.id}
-              className="relative min-w-0 border border-white/[0.06] bg-white/[0.018] px-5 py-7 sm:px-6"
+              className={`relative min-w-0 border px-5 py-7 transition-colors sm:px-6 ${
+                hasActiveSymbol 
+                  ? "border-gold/30 bg-gold/[0.07]"
+                  : "border-white/[0.06] bg-white/[0.018]"
+              }`}
             >
               <div className="absolute right-5 top-5 font-serif text-3xl italic text-gold/20" aria-hidden="true">
                 0{index + 1}
@@ -666,14 +685,22 @@ function MeaningResonanceSpaces() {
                         {codexEntry ? (
                           <Link
                             href={`/codex/${codexEntry.id}`}
-                            className="inline-flex items-center gap-2 border border-gold/18 bg-gold/[0.04] px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-gold/78 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+                            className={`inline-flex items-center gap-2 border px-3 py-2 text-[10px] uppercase tracking-[0.16em] transition-colors ${
+                              symbol.id === activeId
+                                ? "border-gold/45 bg-gold/[0.08] text-gold"
+                                : "border-gold/18 bg-gold/[0.04] text-gold/78 hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+                            }`}
                             title={relation.label}
                           >
                             <span className="font-serif text-lg leading-none" lang="he" dir="rtl">{symbol.hebrew}</span>
                             {symbol.label}
                           </Link>
                         ) : (
-                          <span className="inline-flex items-center gap-2 border border-gold/18 bg-gold/[0.04] px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-gold/78" title={relation.label}>
+                          <span className={`inline-flex items-center gap-2 border px-3 py-2 text-[10px] uppercase tracking-[0.16em] ${
+                            symbol.id === activeId
+                              ? "border-gold/45 bg-gold/[0.08] text-gold"
+                              : "border-gold/18 bg-gold/[0.04] text-gold/78"
+                          }`} title={relation.label}>
                             <span className="font-serif text-lg leading-none" lang="he" dir="rtl">{symbol.hebrew}</span>
                             {symbol.label}
                           </span>
@@ -723,6 +750,38 @@ function MeaningResonanceSpaces() {
                 </div>
               ) : null}
 
+              {(() => {
+                const bridges = Array.from(
+                  new Map(
+                    entry.meaningFields
+                      .flatMap((field) => getBridgesByMeaningField(field))
+                      .map((bridge) => [bridge.id, bridge]),
+                  ).values(),
+                );
+
+                return bridges.length > 0 ? (
+                  <div className="mt-8">
+                    <p className="text-[9px] uppercase tracking-[0.22em] text-cyan-soft/75">Meaning-Bridges</p>
+                    <div className="mt-3 grid gap-3">
+                      {bridges.map((bridge) => (
+                        <div
+                          key={bridge.id}
+                          className="rounded-3xl border border-white/[0.06] bg-white/[0.015] px-4 py-4 shadow-[0_0_32px_rgba(255,227,167,0.03)]"
+                        >
+                          <p className="text-[10px] uppercase tracking-[0.22em] text-gold/70">Bridge</p>
+                          <h4 className="mt-2 font-serif text-lg italic leading-tight text-foreground-strong">
+                            {bridge.title}
+                          </h4>
+                          <p className="mt-3 text-sm leading-relaxed text-[#d8d1c2]/70">
+                            {bridge.summary}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
               <Link
                 href={`/codex/${entry.id}`}
                 className="mt-8 inline-flex border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.2em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
@@ -753,6 +812,8 @@ export default function SymbolNetwork() {
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activePath = network.paths.find((path) => path.id === activePathId);
+  const [ephemeralBridgeId, setEphemeralBridgeId] = useState<string | null>(null);
+  const ephemeralTimerRef = useRef<number | null>(null);
   const activeViewConfig = SYMBOL_NETWORK_VIEWS.find((view) => view.id === activeView);
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
@@ -783,6 +844,27 @@ export default function SymbolNetwork() {
     () => new Set(activeJourney?.symbolPath.slice(1).map((symbolId, index) => getPathKey(activeJourney.symbolPath[index], symbolId)) ?? []),
     [activeJourney]
   );
+
+  const activeBridge = activePath
+    ? getBridgeBySourceAndTarget(activePath.from as string, activePath.to as string) ?? getBridgeBySourceAndTarget(activePath.to as string, activePath.from as string)
+    : undefined;
+
+  const ephemeralBridge = ephemeralBridgeId
+    ? (() => {
+        const p = network.paths.find((p) => p.id === ephemeralBridgeId);
+        return p ? getBridgeBySourceAndTarget(p.from, p.to) ?? getBridgeBySourceAndTarget(p.to, p.from) : undefined;
+      })()
+    : undefined;
+
+  const activeBridgeOrEphemeral: MeaningBridge | undefined = activeBridge ?? ephemeralBridge;
+
+  useEffect(() => {
+    return () => {
+      if (ephemeralTimerRef.current) {
+        window.clearTimeout(ephemeralTimerRef.current);
+      }
+    };
+  }, []);
   const relatedIds = useMemo(
     () => activeJourney
       ? new Set([...journeySymbolIds, ...journeyMeaningIds])
@@ -886,6 +968,7 @@ export default function SymbolNetwork() {
     setTravelingPathId(null);
     setActiveLetterId(null);
     setLetterOverlayContext(null);
+    setEphemeralBridgeId(null);
   }
 
   function openLetterBridge(path: SymbolMeaningPath) {
@@ -903,6 +986,8 @@ export default function SymbolNetwork() {
   }
 
   function previewPath(path: SymbolMeaningPath) {
+    // clear any ephemeral bridge when previewing another path
+    setEphemeralBridgeId(null);
     setPendingPathId(path.id);
     setActivePathId(path.id);
     setActiveJourneyId(null);
@@ -948,6 +1033,12 @@ export default function SymbolNetwork() {
   }
 
   function followPathWithTransition(path: SymbolMeaningPath) {
+    // briefly show bridge text until user selects another connection
+    setEphemeralBridgeId(path.id);
+    if (ephemeralTimerRef.current) window.clearTimeout(ephemeralTimerRef.current);
+    // clear after 4s
+    ephemeralTimerRef.current = window.setTimeout(() => setEphemeralBridgeId(null), 4000) as unknown as number;
+
     if (!travelingPathId) {
       openPathGate(path);
     }
@@ -1003,6 +1094,7 @@ export default function SymbolNetwork() {
     setPendingPathId(null);
     setTravelingPathId(null);
     setActiveId(journey.symbolPath[0]);
+    setEphemeralBridgeId(null);
   }
 
   function focusJourneyStation(symbolId: string) {
@@ -1010,6 +1102,7 @@ export default function SymbolNetwork() {
     setActivePathId(null);
     setPendingPathId(null);
     setTravelingPathId(null);
+    setEphemeralBridgeId(null);
   }
 
   return (
@@ -1195,53 +1288,6 @@ export default function SymbolNetwork() {
             ))}
           </div>
 
-          <div className="mt-16 border-t border-white/[0.055] pt-8">
-            <p className="symbol-kicker text-cyan-soft">Meaning Journeys</p>
-            <p className="symbol-copy mt-3 max-w-2xl text-sm">Aus den entdeckten Verbindungen werden Wege durch das Netz.</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {network.journeys.map((journey) => (
-                <div
-                  key={journey.id}
-                  onMouseEnter={() => setPreviewJourneyId(journey.id)}
-                  onMouseLeave={() => setPreviewJourneyId(null)}
-                  onFocus={() => setPreviewJourneyId(journey.id)}
-                  onBlur={() => setPreviewJourneyId(null)}
-                  onTouchStart={() => setPreviewJourneyId(journey.id)}
-                  className={`border px-4 py-4 transition-colors ${
-                    activeJourney?.id === journey.id
-                      ? "border-gold/30 bg-gold/[0.07]"
-                      : "border-white/[0.06] bg-white/[0.02]"
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => focusJourney(journey)}
-                    aria-pressed={activeJourneyId === journey.id}
-                    className="block w-full text-left"
-                  >
-                    <span className="block font-serif text-xl italic text-foreground-strong">{journey.title}</span>
-                    <span className="mt-3 block text-[9px] uppercase tracking-[0.2em] text-gold/70">Warum diese Reise existiert</span>
-                    <span className="symbol-copy mt-2 block text-sm">{journey.description}</span>
-                    <span className="mt-3 block text-[10px] uppercase tracking-[0.16em] text-cyan-soft">
-                      <JourneySequence items={journey.symbolLabels} />
-                    </span>
-                    <span className="mt-2 block font-serif text-sm italic leading-relaxed text-[#d8d1c2]/60">
-                      <JourneySequence items={journey.meaningNodeLabels} />
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    disabled={isEntering || Boolean(journeyGate)}
-                    onClick={() => openJourneyGate(journey)}
-                    className="symbol-cta mt-4 w-full px-3 py-3 text-[9px]"
-                  >
-                    Reise beginnen
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {activeJourney ? (
             <nav className="mt-5 border-y border-white/[0.055] py-4 md:hidden" aria-label={`Pfad: ${activeJourney.title}`}>
               <p className="symbol-kicker text-cyan-soft">Dein Pfad</p>
@@ -1264,13 +1310,83 @@ export default function SymbolNetwork() {
               </div>
             </nav>
           ) : null}
+
+          <div className="mt-16 border-t border-white/[0.055] pt-8">
+            <p className="symbol-kicker text-cyan-soft">Meaning Journeys</p>
+            <p className="symbol-copy mt-3 max-w-2xl text-sm">Aus den entdeckten Verbindungen werden Wege durch das Netz.</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {network.journeys.map((journey) => {
+                const containsActiveSymbol = journey.symbolPath.includes(activeId);
+                
+                return (
+                  <div
+                    key={journey.id}
+                    onMouseEnter={() => setPreviewJourneyId(journey.id)}
+                    onMouseLeave={() => setPreviewJourneyId(null)}
+                    onFocus={() => setPreviewJourneyId(journey.id)}
+                    onBlur={() => setPreviewJourneyId(null)}
+                    onTouchStart={() => setPreviewJourneyId(journey.id)}
+                    className={`border px-4 py-4 transition-colors ${
+                      containsActiveSymbol
+                        ? activeJourney?.id === journey.id
+                          ? "border-gold/30 bg-gold/[0.07]"
+                          : "border-gold/25 bg-gold/[0.04]"
+                        : activeJourney?.id === journey.id
+                          ? "border-gold/30 bg-gold/[0.07]"
+                          : "border-white/[0.06] bg-white/[0.02]"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => focusJourney(journey)}
+                      aria-pressed={activeJourneyId === journey.id}
+                      className="block w-full text-left"
+                    >
+                      <span className="block font-serif text-xl italic text-foreground-strong">{journey.title}</span>
+                      <span className="mt-3 block text-[9px] uppercase tracking-[0.2em] text-gold/70">Warum diese Reise existiert</span>
+                      <span className="symbol-copy mt-2 block text-sm">{journey.description}</span>
+                      <span className="mt-3 block text-[10px] uppercase tracking-[0.16em] text-cyan-soft">
+                        {/* Render symbol sequence with bridges between matching pairs */}
+                        {journey.symbolPath.map((symbolId, idx) => {
+                          const label = journey.symbolLabels?.[idx] ?? symbolId;
+                          const nextId = journey.symbolPath?.[idx + 1];
+                          const bridge = nextId ? (getBridgeBySourceAndTarget(symbolId, nextId) ?? getBridgeBySourceAndTarget(nextId, symbolId)) : undefined;
+
+                          return (
+                            <Fragment key={`${journey.id}-${symbolId}-${idx}`}>
+                              {idx > 0 ? <span className="text-gold/60 mx-1">→</span> : null}
+                              <span className={symbolId === activeId ? "font-semibold text-gold" : ""}>{label}</span>
+                              {bridge ? (
+                                <span className="ml-2 inline-flex items-center rounded border border-gold/15 bg-gold/[0.03] px-2 py-0.5 text-[10px] text-gold/85">{bridge.title}</span>
+                              ) : null}
+                            </Fragment>
+                          );
+                        })}
+                      </span>
+                      <span className="mt-2 block font-serif text-sm italic leading-relaxed text-[#d8d1c2]/60">
+                        <JourneySequence items={journey.meaningNodeLabels} />
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isEntering || Boolean(journeyGate)}
+                      onClick={() => openJourneyGate(journey)}
+                      className="symbol-cta mt-4 w-full px-3 py-3 text-[9px]"
+                    >
+                      Reise beginnen
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
             </>
           ) : activeView === "torah" ? (
-            <TorahGenesisSequence />
+            <TorahGenesisSequence activeId={activeId} />
           ) : activeView === "hebrew" ? (
-            <HebrewWordConstellation />
+            <HebrewWordConstellation activeId={activeId} />
           ) : activeView === "meaning" ? (
-            <MeaningResonanceSpaces />
+            <MeaningResonanceSpaces activeId={activeId} />
           ) : (
             <div className="mt-12 border-y border-white/[0.055] bg-black/20 px-5 py-14 text-center sm:px-10">
               <p className="symbol-kicker text-cyan-soft">{activeViewConfig?.label}</p>
@@ -1345,6 +1461,32 @@ export default function SymbolNetwork() {
                     <p className="mt-2 font-serif text-sm italic leading-relaxed text-gold/75">
                       {activePath.joint.meanings.join(". ")}.
                     </p>
+                  </div>
+                ) : null}
+                {activeBridgeOrEphemeral ? (
+                  <div className="mt-6 border-t border-white/[0.035] pt-5">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-cyan-soft">Bridge</p>
+                    <h3 className="mt-2 font-serif text-2xl italic text-foreground-strong">{activeBridgeOrEphemeral.title}</h3>
+                    <p className="symbol-copy mt-2 text-sm leading-relaxed">{activeBridgeOrEphemeral.summary}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {activeBridgeOrEphemeral.meaningFields.map((f) => (
+                        <span key={f} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-sm leading-tight text-muted-soft">
+                          {getMeaningNodeLabel(f)}
+                        </span>
+                      ))}
+                      {activeBridgeOrEphemeral.scriptureAnchors?.map((anchor) => {
+                        const linked = resolveCodexEntry(anchor);
+                        const label = linked?.title ?? anchor;
+
+                        return linked ? (
+                          <Link key={anchor} href={`/codex/${linked.id}`} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-sm leading-tight text-muted-soft hover:border-gold/20 hover:text-foreground-strong">
+                            {label}
+                          </Link>
+                        ) : (
+                          <span key={anchor} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-sm leading-tight text-muted-soft">{label}</span>
+                        );
+                      })}
+                    </div>
                   </div>
                 ) : null}
               </div>
