@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, type CSSProperties, type FormEvent } from "react";
 import {
   parseStoredReflections,
@@ -22,6 +23,8 @@ import {
   RoomExperience,
   RoomTransitionStage,
 } from "@/components/rooms/RoomGrammar";
+import { codexRegistry } from "@/lib/codex/codexRegistry";
+import type { CodexEntry } from "@/lib/codex/types";
 import type {
   AtmosphereProfile,
   RoomEchoConfig,
@@ -58,6 +61,15 @@ type SemanticEcho = {
   interpretation: string;
   pathLabel: string;
 };
+
+function getRoomCodexEntry(definition: SymbolRoomDefinition): CodexEntry | undefined {
+  return codexRegistry.find((entry) =>
+    entry.type === "symbol" &&
+    (entry.symbolRoomSlug === definition.slug ||
+      entry.id === definition.slug ||
+      entry.id === definition.centerNodeId),
+  );
+}
 
 function getAtmosphereRendererHooks(profile: AtmosphereProfile) {
   return {
@@ -239,6 +251,7 @@ function createSemanticEcho(definition: SymbolRoomDefinition, echo: RoomEchoConf
 function SymbolRoomEntrance({ definition, symbol }: { definition: SymbolRoomDefinition; symbol: RoomSymbol }) {
   const { entrance } = definition;
   const { heroImage, backgroundImage } = entrance;
+  const codexEntry = getRoomCodexEntry(definition);
 
   return (
     <RoomEntrance className="symbol-room-depth relative flex min-h-screen items-end overflow-hidden pb-24 pt-40 md:pt-36">
@@ -282,13 +295,23 @@ function SymbolRoomEntrance({ definition, symbol }: { definition: SymbolRoomDefi
           <p className="symbol-copy mt-7 text-lg sm:text-3xl">
             {entrance.statement}
           </p>
-          <a
-            href={entrance.ctaHref}
-            className="symbol-cta mt-14 gap-4"
-          >
-            {entrance.ctaLabel}
-            <span className="h-px w-10 bg-gold/[0.42]" />
-          </a>
+          <div className="mt-14 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <a
+              href={entrance.ctaHref}
+              className="symbol-cta gap-4"
+            >
+              {entrance.ctaLabel}
+              <span className="h-px w-10 bg-gold/[0.42]" />
+            </a>
+            {codexEntry ? (
+              <Link
+                href={`/codex/${codexEntry.id}`}
+                className="inline-flex border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+              >
+                Im Codex ansehen
+              </Link>
+            ) : null}
+          </div>
         </div>
       </div>
     </RoomEntrance>

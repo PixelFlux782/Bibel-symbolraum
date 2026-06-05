@@ -2,6 +2,11 @@ import type { BiblicalReference } from "@/types/meaningGraph";
 
 export const biblicalReferences: BiblicalReference[] = [
   {
+    id: "genesis-1-1",
+    reference: "Genesis 1,1",
+    label: "Genesis 1,1",
+  },
+  {
     id: "genesis-1-2",
     reference: "Genesis 1,2",
     label: "Genesis 1,2",

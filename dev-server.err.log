@@ -1,0 +1,17 @@
+Image with src "/Visuals/tiefenraum_backround.png" is using quality "82" which is not configured in images.qualities [75]. Please update your config to [75, 82].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+Image with src "/Visuals/cinem_lichtraum_backround.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+Image with src "/Visuals/symbolnetz_backround.png" is using quality "74" which is not configured in images.qualities [75]. Please update your config to [74, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+Image with src "/Visuals/tiefenraum_backround.png" is using quality "76" which is not configured in images.qualities [75]. Please update your config to [75, 76].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[browser] Image with src "/Visuals/tiefenraum_backround.png" is using quality "82" which is not configured in images.qualities [75]. Please update your config to [75, 82].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities (file://C:/Users/flori/Documents/BiBel WEBTOOL/bibel-symbolraum/.next/dev/static/chunks/node_modules_next_dist_115brz8._.js:2477:13)
+[browser] Image with src "/Visuals/cinem_lichtraum_backround.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities (file://C:/Users/flori/Documents/BiBel WEBTOOL/bibel-symbolraum/.next/dev/static/chunks/node_modules_next_dist_115brz8._.js:2477:13)
+[browser] Image with src "/Visuals/symbolnetz_backround.png" is using quality "74" which is not configured in images.qualities [75]. Please update your config to [74, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities (file://C:/Users/flori/Documents/BiBel WEBTOOL/bibel-symbolraum/.next/dev/static/chunks/node_modules_next_dist_115brz8._.js:2477:13)
+[browser] Image with src "/Visuals/tiefenraum_backround.png" is using quality "76" which is not configured in images.qualities [75]. Please update your config to [75, 76].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities (file://C:/Users/flori/Documents/BiBel WEBTOOL/bibel-symbolraum/.next/dev/static/chunks/node_modules_next_dist_115brz8._.js:2477:13)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior (file://C:/Users/flori/Documents/BiBel WEBTOOL/bibel-symbolraum/.next/dev/static/chunks/node_modules_next_dist_115brz8._.js:2477:13)

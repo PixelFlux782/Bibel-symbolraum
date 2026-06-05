@@ -1,17 +1,76 @@
 
 > bibel-symbolraum@0.1.0 dev
-> next dev -p 3001
+> next dev --hostname 127.0.0.1 --port 3000
 
 ▲ Next.js 16.2.6 (Turbopack)
-- Local:         http://localhost:3001
-- Network:       http://192.168.2.46:3001
-✓ Ready in 1278ms
-⨯ Another next dev server is already running.
+- Local:         http://127.0.0.1:3000
+- Network:       http://127.0.0.1:3000
+✓ Ready in 1335ms
+Creating turbopack project {
+  dir: 'C:\\Users\\flori\\Documents\\BiBel WEBTOOL\\bibel-symbolraum',
+  testMode: true
+}
 
-- Local:        http://localhost:3000
-- PID:          27164
-- Dir:          C:\Users\flori\Documents\BiBel WEBTOOL\bibel-symbolraum
-- Log:          .next\dev\logs\next-development.log
-
-Run taskkill /PID 27164 /F to stop it.
-[?25h
+ GET /codex 200 in 902ms (next.js: 646ms, application-code: 256ms)
+ GET /codex 200 in 80ms (next.js: 4ms, application-code: 75ms)
+ GET /codex/wasser 200 in 1914ms (next.js: 1817ms, generate-params: 1406ms, application-code: 97ms)
+✓ Compiled in 30ms
+ GET /codex/wasser 200 in 1115ms (next.js: 845ms, generate-params: 705ms, application-code: 271ms)
+ GET /codex/wasser 200 in 180ms (next.js: 4ms, generate-params: 27µs, application-code: 176ms)
+ GET /codex/wasser 200 in 116ms (next.js: 53ms, generate-params: 29µs, application-code: 63ms)
+ GET /codex/wasser 200 in 118ms (next.js: 4ms, generate-params: 23µs, application-code: 114ms)
+✓ Compiled in 24ms
+ GET /codex/wasser 200 in 1074ms (next.js: 796ms, generate-params: 691ms, application-code: 278ms)
+ GET /codex/wasser 200 in 198ms (next.js: 5ms, generate-params: 31µs, application-code: 194ms)
+ GET /codex/wasser 200 in 119ms (next.js: 4ms, generate-params: 25µs, application-code: 116ms)
+ GET /codex/wasser 200 in 120ms (next.js: 54ms, generate-params: 27µs, application-code: 66ms)
+✓ Compiled in 26ms
+ GET /codex/wasser 200 in 1067ms (next.js: 789ms, generate-params: 689ms, application-code: 278ms)
+ GET /codex/wasser 200 in 196ms (next.js: 4ms, generate-params: 39µs, application-code: 193ms)
+ GET /codex/wasser 200 in 119ms (next.js: 3ms, generate-params: 19µs, application-code: 115ms)
+ GET /codex/wasser 200 in 119ms (next.js: 53ms, generate-params: 22µs, application-code: 66ms)
+✓ Compiled in 27ms
+ GET /codex/wasser 200 in 1063ms (next.js: 790ms, generate-params: 689ms, application-code: 273ms)
+ GET /codex/wasser 200 in 195ms (next.js: 4ms, generate-params: 29µs, application-code: 191ms)
+ GET /codex/wasser 200 in 119ms (next.js: 54ms, generate-params: 17µs, application-code: 66ms)
+ GET /codex/wasser 200 in 121ms (next.js: 3ms, generate-params: 20µs, application-code: 118ms)
+✓ Compiled in 190ms
+ GET /codex/wasser 200 in 849ms (next.js: 769ms, generate-params: 698ms, application-code: 79ms)
+ GET /codex/zahl-90 200 in 744ms (next.js: 692ms, generate-params: 689ms, application-code: 51ms)
+✓ Compiled in 164ms
+ GET /codex/zahl-90 200 in 933ms (next.js: 794ms, generate-params: 690ms, application-code: 139ms)
+ GET /codex/zahl-90 200 in 52ms (next.js: 3ms, generate-params: 16µs, application-code: 49ms)
+✓ Compiled in 183ms
+ GET /codex/zahl-90 200 in 947ms (next.js: 798ms, generate-params: 692ms, application-code: 149ms)
+ GET /codex/zahl-90 200 in 70ms (next.js: 4ms, generate-params: 27µs, application-code: 66ms)
+✓ Compiled in 163ms
+ GET /codex/zahl-90 200 in 917ms (next.js: 798ms, generate-params: 696ms, application-code: 119ms)
+ GET /codex/zahl-90 200 in 50ms (next.js: 3ms, generate-params: 17µs, application-code: 48ms)
+✓ Compiled in 157ms
+ GET /codex/zahl-90 200 in 953ms (next.js: 803ms, generate-params: 696ms, application-code: 150ms)
+ GET /codex/zahl-90 200 in 67ms (next.js: 4ms, generate-params: 21µs, application-code: 63ms)
+✓ Compiled in 28ms
+ GET /codex/zahl-90 200 in 1008ms (next.js: 786ms, generate-params: 685ms, application-code: 222ms)
+ GET /codex/zahl-90 200 in 152ms (next.js: 3ms, generate-params: 18µs, application-code: 149ms)
+ GET /codex/zahl-90 200 in 100ms (next.js: 4ms, generate-params: 21µs, application-code: 96ms)
+ GET /codex/zahl-90 200 in 100ms (next.js: 44ms, generate-params: 17µs, application-code: 56ms)
+ GET /codex/genesis-1-2 200 in 735ms (next.js: 687ms, generate-params: 684ms, application-code: 48ms)
+✓ Compiled in 27ms
+ GET /codex/genesis-1-2 200 in 1068ms (next.js: 797ms, generate-params: 694ms, application-code: 271ms)
+ GET /codex/genesis-1-2 200 in 176ms (next.js: 3ms, generate-params: 19µs, application-code: 173ms)
+ GET /codex/genesis-1-2 200 in 118ms (next.js: 3ms, generate-params: 40µs, application-code: 115ms)
+ GET /codex/genesis-1-2 200 in 118ms (next.js: 60ms, generate-params: 21µs, application-code: 59ms)
+ GET /codex/geist 200 in 720ms (next.js: 688ms, generate-params: 685ms, application-code: 32ms)
+ GET /codex/zahl-1 200 in 802ms (next.js: 742ms, generate-params: 739ms, application-code: 59ms)
+ GET /codex 200 in 131ms (next.js: 102ms, application-code: 29ms)
+ GET /codex/wasser 200 in 741ms (next.js: 684ms, generate-params: 680ms, application-code: 57ms)
+ GET /codex/wasser 200 in 694ms (next.js: 688ms, generate-params: 684ms, application-code: 7ms)
+ GET /codex/wasser 200 in 57ms (next.js: 4ms, generate-params: 18µs, application-code: 54ms)
+ GET /codex/wasser 200 in 698ms (next.js: 693ms, generate-params: 690ms, application-code: 5ms)
+ GET /codex/wasser 200 in 51ms (next.js: 2ms, generate-params: 17µs, application-code: 49ms)
+✓ Compiled in 246ms
+ GET /codex/wasser 200 in 883ms (next.js: 796ms, generate-params: 717ms, application-code: 87ms)
+ GET /codex/wasser 200 in 856ms (next.js: 765ms, generate-params: 690ms, application-code: 91ms)
+✓ Compiled in 195ms
+ GET /codex/wasser 200 in 841ms (next.js: 766ms, generate-params: 690ms, application-code: 76ms)
+ GET /codex/wasser 200 in 858ms (next.js: 769ms, generate-params: 692ms, application-code: 89ms)

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
 import ReactFlow, {
   BaseEdge,
@@ -21,8 +22,11 @@ import {
 } from "@/components/MeaningTransitionScene";
 import { RoomTransition, RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import { useRoomTransition } from "@/hooks/useRoomTransition";
+import { getCodexEntry, resolveCodexEntry } from "@/lib/codex/getCodexEntry";
+import type { CodexEntry, CodexRelation } from "@/lib/codex/types";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
+import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { getJourneyContext } from "@/lib/meaning/getJourneyContext";
 import { recordActivatedLetter, recordJourneyStart } from "@/lib/pathActivity";
 import {
@@ -85,6 +89,36 @@ type LivingConnectionData = {
   onOpenLetter: () => void;
   onFollow: () => void;
 };
+
+type SymbolNetworkView = "symbols" | "torah" | "hebrew" | "meaning" | "journeys";
+
+const SYMBOL_NETWORK_VIEWS: {
+  id: SymbolNetworkView;
+  label: string;
+  placeholder?: string;
+}[] = [
+  { id: "symbols", label: "Symbole" },
+  {
+    id: "torah",
+    label: "Thora",
+    placeholder: "Die Thora-Ansicht verbindet Genesis, Exodus und die Symbolwege.",
+  },
+  {
+    id: "hebrew",
+    label: "Hebräisch",
+    placeholder: "Die hebräische Ansicht zeigt Wörter, Buchstaben und ihre Resonanzen.",
+  },
+  {
+    id: "meaning",
+    label: "Bedeutung",
+    placeholder: "Die Bedeutungsansicht ordnet Symbole nach inneren Feldern.",
+  },
+  {
+    id: "journeys",
+    label: "Journeys",
+    placeholder: "Die Journey-Ansicht macht geführte Bedeutungspfade sichtbar.",
+  },
+];
 
 const network = buildSymbolMeaningNetwork();
 const positions: Record<string, { x: number; y: number }> = {
@@ -183,6 +217,8 @@ function JourneySequence({ items }: { items: string[] }) {
 }
 
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
+  const codexEntry = getCodexEntry(data.id);
+
   return (
     <div
       className={`group relative cursor-pointer transition-opacity duration-700 ${data.emergenceIndex !== undefined ? "letter-emergence-symbol" : ""} ${data.isDimmed ? "opacity-25" : "opacity-100"}`}
@@ -200,6 +236,15 @@ function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
             {data.hebrew}
           </p>
           <p className="mt-4 text-[10px] uppercase tracking-[0.34em]">{data.label}</p>
+          {codexEntry ? (
+            <Link
+              href={`/codex/${codexEntry.id}`}
+              onClick={(event) => event.stopPropagation()}
+              className="nodrag nopan mt-4 inline-flex border border-gold/20 px-3 py-2 text-[8px] uppercase tracking-[0.18em] text-gold/70 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+            >
+              Codex öffnen
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>
@@ -295,8 +340,405 @@ function LivingConnectionEdge({
 
 const nodeTypes = { symbol: SymbolGraphNode, meaning: MeaningGraphNode };
 const edgeTypes = { living: LivingConnectionEdge };
+const TORAH_GENESIS_SEQUENCE_IDS = ["genesis-1-1", "genesis-1-2", "genesis-1-3"] as const;
+const HEBREW_WORD_CENTER_IDS = ["majim", "or", "esh", "midbar"] as const;
+const HEBREW_WORD_SYMBOLS: Record<(typeof HEBREW_WORD_CENTER_IDS)[number], string> = {
+  majim: "wasser",
+  or: "licht",
+  esh: "feuer",
+  midbar: "wueste",
+};
+const SHARED_HEBREW_LETTER_IDS = new Set(["aleph", "mem"]);
+const SHARED_HEBREW_WORD_IDS: Record<string, string[]> = {
+  aleph: ["or", "esh"],
+  mem: ["majim", "midbar"],
+};
+const MEANING_ENTRY_IDS = ["ursprung", "ordnung", "tiefe", "offenbarung", "reinigung", "wandlung"] as const;
+
+function getRelationTarget(relation: CodexRelation) {
+  return relation.targetId.trim();
+}
+
+function getTorahChipLabel(relation: CodexRelation) {
+  const target = getRelationTarget(relation);
+  const linkedEntry = resolveCodexEntry(target);
+
+  return linkedEntry?.title ?? relation.label?.split(" als ")[0] ?? target;
+}
+
+function getTorahRelationChips(entry: CodexEntry) {
+  return entry.relations.filter((relation) => !getRelationTarget(relation).startsWith("genesis-"));
+}
+
+function TorahRelationChip({ relation }: { relation: CodexRelation }) {
+  const target = getRelationTarget(relation);
+  const linkedEntry = resolveCodexEntry(target);
+  const chipLabel = getTorahChipLabel(relation);
+  const className =
+    "inline-flex border border-gold/20 bg-gold/[0.045] px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-gold/80 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold";
+
+  return linkedEntry ? (
+    <Link href={`/codex/${linkedEntry.id}`} className={className} title={relation.label}>
+      {chipLabel}
+    </Link>
+  ) : (
+    <span className={className} title={relation.label}>
+      {chipLabel}
+    </span>
+  );
+}
+
+function TorahGenesisSequence() {
+  const chapter = getCodexEntry("genesis-1");
+  const verses = TORAH_GENESIS_SEQUENCE_IDS
+    .map((id) => getCodexEntry(id))
+    .filter((entry): entry is CodexEntry => Boolean(entry));
+
+  return (
+    <section className="mt-12 border-y border-white/[0.055] bg-black/20 px-5 py-10 sm:px-8 lg:px-10" aria-labelledby="torah-genesis-heading">
+      <div className="max-w-3xl">
+        <p className="symbol-kicker text-cyan-soft">Thora / Genesis 1</p>
+        <h2 id="torah-genesis-heading" className="mt-5 font-serif text-3xl italic leading-tight text-foreground-strong sm:text-5xl">
+          {chapter?.title ?? "Genesis 1"}
+        </h2>
+        {chapter?.summary ? (
+          <p className="symbol-copy mt-5 max-w-2xl text-sm leading-relaxed sm:text-base">{chapter.summary}</p>
+        ) : null}
+        {chapter ? (
+          <Link
+            href={`/codex/${chapter.id}`}
+            className="mt-6 inline-flex border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.2em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+          >
+            Codex &ouml;ffnen
+          </Link>
+        ) : null}
+      </div>
+
+      <ol className="mt-12 grid gap-0" aria-label="Genesis 1 Sequenz">
+        {verses.map((verse, index) => {
+          const relationChips = getTorahRelationChips(verse);
+
+          return (
+            <li key={verse.id} className="relative grid gap-5 border-l border-gold/25 pb-12 pl-7 last:pb-0 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-8 sm:pl-9">
+              <div className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-gold shadow-[0_0_24px_rgba(189,160,109,0.75)]" aria-hidden="true" />
+              <div className="pt-0.5">
+                <p className="font-serif text-2xl italic text-gold/85">0{index + 1}</p>
+                <p className="mt-2 text-[9px] uppercase tracking-[0.22em] text-[#d8d1c2]/45">Genesis 1</p>
+              </div>
+              <article className="min-w-0 border border-white/[0.06] bg-white/[0.018] px-5 py-5 sm:px-6 sm:py-6">
+                <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-soft">{verse.subtitle}</p>
+                <h3 className="mt-3 font-serif text-2xl italic leading-tight text-foreground-strong sm:text-3xl">{verse.title}</h3>
+                {verse.summary ? (
+                  <p className="symbol-copy mt-4 text-sm leading-relaxed sm:text-base">{verse.summary}</p>
+                ) : null}
+                {relationChips.length > 0 ? (
+                  <div className="mt-5 flex flex-wrap gap-2" aria-label={`${verse.title} Verbindungen`}>
+                    {relationChips.map((relation) => (
+                      <TorahRelationChip key={`${verse.id}-${relation.targetId}-${relation.type}`} relation={relation} />
+                    ))}
+                  </div>
+                ) : null}
+                <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                  <Link
+                    href={`/codex/${verse.id}`}
+                    className="inline-flex justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.2em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+                  >
+                    Codex &ouml;ffnen
+                  </Link>
+                  {verse.symbolRoomSlug ? (
+                    <Link
+                      href={`/raeume/${verse.symbolRoomSlug}`}
+                      className="inline-flex justify-center border border-cyan/20 px-4 py-3 text-[9px] uppercase tracking-[0.2em] text-cyan-soft/75 transition-colors hover:border-cyan/40 hover:text-cyan-soft focus-visible:border-cyan/50 focus-visible:text-cyan-soft"
+                    >
+                      Raum &ouml;ffnen
+                    </Link>
+                  ) : null}
+                </div>
+              </article>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+function HebrewWordConstellation() {
+  const wordCenters = HEBREW_WORD_CENTER_IDS
+    .map((wordId) => {
+      const word = hebrewWords.find((entry) => entry.id === wordId);
+      const symbolId = HEBREW_WORD_SYMBOLS[wordId];
+      const symbol = network.nodes.find((node) => node.id === symbolId);
+      const symbolCodexEntry = getCodexEntry(symbolId);
+
+      return word && symbol
+        ? { word, symbol, symbolCodexEntry }
+        : null;
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+
+  return (
+    <section className="relative mt-12 overflow-hidden border-y border-white/[0.055] bg-black/25 px-4 py-8 sm:px-6 lg:px-8" aria-labelledby="hebrew-word-constellation-heading">
+      <div className="absolute inset-x-8 top-[50%] hidden h-px bg-gradient-to-r from-transparent via-gold/25 to-transparent md:block" aria-hidden="true" />
+      <div className="absolute left-[50%] top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-transparent via-cyan/18 to-transparent md:block" aria-hidden="true" />
+
+      <div className="relative z-10 max-w-3xl">
+        <p className="symbol-kicker text-cyan-soft">Hebr&auml;isch / Wort und Buchstabe</p>
+        <h2 id="hebrew-word-constellation-heading" className="mt-5 font-serif text-3xl italic leading-tight text-foreground-strong sm:text-5xl">
+          Vier Wortzentren im Symbolnetz
+        </h2>
+        <p className="symbol-copy mt-5 max-w-2xl text-sm leading-relaxed sm:text-base">
+          Die Ansicht liest die Symbole von ihren hebr&auml;ischen W&ouml;rtern her. Gemeinsame Buchstaben werden als leise Resonanz sichtbar.
+        </p>
+      </div>
+
+      <div className="relative z-10 mt-10 grid gap-4 md:grid-cols-2">
+        {wordCenters.map(({ word, symbol, symbolCodexEntry }) => {
+          const glyphs = Array.from(word.hebrew);
+
+          return (
+            <article
+              key={word.id}
+              className={`relative min-w-0 border px-5 py-6 transition-colors sm:px-6 ${
+                word.id === "or" || word.id === "esh"
+                  ? "border-gold/18 bg-gold/[0.035]"
+                  : word.id === "majim" || word.id === "midbar"
+                    ? "border-cyan/16 bg-cyan/[0.025]"
+                    : "border-white/[0.06] bg-white/[0.018]"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-5">
+                <div className="min-w-0">
+                  <p className="font-serif text-6xl leading-none text-gold/90 sm:text-7xl" lang="he" dir="rtl">
+                    {word.hebrew}
+                  </p>
+                  <p className="mt-4 text-[10px] uppercase tracking-[0.3em] text-[#d8d1c2]/52">{word.transliteration}</p>
+                </div>
+                <div className="shrink-0 border-l border-gold/18 pl-4 text-right">
+                  <p className="font-serif text-2xl italic leading-tight text-foreground-strong">{symbol.label}</p>
+                  <p className="mt-2 text-[9px] uppercase tracking-[0.22em] text-cyan-soft/75">Symbol</p>
+                </div>
+              </div>
+
+              <div className="mt-7 flex flex-wrap gap-2" aria-label={`${symbol.label}: Buchstaben`}>
+                {word.letterIds.map((letterId, index) => {
+                  const letter = hebrewLetters.find((entry) => entry.id === letterId);
+                  const letterCodexEntry = getCodexEntry(letterId);
+                  const isCodexLetter = letterCodexEntry?.type === "hebrew-letter";
+                  const isSharedLetter = SHARED_HEBREW_LETTER_IDS.has(letterId) && SHARED_HEBREW_WORD_IDS[letterId]?.includes(word.id);
+                  const chipClassName = `inline-flex min-h-14 min-w-14 flex-col items-center justify-center border px-3 py-2 text-center transition-colors ${
+                    isSharedLetter
+                      ? "border-gold/35 bg-gold/[0.08] text-gold shadow-[0_0_28px_rgba(189,160,109,0.12)]"
+                      : "border-white/[0.07] bg-black/18 text-[#d8d1c2]/62"
+                  } ${isCodexLetter ? "hover:border-gold/55 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold" : "cursor-default opacity-75"}`;
+                  const chipContent = (
+                    <>
+                      <span className="font-serif text-2xl leading-none" lang="he" dir="rtl">{glyphs[index] ?? letter?.glyph}</span>
+                      <span className="mt-1 text-[8px] uppercase tracking-[0.16em]">{letter?.name ?? letterId}</span>
+                    </>
+                  );
+
+                  return isCodexLetter ? (
+                    <Link
+                      key={`${word.id}-${letterId}-${index}`}
+                      href={`/codex/${letterCodexEntry.id}`}
+                      onClick={() => recordActivatedLetter({ letterId, pathId: `hebrew-word-${word.id}` })}
+                      className={chipClassName}
+                      aria-label={`${letter?.name ?? letterId} im Codex oeffnen`}
+                    >
+                      {chipContent}
+                    </Link>
+                  ) : (
+                    <span key={`${word.id}-${letterId}-${index}`} className={chipClassName} aria-label={`${letter?.name ?? letterId} noch nicht als Codex-Buchstabe verfuegbar`}>
+                      {chipContent}
+                    </span>
+                  );
+                })}
+              </div>
+
+              <div className="mt-7 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                {symbolCodexEntry ? (
+                  <Link
+                    href={`/codex/${symbolCodexEntry.id}`}
+                    className="inline-flex justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.2em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+                  >
+                    Codex &ouml;ffnen
+                  </Link>
+                ) : null}
+                {symbol.roomHref ? (
+                  <Link
+                    href={symbol.roomHref}
+                    className="inline-flex justify-center border border-cyan/20 px-4 py-3 text-[9px] uppercase tracking-[0.2em] text-cyan-soft/75 transition-colors hover:border-cyan/40 hover:text-cyan-soft focus-visible:border-cyan/50 focus-visible:text-cyan-soft"
+                  >
+                    Raum &ouml;ffnen
+                  </Link>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="relative z-10 mt-6 grid gap-3 sm:grid-cols-2">
+        <div className="border-l border-gold/30 bg-gold/[0.035] px-4 py-3">
+          <p className="font-serif text-2xl leading-none text-gold/85" lang="he" dir="rtl">&#x05d0;</p>
+          <p className="mt-2 text-[9px] uppercase tracking-[0.2em] text-[#d8d1c2]/58">Aleph verbindet Licht und Feuer</p>
+        </div>
+        <div className="border-l border-cyan/25 bg-cyan/[0.025] px-4 py-3">
+          <p className="font-serif text-2xl leading-none text-gold/85" lang="he" dir="rtl">&#x05de;</p>
+          <p className="mt-2 text-[9px] uppercase tracking-[0.2em] text-[#d8d1c2]/58">Mem verbindet Wasser und W&uuml;ste</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MeaningResonanceSpaces() {
+  const meaningEntries = MEANING_ENTRY_IDS
+    .map((entryId) => getCodexEntry(entryId))
+    .filter((entry): entry is CodexEntry => Boolean(entry));
+
+  return (
+    <section className="mt-12 border-y border-white/[0.055] bg-black/20 px-4 py-10 sm:px-6 lg:px-8" aria-labelledby="meaning-resonance-heading">
+      <div className="max-w-3xl">
+        <p className="symbol-kicker text-cyan-soft">Bedeutung / Innere Resonanzr&auml;ume</p>
+        <h2 id="meaning-resonance-heading" className="mt-5 font-serif text-3xl italic leading-tight text-foreground-strong sm:text-5xl">
+          Sechs Felder, in denen Symbole lesbar werden
+        </h2>
+        <p className="symbol-copy mt-5 max-w-2xl text-sm leading-relaxed sm:text-base">
+          Die Bedeutungsansicht sammelt Codex-Felder nicht als technische Knoten, sondern als ruhige Innenr&auml;ume mit ihren Symbol- und Schriftspuren.
+        </p>
+      </div>
+
+      <div className="mt-12 grid gap-5 md:grid-cols-2">
+        {meaningEntries.map((entry, index) => {
+          const symbolRelations = entry.relations
+            .map((relation) => {
+              const symbol = network.nodes.find((node) => node.id === getRelationTarget(relation));
+              const codexEntry = symbol ? getCodexEntry(symbol.id) : undefined;
+
+              return symbol ? { relation, symbol, codexEntry } : null;
+            })
+            .filter((item): item is NonNullable<typeof item> => Boolean(item));
+          const scriptureAnchors = [
+            ...entry.scriptureAnchors,
+            ...entry.relations
+              .filter((relation) => relation.source === "scripture-reference" || relation.type === "anchors-scripture")
+              .map((relation) => {
+                const linkedEntry = resolveCodexEntry(getRelationTarget(relation));
+
+                return {
+                  id: getRelationTarget(relation),
+                  reference: linkedEntry?.title ?? getRelationTarget(relation),
+                  label: linkedEntry?.subtitle ?? relation.label,
+                  note: relation.label,
+                  source: relation.source,
+                };
+              }),
+          ].filter((anchor, anchorIndex, anchors) => {
+            const key = anchor.id ?? anchor.reference;
+
+            return anchors.findIndex((candidate) => (candidate.id ?? candidate.reference) === key) === anchorIndex;
+          });
+
+          return (
+            <article
+              key={entry.id}
+              className="relative min-w-0 border border-white/[0.06] bg-white/[0.018] px-5 py-7 sm:px-6"
+            >
+              <div className="absolute right-5 top-5 font-serif text-3xl italic text-gold/20" aria-hidden="true">
+                0{index + 1}
+              </div>
+              <div className="max-w-[min(100%,34rem)]">
+                <p className="symbol-kicker text-gold/70">{entry.subtitle}</p>
+                <h3 className="mt-5 font-serif text-3xl italic leading-tight text-foreground-strong sm:text-4xl">
+                  {entry.title}
+                </h3>
+                <p className="symbol-copy mt-5 text-sm leading-relaxed sm:text-base">{entry.summary}</p>
+              </div>
+
+              {symbolRelations.length > 0 ? (
+                <div className="mt-7">
+                  <p className="text-[9px] uppercase tracking-[0.22em] text-cyan-soft/75">Symbole</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {symbolRelations.map(({ relation, symbol, codexEntry }) => (
+                      <Fragment key={`${entry.id}-${symbol.id}-${relation.type}`}>
+                        {codexEntry ? (
+                          <Link
+                            href={`/codex/${codexEntry.id}`}
+                            className="inline-flex items-center gap-2 border border-gold/18 bg-gold/[0.04] px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-gold/78 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+                            title={relation.label}
+                          >
+                            <span className="font-serif text-lg leading-none" lang="he" dir="rtl">{symbol.hebrew}</span>
+                            {symbol.label}
+                          </Link>
+                        ) : (
+                          <span className="inline-flex items-center gap-2 border border-gold/18 bg-gold/[0.04] px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-gold/78" title={relation.label}>
+                            <span className="font-serif text-lg leading-none" lang="he" dir="rtl">{symbol.hebrew}</span>
+                            {symbol.label}
+                          </span>
+                        )}
+                        {symbol.roomHref ? (
+                          <Link
+                            href={symbol.roomHref}
+                            className="inline-flex border border-cyan/18 bg-cyan/[0.025] px-3 py-2 text-[9px] uppercase tracking-[0.16em] text-cyan-soft/75 transition-colors hover:border-cyan/40 hover:text-cyan-soft focus-visible:border-cyan/50 focus-visible:text-cyan-soft"
+                          >
+                            {symbol.label}-Raum &ouml;ffnen
+                          </Link>
+                        ) : null}
+                      </Fragment>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {scriptureAnchors.length > 0 ? (
+                <div className="mt-7">
+                  <p className="text-[9px] uppercase tracking-[0.22em] text-cyan-soft/75">Thora / Scripture</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {scriptureAnchors.map((anchor) => {
+                      const linkedEntry = anchor.id ? resolveCodexEntry(anchor.id) : undefined;
+                      const label = anchor.label ?? anchor.reference;
+
+                      return linkedEntry ? (
+                        <Link
+                          key={`${entry.id}-${anchor.id ?? anchor.reference}`}
+                          href={`/codex/${linkedEntry.id}`}
+                          className="inline-flex border border-white/[0.07] bg-black/18 px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-[#d8d1c2]/68 transition-colors hover:border-gold/35 hover:text-gold focus-visible:border-gold/55 focus-visible:text-gold"
+                          title={anchor.note}
+                        >
+                          {label}
+                        </Link>
+                      ) : (
+                        <span
+                          key={`${entry.id}-${anchor.id ?? anchor.reference}`}
+                          className="inline-flex border border-white/[0.07] bg-black/18 px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-[#d8d1c2]/58"
+                          title={anchor.note}
+                        >
+                          {label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : null}
+
+              <Link
+                href={`/codex/${entry.id}`}
+                className="mt-8 inline-flex border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.2em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+              >
+                Codex &ouml;ffnen
+              </Link>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 
 export default function SymbolNetwork() {
+  const [activeView, setActiveView] = useState<SymbolNetworkView>("symbols");
   const [activeId, setActiveId] = useState("wasser");
   const [activePathId, setActivePathId] = useState<string | null>(null);
   const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
@@ -309,7 +751,9 @@ export default function SymbolNetwork() {
   const [letterOverlayContext, setLetterOverlayContext] = useState<LetterBridgeContext | null>(null);
   const { isEntering, startRoomTransition } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
+  const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activePath = network.paths.find((path) => path.id === activePathId);
+  const activeViewConfig = SYMBOL_NETWORK_VIEWS.find((view) => view.id === activeView);
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
@@ -585,6 +1029,28 @@ export default function SymbolNetwork() {
             Waehle ein Symbol. Oeffne eine Letter Bridge, um zu sehen, welche Raeume aus demselben Buchstaben hervorgehen.
           </p>
 
+          <div className="mt-8 overflow-x-auto pb-2" aria-label="Symbolnetz-Ansicht waehlen">
+            <div className="flex min-w-max gap-2 border-y border-white/[0.055] bg-black/20 px-1 py-2">
+              {SYMBOL_NETWORK_VIEWS.map((view) => (
+                <button
+                  key={view.id}
+                  type="button"
+                  onClick={() => setActiveView(view.id)}
+                  aria-pressed={activeView === view.id}
+                  className={`border px-4 py-3 text-[10px] uppercase tracking-[0.22em] transition-colors ${
+                    activeView === view.id
+                      ? "border-gold/35 bg-gold/[0.08] text-gold"
+                      : "border-white/[0.06] text-[#d8d1c2]/55 hover:border-gold/20 hover:text-[#d8d1c2]/80"
+                  }`}
+                >
+                  {view.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {activeView === "symbols" ? (
+            <>
           <div className="mt-8 flex flex-wrap gap-3 max-md:hidden" aria-label="Symbol fokussieren">
             {network.nodes.map((node) => (
               <button
@@ -689,6 +1155,14 @@ export default function SymbolNetwork() {
                 ))}
               </div>
             )}
+            {!activeCodexLetter && activeCodexEntry ? (
+              <Link
+                href={`/codex/${activeCodexEntry.id}`}
+                className="mt-4 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold"
+              >
+                Codex öffnen
+              </Link>
+            ) : null}
           </div>
 
           <div className="mt-5 grid gap-3 md:hidden">
@@ -790,8 +1264,24 @@ export default function SymbolNetwork() {
               </div>
             </nav>
           ) : null}
+            </>
+          ) : activeView === "torah" ? (
+            <TorahGenesisSequence />
+          ) : activeView === "hebrew" ? (
+            <HebrewWordConstellation />
+          ) : activeView === "meaning" ? (
+            <MeaningResonanceSpaces />
+          ) : (
+            <div className="mt-12 border-y border-white/[0.055] bg-black/20 px-5 py-14 text-center sm:px-10">
+              <p className="symbol-kicker text-cyan-soft">{activeViewConfig?.label}</p>
+              <p className="mx-auto mt-5 max-w-2xl font-serif text-2xl italic leading-relaxed text-foreground-strong sm:text-3xl">
+                {activeViewConfig?.placeholder}
+              </p>
+            </div>
+          )}
         </div>
 
+        {activeView === "symbols" ? (
         <aside className="symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40">
           <p className="symbol-kicker text-cyan-soft">{activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}</p>
           {activeJourney ? (
@@ -815,6 +1305,14 @@ export default function SymbolNetwork() {
                 <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">
                   {activeSymbol.label}-Raum öffnen
                 </RoomTransitionButton>
+                {activeCodexEntry ? (
+                  <Link
+                    href={`/codex/${activeCodexEntry.id}`}
+                    className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+                  >
+                    Codex öffnen
+                  </Link>
+                ) : null}
               </div>
             </>
           )}
@@ -883,6 +1381,7 @@ export default function SymbolNetwork() {
             </div>
           </div> : null}
         </aside>
+        ) : null}
       </div>
       {journeyGate ? (
         <JourneyGate

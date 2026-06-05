@@ -1,0 +1,77 @@
+import { codexRegistry } from "./codexRegistry";
+import type { CodexEntry, CodexEntryType } from "./types";
+
+function normalizeCodexTerm(term: string): string {
+  return term
+    .trim()
+    .toLocaleLowerCase("de-DE")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f\u0591-\u05c7]/g, "")
+    .replace(/[\s:_,.;/\\]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function entryTerms(entry: CodexEntry): string[] {
+  return [
+    entry.id,
+    entry.title,
+    entry.subtitle,
+    entry.hebrew,
+    entry.transliteration,
+    ...entry.aliases ?? [],
+    ...entry.searchTerms ?? [],
+    ...entry.scriptureAnchors.flatMap((anchor) => [anchor.id, anchor.reference, anchor.label]),
+    ...entry.meta.tags ?? [],
+  ].filter((term): term is string => Boolean(term?.trim()));
+}
+
+function uniqueEntries(entries: CodexEntry[]): CodexEntry[] {
+  const seen = new Set<string>();
+
+  return entries.filter((entry) => {
+    if (seen.has(entry.id)) {
+      return false;
+    }
+
+    seen.add(entry.id);
+    return true;
+  });
+}
+
+export function resolveCodexEntry(input: string): CodexEntry | undefined {
+  const normalizedInput = normalizeCodexTerm(input);
+
+  if (!normalizedInput) {
+    return undefined;
+  }
+
+  return codexRegistry.find((entry) =>
+    entryTerms(entry).some((term) => normalizeCodexTerm(term) === normalizedInput),
+  );
+}
+
+export function searchCodexEntries(query: string): CodexEntry[] {
+  const normalizedQuery = normalizeCodexTerm(query);
+
+  if (!normalizedQuery) {
+    return [];
+  }
+
+  return uniqueEntries(
+    codexRegistry.filter((entry) =>
+      entryTerms(entry).some((term) => {
+        const normalizedTerm = normalizeCodexTerm(term);
+        return normalizedTerm === normalizedQuery || normalizedTerm.includes(normalizedQuery);
+      }),
+    ),
+  );
+}
+
+export function getCodexEntriesByType(type: CodexEntryType): CodexEntry[] {
+  return codexRegistry.filter((entry) => entry.type === type);
+}

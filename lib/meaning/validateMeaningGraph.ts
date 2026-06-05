@@ -26,6 +26,8 @@ type RelationAwareMapping = {
   relationIds?: string[];
 };
 
+const curatedCodexBiblicalReferenceIds = new Set(["genesis-1-1"]);
+
 export interface MeaningGraphValidationResult {
   errors: string[];
   warnings: string[];
@@ -64,6 +66,9 @@ const defaultData: MeaningGraphValidationData = {
   biblicalReferences,
   journeys: meaningJourneys,
   availableBiblicalReferences: Array.from(new Set([
+    ...biblicalReferences
+      .filter((reference) => curatedCodexBiblicalReferenceIds.has(reference.id))
+      .map((reference) => reference.reference),
     ...SYMBOL_NETWORK.flatMap((symbol) => symbol.scriptureReferences?.map((entry) => entry.reference) ?? []),
     ...SYMBOLS.flatMap((symbol) => symbol.bibleReferences),
     ...hebrewWords.flatMap((word) => word.biblicalReferences.map((entry) => entry.reference)),
