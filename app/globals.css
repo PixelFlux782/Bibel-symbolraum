@@ -2458,6 +2458,45 @@ body {
   color: rgba(var(--foreground-rgb), 0.72);
 }
 
+.symbol-constellation-node__lens {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.62rem;
+  display: grid;
+  min-width: 3.2rem;
+  justify-items: center;
+  gap: 0.1rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.18);
+  border-radius: 999px;
+  background: rgba(2, 5, 12, 0.82);
+  padding: 0.28rem 0.55rem 0.34rem;
+  box-shadow: 0 0 1.4rem rgba(var(--gold-rgb), 0.08);
+  pointer-events: none;
+}
+
+.symbol-constellation-node__lens span {
+  color: rgba(var(--gold-rgb), 0.94);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.08rem;
+  font-style: italic;
+  line-height: 1;
+}
+
+.symbol-constellation-node.has-lens-hebrew .symbol-constellation-node__lens span {
+  font-size: 1.45rem;
+  font-style: normal;
+}
+
+.symbol-constellation-node.has-lens-number .symbol-constellation-node__lens span {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+
+.symbol-constellation-node__lens i {
+  display: none;
+}
+
 .symbol-constellation-field.is-water-focused {
   height: clamp(32rem, calc(100dvh - 11.2rem), 48rem) !important;
   min-height: 0;
@@ -2470,15 +2509,14 @@ body {
 }
 
 .symbol-constellation-field.is-water-focused .react-flow__node:not(:has(.symbol-constellation-node.is-active, .symbol-constellation-node.is-previewed, .symbol-constellation-node.is-related)) {
-  opacity: 0.08 !important;
-  filter: saturate(0.35) blur(0.2px);
+  opacity: 0.82 !important;
+  filter: none;
 }
 
 .symbol-constellation-field.is-water-focused .react-flow__edge,
 .symbol-constellation-field.is-water-focused .react-flow__edge-text,
 .symbol-constellation-field.is-water-focused .react-flow__edgeupdater {
-  opacity: 0 !important;
-  pointer-events: none !important;
+  opacity: 1 !important;
 }
 
 .symbol-constellation-field.is-water-focused .react-flow__nodes {
@@ -2495,8 +2533,8 @@ body {
   left: 50%;
   top: 50%;
   z-index: 8;
-  width: 20rem;
-  height: 20rem;
+  width: 9.25rem;
+  height: 9.25rem;
   pointer-events: none;
   transform: translate(-50%, -50%);
   animation: symbol-water-orbit-arrive 1100ms ease both;
@@ -2504,19 +2542,19 @@ body {
 
 .symbol-water-orbit__ring {
   position: absolute;
-  inset: 4.9rem;
-  border: 1px solid rgba(var(--gold-rgb), 0.12);
+  inset: 2.65rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.1);
   border-radius: 999px;
   box-shadow:
-    0 0 3.6rem rgba(var(--gold-rgb), 0.055),
-    inset 0 0 2.4rem rgba(var(--cyan-rgb), 0.025);
+    0 0 1.8rem rgba(var(--gold-rgb), 0.045),
+    inset 0 0 1.2rem rgba(var(--cyan-rgb), 0.02);
   pointer-events: none;
 }
 
 .symbol-water-orbit__ring--outer {
-  inset: 1.55rem;
+  inset: 1.4rem;
   border-color: rgba(var(--cyan-rgb), 0.055);
-  box-shadow: 0 0 4.4rem rgba(var(--cyan-rgb), 0.035);
+  box-shadow: 0 0 1.8rem rgba(var(--cyan-rgb), 0.03);
 }
 
 .symbol-water-orbit__ring::before,
@@ -2538,7 +2576,7 @@ body {
 .symbol-water-orbit__node {
   position: absolute;
   display: grid;
-  width: 5.6rem;
+  width: 3.5rem;
   place-items: center;
   gap: 0.18rem;
   color: rgba(216, 209, 194, 0.68);
@@ -2550,37 +2588,32 @@ body {
 
 .symbol-water-orbit__node--journey {
   left: 50%;
-  top: 6%;
+  top: 5%;
 }
 
 .symbol-water-orbit__node--torah {
-  left: 82%;
-  top: 24%;
+  left: 91%;
+  top: 35%;
 }
 
 .symbol-water-orbit__node--hebrew {
-  left: 82%;
-  top: 76%;
+  left: 76%;
+  top: 91%;
 }
 
 .symbol-water-orbit__node--meaning {
-  left: 50%;
-  top: 94%;
-}
-
-.symbol-water-orbit__node--room {
-  left: 18%;
-  top: 76%;
+  left: 24%;
+  top: 91%;
 }
 
 .symbol-water-orbit__node--number {
-  left: 18%;
-  top: 24%;
+  left: 9%;
+  top: 35%;
 }
 
 .symbol-water-orbit__dot {
-  width: 0.62rem;
-  height: 0.62rem;
+  width: 0.48rem;
+  height: 0.48rem;
   border: 1px solid rgba(var(--gold-rgb), 0.34);
   border-radius: 999px;
   background:
@@ -2591,9 +2624,12 @@ body {
 
 .symbol-water-orbit__label {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   font-style: italic;
   line-height: 1.2;
+  opacity: 0;
+  transform: translateY(0.2rem);
+  transition: opacity 220ms ease, transform 220ms ease;
 }
 
 .symbol-water-orbit__preview {
@@ -2625,8 +2661,7 @@ body {
   right: 0;
 }
 
-.symbol-water-orbit__node--number .symbol-water-orbit__preview,
-.symbol-water-orbit__node--room .symbol-water-orbit__preview {
+.symbol-water-orbit__node--number .symbol-water-orbit__preview {
   left: 0;
 }
 
@@ -2655,6 +2690,12 @@ body {
   filter: drop-shadow(0 0 1.1rem rgba(var(--gold-rgb), 0.18));
 }
 
+.symbol-water-orbit__node:hover .symbol-water-orbit__label,
+.symbol-water-orbit__node:focus-visible .symbol-water-orbit__label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .symbol-water-orbit__node:hover .symbol-water-orbit__dot,
 .symbol-water-orbit__node:focus-visible .symbol-water-orbit__dot,
 .symbol-water-orbit__node.is-active .symbol-water-orbit__dot {
@@ -2666,8 +2707,7 @@ body {
 }
 
 .symbol-water-orbit__node:hover .symbol-water-orbit__preview,
-.symbol-water-orbit__node:focus-visible .symbol-water-orbit__preview,
-.symbol-water-orbit__node.is-active .symbol-water-orbit__preview {
+.symbol-water-orbit__node:focus-visible .symbol-water-orbit__preview {
   opacity: 1;
   transform: translateY(0);
 }
@@ -2823,6 +2863,116 @@ body {
 
 .letter-emergence-symbol {
   animation: letter-emergence-symbol 1100ms ease both;
+}
+
+.letter-focus-node {
+  position: relative;
+  display: grid;
+  width: 10.5rem;
+  height: 10.5rem;
+  place-items: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.16);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(var(--gold-rgb), 0.12), rgba(var(--gold-rgb), 0.034) 46%, transparent 72%),
+    rgba(1, 3, 8, 0.34);
+  color: rgba(var(--gold-rgb), 0.96);
+  text-align: center;
+  box-shadow:
+    0 0 4.4rem rgba(var(--gold-rgb), 0.13),
+    inset 0 0 2.8rem rgba(var(--gold-rgb), 0.04);
+  transition: border-color 520ms ease, box-shadow 520ms ease, transform 520ms ease;
+  animation: letter-emergence-center 900ms ease both;
+}
+
+.letter-focus-node:hover,
+.letter-focus-node:focus-visible,
+.letter-focus-node.is-expanded {
+  border-color: rgba(var(--gold-rgb), 0.42);
+  box-shadow:
+    0 0 5.6rem rgba(var(--gold-rgb), 0.2),
+    inset 0 0 3rem rgba(var(--gold-rgb), 0.06);
+}
+
+.letter-focus-node__glyph {
+  display: block;
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 5.9rem;
+  line-height: 0.78;
+  text-shadow: 0 0 2.6rem rgba(var(--gold-rgb), 0.22);
+}
+
+.letter-focus-node__name,
+.letter-focus-node__hint {
+  display: block;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  text-transform: uppercase;
+}
+
+.letter-focus-node__name {
+  margin-top: -0.9rem;
+  color: rgba(var(--foreground-rgb), 0.86);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+}
+
+.letter-focus-node__hint {
+  color: rgba(var(--cyan-rgb), 0.66);
+  font-size: 0.48rem;
+  letter-spacing: 0.22em;
+}
+
+.letter-resonance-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.letter-resonance-pills button {
+  border: 1px solid rgba(var(--cyan-rgb), 0.13);
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.46rem 0.68rem;
+  color: rgba(var(--foreground-rgb), 0.7);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: border-color 320ms ease, color 320ms ease, background 320ms ease;
+}
+
+.letter-resonance-pills button:hover,
+.letter-resonance-pills button:focus-visible,
+.letter-resonance-pills button.is-active {
+  border-color: rgba(var(--gold-rgb), 0.34);
+  background: rgba(var(--gold-rgb), 0.045);
+  color: rgba(var(--gold-rgb), 0.9);
+}
+
+.letter-inspector-accordions {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.letter-inspector-accordions details {
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+  padding-top: 0.72rem;
+}
+
+.letter-inspector-accordions summary {
+  cursor: pointer;
+  color: rgba(var(--cyan-rgb), 0.72);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.letter-inspector-accordions p {
+  margin-top: 0.7rem;
+  color: rgba(216, 209, 194, 0.68);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.95rem;
+  line-height: 1.55;
 }
 
 .symbol-network-flow .react-flow__edge-path {
