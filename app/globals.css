@@ -2157,6 +2157,114 @@ body {
   will-change: opacity, filter;
 }
 
+.symbol-network-orientation {
+  display: inline-grid;
+  gap: 0.18rem;
+  opacity: 0.68;
+}
+
+.symbol-network-orientation p {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(var(--gold-rgb), 0.74);
+}
+
+.symbol-network-orientation span {
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.98rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: rgba(216, 209, 194, 0.54);
+}
+
+.symbol-view-strip {
+  position: absolute;
+  right: 0;
+  top: 0.15rem;
+  z-index: 8;
+  max-width: min(100%, 31rem);
+  overflow-x: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.026);
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.035);
+  background: linear-gradient(90deg, rgba(2, 5, 12, 0.04), rgba(2, 5, 12, 0.36));
+  padding: 0.28rem;
+  opacity: 0.42;
+  scrollbar-width: none;
+  transition: opacity 700ms ease, background 700ms ease;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.symbol-view-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.symbol-view-strip:hover,
+.symbol-view-strip:focus-within {
+  opacity: 0.9;
+}
+
+.symbol-view-strip__button {
+  min-height: 1.9rem;
+  border: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 0.35rem 0.55rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(216, 209, 194, 0.44);
+  transition: color 520ms ease, background 520ms ease;
+}
+
+.symbol-view-strip__button:first-child {
+  border-left: 0;
+}
+
+.symbol-view-strip__button:hover,
+.symbol-view-strip__button:focus-visible {
+  color: rgba(var(--foreground-rgb), 0.72);
+}
+
+.symbol-view-strip__button.is-active {
+  background: rgba(var(--gold-rgb), 0.045);
+  color: rgba(var(--gold-rgb), 0.76);
+}
+
+.symbol-symbol-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  opacity: 0.54;
+  transition: opacity 520ms ease;
+}
+
+.symbol-symbol-strip:hover,
+.symbol-symbol-strip:focus-within {
+  opacity: 0.9;
+}
+
+.symbol-symbol-strip button {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+  padding: 0.28rem 0.4rem 0.36rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.53rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(216, 209, 194, 0.42);
+  transition: border-color 520ms ease, color 520ms ease;
+}
+
+.symbol-symbol-strip button:hover,
+.symbol-symbol-strip button:focus-visible,
+.symbol-symbol-strip button.is-active {
+  border-color: rgba(var(--gold-rgb), 0.24);
+  color: rgba(var(--gold-rgb), 0.76);
+}
+
 .symbol-constellation-field {
   border-top: 1px solid rgba(255, 255, 255, 0.025);
   border-bottom: 1px solid rgba(var(--gold-rgb), 0.035);
@@ -2881,6 +2989,110 @@ body {
   overscroll-behavior: contain;
 }
 
+.symbol-orbit-detail {
+  animation: symbol-fade-in 620ms ease both;
+}
+
+.symbol-orbit-unfolding {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.symbol-orbit-unfolding__step {
+  display: grid;
+  grid-template-columns: 2.7rem minmax(0, 1fr);
+  column-gap: 0.85rem;
+  align-items: center;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.18);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.035), transparent);
+  padding: 0.62rem 0 0.62rem 0.85rem;
+}
+
+.symbol-orbit-unfolding__step span {
+  grid-row: span 2;
+  color: rgba(var(--gold-rgb), 0.9);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.symbol-orbit-unfolding__step strong {
+  color: rgba(var(--foreground-rgb), 0.86);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.2;
+}
+
+.symbol-orbit-unfolding__step i {
+  color: rgba(216, 209, 194, 0.56);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.82rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.symbol-orbit-link {
+  display: inline-flex;
+  justify-content: center;
+  width: 100%;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.22);
+  padding: 0.75rem 0.25rem 0.85rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(var(--gold-rgb), 0.74);
+}
+
+.symbol-focus-hints {
+  border-top: 1px solid rgba(255, 255, 255, 0.045);
+  padding-top: 1rem;
+}
+
+.symbol-focus-hints p:last-child {
+  margin-top: 0.55rem;
+  color: rgba(216, 209, 194, 0.56);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.symbol-focus-path {
+  border-left: 1px solid rgba(var(--cyan-rgb), 0.14);
+  background: rgba(255, 255, 255, 0.014);
+  padding: 0.72rem 0.85rem;
+  text-align: left;
+  transition: border-color 520ms ease, background 520ms ease;
+}
+
+.symbol-focus-path:hover,
+.symbol-focus-path:focus-visible {
+  border-color: rgba(var(--gold-rgb), 0.24);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.symbol-focus-path span {
+  display: block;
+  color: rgba(var(--foreground-rgb), 0.82);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.98rem;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.symbol-focus-path i {
+  display: block;
+  margin-top: 0.35rem;
+  color: rgba(216, 209, 194, 0.54);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.78rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
 .symbol-detail-accordion {
   margin-top: 0.9rem;
   border-top: 1px solid rgba(255, 255, 255, 0.055);
@@ -3569,6 +3781,14 @@ body {
 }
 
 @media (max-width: 639px) {
+  .symbol-network-orientation {
+    max-width: 15rem;
+  }
+
+  .symbol-view-strip {
+    display: none;
+  }
+
   .journey-gate {
     padding: 1.35rem;
   }
