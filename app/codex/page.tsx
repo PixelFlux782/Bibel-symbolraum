@@ -5,7 +5,7 @@ import Link from "next/link";
 import { codexRegistry } from "@/lib/codex/codexRegistry";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
-import { resolveCodexEntry, searchCodexEntries } from "@/lib/codex/getCodexEntry";
+import { getCodexEntriesByType, resolveCodexEntry, searchCodexEntries } from "@/lib/codex/getCodexEntry";
 import type { CodexEntry, CodexEntryType } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
@@ -49,6 +49,68 @@ const TORAH_SEQUENCE = [
   },
 ] as const;
 
+type CodexCardFocusProps = {
+  activeCodexId: string | null;
+  onActivateCodexEntry: (entryId: string) => void;
+};
+
+type ResonancePathStationKind =
+  | "Symbol"
+  | "Hebraeisch"
+  | "Buchstabe"
+  | "Zahl"
+  | "Bedeutung"
+  | "Thora"
+  | "Journey";
+
+type ResonancePathStation = {
+  kind: ResonancePathStationKind;
+  label: string;
+  entry?: CodexEntry;
+  lang?: "he";
+  dir?: "rtl";
+};
+
+const CODEX_TYPE_RESONANCE_LABELS: Partial<Record<CodexEntryType, string>> = {
+  symbol: "Symbol",
+  "hebrew-word": "hebraeisches Wort",
+  "hebrew-letter": "Buchstabe",
+  number: "Zahl",
+  scripture: "Schriftanker",
+  meaning: "Bedeutung",
+  "meaning-field": "Bedeutungsfeld",
+  journey: "Weg",
+};
+
+const RESONANCE_PATH_PRIORITIES: Partial<Record<string, Partial<Record<ResonancePathStationKind, string[]>>>> = {
+  wasser: {
+    Buchstabe: ["mem"],
+    Zahl: ["zahl-40", "zahl-90"],
+    Bedeutung: ["tiefe"],
+    Thora: ["genesis-1-2"],
+    Journey: ["journey-wasser-geist"],
+  },
+  licht: {
+    Buchstabe: ["aleph"],
+    Zahl: ["zahl-1"],
+    Bedeutung: ["offenbarung"],
+    Thora: ["genesis-1-3"],
+    Journey: ["journey-chaos-ordnung"],
+  },
+  feuer: {
+    Buchstabe: ["aleph"],
+    Zahl: ["zahl-1"],
+    Bedeutung: ["wandlung", "offenbarung"],
+    Journey: ["journey-wueste-offenbarung"],
+  },
+  wueste: {
+    Buchstabe: ["mem"],
+    Zahl: ["zahl-40"],
+    Bedeutung: ["wandlung"],
+    Journey: ["journey-wueste-offenbarung"],
+  },
+};
+
 function formatType(type: CodexEntryType) {
   if (type === "meaning") {
     return "Bedeutung";
@@ -71,6 +133,312 @@ function getScriptureAnchorLabel(anchorId: string) {
   }
 
   return anchorId.replace(/-/g, " ").replace(/\b(genesis|exodus|leviticus|numbers|deuteronomy|thora|scripture)\b/gi, "$1").trim() || anchorId;
+}
+
+function uniqueLabels(labels: Array<string | null | undefined>) {
+  const seen = new Set<string>();
+
+  return labels
+    .map((label) => label?.trim())
+    .filter((label): label is string => Boolean(label))
+    .filter((label) => {
+      const normalized = label.toLocaleLowerCase("de-DE");
+
+      if (seen.has(normalized)) {
+        return false;
+      }
+
+      seen.add(normalized);
+      return true;
+    });
+}
+
+function formatLabelSeries(labels: string[]) {
+  if (labels.length <= 1) {
+    return labels[0] ?? "";
+  }
+
+  return `${labels.slice(0, -1).join(", ")} und ${labels.at(-1)}`;
+}
+
+function getResonanceEntryLabel(entry: CodexEntry) {
+  if (entry.type === "number") {
+    return entry.title.match(/\d+/)?.[0] ?? entry.title;
+  }
+
+  return entry.title;
+}
+
+function getEntryRelationLabels(entry: CodexEntry) {
+  const outgoingIds = entry.relations.map((relation) => relation.targetId);
+  const incomingIds = codexRegistry
+    .filter((candidate) => candidate.relations.some((relation) => relation.targetId === entry.id))
+    .map((candidate) => candidate.id);
+
+  return uniqueLabels(
+    [...outgoingIds, ...incomingIds]
+      .map((targetId) => codexRegistry.find((candidate) => candidate.id === targetId))
+      .map((linkedEntry) => linkedEntry ? getResonanceEntryLabel(linkedEntry) : null),
+  ).filter((label) => label !== entry.title).slice(0, 4);
+}
+
+function getEntryScriptureLabels(entry: CodexEntry) {
+  const directAnchors = entry.scriptureAnchors.map((anchor) => anchor.label ?? anchor.reference);
+  const linkedAnchors = entry.relations
+    .map((relation) => codexRegistry.find((candidate) => candidate.id === relation.targetId && candidate.type === "scripture"))
+    .map((linkedEntry) => linkedEntry?.title);
+  const backlinkAnchors = codexRegistry
+    .filter((candidate) => candidate.type === "scripture" && candidate.relations.some((relation) => relation.targetId === entry.id))
+    .map((candidate) => candidate.title);
+
+  return uniqueLabels([...directAnchors, ...linkedAnchors, ...backlinkAnchors]).slice(0, 2);
+}
+
+function getEntryJourneyLabels(entry: CodexEntry) {
+  const directJourneys = entry.journeyIds
+    .map((journeyId) => codexRegistry.find((candidate) => candidate.id === journeyId))
+    .map((journey) => journey?.title);
+  const stepJourneys = codexRegistry
+    .filter((candidate) => candidate.type === "journey" && candidate.steps?.some((step) => step.codexId === entry.id))
+    .map((candidate) => candidate.title);
+
+  return uniqueLabels([...directJourneys, ...stepJourneys]).slice(0, 2);
+}
+
+function buildCodexResonanceTeaser(entry: CodexEntry) {
+  const parts = uniqueLabels([
+    CODEX_TYPE_RESONANCE_LABELS[entry.type],
+    entry.hebrew ? `${entry.hebrew}${entry.transliteration ? ` / ${entry.transliteration}` : ""}` : null,
+    ...getEntryRelationLabels(entry),
+    ...entry.meaningFields.map(getMeaningFieldLabel),
+    ...getEntryScriptureLabels(entry),
+    ...getEntryJourneyLabels(entry).map((label) => `Weg ${label}`),
+    entry.symbolRoomSlug ? `Symbolraum ${getConnectedEntryLabel(entry.symbolRoomSlug)}` : null,
+  ]).slice(0, 6);
+
+  if (parts.length === 0) {
+    return `${entry.title} bleibt als aktiver Codex-Knoten durch die Ansichten hindurch erhalten.`;
+  }
+
+  return `${entry.title} erscheint im Codex als ${formatLabelSeries(parts)}.`;
+}
+
+function getCodexEntryById(entryId: string) {
+  return codexRegistry.find((entry) => entry.id === entryId);
+}
+
+function uniqueCodexEntries(entries: Array<CodexEntry | null | undefined>) {
+  const seen = new Set<string>();
+
+  return entries.filter((entry): entry is CodexEntry => {
+    if (!entry || seen.has(entry.id)) {
+      return false;
+    }
+
+    seen.add(entry.id);
+    return true;
+  });
+}
+
+function getBacklinkEntries(entry: CodexEntry) {
+  return codexRegistry.filter((candidate) =>
+    candidate.relations.some((relation) => relation.targetId === entry.id) ||
+    candidate.steps?.some((step) => step.codexId === entry.id),
+  );
+}
+
+function getResonanceGraphEntries(entry: CodexEntry) {
+  return uniqueCodexEntries([
+    entry,
+    ...entry.relations.map((relation) => getCodexEntryById(relation.targetId)),
+    ...getBacklinkEntries(entry),
+    ...entry.scriptureAnchors.map((anchor) => anchor.id ? getCodexEntryById(anchor.id) : undefined),
+    ...entry.journeyIds.map(getCodexEntryById),
+    entry.symbolRoomSlug ? getCodexEntryById(entry.symbolRoomSlug) : undefined,
+    ...codexRegistry
+      .filter((candidate) => candidate.type === "journey" && candidate.steps?.some((step) => step.codexId === entry.id)),
+  ]);
+}
+
+function getPriorityIds(entry: CodexEntry, kind: ResonancePathStationKind) {
+  return [
+    ...(RESONANCE_PATH_PRIORITIES[entry.id]?.[kind] ?? []),
+    ...(entry.symbolRoomSlug ? RESONANCE_PATH_PRIORITIES[entry.symbolRoomSlug]?.[kind] ?? [] : []),
+  ];
+}
+
+function pickEntryByPriority(
+  entry: CodexEntry,
+  kind: ResonancePathStationKind,
+  candidates: CodexEntry[],
+) {
+  const priorityIds = getPriorityIds(entry, kind);
+  const preferredEntry = priorityIds
+    .map((entryId) => candidates.find((candidate) => candidate.id === entryId))
+    .find((candidate): candidate is CodexEntry => Boolean(candidate));
+
+  return preferredEntry ?? candidates[0];
+}
+
+function getHebrewStationSource(entry: CodexEntry, graphEntries: CodexEntry[]) {
+  return [entry, ...graphEntries].find((candidate) => Boolean(candidate.hebrew));
+}
+
+function getStationEntryLabel(entry: CodexEntry) {
+  if (entry.type === "number") {
+    return `Zahl ${getNumberValue(entry)}`;
+  }
+
+  return entry.title;
+}
+
+function buildResonancePath(entry: CodexEntry): ResonancePathStation[] {
+  const graphEntries = getResonanceGraphEntries(entry);
+  const symbolEntry = entry.type === "symbol"
+    ? entry
+    : pickEntryByPriority(entry, "Symbol", graphEntries.filter((candidate) => candidate.type === "symbol"));
+  const hebrewSource = getHebrewStationSource(entry, graphEntries);
+  const letterEntry = pickEntryByPriority(
+    entry,
+    "Buchstabe",
+    graphEntries.filter((candidate) => candidate.type === "hebrew-letter"),
+  );
+  const numberEntry = pickEntryByPriority(
+    entry,
+    "Zahl",
+    graphEntries.filter((candidate) => candidate.type === "number"),
+  );
+  const meaningCandidates = [
+    ...graphEntries.filter((candidate) => candidate.type === "meaning" || candidate.type === "meaning-field"),
+    ...getCodexEntriesByType("meaning").filter((candidate) =>
+      candidate.meaningFields.some((field) => entry.meaningFields.includes(field)),
+    ),
+    ...getCodexEntriesByType("meaning-field").filter((candidate) =>
+      candidate.meaningFields.some((field) => entry.meaningFields.includes(field)),
+    ),
+  ];
+  const meaningEntry = pickEntryByPriority(entry, "Bedeutung", uniqueCodexEntries(meaningCandidates));
+  const scriptureEntry = pickEntryByPriority(
+    entry,
+    "Thora",
+    graphEntries.filter((candidate) => candidate.type === "scripture"),
+  );
+  const journeyEntry = pickEntryByPriority(
+    entry,
+    "Journey",
+    graphEntries.filter((candidate) => candidate.type === "journey"),
+  );
+
+  const stations: Array<ResonancePathStation | null> = [
+    symbolEntry ? { kind: "Symbol", label: symbolEntry.title, entry: symbolEntry } : null,
+    hebrewSource?.hebrew
+      ? {
+          kind: "Hebraeisch",
+          label: `${hebrewSource.hebrew}${hebrewSource.transliteration ? ` / ${hebrewSource.transliteration}` : ""}`,
+          entry: hebrewSource,
+          lang: "he" as const,
+          dir: "rtl" as const,
+        }
+      : null,
+    letterEntry ? { kind: "Buchstabe", label: letterEntry.title, entry: letterEntry } : null,
+    numberEntry ? { kind: "Zahl", label: getStationEntryLabel(numberEntry), entry: numberEntry } : null,
+    meaningEntry ? { kind: "Bedeutung", label: meaningEntry.title, entry: meaningEntry } : null,
+    scriptureEntry ? { kind: "Thora", label: scriptureEntry.title, entry: scriptureEntry } : null,
+    journeyEntry ? { kind: "Journey", label: `Journey ${journeyEntry.title}`, entry: journeyEntry } : null,
+  ];
+
+  return stations.filter((station): station is ResonancePathStation => Boolean(station?.label.trim()));
+}
+
+function CodexResonanceTeaser({ entry }: { entry: CodexEntry }) {
+  return (
+    <aside className="mt-5 border-l-2 border-gold/45 bg-black/[0.18] px-5 py-4 shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur-md sm:px-6">
+      <p className="symbol-kicker text-gold/70">Aktive Resonanz</p>
+      <p className="symbol-copy mt-2 text-base italic leading-relaxed text-foreground-strong sm:text-lg">
+        {buildCodexResonanceTeaser(entry)}
+      </p>
+    </aside>
+  );
+}
+
+function CodexResonancePath({
+  entry,
+  onActivateCodexEntry,
+}: {
+  entry: CodexEntry;
+  onActivateCodexEntry: (entryId: string) => void;
+}) {
+  const stations = buildResonancePath(entry);
+
+  if (stations.length === 0) {
+    return null;
+  }
+
+  return (
+    <nav
+      aria-label={`Resonanzpfad fuer ${entry.title}`}
+      className="mt-4 overflow-hidden border border-gold/[0.13] bg-[linear-gradient(90deg,rgba(189,160,109,0.07),rgba(255,255,255,0.018)_46%,rgba(127,184,201,0.035))] px-4 py-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] backdrop-blur-md sm:px-5"
+    >
+      <ol className="flex flex-wrap items-stretch gap-2 sm:gap-3">
+        {stations.map((station, index) => {
+          const isActive = station.entry?.id === entry.id;
+          const stationClassName = `group flex min-h-16 min-w-36 flex-col justify-center border px-3 py-3 text-left outline-none transition-colors duration-500 sm:min-w-40 ${
+            isActive
+              ? "border-gold/45 bg-gold/[0.095] shadow-[0_0_34px_rgba(189,160,109,0.12)]"
+              : "border-white/[0.075] bg-black/[0.14] hover:border-gold/24 hover:bg-gold/[0.045]"
+          }`;
+          const content = (
+            <>
+              <span className="text-[0.56rem] uppercase tracking-[0.22em] text-cyan-soft/80">
+                {station.kind === "Hebraeisch" ? "Hebr\u00e4isch" : station.kind}
+              </span>
+              <span
+                className={`mt-2 block leading-tight ${
+                  station.lang === "he"
+                    ? "font-serif text-xl text-gold/90"
+                    : "font-serif text-lg italic text-foreground-strong"
+                }`}
+                lang={station.lang}
+                dir={station.dir}
+              >
+                {station.label}
+              </span>
+            </>
+          );
+
+          return (
+            <li key={`${station.kind}-${station.entry?.id ?? station.label}`} className="flex items-stretch gap-2 sm:gap-3">
+              {index > 0 ? (
+                <span
+                  className="flex items-center text-gold/45"
+                  aria-hidden="true"
+                >
+                  <span className="hidden h-px w-5 bg-gradient-to-r from-gold/20 to-gold/55 sm:block" />
+                  <span className="font-serif text-xl leading-none">-&gt;</span>
+                </span>
+              ) : null}
+
+              {station.entry ? (
+                <Link
+                  href={`/codex/${station.entry.id}`}
+                  onClick={() => onActivateCodexEntry(station.entry?.id ?? entry.id)}
+                  onFocus={() => onActivateCodexEntry(station.entry?.id ?? entry.id)}
+                  className={stationClassName}
+                  aria-current={isActive ? "true" : undefined}
+                >
+                  {content}
+                </Link>
+              ) : (
+                <span className={stationClassName}>
+                  {content}
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  );
 }
 
 function filterEntriesByView(entries: CodexEntry[], viewId: CodexViewId) {
@@ -154,15 +522,24 @@ function HebrewLetterChip({
 function HebrewWordCard({
   entry,
   word,
+  activeCodexId,
+  onActivateCodexEntry,
 }: {
   entry: CodexEntry;
   word?: HebrewWord;
-}) {
+} & CodexCardFocusProps) {
   const glyphs = Array.from(word?.hebrew ?? entry.hebrew ?? "");
   const letterIds = word?.letterIds ?? [];
+  const isActive = activeCodexId === entry.id;
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden border border-gold/[0.12] bg-[linear-gradient(180deg,rgba(189,160,109,0.055),rgba(255,255,255,0.018)_38%,rgba(0,0,0,0.08))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.26)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.28] sm:p-7">
+    <article
+      onClickCapture={() => onActivateCodexEntry(entry.id)}
+      onFocusCapture={() => onActivateCodexEntry(entry.id)}
+      className={`group relative flex h-full flex-col overflow-hidden border bg-[linear-gradient(180deg,rgba(189,160,109,0.055),rgba(255,255,255,0.018)_38%,rgba(0,0,0,0.08))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.26)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.28] sm:p-7 ${
+        isActive ? "border-gold/45" : "border-gold/[0.12]"
+      }`}
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(189,160,109,0.13),transparent_34%),linear-gradient(90deg,rgba(127,184,201,0.045),transparent_36%)] opacity-70 transition-opacity duration-700 group-hover:opacity-100" />
 
       <div className="relative flex h-full flex-col">
@@ -227,9 +604,17 @@ function HebrewWordCard({
   );
 }
 
-function HebrewLetterCard({ entry }: { entry: CodexEntry }) {
+function HebrewLetterCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: CodexEntry } & CodexCardFocusProps) {
+  const isActive = activeCodexId === entry.id;
+
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden border border-white/[0.075] bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.24] sm:p-7">
+    <article
+      onClickCapture={() => onActivateCodexEntry(entry.id)}
+      onFocusCapture={() => onActivateCodexEntry(entry.id)}
+      className={`group relative flex h-full flex-col overflow-hidden border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.24] sm:p-7 ${
+        isActive ? "border-gold/42" : "border-white/[0.075]"
+      }`}
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(189,160,109,0.09),transparent_38%)] opacity-70 transition-opacity duration-700 group-hover:opacity-100" />
 
       <div className="relative flex h-full flex-col">
@@ -305,7 +690,7 @@ function HebrewGroupSection({
   );
 }
 
-function HebrewCodexView({ entries }: { entries: CodexEntry[] }) {
+function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { entries: CodexEntry[] } & CodexCardFocusProps) {
   const wordEntries = getHebrewWordEntries(entries);
   const letterEntries = entries.filter((entry) => entry.type === "hebrew-letter");
 
@@ -323,6 +708,8 @@ function HebrewCodexView({ entries }: { entries: CodexEntry[] }) {
                 key={entry.id}
                 entry={entry}
                 word={getHebrewWordForEntry(entry)}
+                activeCodexId={activeCodexId}
+                onActivateCodexEntry={onActivateCodexEntry}
               />
             ))}
           </div>
@@ -341,7 +728,12 @@ function HebrewCodexView({ entries }: { entries: CodexEntry[] }) {
         {letterEntries.length > 0 ? (
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {letterEntries.map((entry) => (
-              <HebrewLetterCard key={entry.id} entry={entry} />
+              <HebrewLetterCard
+                key={entry.id}
+                entry={entry}
+                activeCodexId={activeCodexId}
+                onActivateCodexEntry={onActivateCodexEntry}
+              />
             ))}
           </div>
         ) : (
@@ -354,11 +746,17 @@ function HebrewCodexView({ entries }: { entries: CodexEntry[] }) {
   );
 }
 
-function CodexCard({ entry }: { entry: CodexEntry }) {
+function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: CodexEntry } & CodexCardFocusProps) {
+  const isActive = activeCodexId === entry.id;
+
   return (
     <Link
       href={`/codex/${entry.id}`}
-      className="group relative block h-full overflow-hidden border border-white/[0.075] bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)] outline-none backdrop-blur-md transition-colors duration-700 hover:border-gold/20 focus-visible:border-gold/35 focus-visible:ring-2 focus-visible:ring-gold/20 sm:p-7"
+      onClick={() => onActivateCodexEntry(entry.id)}
+      onFocus={() => onActivateCodexEntry(entry.id)}
+      className={`group relative block h-full overflow-hidden border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)] outline-none backdrop-blur-md transition-colors duration-700 hover:border-gold/20 focus-visible:border-gold/35 focus-visible:ring-2 focus-visible:ring-gold/20 sm:p-7 ${
+        isActive ? "border-gold/42" : "border-white/[0.075]"
+      }`}
       aria-label={`Codex-Eintrag ${entry.title} ansehen`}
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(189,160,109,0.075),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.028),transparent_34%)] opacity-70 transition-opacity duration-700 group-hover:opacity-100" />
@@ -450,7 +848,8 @@ function CodexCard({ entry }: { entry: CodexEntry }) {
   );
 }
 
-function MeaningCard({ entry }: { entry: CodexEntry }) {
+function MeaningCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: CodexEntry } & CodexCardFocusProps) {
+  const isActive = activeCodexId === entry.id;
   const relationChips = entry.relations.slice(0, 6).map((relation) => ({
     id: `${relation.type}-${relation.targetId}`,
     targetId: relation.targetId,
@@ -463,7 +862,13 @@ function MeaningCard({ entry }: { entry: CodexEntry }) {
   }));
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden border border-white/[0.07] bg-white/[0.022] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.22] sm:p-7">
+    <article
+      onClickCapture={() => onActivateCodexEntry(entry.id)}
+      onFocusCapture={() => onActivateCodexEntry(entry.id)}
+      className={`group relative flex h-full flex-col overflow-hidden border bg-white/[0.022] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.22] sm:p-7 ${
+        isActive ? "border-gold/42" : "border-white/[0.07]"
+      }`}
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(127,184,201,0.07),transparent_34%),radial-gradient(circle_at_86%_10%,rgba(189,160,109,0.075),transparent_38%)] opacity-70 transition-opacity duration-700 group-hover:opacity-100" />
 
       <div className="relative flex h-full flex-col">
@@ -533,14 +938,21 @@ function getConnectedEntryLabel(targetId: string) {
     ?? targetId;
 }
 
-function GematriaNumberCard({ entry }: { entry: CodexEntry }) {
+function GematriaNumberCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: CodexEntry } & CodexCardFocusProps) {
+  const isActive = activeCodexId === entry.id;
   const connectedEntries = entry.relations.map((relation) => ({
     id: relation.targetId,
     label: getConnectedEntryLabel(relation.targetId),
   }));
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden border border-gold/[0.14] bg-[linear-gradient(180deg,rgba(189,160,109,0.06),rgba(255,255,255,0.018)_36%,rgba(0,0,0,0.1))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.3] sm:p-7">
+    <article
+      onClickCapture={() => onActivateCodexEntry(entry.id)}
+      onFocusCapture={() => onActivateCodexEntry(entry.id)}
+      className={`group relative flex h-full flex-col overflow-hidden border bg-[linear-gradient(180deg,rgba(189,160,109,0.06),rgba(255,255,255,0.018)_36%,rgba(0,0,0,0.1))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.3] sm:p-7 ${
+        isActive ? "border-gold/45" : "border-gold/[0.14]"
+      }`}
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_4%,rgba(189,160,109,0.16),transparent_34%),linear-gradient(90deg,rgba(127,184,201,0.045),transparent_42%)] opacity-75 transition-opacity duration-700 group-hover:opacity-100" />
 
       <div className="relative flex h-full flex-col">
@@ -594,7 +1006,7 @@ function GematriaNumberCard({ entry }: { entry: CodexEntry }) {
   );
 }
 
-function TorahSequence({ entries }: { entries: CodexEntry[] }) {
+function TorahSequence({ entries, activeCodexId, onActivateCodexEntry }: { entries: CodexEntry[] } & CodexCardFocusProps) {
   const entryMap = new Map(entries.map((entry) => [entry.id, entry]));
   const visibleIds = new Set(entries.map((entry) => entry.id));
   const chapters = TORAH_SEQUENCE.map((chapter) => ({
@@ -619,10 +1031,14 @@ function TorahSequence({ entries }: { entries: CodexEntry[] }) {
       {chapters.map(({ entry, children }) => entry ? (
         <article
           key={entry.id}
-          className="border border-white/[0.075] bg-white/[0.025] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md sm:p-6"
+          className={`border bg-white/[0.025] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md transition-colors duration-700 sm:p-6 ${
+            activeCodexId === entry.id ? "border-gold/42" : "border-white/[0.075]"
+          }`}
         >
           <Link
             href={`/codex/${entry.id}`}
+            onClick={() => onActivateCodexEntry(entry.id)}
+            onFocus={() => onActivateCodexEntry(entry.id)}
             className="group block outline-none focus-visible:ring-2 focus-visible:ring-gold/20"
           >
             <p className="symbol-kicker text-cyan-soft">Genesis</p>
@@ -646,7 +1062,11 @@ function TorahSequence({ entries }: { entries: CodexEntry[] }) {
               <Link
                 key={child.id}
                 href={`/codex/${child.id}`}
-                className="grid gap-3 border border-white/[0.055] bg-black/[0.12] p-4 outline-none transition-colors duration-500 hover:border-gold/20 hover:bg-gold/[0.035] focus-visible:border-gold/30 focus-visible:ring-2 focus-visible:ring-gold/15 sm:grid-cols-[auto_1fr_auto] sm:items-center"
+                onClick={() => onActivateCodexEntry(child.id)}
+                onFocus={() => onActivateCodexEntry(child.id)}
+                className={`grid gap-3 border bg-black/[0.12] p-4 outline-none transition-colors duration-500 hover:border-gold/20 hover:bg-gold/[0.035] focus-visible:border-gold/30 focus-visible:ring-2 focus-visible:ring-gold/15 sm:grid-cols-[auto_1fr_auto] sm:items-center ${
+                  activeCodexId === child.id ? "border-gold/40" : "border-white/[0.055]"
+                }`}
               >
                 <span className="font-serif text-2xl italic text-gold/80">{index + 1}</span>
                 <span>
@@ -672,6 +1092,7 @@ function TorahSequence({ entries }: { entries: CodexEntry[] }) {
 export default function CodexPage() {
   const [query, setQuery] = useState("");
   const [activeViewId, setActiveViewId] = useState<CodexViewId>("all");
+  const [activeCodexId, setActiveCodexId] = useState<string | null>(null);
   const trimmedQuery = query.trim();
 
   const activeViewEntries = useMemo(
@@ -694,6 +1115,7 @@ export default function CodexPage() {
   );
 
   const activeView = CODEX_VIEWS.find((view) => view.id === activeViewId) ?? CODEX_VIEWS[0];
+  const activeCodexEntry = activeCodexId ? resolveCodexEntry(activeCodexId) : undefined;
   const hasPreparedEmptyView = activeViewEntries.length === 0;
   const hasSearchWithoutResults = !hasPreparedEmptyView && trimmedQuery && visibleEntries.length === 0;
 
@@ -747,6 +1169,16 @@ export default function CodexPage() {
               );
             })}
           </div>
+
+          {activeCodexEntry ? (
+            <>
+              <CodexResonanceTeaser entry={activeCodexEntry} />
+              <CodexResonancePath
+                entry={activeCodexEntry}
+                onActivateCodexEntry={setActiveCodexId}
+              />
+            </>
+          ) : null}
         </section>
 
         <section className="mt-9 max-w-2xl">
@@ -787,7 +1219,12 @@ export default function CodexPage() {
                 {group.entries.length > 0 ? (
                   <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {group.entries.map((entry) => (
-                      <CodexCard key={entry.id} entry={entry} />
+                      <CodexCard
+                        key={entry.id}
+                        entry={entry}
+                        activeCodexId={activeCodexId}
+                        onActivateCodexEntry={setActiveCodexId}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -813,25 +1250,48 @@ export default function CodexPage() {
 
               {visibleEntries.length > 0 ? (
                 activeViewId === "torah" ? (
-                  <TorahSequence entries={visibleEntries} />
+                  <TorahSequence
+                    entries={visibleEntries}
+                    activeCodexId={activeCodexId}
+                    onActivateCodexEntry={setActiveCodexId}
+                  />
                 ) : activeViewId === "hebrew" ? (
-                  <HebrewCodexView entries={visibleEntries} />
+                  <HebrewCodexView
+                    entries={visibleEntries}
+                    activeCodexId={activeCodexId}
+                    onActivateCodexEntry={setActiveCodexId}
+                  />
                 ) : activeViewId === "meaning" ? (
                   <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {visibleEntries.map((entry) => (
-                      <MeaningCard key={entry.id} entry={entry} />
+                      <MeaningCard
+                        key={entry.id}
+                        entry={entry}
+                        activeCodexId={activeCodexId}
+                        onActivateCodexEntry={setActiveCodexId}
+                      />
                     ))}
                   </div>
                 ) : activeViewId === "gematria" ? (
                   <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {visibleEntries.map((entry) => (
-                      <GematriaNumberCard key={entry.id} entry={entry} />
+                      <GematriaNumberCard
+                        key={entry.id}
+                        entry={entry}
+                        activeCodexId={activeCodexId}
+                        onActivateCodexEntry={setActiveCodexId}
+                      />
                     ))}
                   </div>
                 ) : (
                   <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {visibleEntries.map((entry) => (
-                      <CodexCard key={entry.id} entry={entry} />
+                      <CodexCard
+                        key={entry.id}
+                        entry={entry}
+                        activeCodexId={activeCodexId}
+                        onActivateCodexEntry={setActiveCodexId}
+                      />
                     ))}
                   </div>
                 )
