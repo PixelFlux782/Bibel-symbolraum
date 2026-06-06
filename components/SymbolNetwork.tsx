@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useMemo, useState, useRef, useEffect } from "react";
+import { Fragment, useMemo, useState, useRef, useEffect, type ReactNode } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
@@ -12,6 +12,7 @@ import ReactFlow, {
   Node,
   NodeProps,
   Position,
+  ReactFlowInstance,
 } from "reactflow";
 
 import { JourneyGate } from "@/components/JourneyGate";
@@ -889,6 +890,23 @@ function WaterResonanceOrbit({
   );
 }
 
+function WaterDetailAccordion({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  return (
+    <details className="symbol-detail-accordion" open={defaultOpen}>
+      <summary>{title}</summary>
+      <div className="symbol-detail-accordion__content">{children}</div>
+    </details>
+  );
+}
+
 function WaterMobileUnfoldingTrace() {
   const [openStepCount, setOpenStepCount] = useState(1);
   const steps = [
@@ -964,14 +982,16 @@ function WaterOrbitDetail({
         </p>
         <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{hebrewWord.transliteration}</h2>
         <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{hebrewWord.germanMeaning}</p>
-        <div className="mt-7 grid gap-3">
-          {hebrewWord.meaningFields.map((field) => (
-            <div key={field.id} className="border-l border-gold/20 pl-4">
-              <p className="font-serif text-lg italic text-foreground-strong">{field.label}</p>
-              <p className="symbol-copy mt-1 text-sm">{field.description}</p>
-            </div>
-          ))}
-        </div>
+        <WaterDetailAccordion title="Bedeutungsfelder">
+          <div className="grid gap-3">
+            {hebrewWord.meaningFields.map((field) => (
+              <div key={field.id} className="border-l border-gold/20 pl-4">
+                <p className="font-serif text-lg italic text-foreground-strong">{field.label}</p>
+                <p className="symbol-copy mt-1 text-sm">{field.description}</p>
+              </div>
+            ))}
+          </div>
+        </WaterDetailAccordion>
       </>
     );
   }
@@ -987,10 +1007,9 @@ function WaterOrbitDetail({
       ) : null}
       <p className="symbol-copy mt-6 text-lg">{codexEntry?.summary ?? meaningNode?.shortMeaning}</p>
       {codexEntry?.relations.length ? (
-        <div className="mt-7 border-t border-white/[0.055] pt-5">
-          <p className="symbol-kicker text-cyan-soft">Bestehende Verknuepfungen</p>
-          <div className="mt-4 grid gap-3">
-            {codexEntry.relations.slice(0, 4).map((relation) => {
+        <WaterDetailAccordion title="Bestehende Verknuepfungen">
+          <div className="grid gap-3">
+            {codexEntry.relations.map((relation) => {
               const linkedEntry = resolveCodexEntry(relation.targetId);
 
               return (
@@ -1003,7 +1022,7 @@ function WaterOrbitDetail({
               );
             })}
           </div>
-        </div>
+        </WaterDetailAccordion>
       ) : null}
       {codexEntry ? (
         <Link
@@ -1013,6 +1032,100 @@ function WaterOrbitDetail({
           Codex oeffnen
         </Link>
       ) : null}
+    </>
+  );
+}
+
+function WaterFocusDetail({
+  activeSymbol,
+  activeCodexEntry,
+  connectedPaths,
+  journeys,
+  onPreviewPath,
+}: {
+  activeSymbol: SymbolMeaningNetworkNode;
+  activeCodexEntry?: CodexEntry;
+  connectedPaths: SymbolMeaningPath[];
+  journeys: SymbolMeaningJourney[];
+  onPreviewPath: (path: SymbolMeaningPath) => void;
+}) {
+  const scriptureRelations = activeCodexEntry?.relations.filter((relation) => getRelationTarget(relation).startsWith("genesis-")) ?? [];
+  const otherRelations = activeCodexEntry?.relations.filter((relation) => !getRelationTarget(relation).startsWith("genesis-")) ?? [];
+
+  return (
+    <>
+      <p className="symbol-breathe mt-6 font-serif text-6xl leading-none text-gold/90" lang="he" dir="rtl">{activeSymbol.hebrew}</p>
+      <h2 className="mt-5 font-serif text-3xl italic text-foreground-strong">{activeSymbol.label}</h2>
+      <p className="mt-2 text-[10px] uppercase tracking-[0.26em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
+
+      <WaterDetailAccordion title="Essenz / Resonanz" defaultOpen>
+        <p className="symbol-copy text-base">{activeSymbol.shortMeaning}</p>
+      </WaterDetailAccordion>
+
+      <WaterDetailAccordion title="Verbindungen folgen">
+        <div className="grid gap-2">
+          {connectedPaths.map((path) => (
+            <button key={path.id} type="button" onClick={() => onPreviewPath(path)} className="border-l border-cyan/[0.18] bg-white/[0.018] px-4 py-3 text-left transition-colors hover:border-gold/30 hover:bg-white/[0.04]">
+              <span className="block font-serif text-base italic text-foreground-strong/85">{path.label}</span>
+              <span className="symbol-copy mt-1 block text-xs">{path.summary}</span>
+            </button>
+          ))}
+        </div>
+      </WaterDetailAccordion>
+
+      <WaterDetailAccordion title="Codex / Raum">
+        <div className="grid gap-3">
+          <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">
+            Wasser-Raum oeffnen
+          </RoomTransitionButton>
+          {activeCodexEntry ? (
+            <Link
+              href={`/codex/${activeCodexEntry.id}`}
+              className="inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+            >
+              Codex oeffnen
+            </Link>
+          ) : null}
+        </div>
+      </WaterDetailAccordion>
+
+      <WaterDetailAccordion title="Bibelanker">
+        <div className="grid gap-3">
+          {scriptureRelations.map((relation) => {
+            const linkedEntry = resolveCodexEntry(relation.targetId);
+
+            return (
+              <div key={`${relation.type}-${relation.targetId}`} className="border-l border-gold/20 pl-4">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-gold/70">{linkedEntry?.title ?? relation.targetId}</p>
+                {relation.label ? <p className="symbol-copy mt-1 text-sm">{relation.label}</p> : null}
+              </div>
+            );
+          })}
+        </div>
+      </WaterDetailAccordion>
+
+      <WaterDetailAccordion title="Journeys">
+        <div className="grid gap-3">
+          {journeys.map((journey) => (
+            <div key={journey.id} className="border-l border-gold/20 pl-4">
+              <p className="font-serif text-base italic text-foreground-strong">{journey.title}</p>
+              <p className="symbol-copy mt-1 text-sm">{journey.description}</p>
+            </div>
+          ))}
+        </div>
+      </WaterDetailAccordion>
+
+      <WaterDetailAccordion title="Technisches / Quellen">
+        <div className="grid gap-3">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-cyan-soft">Symbol-ID: {activeSymbol.id}</p>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-cyan-soft">Raum: {activeSymbol.roomHref}</p>
+          {otherRelations.map((relation) => (
+            <p key={`${relation.type}-${relation.targetId}`} className="symbol-copy text-sm">
+              {relation.label ?? relation.targetId}
+            </p>
+          ))}
+        </div>
+      </WaterDetailAccordion>
     </>
   );
 }
@@ -1032,6 +1145,7 @@ export default function SymbolNetwork() {
   const [activeLetterId, setActiveLetterId] = useState<string | null>(null);
   const [letterOverlayContext, setLetterOverlayContext] = useState<LetterBridgeContext | null>(null);
   const [activeWaterOrbitId, setActiveWaterOrbitId] = useState<WaterOrbitNodeId | null>(null);
+  const reactFlowRef = useRef<ReactFlowInstance | null>(null);
   const { isEntering, startRoomTransition } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
@@ -1054,6 +1168,10 @@ export default function SymbolNetwork() {
   const activeWaterOrbitNode = isWaterOrbitVisible && activeWaterOrbitId
     ? WATER_ORBIT_NODES.find((node) => node.id === activeWaterOrbitId)
     : undefined;
+  const waterJourneys = useMemo(
+    () => network.journeys.filter((journey) => journey.symbolPath.includes("wasser")),
+    [],
+  );
   const letterSymbolIds = useMemo(
     () => new Set(activeLetterId
       ? network.nodes
@@ -1101,6 +1219,20 @@ export default function SymbolNetwork() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const instance = reactFlowRef.current;
+
+    if (!instance || activeView !== "symbols") return;
+
+    if (isWaterOrbitVisible) {
+      instance.setCenter(178, 368, { zoom: 1.18, duration: 760 });
+      return;
+    }
+
+    instance.fitView({ padding: 0.2, duration: 620 });
+  }, [activeView, isWaterOrbitVisible]);
+
   const relatedIds = useMemo(
     () => activeJourney
       ? new Set([...journeySymbolIds, ...journeyMeaningIds])
@@ -1143,8 +1275,10 @@ export default function SymbolNetwork() {
                 ? !letterSymbolIds.has(node.id)
                 : activeJourney
                   ? !journeySymbolIds.has(node.id)
-                  : hasGraphDisclosure && node.id !== disclosureSymbolId && !relatedIds.has(node.id),
-              showActions: isActiveSymbol || isPreviewedSymbol,
+                  : isWaterOrbitVisible
+                    ? node.id !== "wasser"
+                    : hasGraphDisclosure && node.id !== disclosureSymbolId && !relatedIds.has(node.id),
+              showActions: (isActiveSymbol || isPreviewedSymbol) && !isWaterOrbitVisible,
               emergenceIndex: activeLetterId && letterSymbolIds.has(node.id) ? letterSymbols.findIndex((symbol) => symbol.id === node.id) : undefined,
             },
           };
@@ -1163,11 +1297,11 @@ export default function SymbolNetwork() {
         })) : []),
       ];
     },
-    [activeId, activeJourney, activeLetterId, activePathId, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, hoveredSymbolId, journeySymbolIds, letterMeaningIds, letterSymbolIds, letterSymbols, relatedIds]
+    [activeId, activeJourney, activeLetterId, activePathId, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, hoveredSymbolId, isWaterOrbitVisible, journeySymbolIds, letterMeaningIds, letterSymbolIds, letterSymbols, relatedIds]
   );
 
   const edges: Edge[] = [
-    ...(hasGraphDisclosure ? network.paths.map((path) => {
+    ...(hasGraphDisclosure && !isWaterOrbitVisible ? network.paths.map((path) => {
         const isFocused = focusedSymbolId ? path.from === focusedSymbolId || path.to === focusedSymbolId : false;
         const isSelected = path.id === activePathId || path.id === pendingPathId;
         const isJourneyPath = journeyPathKeys.has(getPathKey(path.from, path.to));
@@ -1199,7 +1333,7 @@ export default function SymbolNetwork() {
           },
         };
     }) : []),
-    ...(hasSymbolFocus || activeJourney || activeLetterId ? network.meaningLinks.map((link) => {
+    ...((hasSymbolFocus || activeJourney || activeLetterId) && !isWaterOrbitVisible ? network.meaningLinks.map((link) => {
       const isFocused = activeJourney
         ? journeySymbolIds.has(link.symbolId) && journeyMeaningIds.has(link.meaningId)
         : activeLetterId ? letterSymbolIds.has(link.symbolId) : link.symbolId === activeId;
@@ -1468,6 +1602,9 @@ export default function SymbolNetwork() {
               edgeTypes={edgeTypes}
               fitView
               fitViewOptions={{ padding: 0.2 }}
+              onInit={(instance) => {
+                reactFlowRef.current = instance;
+              }}
               nodesDraggable={false}
               nodesConnectable={false}
               zoomOnScroll={false}
@@ -1695,12 +1832,20 @@ export default function SymbolNetwork() {
         </div>
 
         {activeView === "symbols" && hasDetailDisclosure ? (
-        <aside className="symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40">
+        <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40 ${isWaterOrbitVisible ? "symbol-detail-panel--water-focus" : ""}`}>
           <p className="symbol-kicker text-cyan-soft">
             {activeWaterOrbitNode ? "Wasser-Orbit" : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
           </p>
           {activeWaterOrbitNode ? (
             <WaterOrbitDetail orbitNode={activeWaterOrbitNode} activeSymbol={activeSymbol} />
+          ) : isWaterOrbitVisible ? (
+            <WaterFocusDetail
+              activeSymbol={activeSymbol}
+              activeCodexEntry={activeCodexEntry}
+              connectedPaths={connectedPaths}
+              journeys={waterJourneys}
+              onPreviewPath={previewPath}
+            />
           ) : activeJourney ? (
             <>
               <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activeJourney.title}</h2>
