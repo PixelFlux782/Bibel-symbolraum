@@ -1096,9 +1096,11 @@ export default function SymbolNetwork() {
   const [ephemeralBridgeId, setEphemeralBridgeId] = useState<string | null>(null);
   const ephemeralTimerRef = useRef<number | null>(null);
   const activeViewConfig = SYMBOL_NETWORK_VIEWS.find((view) => view.id === activeView);
-  const disclosureSymbolId = hoveredSymbolId ?? (hasSymbolFocus ? activeId : null);
-  const focusedSymbolId = hasSymbolFocus ? activeId : disclosureSymbolId;
+  const activeDisclosureSymbolId = hasSymbolFocus ? activeId : null;
+  const disclosureSymbolId = hoveredSymbolId ?? activeDisclosureSymbolId;
+  const focusedSymbolId = activeDisclosureSymbolId;
   const hasGraphDisclosure = Boolean(disclosureSymbolId || activePathId || activeJourneyId || previewJourneyId || activeLetterId);
+  const hasEdgeDisclosure = Boolean(activeDisclosureSymbolId || activePathId || activeJourneyId || previewJourneyId || activeLetterId);
   const hasDetailDisclosure = Boolean(hasSymbolFocus || activePathId || activeJourneyId || previewJourneyId || activeLetterId || activeWaterOrbitId);
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
@@ -1111,7 +1113,7 @@ export default function SymbolNetwork() {
     ? "RELATION_FOCUS"
     : activeWaterOrbitId
       ? "ORBIT_DETAIL"
-      : hasSymbolFocus || hoveredSymbolId || activeJourney || activeLetterId
+      : hasSymbolFocus || activeJourney || activeLetterId
         ? "SYMBOL_FOCUS"
         : "OVERVIEW";
   const isWaterOrbitVisible = activeView === "symbols"
@@ -1168,8 +1170,8 @@ export default function SymbolNetwork() {
       : isWaterOrbitVisible
         ? "Orbit"
         : hasSymbolFocus || activeLetterId
-          ? "Symbol"
-          : "Uebersicht";
+        ? "Symbol"
+        : "Uebersicht";
 
   useEffect(() => {
     return () => {
@@ -1231,6 +1233,10 @@ export default function SymbolNetwork() {
 
     return () => window.cancelAnimationFrame(frameId);
   }, [activeId, activePath, activeView, graphViewMode]);
+
+  function updateHoveredSymbol(symbolId: string | null) {
+    setHoveredSymbolId((currentSymbolId) => currentSymbolId === symbolId ? currentSymbolId : symbolId);
+  }
 
   const relatedIds = useMemo(
     () => activeJourney
@@ -1305,7 +1311,7 @@ export default function SymbolNetwork() {
   );
 
   const edges: Edge[] = [
-    ...(hasGraphDisclosure && !isWaterOrbitVisible ? network.paths.map((path) => {
+    ...(hasEdgeDisclosure && !isWaterOrbitVisible ? network.paths.map((path) => {
         const isFocused = focusedSymbolId ? path.from === focusedSymbolId || path.to === focusedSymbolId : false;
         const isSelected = path.id === activePathId || path.id === pendingPathId;
         const isJourneyPath = journeyPathKeys.has(getPathKey(path.from, path.to));
@@ -1529,14 +1535,14 @@ export default function SymbolNetwork() {
   }
 
   return (
-    <section className="symbol-page symbol-section relative min-h-screen pb-32 pt-20 md:pt-16">
+    <section className="symbol-page symbol-section symbol-network-page relative min-h-[100svh]">
       <div className="absolute inset-0">
         <Image src="/Visuals/symbolnetz_backround.png" alt="" fill priority sizes="100vw" className="sacred-drift object-cover opacity-[0.18]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.78)_78%,rgba(0,0,0,0.95)_100%)]" />
       </div>
 
-      <div className={`symbol-fade-in relative z-10 mx-auto grid max-w-7xl gap-12 ${hasDetailDisclosure ? "lg:grid-cols-[minmax(0,1fr)_23rem]" : ""}`}>
-        <div className="min-w-0">
+      <div className={`symbol-network-shell symbol-fade-in relative z-10 mx-auto grid w-full max-w-[92rem] gap-6 ${hasDetailDisclosure ? "lg:grid-cols-[minmax(0,1fr)_minmax(18rem,21rem)]" : ""}`}>
+        <div className="symbol-network-main min-w-0">
           <div className="symbol-network-orientation">
             <p>Symbolnetz</p>
             <span>Waehle ein Symbol. Folge einer Spur.</span>
@@ -1564,7 +1570,7 @@ export default function SymbolNetwork() {
 
           {activeView === "symbols" ? (
             <>
-          <div className={`${hasSymbolFocus ? "symbol-symbol-strip" : "hidden"} max-md:hidden`} aria-label="Symbol fokussieren">
+            <div className={`${hasSymbolFocus ? "symbol-symbol-strip" : "hidden"} max-md:hidden`} aria-label="Symbol fokussieren">
             {network.nodes.map((node) => (
               <button
                 key={node.id}
@@ -1589,9 +1595,9 @@ export default function SymbolNetwork() {
           ) : null}
 
           <div
-            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-5 h-[650px] overflow-hidden max-md:hidden ${isWaterOrbitVisible ? "is-water-focused" : ""}`}
+            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden max-md:hidden ${isWaterOrbitVisible ? "is-water-focused" : ""}`}
             onMouseLeave={() => {
-              if (!activeWaterOrbitId) setHoveredSymbolId(null);
+              if (!activeWaterOrbitId) updateHoveredSymbol(null);
             }}
           >
             <ReactFlow
@@ -1611,10 +1617,10 @@ export default function SymbolNetwork() {
               panOnDrag={false}
               preventScrolling={false}
               onNodeMouseEnter={(_, node) => {
-                if (node.type === "symbol") setHoveredSymbolId(node.id);
+                if (node.type === "symbol") updateHoveredSymbol(node.id);
               }}
               onNodeMouseLeave={(_, node) => {
-                if (!activeWaterOrbitId && node.id !== "wasser") setHoveredSymbolId(null);
+                if (!activeWaterOrbitId && node.id !== "wasser") updateHoveredSymbol(null);
               }}
               onNodeClick={(_, node) => {
                 if (node.type === "symbol") focusSymbol(node.id);
@@ -1751,7 +1757,7 @@ export default function SymbolNetwork() {
             </nav>
           ) : null}
 
-          <div className="mt-16 border-t border-white/[0.055] pt-8">
+          <div className="symbol-journey-panel mt-8 border-t border-white/[0.055] pt-5">
             <p className="symbol-kicker text-cyan-soft">Meaning Journeys</p>
             <p className="symbol-copy mt-3 max-w-2xl text-sm">Aus den entdeckten Verbindungen werden Wege durch das Netz.</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -1838,7 +1844,7 @@ export default function SymbolNetwork() {
         </div>
 
         {activeView === "symbols" && hasDetailDisclosure ? (
-        <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 lg:mt-24 ${isWaterOrbitVisible ? "symbol-detail-panel--water-focus" : ""}`}>
+        <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isWaterOrbitVisible ? "symbol-detail-panel--water-focus" : ""}`}>
           <p className="symbol-kicker text-cyan-soft">
             {activeWaterOrbitNode ? "Wasser-Orbit" : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
           </p>
