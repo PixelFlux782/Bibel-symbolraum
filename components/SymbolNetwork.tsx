@@ -93,6 +93,16 @@ type LivingConnectionData = {
 };
 
 type SymbolNetworkView = "symbols" | "torah" | "hebrew" | "meaning" | "journeys";
+type WaterOrbitNodeId = "hebrew" | "number" | "meaning" | "torah" | "journey" | "room";
+
+type WaterOrbitNode = {
+  id: WaterOrbitNodeId;
+  label: string;
+  eyebrow: string;
+  preview: string;
+  sourceId: string;
+  className: string;
+};
 
 const SYMBOL_NETWORK_VIEWS: {
   id: SymbolNetworkView;
@@ -356,6 +366,56 @@ const SHARED_HEBREW_WORD_IDS: Record<string, string[]> = {
   mem: ["majim", "midbar"],
 };
 const MEANING_ENTRY_IDS = ["ursprung", "ordnung", "tiefe", "offenbarung", "reinigung", "wandlung"] as const;
+const WATER_ORBIT_NODES: WaterOrbitNode[] = [
+  {
+    id: "journey",
+    label: "Journey",
+    eyebrow: "Resonanzpfad",
+    preview: "Wasser und Geist",
+    sourceId: "journey-wasser-geist",
+    className: "symbol-water-orbit__node--journey",
+  },
+  {
+    id: "torah",
+    label: "Thora",
+    eyebrow: "Genesis",
+    preview: "Genesis 1:2",
+    sourceId: "genesis-1-2",
+    className: "symbol-water-orbit__node--torah",
+  },
+  {
+    id: "hebrew",
+    label: "Hebraeisch",
+    eyebrow: "Majim",
+    preview: "majim / מים",
+    sourceId: "majim",
+    className: "symbol-water-orbit__node--hebrew",
+  },
+  {
+    id: "meaning",
+    label: "Bedeutung",
+    eyebrow: "Meaning Graph",
+    preview: "Tiefe",
+    sourceId: "tiefe",
+    className: "symbol-water-orbit__node--meaning",
+  },
+  {
+    id: "room",
+    label: "Raum",
+    eyebrow: "Symbolraum",
+    preview: "/raeume/wasser",
+    sourceId: "/raeume/wasser",
+    className: "symbol-water-orbit__node--room",
+  },
+  {
+    id: "number",
+    label: "Zahl",
+    eyebrow: "Gematria",
+    preview: "90",
+    sourceId: "zahl-90",
+    className: "symbol-water-orbit__node--number",
+  },
+];
 
 function getRelationTarget(relation: CodexRelation) {
   return relation.targetId.trim();
@@ -796,6 +856,150 @@ function MeaningResonanceSpaces({ activeId }: { activeId: string }) {
   );
 }
 
+function WaterResonanceOrbit({
+  activeOrbitId,
+  onActivate,
+}: {
+  activeOrbitId: WaterOrbitNodeId | null;
+  onActivate: (nodeId: WaterOrbitNodeId) => void;
+}) {
+  return (
+    <div className="symbol-water-orbit" aria-label="Wasser Resonanz-Orbit">
+      <div className="symbol-water-orbit__ring" aria-hidden="true" />
+      <div className="symbol-water-orbit__ring symbol-water-orbit__ring--outer" aria-hidden="true" />
+      {WATER_ORBIT_NODES.map((node) => (
+        <button
+          key={node.id}
+          type="button"
+          onClick={() => onActivate(node.id)}
+          aria-pressed={activeOrbitId === node.id}
+          className={`symbol-water-orbit__node ${node.className} ${activeOrbitId === node.id ? "is-active" : ""}`}
+        >
+          <span className="symbol-water-orbit__dot" aria-hidden="true" />
+          <span className="symbol-water-orbit__label">{node.label}</span>
+          <span className="symbol-water-orbit__preview">
+            <i>{node.eyebrow}</i>
+            <strong>{node.preview}</strong>
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function WaterMobileUnfoldingTrace() {
+  const steps = [
+    { label: "Wasser", subline: "Symbol", glyph: "\u05de\u05d9\u05dd" },
+    { label: "Majim", subline: "Hebraeisch / מים", glyph: "majim" },
+    { label: "Mem", subline: "Buchstabe", glyph: "\u05de" },
+    { label: "40", subline: "Mem-Zahl", glyph: "40" },
+    { label: "Tiefe", subline: "Bedeutung", glyph: "depth" },
+    { label: "Genesis 1:2", subline: "Thora", glyph: "1:2" },
+  ];
+
+  return (
+    <div className="symbol-water-mobile-trace mt-5" aria-label="Vertikale Entfaltungs-Spur Wasser">
+      {steps.map((step, index) => (
+        <Fragment key={step.label}>
+          <div className="symbol-water-mobile-trace__step">
+            <span>{step.glyph}</span>
+            <strong>{step.label}</strong>
+            <i>{step.subline}</i>
+          </div>
+          {index < steps.length - 1 ? <div className="symbol-water-mobile-trace__thread" aria-hidden="true" /> : null}
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
+function WaterOrbitDetail({
+  orbitNode,
+  activeSymbol,
+}: {
+  orbitNode: WaterOrbitNode;
+  activeSymbol: SymbolMeaningNetworkNode;
+}) {
+  const codexEntry = orbitNode.id === "hebrew" ? undefined : getCodexEntry(orbitNode.sourceId);
+  const hebrewWord = orbitNode.id === "hebrew" ? hebrewWords.find((word) => word.id === orbitNode.sourceId) : undefined;
+  const meaningNode = orbitNode.id === "meaning" ? network.meaningNodes.find((node) => node.id === "depth") : undefined;
+
+  if (orbitNode.id === "room") {
+    return (
+      <>
+        <p className="symbol-kicker text-cyan-soft">Raum-Spur</p>
+        <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">Wasserraum</h2>
+        <p className="symbol-copy mt-5 text-lg">{activeSymbol.shortMeaning}</p>
+        <p className="mt-5 text-[10px] uppercase tracking-[0.18em] text-gold/70">{activeSymbol.roomHref}</p>
+        <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta mt-7 w-full">
+          Wasser-Raum oeffnen
+        </RoomTransitionButton>
+      </>
+    );
+  }
+
+  if (hebrewWord) {
+    return (
+      <>
+        <p className="symbol-kicker text-cyan-soft">Hebrew Codex</p>
+        <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">
+          {hebrewWord.hebrew}
+        </p>
+        <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{hebrewWord.transliteration}</h2>
+        <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{hebrewWord.germanMeaning}</p>
+        <div className="mt-7 grid gap-3">
+          {hebrewWord.meaningFields.map((field) => (
+            <div key={field.id} className="border-l border-gold/20 pl-4">
+              <p className="font-serif text-lg italic text-foreground-strong">{field.label}</p>
+              <p className="symbol-copy mt-1 text-sm">{field.description}</p>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <p className="symbol-kicker text-cyan-soft">{orbitNode.eyebrow}</p>
+      <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">
+        {codexEntry?.title ?? meaningNode?.label ?? orbitNode.preview}
+      </h2>
+      {codexEntry?.subtitle ? (
+        <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{codexEntry.subtitle}</p>
+      ) : null}
+      <p className="symbol-copy mt-6 text-lg">{codexEntry?.summary ?? meaningNode?.shortMeaning}</p>
+      {codexEntry?.relations.length ? (
+        <div className="mt-7 border-t border-white/[0.055] pt-5">
+          <p className="symbol-kicker text-cyan-soft">Bestehende Verknuepfungen</p>
+          <div className="mt-4 grid gap-3">
+            {codexEntry.relations.slice(0, 4).map((relation) => {
+              const linkedEntry = resolveCodexEntry(relation.targetId);
+
+              return (
+                <div key={`${relation.type}-${relation.targetId}`} className="border-l border-gold/20 pl-4">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-gold/70">
+                    {linkedEntry?.title ?? relation.targetId}
+                  </p>
+                  {relation.label ? <p className="symbol-copy mt-1 text-sm">{relation.label}</p> : null}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+      {codexEntry ? (
+        <Link
+          href={`/codex/${codexEntry.id}`}
+          className="mt-7 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+        >
+          Codex oeffnen
+        </Link>
+      ) : null}
+    </>
+  );
+}
+
 export default function SymbolNetwork() {
   const [activeView, setActiveView] = useState<SymbolNetworkView>("symbols");
   const [activeId, setActiveId] = useState("wasser");
@@ -808,6 +1012,7 @@ export default function SymbolNetwork() {
   const [meaningTransitionScene, setMeaningTransitionScene] = useState<MeaningTransitionSceneState | null>(null);
   const [activeLetterId, setActiveLetterId] = useState<string | null>(null);
   const [letterOverlayContext, setLetterOverlayContext] = useState<LetterBridgeContext | null>(null);
+  const [activeWaterOrbitId, setActiveWaterOrbitId] = useState<WaterOrbitNodeId | null>(null);
   const { isEntering, startRoomTransition } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
@@ -818,6 +1023,10 @@ export default function SymbolNetwork() {
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
+  const isWaterOrbitVisible = activeView === "symbols" && activeId === "wasser" && !activeJourney && !activeCodexLetter;
+  const activeWaterOrbitNode = isWaterOrbitVisible && activeWaterOrbitId
+    ? WATER_ORBIT_NODES.find((node) => node.id === activeWaterOrbitId)
+    : undefined;
   const letterSymbolIds = useMemo(
     () => new Set(activeLetterId
       ? network.nodes
@@ -969,6 +1178,18 @@ export default function SymbolNetwork() {
     setActiveLetterId(null);
     setLetterOverlayContext(null);
     setEphemeralBridgeId(null);
+    setActiveWaterOrbitId(null);
+  }
+
+  function activateWaterOrbit(nodeId: WaterOrbitNodeId) {
+    setActiveWaterOrbitId(nodeId);
+    setActivePathId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
+    setActiveJourneyId(null);
+    setPreviewJourneyId(null);
+    setActiveLetterId(null);
+    setLetterOverlayContext(null);
   }
 
   function openLetterBridge(path: SymbolMeaningPath) {
@@ -988,6 +1209,7 @@ export default function SymbolNetwork() {
   function previewPath(path: SymbolMeaningPath) {
     // clear any ephemeral bridge when previewing another path
     setEphemeralBridgeId(null);
+    setActiveWaterOrbitId(null);
     setPendingPathId(path.id);
     setActivePathId(path.id);
     setActiveJourneyId(null);
@@ -998,6 +1220,7 @@ export default function SymbolNetwork() {
     setTravelingPathId(null);
     setActivePathId(path.id);
     setActiveJourneyId(null);
+    setActiveWaterOrbitId(null);
     setActiveId(path.from === activeId ? path.to : path.to === activeId ? path.from : path.to);
   }
 
@@ -1091,6 +1314,7 @@ export default function SymbolNetwork() {
   function focusJourney(journey: SymbolMeaningJourney) {
     setActiveJourneyId(journey.id);
     setActivePathId(null);
+    setActiveWaterOrbitId(null);
     setPendingPathId(null);
     setTravelingPathId(null);
     setActiveId(journey.symbolPath[0]);
@@ -1100,6 +1324,7 @@ export default function SymbolNetwork() {
   function focusJourneyStation(symbolId: string) {
     setActiveId(symbolId);
     setActivePathId(null);
+    setActiveWaterOrbitId(null);
     setPendingPathId(null);
     setTravelingPathId(null);
     setEphemeralBridgeId(null);
@@ -1170,7 +1395,7 @@ export default function SymbolNetwork() {
             </div>
           ) : null}
 
-          <div className="symbol-constellation-field relative mt-12 h-[650px] overflow-hidden max-md:hidden">
+          <div className={`symbol-constellation-field relative mt-12 h-[650px] overflow-hidden max-md:hidden ${isWaterOrbitVisible ? "is-water-focused" : ""}`}>
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -1197,6 +1422,9 @@ export default function SymbolNetwork() {
               }}
               className="symbol-network-flow bg-transparent"
             />
+            {isWaterOrbitVisible ? (
+              <WaterResonanceOrbit activeOrbitId={activeWaterOrbitId} onActivate={activateWaterOrbit} />
+            ) : null}
             {activeCodexLetter ? (
               <div className="letter-emergence-field-center" aria-hidden="true">
                 <div className="letter-emergence-center">
@@ -1230,6 +1458,8 @@ export default function SymbolNetwork() {
                   ))}
                 </div>
               </div>
+            ) : activeId === "wasser" ? (
+              <WaterMobileUnfoldingTrace />
             ) : (
               <div className="mt-5 grid grid-cols-2 gap-2">
                 {network.nodes.map((node) => (
@@ -1399,8 +1629,12 @@ export default function SymbolNetwork() {
 
         {activeView === "symbols" ? (
         <aside className="symbol-detail-panel symbol-archive-fragment self-start p-7 lg:mt-40">
-          <p className="symbol-kicker text-cyan-soft">{activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}</p>
-          {activeJourney ? (
+          <p className="symbol-kicker text-cyan-soft">
+            {activeWaterOrbitNode ? "Wasser-Orbit" : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
+          </p>
+          {activeWaterOrbitNode ? (
+            <WaterOrbitDetail orbitNode={activeWaterOrbitNode} activeSymbol={activeSymbol} />
+          ) : activeJourney ? (
             <>
               <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activeJourney.title}</h2>
               <p className="symbol-copy mt-5 text-lg">{activeJourney.description}</p>
@@ -1433,7 +1667,7 @@ export default function SymbolNetwork() {
             </>
           )}
 
-          {!activeJourney && activePath ? (
+          {!activeWaterOrbitNode && !activeJourney && activePath ? (
             <>
               <div className="mt-8 border-t border-white/[0.055] pt-6">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
@@ -1491,7 +1725,7 @@ export default function SymbolNetwork() {
                 ) : null}
               </div>
             </>
-          ) : !activeJourney && activeCodexLetter ? (
+          ) : !activeWaterOrbitNode && !activeJourney && activeCodexLetter ? (
             <>
               <div className="mt-8 border-t border-white/[0.055] pt-6">
                 <p className="symbol-breathe font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeCodexLetter.glyph}</p>
@@ -1510,7 +1744,7 @@ export default function SymbolNetwork() {
             </>
           ) : null}
 
-          {!activeJourney ? <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
+          {!activeWaterOrbitNode && !activeJourney ? <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
             <p className="symbol-kicker text-cyan-soft">Verbindungen folgen</p>
             <div className="mt-4 grid gap-3">
               {connectedPaths.map((path) => (
