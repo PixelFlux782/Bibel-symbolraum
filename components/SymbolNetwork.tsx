@@ -96,6 +96,8 @@ type LivingConnectionData = {
 };
 
 type SymbolNetworkView = "symbols" | "torah" | "hebrew" | "meaning" | "journeys";
+type SymbolGraphViewMode = "OVERVIEW" | "SYMBOL_FOCUS" | "RELATION_FOCUS" | "ORBIT_DETAIL";
+type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Orbit" | "Detail" | "Beziehung";
 type WaterOrbitNodeId = "hebrew" | "number" | "meaning" | "torah" | "journey" | "room";
 
 type WaterOrbitNode = {
@@ -170,6 +172,9 @@ const letterEmergencePositions = [
   { x: 720, y: 500 },
 ];
 const missingPositionWarnings = new Set<string>();
+const SYMBOL_NODE_SIZE = 176;
+const MEANING_NODE_SIZE = 96;
+const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 
 function getNodePosition(nodeId: string) {
   const position = positions[nodeId];
@@ -180,6 +185,17 @@ function getNodePosition(nodeId: string) {
   }
 
   return position ?? fallbackPosition;
+}
+
+function getNodeCenter(nodeId: string) {
+  const isMeaningNode = network.meaningNodes.some((node) => node.id === nodeId);
+  const size = isMeaningNode ? MEANING_NODE_SIZE : SYMBOL_NODE_SIZE;
+  const position = getNodePosition(nodeId);
+
+  return {
+    x: position.x + size / 2,
+    y: position.y + size / 2,
+  };
 }
 
 function getOtherSymbolId(path: SymbolMeaningPath, symbolId: string) {
@@ -1087,6 +1103,17 @@ export default function SymbolNetwork() {
   const activeJourney = network.journeys.find((journey) => journey.id === (previewJourneyId ?? activeJourneyId));
   const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
+  const relationSymbolIds = useMemo(
+    () => new Set(activePath ? [activePath.from, activePath.to] : []),
+    [activePath],
+  );
+  const graphViewMode: SymbolGraphViewMode = activePath
+    ? "RELATION_FOCUS"
+    : activeWaterOrbitId
+      ? "ORBIT_DETAIL"
+      : hasSymbolFocus || hoveredSymbolId || activeJourney || activeLetterId
+        ? "SYMBOL_FOCUS"
+        : "OVERVIEW";
   const isWaterOrbitVisible = activeView === "symbols"
     && disclosureSymbolId === "wasser"
     && !activeJourney
@@ -1134,6 +1161,15 @@ export default function SymbolNetwork() {
     : undefined;
 
   const activeBridgeOrEphemeral: MeaningBridge | undefined = activeBridge ?? ephemeralBridge;
+  const mobileLayerStep: SymbolMobileLayer = activePath
+    ? "Beziehung"
+    : activeWaterOrbitId
+      ? "Detail"
+      : isWaterOrbitVisible
+        ? "Orbit"
+        : hasSymbolFocus || activeLetterId
+          ? "Symbol"
+          : "Uebersicht";
 
   useEffect(() => {
     return () => {
@@ -1148,13 +1184,53 @@ export default function SymbolNetwork() {
 
     if (!instance || activeView !== "symbols") return;
 
-    if (isWaterOrbitVisible) {
-      instance.setCenter(178, 368, { zoom: 1.18, duration: 760 });
-      return;
-    }
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-    instance.fitView({ padding: 0.2, duration: 620 });
-  }, [activeView, isWaterOrbitVisible]);
+    if (isMobile) return;
+
+    const frameId = window.requestAnimationFrame(() => {
+      if (graphViewMode === "RELATION_FOCUS" && activePath) {
+        instance.fitView({
+          nodes: [{ id: activePath.from }, { id: activePath.to }],
+          padding: 0.36,
+          minZoom: 0.5,
+          maxZoom: 0.92,
+          duration: 720,
+        });
+        return;
+      }
+
+      if (graphViewMode === "ORBIT_DETAIL") {
+        const center = getNodeCenter("wasser");
+        instance.fitBounds(
+          {
+            x: center.x - 205,
+            y: center.y - 185,
+            width: 410,
+            height: 370,
+          },
+          { padding: 0.22, duration: 680 },
+        );
+        return;
+      }
+
+      if (graphViewMode === "SYMBOL_FOCUS") {
+        const center = getNodeCenter(activeId);
+        instance.setCenter(center.x, center.y, { zoom: activeId === "wasser" ? 1.04 : 0.86, duration: 680 });
+        return;
+      }
+
+      instance.fitView({
+        nodes: MAIN_SYMBOL_IDS.map((id) => ({ id })),
+        padding: 0.24,
+        minZoom: 0.46,
+        maxZoom: 0.78,
+        duration: 620,
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [activeId, activePath, activeView, graphViewMode]);
 
   const relatedIds = useMemo(
     () => activeJourney
@@ -1162,12 +1238,13 @@ export default function SymbolNetwork() {
       : !focusedSymbolId
         ? new Set<string>()
       : new Set([
+        ...relationSymbolIds,
         ...network.paths
           .filter((path) => path.from === focusedSymbolId || path.to === focusedSymbolId)
           .map((path) => getOtherSymbolId(path, focusedSymbolId)),
         ...network.meaningLinks.filter((link) => link.symbolId === focusedSymbolId).map((link) => link.meaningId),
       ]),
-    [activeJourney, focusedSymbolId, journeyMeaningIds, journeySymbolIds]
+    [activeJourney, focusedSymbolId, journeyMeaningIds, journeySymbolIds, relationSymbolIds]
   );
   const nodes = useMemo<Node<SymbolNodeData | MeaningNodeData>[]>(
     () => {
@@ -1179,7 +1256,9 @@ export default function SymbolNetwork() {
             ? letterSymbolIds.has(node.id)
             : activeJourney
               ? journeySymbolIds.has(node.id)
-              : hasSymbolFocus && node.id === activeId;
+              : activePath
+                ? relationSymbolIds.has(node.id)
+                : hasSymbolFocus && node.id === activeId;
           const isPreviewedSymbol = !hasSymbolFocus && node.id === hoveredSymbolId;
 
           return {
@@ -1198,6 +1277,8 @@ export default function SymbolNetwork() {
                 ? !letterSymbolIds.has(node.id)
                 : activeJourney
                   ? !journeySymbolIds.has(node.id)
+                  : activePath
+                    ? !relationSymbolIds.has(node.id)
                   : isWaterOrbitVisible
                     ? node.id !== "wasser"
                     : hasGraphDisclosure && node.id !== disclosureSymbolId && !relatedIds.has(node.id),
@@ -1220,7 +1301,7 @@ export default function SymbolNetwork() {
         })) : []),
       ];
     },
-    [activeId, activeJourney, activeLetterId, activePathId, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, hoveredSymbolId, isWaterOrbitVisible, journeySymbolIds, letterMeaningIds, letterSymbolIds, letterSymbols, relatedIds]
+    [activeId, activeJourney, activeLetterId, activePath, activePathId, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, hoveredSymbolId, isWaterOrbitVisible, journeySymbolIds, letterMeaningIds, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds]
   );
 
   const edges: Edge[] = [
@@ -1508,7 +1589,7 @@ export default function SymbolNetwork() {
           ) : null}
 
           <div
-            className={`symbol-constellation-field relative mt-5 h-[650px] overflow-hidden max-md:hidden ${isWaterOrbitVisible ? "is-water-focused" : ""}`}
+            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-5 h-[650px] overflow-hidden max-md:hidden ${isWaterOrbitVisible ? "is-water-focused" : ""}`}
             onMouseLeave={() => {
               if (!activeWaterOrbitId) setHoveredSymbolId(null);
             }}
@@ -1558,6 +1639,13 @@ export default function SymbolNetwork() {
           </div>
 
           <div className="mt-5 border-y border-white/[0.035] py-5 md:hidden">
+            <div className="symbol-mobile-layer-stepper" aria-label="Mobile Symbolnetz-Ebene">
+              {(["Uebersicht", "Symbol", "Orbit", "Detail", "Beziehung"] as const).map((layer) => (
+                <span key={layer} className={mobileLayerStep === layer ? "is-active" : ""}>
+                  {layer}
+                </span>
+              ))}
+            </div>
             <p className="symbol-kicker text-cyan-soft">{activeCodexLetter ? "Buchstabe als Ursprung" : activeId === "wasser" ? "Wasser entfalten" : "Symbol waehlen"}</p>
             {activeCodexLetter ? (
               <div className="letter-emergence-mobile mt-5">

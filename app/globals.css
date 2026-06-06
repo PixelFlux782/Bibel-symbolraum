@@ -2441,8 +2441,8 @@ body {
   left: 50%;
   top: 50%;
   z-index: 6;
-  width: 12.6rem;
-  height: 12.6rem;
+  width: 20rem;
+  height: 20rem;
   pointer-events: none;
   transform: translate(-50%, -50%);
   animation: symbol-water-orbit-arrive 1100ms ease both;
@@ -2450,7 +2450,7 @@ body {
 
 .symbol-water-orbit__ring {
   position: absolute;
-  inset: 2.6rem;
+  inset: 4.9rem;
   border: 1px solid rgba(var(--gold-rgb), 0.12);
   border-radius: 999px;
   box-shadow:
@@ -2460,7 +2460,7 @@ body {
 }
 
 .symbol-water-orbit__ring--outer {
-  inset: 0.75rem;
+  inset: 1.55rem;
   border-color: rgba(var(--cyan-rgb), 0.055);
   box-shadow: 0 0 4.4rem rgba(var(--cyan-rgb), 0.035);
 }
@@ -2484,7 +2484,7 @@ body {
 .symbol-water-orbit__node {
   position: absolute;
   display: grid;
-  min-width: 4.9rem;
+  width: 5.6rem;
   place-items: center;
   gap: 0.18rem;
   color: rgba(216, 209, 194, 0.68);
@@ -2496,32 +2496,32 @@ body {
 
 .symbol-water-orbit__node--journey {
   left: 50%;
-  top: 2%;
+  top: 6%;
 }
 
 .symbol-water-orbit__node--torah {
-  left: 86%;
-  top: 26%;
+  left: 82%;
+  top: 24%;
 }
 
 .symbol-water-orbit__node--hebrew {
-  left: 86%;
-  top: 74%;
+  left: 82%;
+  top: 76%;
 }
 
 .symbol-water-orbit__node--meaning {
   left: 50%;
-  top: 98%;
+  top: 94%;
 }
 
 .symbol-water-orbit__node--room {
-  left: 14%;
-  top: 74%;
+  left: 18%;
+  top: 76%;
 }
 
 .symbol-water-orbit__node--number {
-  left: 14%;
-  top: 26%;
+  left: 18%;
+  top: 24%;
 }
 
 .symbol-water-orbit__dot {
@@ -2556,6 +2556,24 @@ body {
   pointer-events: none;
   transform: translateY(0.35rem);
   transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.symbol-water-orbit__node--journey .symbol-water-orbit__preview,
+.symbol-water-orbit__node--torah .symbol-water-orbit__preview,
+.symbol-water-orbit__node--number .symbol-water-orbit__preview {
+  top: auto;
+  bottom: calc(100% + 0.5rem);
+  transform: translateY(-0.35rem);
+}
+
+.symbol-water-orbit__node--torah .symbol-water-orbit__preview,
+.symbol-water-orbit__node--hebrew .symbol-water-orbit__preview {
+  right: 0;
+}
+
+.symbol-water-orbit__node--number .symbol-water-orbit__preview,
+.symbol-water-orbit__node--room .symbol-water-orbit__preview {
+  left: 0;
 }
 
 .symbol-water-orbit__preview i {
@@ -2603,6 +2621,31 @@ body {
 .symbol-water-mobile-trace {
   display: grid;
   justify-items: center;
+}
+
+.symbol-mobile-layer-stepper {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-bottom: 1.1rem;
+}
+
+.symbol-mobile-layer-stepper span {
+  min-width: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.42rem;
+  color: rgba(216, 209, 194, 0.38);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.symbol-mobile-layer-stepper span.is-active {
+  border-color: rgba(var(--gold-rgb), 0.5);
+  color: rgba(var(--gold-rgb), 0.86);
 }
 
 .symbol-water-mobile-trace__step {
