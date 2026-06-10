@@ -60,6 +60,12 @@ type LetterNodeData = {
   isExpanded: boolean;
 };
 
+type FirstResonanceData = {
+  letterId: string;
+  glyph: string;
+  name: string;
+};
+
 type LivingConnectionData = {
   isTraveling: boolean;
   relationType: "symbol" | "letter" | "meaning" | "journey";
@@ -68,7 +74,7 @@ type LivingConnectionData = {
 };
 
 type SymbolGraphViewMode = "OVERVIEW" | "SYMBOL_FOCUS" | "RELATION_FOCUS";
-type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Linse" | "Info" | "Beziehung";
+type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Resonanz" | "Info" | "Beziehung";
 type SymbolLensMode = "hebrew" | "number" | "meaning" | "torah" | "journey" | "room";
 type JourneyViewportMode = "journey" | "step" | "overview";
 
@@ -140,6 +146,12 @@ const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 const LETTER_NODE_PREFIX = "letter:";
 const LETTER_RESONANCE_LIMIT = 3;
 const SYMBOL_LENS_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste"];
+const FIRST_RESONANCE_BY_SYMBOL: Partial<Record<string, string>> = {
+  wasser: "mem",
+  licht: "aleph",
+  feuer: "aleph",
+  wueste: "mem",
+};
 const SYMBOL_LENS_MODE_LABELS: Record<SymbolLensMode, string> = {
   hebrew: "Hebraeisch",
   number: "Zahl",
@@ -509,6 +521,30 @@ function LetterGraphNode({ data }: NodeProps<LetterNodeData>) {
   );
 }
 
+function FirstResonanceHint({
+  data,
+  position,
+  onActivate,
+}: {
+  data: FirstResonanceData;
+  position: { x: number; y: number };
+  onActivate: (letterId: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="symbol-hidden-resonance"
+      style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      onClick={() => onActivate(data.letterId)}
+      aria-label={`${data.name} Resonanz entdecken`}
+    >
+      <span className="symbol-hidden-resonance__glow" aria-hidden="true" />
+      <span className="symbol-hidden-resonance__glyph" lang="he" dir="rtl">{data.glyph}</span>
+      <span className="symbol-hidden-resonance__label">{data.name}</span>
+    </button>
+  );
+}
+
 function LivingConnectionEdge({
   id,
   sourceX,
@@ -657,6 +693,9 @@ export default function SymbolNetwork() {
   const [activeLetterSourcePathId, setActiveLetterSourcePathId] = useState<string | null>(null);
   const [activeLensMode, setActiveLensMode] = useState<SymbolLensMode | null>(null);
   const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(null);
+  const [revealedResonanceId, setRevealedResonanceId] = useState<string | null>(null);
+  const [resonanceHintVisible, setResonanceHintVisible] = useState(false);
+  const [resonanceFocusTick, setResonanceFocusTick] = useState(0);
   const [flowViewport, setFlowViewport] = useState({ x: 0, y: 0, zoom: 1 });
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
   const { isEntering } = useRoomTransition();
@@ -664,6 +703,10 @@ export default function SymbolNetwork() {
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activeLetterSourcePath = network.paths.find((path) => path.id === activeLetterSourcePathId);
+  const firstResonanceLetterId = FIRST_RESONANCE_BY_SYMBOL[activeSymbolId] ?? null;
+  const firstResonanceLetter = firstResonanceLetterId
+    ? hebrewLetters.find((letter) => letter.id === firstResonanceLetterId)
+    : undefined;
   const activeDisclosureSymbolId = hasSymbolFocus ? activeSymbolId : null;
   const disclosureSymbolId = activeDisclosureSymbolId;
   const focusedSymbolId = activeDisclosureSymbolId;
@@ -713,7 +756,7 @@ export default function SymbolNetwork() {
     () => (disclosureSymbolId ? getSymbolLensData(disclosureSymbolId) : null),
     [disclosureSymbolId],
   );
-  const isSymbolLensVisible = Boolean(activeSymbolLensData)
+  const isSymbolLensVisible = Boolean(activeLensMode && activeSymbolLensData)
     && !activeJourney
     && !activeCodexLetter
     && !activePathId;
@@ -859,7 +902,7 @@ export default function SymbolNetwork() {
     : activeLensMode
       ? "Info"
       : isSymbolLensVisible
-        ? "Linse"
+        ? "Resonanz"
         : hasSymbolFocus || activeLetterId
         ? "Symbol"
         : "Uebersicht";
@@ -889,6 +932,19 @@ export default function SymbolNetwork() {
     && lensOrbitPosition
     && activeSymbolLensData.symbolId === lensOrbitAnchorId,
   );
+  const resonanceHintPosition = useMemo(() => {
+    if (!resonanceHintVisible || !revealedResonanceId || !firstResonanceLetter || activeLetterId || activePathId || activeJourney) return null;
+
+    const center = getNodeCenter(activeSymbolId);
+    const offset = activeSymbolId === "licht" || activeSymbolId === "feuer"
+      ? { x: -54, y: 58 }
+      : { x: 54, y: -48 };
+
+    return {
+      x: (center.x + offset.x) * flowViewport.zoom + flowViewport.x,
+      y: (center.y + offset.y) * flowViewport.zoom + flowViewport.y,
+    };
+  }, [activeJourney, activeLetterId, activePathId, activeSymbolId, firstResonanceLetter, flowViewport, resonanceHintVisible, revealedResonanceId]);
 
   const setJourneyViewport = useCallback((mode: JourneyViewportMode, duration = 680) => {
     const instance = reactFlowRef.current;
@@ -987,6 +1043,19 @@ export default function SymbolNetwork() {
     return () => window.cancelAnimationFrame(frameId);
   }, [activeLetterId, activeLetterNodeId, activePath, activeSymbolId, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, letterSymbolIds, setJourneyViewport]);
 
+  useEffect(() => {
+    if (!hasSymbolFocus || activeLetterId || activePathId || activeJourneyId || !firstResonanceLetterId) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setRevealedResonanceId(firstResonanceLetterId);
+      setResonanceHintVisible(true);
+    }, 2000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [activeJourneyId, activeLetterId, activePathId, activeSymbolId, firstResonanceLetterId, hasSymbolFocus, resonanceFocusTick]);
+
   const relatedIds = useMemo(
     () => isJourneyFocus
       ? new Set([...journeyFocusSymbolIds, ...journeyFocusMeaningIds])
@@ -1052,7 +1121,7 @@ export default function SymbolNetwork() {
         ];
       }
 
-      const showMeaningNodes = Boolean(hasSymbolFocus || activePathId || isJourneyFocus || activeLensMeaningIds.size > 0);
+      const showMeaningNodes = Boolean(activePathId || isJourneyFocus || activeLensMeaningIds.size > 0);
 
       return [
         ...network.nodes.map((node) => {
@@ -1222,7 +1291,7 @@ export default function SymbolNetwork() {
           },
         };
     }) : []),
-    ...((hasSymbolFocus || isJourneyFocus || activeLensMeaningIds.size > 0) && !activeLetterId ? network.meaningLinks.map((link, index) => {
+    ...((activePathId || isJourneyFocus || activeLensMeaningIds.size > 0) && !activeLetterId ? network.meaningLinks.map((link, index) => {
       const isFocused = isJourneyFocus
         ? journeyFocusSymbolIds.has(link.symbolId) && journeyFocusMeaningIds.has(link.meaningId)
         : activeLetterId ? letterSymbolIds.has(link.symbolId) : activeLensMeaningIds.has(link.meaningId) || link.symbolId === activeSymbolId;
@@ -1263,6 +1332,29 @@ export default function SymbolNetwork() {
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
     setActiveLensMode(null);
+    setRevealedResonanceId(null);
+    setResonanceHintVisible(false);
+    setResonanceFocusTick((tick) => tick + 1);
+  }
+
+  function activateFirstResonance(letterId: string) {
+    recordActivatedLetter({
+      letterId,
+      symbolId: activeSymbolId,
+    });
+    setActiveLetterId(letterId);
+    setIsLetterResonanceOpen(false);
+    setActiveLetterResonanceId(null);
+    setActiveLetterSourcePathId(null);
+    setActivePathId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
+    setActiveJourneyId(null);
+    setActiveLensMode(null);
+    setActiveJourneyStepId(null);
+    setHasSymbolFocus(true);
+    setResonanceHintVisible(false);
+    setRevealedResonanceId(null);
   }
 
   function activateSymbolLens(nodeId: SymbolLensMode) {
@@ -1277,6 +1369,8 @@ export default function SymbolNetwork() {
     setIsLetterResonanceOpen(false);
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
+    setResonanceHintVisible(false);
+    setRevealedResonanceId(null);
   }
 
   function openLetterBridge(path: SymbolMeaningPath) {
@@ -1297,6 +1391,8 @@ export default function SymbolNetwork() {
     setActiveLensMode(null);
     setActiveJourneyStepId(null);
     setHasSymbolFocus(true);
+    setResonanceHintVisible(false);
+    setRevealedResonanceId(null);
   }
 
   function previewPath(path: SymbolMeaningPath) {
@@ -1310,6 +1406,8 @@ export default function SymbolNetwork() {
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
     setHasSymbolFocus(true);
+    setResonanceHintVisible(false);
+    setRevealedResonanceId(null);
   }
 
   return (
@@ -1420,6 +1518,17 @@ export default function SymbolNetwork() {
                 {activeResonanceText}
               </p>
             ) : null}
+            {resonanceHintPosition && firstResonanceLetter && revealedResonanceId ? (
+              <FirstResonanceHint
+                data={{
+                  letterId: revealedResonanceId,
+                  glyph: firstResonanceLetter.glyph,
+                  name: firstResonanceLetter.name,
+                }}
+                position={resonanceHintPosition}
+                onActivate={activateFirstResonance}
+              />
+            ) : null}
             {isJourneyFocus ? (
               <div className="journey-viewport-controls" aria-label="Journey-Ansicht steuern">
                 <button type="button" onClick={() => setJourneyViewport("journey")} aria-label="Ganze Journey anzeigen">
@@ -1445,12 +1554,21 @@ export default function SymbolNetwork() {
           </div>
 
           <div className="symbol-mobile-layer-stepper mt-3 md:hidden" aria-label="Mobile Symbolnetz-Ebene">
-            {(["Uebersicht", "Symbol", "Linse", "Info", "Beziehung"] as const).map((layer) => (
-              <span key={layer} className={mobileLayerStep === layer ? "is-active" : ""}>
+            {(["Uebersicht", "Symbol", "Resonanz", "Info", "Beziehung"] as const).map((layer) => (
+              <span key={layer} className={(layer === "Resonanz" ? resonanceHintVisible : mobileLayerStep === layer) ? "is-active" : ""}>
                 {layer}
               </span>
             ))}
           </div>
+          {resonanceHintVisible && firstResonanceLetter && revealedResonanceId ? (
+            <button
+              type="button"
+              className="symbol-mobile-resonance-hint md:hidden"
+              onClick={() => activateFirstResonance(revealedResonanceId)}
+            >
+              Resonanz entdecken
+            </button>
+          ) : null}
         </div>
 
         <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isSymbolLensVisible ? "symbol-detail-panel--lens-focus" : ""}`}>
@@ -1583,7 +1701,7 @@ export default function SymbolNetwork() {
             </>
           ) : null}
 
-          {!activeJourney && !activeCodexLetter ? <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
+          {isSymbolLensVisible && !activeJourney && !activeCodexLetter ? <div className="mt-8 border-t border-white/[0.055] pt-6 max-md:hidden">
             <p className="symbol-kicker text-cyan-soft">Verbindungen folgen</p>
             <div className="mt-4 grid gap-3">
               {connectedPaths.map((path) => (
