@@ -2319,6 +2319,10 @@ body {
   pointer-events: none;
 }
 
+.symbol-network-flow .react-flow__edge.is-journey-path {
+  opacity: 0.86;
+}
+
 .symbol-network-flow .react-flow__nodes {
   z-index: 5;
   pointer-events: auto;
@@ -2456,6 +2460,17 @@ body {
 
 .symbol-constellation-node.is-active p:last-child {
   color: rgba(var(--foreground-rgb), 0.72);
+}
+
+.symbol-network-port {
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 1px !important;
+  min-height: 1px !important;
+  border: 0 !important;
+  background: transparent !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .symbol-constellation-node__lens {
@@ -2981,23 +2996,44 @@ body {
 }
 
 .symbol-network-flow .react-flow__edge-path {
-  filter: drop-shadow(0 0 5px rgba(189, 160, 109, 0.08));
+  filter: drop-shadow(0 0 5px rgba(127, 184, 201, 0.035));
   pointer-events: none;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
+.symbol-network-flow .react-flow__edge.is-symbol-path .react-flow__edge-path,
+.symbol-network-flow .react-flow__edge.is-meaning-path .react-flow__edge-path {
+  stroke-dasharray: 1 7;
+}
+
 .symbol-network-flow .react-flow__edge.is-dormant .react-flow__edge-path {
-  opacity: 0.34;
-  stroke-dasharray: 1 9;
+  opacity: 0.26;
+  stroke-dasharray: 1 10;
 }
 
 .symbol-network-flow .react-flow__edge.is-awake .react-flow__edge-path {
-  opacity: 0.62;
+  opacity: 0.56;
   stroke-dasharray: 1 6;
   filter:
-    drop-shadow(0 0 8px rgba(189, 160, 109, 0.08))
+    drop-shadow(0 0 8px rgba(127, 184, 201, 0.08))
     drop-shadow(0 0 14px rgba(127, 184, 201, 0.035));
+}
+
+.symbol-network-flow .react-flow__edge.is-letter-path .react-flow__edge-path {
+  opacity: 0.72;
+  stroke-dasharray: 3 9;
+  filter:
+    drop-shadow(0 0 8px rgba(189, 160, 109, 0.12))
+    drop-shadow(0 0 18px rgba(189, 160, 109, 0.045));
+}
+
+.symbol-network-flow .react-flow__edge.is-journey-path .react-flow__edge-path {
+  opacity: 0.46;
+  stroke-dasharray: none;
+  filter:
+    drop-shadow(0 0 10px rgba(189, 160, 109, 0.16))
+    drop-shadow(0 0 24px rgba(189, 160, 109, 0.075));
 }
 
 .symbol-network-flow .react-flow__edge-text,
@@ -3006,11 +3042,15 @@ body {
 }
 
 .symbol-network-flow .react-flow__edge.is-selected-path .react-flow__edge-path {
-  opacity: 0.92;
+  opacity: 0.78;
   filter:
-    drop-shadow(0 0 8px rgba(189, 160, 109, 0.22))
-    drop-shadow(0 0 18px rgba(127, 184, 201, 0.1));
+    drop-shadow(0 0 8px rgba(189, 160, 109, 0.18))
+    drop-shadow(0 0 18px rgba(127, 184, 201, 0.065));
   animation: light-pulse 3.8s ease-in-out infinite;
+}
+
+.symbol-network-flow .react-flow__edge.is-journey-path.is-selected-path .react-flow__edge-path {
+  opacity: 0.52;
 }
 
 .symbol-network-flow .react-flow__edge.is-traveling-path .react-flow__edge-path {

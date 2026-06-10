@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { Fragment, useMemo, useState, useRef, useEffect } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
   EdgeProps,
-  getBezierPath,
   Handle,
   Node,
   NodeProps,
@@ -62,6 +62,9 @@ type LetterNodeData = {
 
 type LivingConnectionData = {
   isTraveling: boolean;
+  relationType: "symbol" | "letter" | "meaning" | "journey";
+  routeIndex: number;
+  routeOffset: number;
 };
 
 type SymbolGraphViewMode = "OVERVIEW" | "SYMBOL_FOCUS" | "RELATION_FOCUS";
@@ -166,6 +169,37 @@ const LETTER_RESONANCE_LABELS: Partial<Record<MeaningNodeId, string>> = {
 const LETTER_RESONANCE_PRIORITY: Partial<Record<string, MeaningNodeId[]>> = {
   mem: ["depth", "lack", "nourishment"],
 };
+const SYMBOL_PORTS = [
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "top-right",
+  "top-left",
+  "bottom-right",
+  "bottom-left",
+] as const;
+type SymbolPort = (typeof SYMBOL_PORTS)[number];
+const PORT_POSITIONS: Record<SymbolPort, Position> = {
+  top: Position.Top,
+  right: Position.Right,
+  bottom: Position.Bottom,
+  left: Position.Left,
+  "top-right": Position.Top,
+  "top-left": Position.Top,
+  "bottom-right": Position.Bottom,
+  "bottom-left": Position.Bottom,
+};
+const PORT_STYLES: Record<SymbolPort, CSSProperties> = {
+  top: { left: "50%" },
+  right: { top: "50%" },
+  bottom: { left: "50%" },
+  left: { top: "50%" },
+  "top-right": { left: "70%" },
+  "top-left": { left: "30%" },
+  "bottom-right": { left: "70%" },
+  "bottom-left": { left: "30%" },
+};
 
 function getNodePosition(nodeId: string) {
   const position = positions[nodeId];
@@ -187,6 +221,39 @@ function getNodeCenter(nodeId: string) {
     x: position.x + size / 2,
     y: position.y + size / 2,
   };
+}
+
+function pickPortForVector(dx: number, dy: number): SymbolPort {
+  const absX = Math.abs(dx);
+  const absY = Math.abs(dy);
+
+  if (absX > absY * 1.25) return dx >= 0 ? "right" : "left";
+  if (absY > absX * 1.25) return dy >= 0 ? "bottom" : "top";
+
+  if (dx >= 0 && dy >= 0) return "bottom-right";
+  if (dx >= 0 && dy < 0) return "top-right";
+  if (dx < 0 && dy >= 0) return "bottom-left";
+  return "top-left";
+}
+
+function getConnectionPorts(sourceId: string, targetId: string) {
+  const sourceCenter = getNodeCenter(sourceId);
+  const targetCenter = getNodeCenter(targetId);
+  const dx = targetCenter.x - sourceCenter.x;
+  const dy = targetCenter.y - sourceCenter.y;
+
+  return {
+    sourceHandle: pickPortForVector(dx, dy),
+    targetHandle: pickPortForVector(-dx, -dy),
+  };
+}
+
+function getRouteOffset(index: number, relationType: LivingConnectionData["relationType"]) {
+  const spread = relationType === "journey" ? 22 : relationType === "letter" ? 14 : 10;
+  const side = index % 2 === 0 ? 1 : -1;
+  const lane = Math.floor(index / 2) + 1;
+
+  return side * lane * spread;
 }
 
 function getOtherSymbolId(path: SymbolMeaningPath, symbolId: string) {
@@ -322,8 +389,12 @@ function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
       className={`group relative cursor-pointer transition-opacity duration-700 ${data.emergenceIndex !== undefined ? "letter-emergence-symbol" : ""} ${data.isDimmed ? "opacity-[0.14]" : "opacity-100"}`}
       style={data.emergenceIndex !== undefined ? { animationDelay: `${data.emergenceIndex * 220}ms` } : undefined}
     >
-      <Handle type="target" position={Position.Left} className="opacity-0" />
-      <Handle type="source" position={Position.Right} className="opacity-0" />
+      {SYMBOL_PORTS.map((port) => (
+        <Fragment key={port}>
+          <Handle id={port} type="source" position={PORT_POSITIONS[port]} className="symbol-network-port" style={PORT_STYLES[port]} />
+          <Handle id={port} type="target" position={PORT_POSITIONS[port]} className="symbol-network-port" style={PORT_STYLES[port]} />
+        </Fragment>
+      ))}
       <div
         className={`symbol-constellation-node relative grid h-44 w-44 place-items-center px-5 py-5 text-center transition-colors duration-700 ${
           data.isActive ? "is-active" : data.isPreviewed ? "is-previewed" : data.isRelated ? "is-related" : ""
@@ -354,7 +425,9 @@ function MeaningGraphNode({ data }: NodeProps<MeaningNodeData>) {
       tabIndex={0}
       aria-label={`${data.label}: ${data.shortMeaning}`}
     >
-      <Handle type="target" position={Position.Left} className="opacity-0" />
+      <Handle id="left" type="target" position={Position.Left} className="opacity-0" />
+      <Handle id="top" type="target" position={Position.Top} className="opacity-0" />
+      <Handle id="right" type="source" position={Position.Right} className="opacity-0" />
       <div className={`grid h-24 w-24 place-items-center rounded-full border px-3 text-center transition-colors ${
         data.isRelated ? "border-cyan/25 bg-cyan/[0.06] text-cyan-soft" : "border-white/[0.06] bg-black/15 text-[#d8d1c2]/45"
       }`}>
@@ -371,6 +444,9 @@ function LetterGraphNode({ data }: NodeProps<LetterNodeData>) {
       className={`letter-focus-node ${data.isExpanded ? "is-expanded" : ""}`}
       aria-label={`${data.name} Resonanz entfalten`}
     >
+      <Handle id="left" type="target" position={Position.Left} className="opacity-0" />
+      <Handle id="right" type="source" position={Position.Right} className="opacity-0" />
+      <Handle id="bottom" type="source" position={Position.Bottom} className="opacity-0" />
       <span className="letter-focus-node__glyph" lang="he" dir="rtl">{data.glyph}</span>
       <span className="letter-focus-node__name">{data.name}</span>
       <span className="letter-focus-node__hint">{data.isExpanded ? "Resonanz" : "Oeffnen"}</span>
@@ -385,13 +461,38 @@ function LivingConnectionEdge({
   targetX,
   targetY,
   style,
+  data,
 }: EdgeProps<LivingConnectionData>) {
-  const [edgePath] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+  const distance = Math.max(Math.hypot(dx, dy), 1);
+  const normalX = -dy / distance;
+  const normalY = dx / distance;
+  const midpointX = (sourceX + targetX) / 2;
+  const midpointY = (sourceY + targetY) / 2;
+  const routeOffset = data?.routeOffset ?? 0;
+  const relationType = data?.relationType ?? "symbol";
+  const outwardLift = relationType === "journey" ? 30 : relationType === "letter" ? 18 : 8;
+  const curveX = midpointX + normalX * (routeOffset + outwardLift);
+  const curveY = midpointY + normalY * (routeOffset + outwardLift);
+  const edgePath = `M ${sourceX},${sourceY} Q ${curveX},${curveY} ${targetX},${targetY}`;
+
+  if (relationType === "journey") {
+    return (
+      <>
+        <BaseEdge
+          id={`${id}-journey-halo`}
+          path={edgePath}
+          style={{
+            stroke: "rgba(189,160,109,0.18)",
+            strokeWidth: 9,
+            filter: "blur(3px)",
+          }}
+        />
+        <BaseEdge id={id} path={edgePath} style={style} />
+      </>
+    );
+  }
 
   return <BaseEdge id={id} path={edgePath} style={style} />;
 }
@@ -795,32 +896,50 @@ export default function SymbolNetwork() {
 
   const edges: Edge[] = [
     ...(activeLetterId && activeLetterNodeId ? [
-      ...letterSymbols.map((symbol) => ({
-        id: `${symbol.id}-${activeLetterNodeId}`,
-        source: symbol.id,
-        target: activeLetterNodeId,
-        type: "living",
-        className: "is-selected-path",
-        style: {
-          stroke: "rgba(189,160,109,0.72)",
-          strokeWidth: 2.4,
-        },
-        data: {
-          isTraveling: false,
-        },
-      })),
-      ...(isLetterResonanceOpen ? letterResonances.map((resonance) => ({
+      ...letterSymbols.map((symbol, index) => {
+        const ports = getConnectionPorts(symbol.id, activeLetterNodeId);
+
+        return {
+          id: `${symbol.id}-${activeLetterNodeId}`,
+          source: symbol.id,
+          target: activeLetterNodeId,
+          sourceHandle: ports.sourceHandle,
+          targetHandle: "left",
+          type: "living",
+          className: "is-letter-path is-selected-path",
+          style: {
+            stroke: "rgba(189,160,109,0.72)",
+            strokeWidth: 2.4,
+          },
+          data: {
+            isTraveling: false,
+            relationType: "letter" as const,
+            routeIndex: index,
+            routeOffset: getRouteOffset(index, "letter"),
+          },
+        };
+      }),
+      ...(isLetterResonanceOpen ? letterResonances.map((resonance, index) => ({
         id: `${activeLetterNodeId}-${resonance.id}`,
         source: activeLetterNodeId,
         target: resonance.id,
-        className: "is-awake",
+        sourceHandle: "bottom",
+        targetHandle: index === 2 ? "top" : "left",
+        type: "living",
+        className: "is-meaning-path is-awake",
         style: {
           stroke: "rgba(127,184,201,0.36)",
           strokeWidth: 1.2,
         },
+        data: {
+          isTraveling: false,
+          relationType: "meaning" as const,
+          routeIndex: index,
+          routeOffset: getRouteOffset(index, "meaning"),
+        },
       })) : []),
     ] : []),
-    ...(hasEdgeDisclosure && !activeLetterId ? network.paths.map((path) => {
+    ...(hasEdgeDisclosure && !activeLetterId ? network.paths.map((path, index) => {
         const isFocused = focusedSymbolId ? path.from === focusedSymbolId || path.to === focusedSymbolId : false;
         const isSelected = path.id === activePathId || path.id === pendingPathId;
         const pathKey = getPathKey(path.from, path.to);
@@ -830,34 +949,52 @@ export default function SymbolNetwork() {
         const isLetterPath = Boolean(activeLetterId)
           && letterSymbolIds.has(path.from)
           && letterSymbolIds.has(path.to);
+        const relationType: LivingConnectionData["relationType"] = isJourneyPath ? "journey" : isLetterPath ? "letter" : "symbol";
+        const ports = getConnectionPorts(path.from, path.to);
+
         return {
           id: path.id,
           source: path.from,
           target: path.to,
+          sourceHandle: ports.sourceHandle,
+          targetHandle: ports.targetHandle,
           type: "living",
-          className: `${isJourneyPath || isSelected || isLetterPath ? "is-selected-path" : isFocused && !activeJourney && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
+          className: `${isJourneyPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isJourneyPath || isSelected || isLetterPath ? "is-selected-path" : isFocused && !activeJourney && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
           style: {
-            stroke: isJourneyPath || isSelected || isLetterPath ? "rgba(189,160,109,0.9)" : isFocused && !activeJourney && !activeLetterId ? "rgba(127,184,201,0.55)" : "rgba(127,184,201,0.12)",
-            strokeWidth: isJourneyPath || isSelected || isLetterPath ? 3 : isFocused && !activeJourney && !activeLetterId ? 1.8 : 0.7,
+            stroke: isJourneyPath ? "rgba(189,160,109,0.58)" : isSelected || isLetterPath ? "rgba(189,160,109,0.82)" : isFocused && !activeJourney && !activeLetterId ? "rgba(127,184,201,0.48)" : "rgba(127,184,201,0.12)",
+            strokeWidth: isJourneyPath ? 4.2 : isSelected || isLetterPath ? 2.4 : isFocused && !activeJourney && !activeLetterId ? 1.6 : 0.7,
           },
           data: {
             isTraveling,
+            relationType,
+            routeIndex: index,
+            routeOffset: getRouteOffset(index, relationType),
           },
         };
     }) : []),
-    ...((hasSymbolFocus || activeJourney || activeLensMeaningIds.size > 0) && !activeLetterId ? network.meaningLinks.map((link) => {
+    ...((hasSymbolFocus || activeJourney || activeLensMeaningIds.size > 0) && !activeLetterId ? network.meaningLinks.map((link, index) => {
       const isFocused = activeJourney
         ? journeySymbolIds.has(link.symbolId) && journeyMeaningIds.has(link.meaningId)
         : activeLetterId ? letterSymbolIds.has(link.symbolId) : activeLensMeaningIds.has(link.meaningId) || link.symbolId === activeSymbolId;
+      const ports = getConnectionPorts(link.symbolId, link.meaningId);
 
       return {
         id: `${link.symbolId}-${link.meaningId}`,
         source: link.symbolId,
         target: link.meaningId,
-        className: isFocused ? "is-awake" : "is-dormant",
+        sourceHandle: ports.sourceHandle,
+        targetHandle: ports.targetHandle === "top" || ports.targetHandle === "top-left" || ports.targetHandle === "top-right" ? "top" : "left",
+        type: "living",
+        className: `is-meaning-path ${isFocused ? "is-awake" : "is-dormant"}`,
         style: {
           stroke: isFocused ? "rgba(127,184,201,0.42)" : "rgba(127,184,201,0.07)",
           strokeWidth: isFocused ? 1.3 : 0.5,
+        },
+        data: {
+          isTraveling: false,
+          relationType: "meaning" as const,
+          routeIndex: index,
+          routeOffset: getRouteOffset(index, "meaning"),
         },
       };
     }) : []),
