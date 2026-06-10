@@ -18,6 +18,7 @@ import ReactFlow, {
 import { RoomTransition, RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import { useRoomTransition } from "@/hooks/useRoomTransition";
 import { getCodexEntry, resolveCodexEntry } from "@/lib/codex/getCodexEntry";
+import { calculateGematria } from "@/lib/hebrew/gematria";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
@@ -39,7 +40,7 @@ type SymbolNodeData = SymbolMeaningNetworkNode & {
   isRelated: boolean;
   isDimmed: boolean;
   showActions: boolean;
-  activeLens: WaterOrbitNodeId | null;
+  activeLens: SymbolLensMode | null;
   lensLabel?: string;
   lensNote?: string;
   emergenceIndex?: number;
@@ -64,16 +65,27 @@ type LivingConnectionData = {
 };
 
 type SymbolGraphViewMode = "OVERVIEW" | "SYMBOL_FOCUS" | "RELATION_FOCUS";
-type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Orbit" | "Detail" | "Beziehung";
-type WaterOrbitNodeId = "hebrew" | "number" | "meaning" | "torah" | "journey";
+type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Linse" | "Info" | "Beziehung";
+type SymbolLensMode = "hebrew" | "number" | "meaning" | "torah" | "journey" | "room";
 
-type WaterOrbitNode = {
-  id: WaterOrbitNodeId;
+type SymbolLensOrbitNode = {
+  id: SymbolLensMode;
   label: string;
   eyebrow: string;
   preview: string;
-  sourceId: string;
   className: string;
+};
+
+type SymbolLensData = {
+  symbolId: string;
+  nodes: SymbolLensOrbitNode[];
+  labels: Partial<Record<SymbolLensMode, string>>;
+  notes: Partial<Record<SymbolLensMode, string>>;
+  meaningNodeIds: Partial<Record<SymbolLensMode, MeaningNodeId[]>>;
+  journeyPathKeys: Set<string>;
+  scriptureAnchors: string[];
+  journeyTitles: string[];
+  roomHref?: string;
 };
 
 const network = buildSymbolMeaningNetwork();
@@ -123,60 +135,31 @@ const MEANING_NODE_SIZE = 96;
 const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 const LETTER_NODE_PREFIX = "letter:";
 const LETTER_RESONANCE_LIMIT = 3;
-const WATER_LENS_NOTES: Record<WaterOrbitNodeId, string> = {
-  hebrew: "Hebraeische Namen direkt im Netz",
-  number: "Gematria an den Symbolen",
-  meaning: "Bedeutungsfelder als Layer",
-  torah: "Genesis-Anker im Netz",
+const SYMBOL_LENS_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste"];
+const SYMBOL_LENS_MODE_LABELS: Record<SymbolLensMode, string> = {
+  hebrew: "Hebraeisch",
+  number: "Zahl",
+  meaning: "Bedeutung",
+  torah: "Thora",
+  journey: "Journey",
+  room: "Raum",
+};
+const SYMBOL_LENS_MODE_NOTES: Record<SymbolLensMode, string> = {
+  hebrew: "Hebrew Codex direkt im Netz",
+  number: "Gematria am aktiven Symbol",
+  meaning: "Bedeutungsfelder als bestehender Layer",
+  torah: "Schriftanker ohne Detailwelt",
   journey: "Pfade bleiben sichtbar markiert",
+  room: "Symbolraum-Link im Inspector",
 };
-const SYMBOL_LENS_LABELS: Record<WaterOrbitNodeId, Record<string, string>> = {
-  hebrew: {
-    wasser: "מים",
-    licht: "אור",
-    feuer: "אש",
-    wueste: "מדבר",
-    brot: "לחם",
-  },
-  number: {
-    wasser: "90",
-    licht: "207",
-    feuer: "301",
-    wueste: "246",
-    brot: "78",
-  },
-  meaning: {
-    wasser: "Tiefe",
-    licht: "Offenbarung",
-    feuer: "Wandlung",
-    wueste: "Pruefung",
-    brot: "Nahrung",
-  },
-  torah: {
-    wasser: "Genesis 1:2",
-    licht: "Genesis 1:3",
-    feuer: "Exodus 13:21",
-    wueste: "Exodus 16",
-    brot: "Exodus 16:4",
-  },
-  journey: {
-    wasser: "Start",
-    licht: "Sicht",
-    feuer: "Wandlung",
-    wueste: "Mangel",
-    brot: "Gabe",
-  },
+const SYMBOL_LENS_CLASS_NAMES: Record<SymbolLensMode, string> = {
+  journey: "symbol-lens-orbit__node--journey",
+  torah: "symbol-lens-orbit__node--torah",
+  hebrew: "symbol-lens-orbit__node--hebrew",
+  meaning: "symbol-lens-orbit__node--meaning",
+  number: "symbol-lens-orbit__node--number",
+  room: "symbol-lens-orbit__node--room",
 };
-const WATER_LENS_MEANING_IDS: Partial<Record<WaterOrbitNodeId, MeaningNodeId[]>> = {
-  meaning: ["depth", "purification", "revelation", "transformation"],
-  torah: ["depth", "revelation"],
-};
-const WATER_LENS_JOURNEY_PATH_KEYS = new Set([
-  getPathKey("wasser", "licht"),
-  getPathKey("wasser", "feuer"),
-  getPathKey("wueste", "wasser"),
-  getPathKey("wasser", "brot"),
-]);
 const LETTER_RESONANCE_LABELS: Partial<Record<MeaningNodeId, string>> = {
   lack: "Leere",
 };
@@ -226,6 +209,98 @@ function getLetterResonanceLabel(meaningNodeId: MeaningNodeId) {
 
 function getPathKey(from: string, to: string) {
   return [from, to].sort().join(":");
+}
+
+function getJourneyPathKeys(symbolId: string) {
+  return new Set(
+    network.journeys
+      .filter((journey) => journey.symbolPath.includes(symbolId))
+      .flatMap((journey) => journey.symbolPath.slice(1).map((nextSymbolId, index) => getPathKey(journey.symbolPath[index], nextSymbolId))),
+  );
+}
+
+function getSymbolLensData(symbolId: string): SymbolLensData | null {
+  if (!SYMBOL_LENS_SYMBOL_IDS.includes(symbolId)) return null;
+
+  const symbol = network.nodes.find((node) => node.id === symbolId);
+  if (!symbol) return null;
+
+  const codexEntry = getCodexEntry(symbolId);
+  const hebrewProfile = getSymbolHebrewProfile(symbolId);
+  const hebrewWord = hebrewProfile.hebrewWord;
+  const hebrew = hebrewWord?.hebrew ?? symbol.hebrew;
+  const transliteration = hebrewWord?.transliteration ?? symbol.transliteration;
+  const meaningNodeIds = network.meaningLinks
+    .filter((link) => link.symbolId === symbolId)
+    .map((link) => link.meaningId);
+  const scriptureAnchors = [
+    ...(codexEntry?.scriptureAnchors.map((anchor) => anchor.reference) ?? []),
+    ...(hebrewWord?.biblicalReferences.map((reference) => reference.reference) ?? []),
+  ];
+  const uniqueScriptureAnchors = Array.from(new Set(scriptureAnchors));
+  const journeys = network.journeys.filter((journey) => journey.symbolPath.includes(symbolId));
+  const labels: SymbolLensData["labels"] = {};
+  const notes: SymbolLensData["notes"] = {};
+  const lensMeaningNodeIds: SymbolLensData["meaningNodeIds"] = {};
+  const nodes: SymbolLensOrbitNode[] = [];
+
+  const addNode = (mode: SymbolLensMode, eyebrow: string, preview: string) => {
+    labels[mode] = preview;
+    notes[mode] = SYMBOL_LENS_MODE_NOTES[mode];
+    nodes.push({
+      id: mode,
+      label: SYMBOL_LENS_MODE_LABELS[mode],
+      eyebrow,
+      preview,
+      className: SYMBOL_LENS_CLASS_NAMES[mode],
+    });
+  };
+
+  if (hebrew) {
+    addNode("hebrew", transliteration, `${transliteration} / ${hebrew}`);
+    labels.hebrew = hebrew;
+  }
+
+  const gematria = hebrew ? calculateGematria(hebrew) : 0;
+  if (gematria > 0) {
+    addNode("number", "Gematria", String(gematria));
+  }
+
+  if (meaningNodeIds.length > 0) {
+    const primaryMeaning = getMeaningNodeLabel(meaningNodeIds[0]);
+    addNode("meaning", "Meaning Graph", primaryMeaning);
+    lensMeaningNodeIds.meaning = meaningNodeIds;
+  }
+
+  if (uniqueScriptureAnchors.length > 0) {
+    addNode("torah", "Schriftanker", uniqueScriptureAnchors[0]);
+    lensMeaningNodeIds.torah = [
+      ...meaningNodeIds,
+      ...(codexEntry?.meaningFields ?? []),
+    ];
+  }
+
+  if (journeys.length > 0) {
+    addNode("journey", "Resonanzpfad", journeys[0].title);
+    lensMeaningNodeIds.journey = Array.from(new Set(journeys.flatMap((journey) => journey.meaningNodePath)));
+  }
+
+  if (symbol.roomHref || codexEntry?.symbolRoomSlug) {
+    addNode("room", "Symbolraum", symbol.roomHref ?? `/raeume/${codexEntry?.symbolRoomSlug}`);
+    labels.room = "Raum";
+  }
+
+  return {
+    symbolId,
+    nodes,
+    labels,
+    notes,
+    meaningNodeIds: lensMeaningNodeIds,
+    journeyPathKeys: getJourneyPathKeys(symbolId),
+    scriptureAnchors: uniqueScriptureAnchors,
+    journeyTitles: journeys.map((journey) => journey.title),
+    roomHref: symbol.roomHref,
+  };
 }
 
 function JourneySequence({ items }: { items: string[] }) {
@@ -323,71 +398,30 @@ function LivingConnectionEdge({
 
 const nodeTypes = { symbol: SymbolGraphNode, meaning: MeaningGraphNode, letter: LetterGraphNode };
 const edgeTypes = { living: LivingConnectionEdge };
-const WATER_ORBIT_NODES: WaterOrbitNode[] = [
-  {
-    id: "journey",
-    label: "Journey",
-    eyebrow: "Resonanzpfad",
-    preview: "Wasser und Geist",
-    sourceId: "journey-wasser-geist",
-    className: "symbol-water-orbit__node--journey",
-  },
-  {
-    id: "torah",
-    label: "Thora",
-    eyebrow: "Genesis",
-    preview: "Genesis 1:2",
-    sourceId: "genesis-1-2",
-    className: "symbol-water-orbit__node--torah",
-  },
-  {
-    id: "hebrew",
-    label: "Hebraeisch",
-    eyebrow: "Majim",
-    preview: "majim / מים",
-    sourceId: "majim",
-    className: "symbol-water-orbit__node--hebrew",
-  },
-  {
-    id: "meaning",
-    label: "Bedeutung",
-    eyebrow: "Meaning Graph",
-    preview: "Tiefe",
-    sourceId: "tiefe",
-    className: "symbol-water-orbit__node--meaning",
-  },
-  {
-    id: "number",
-    label: "Zahl",
-    eyebrow: "Gematria",
-    preview: "90",
-    sourceId: "zahl-90",
-    className: "symbol-water-orbit__node--number",
-  },
-];
-
-function WaterResonanceOrbit({
-  activeOrbitId,
+function SymbolLensOrbit({
+  lensData,
+  activeLensMode,
   onActivate,
 }: {
-  activeOrbitId: WaterOrbitNodeId | null;
-  onActivate: (nodeId: WaterOrbitNodeId) => void;
+  lensData: SymbolLensData;
+  activeLensMode: SymbolLensMode | null;
+  onActivate: (nodeId: SymbolLensMode) => void;
 }) {
   return (
-    <div className="symbol-water-orbit" aria-label="Wasser Resonanz-Orbit">
-      <div className="symbol-water-orbit__ring" aria-hidden="true" />
-      <div className="symbol-water-orbit__ring symbol-water-orbit__ring--outer" aria-hidden="true" />
-      {WATER_ORBIT_NODES.map((node) => (
+    <div className="symbol-lens-orbit" aria-label={`${getSymbolLabel(lensData.symbolId)} Symbol-Linse`}>
+      <div className="symbol-lens-orbit__ring" aria-hidden="true" />
+      <div className="symbol-lens-orbit__ring symbol-lens-orbit__ring--outer" aria-hidden="true" />
+      {lensData.nodes.map((node) => (
         <button
           key={node.id}
           type="button"
           onClick={() => onActivate(node.id)}
-          aria-pressed={activeOrbitId === node.id}
-          className={`symbol-water-orbit__node ${node.className} ${activeOrbitId === node.id ? "is-active" : ""}`}
+          aria-pressed={activeLensMode === node.id}
+          className={`symbol-lens-orbit__node ${node.className} ${activeLensMode === node.id ? "is-active" : ""}`}
         >
-          <span className="symbol-water-orbit__dot" aria-hidden="true" />
-          <span className="symbol-water-orbit__label">{node.label}</span>
-          <span className="symbol-water-orbit__preview">
+          <span className="symbol-lens-orbit__dot" aria-hidden="true" />
+          <span className="symbol-lens-orbit__label">{node.label}</span>
+          <span className="symbol-lens-orbit__preview">
             <i>{node.eyebrow}</i>
             <strong>{node.preview}</strong>
           </span>
@@ -397,18 +431,22 @@ function WaterResonanceOrbit({
   );
 }
 
-function WaterFocusDetail({
+function SymbolLensFocusDetail({
   activeSymbol,
   connectedPaths,
-  activeLens,
+  lensData,
+  activeLensMode,
   onPreviewPath,
 }: {
   activeSymbol: SymbolMeaningNetworkNode;
   connectedPaths: SymbolMeaningPath[];
-  activeLens: WaterOrbitNodeId | null;
+  lensData: SymbolLensData;
+  activeLensMode: SymbolLensMode | null;
   onPreviewPath: (path: SymbolMeaningPath) => void;
 }) {
   const visiblePaths = connectedPaths.slice(0, 2);
+  const lensNote = activeLensMode ? lensData.notes[activeLensMode] : undefined;
+  const activeLabel = activeLensMode ? SYMBOL_LENS_MODE_LABELS[activeLensMode] : undefined;
 
   return (
     <>
@@ -416,9 +454,20 @@ function WaterFocusDetail({
       <h2 className="mt-4 font-serif text-2xl italic text-foreground-strong">{activeSymbol.label}</h2>
       <p className="symbol-copy mt-4 text-sm">{activeSymbol.shortMeaning}</p>
       <div className="symbol-focus-hints mt-6">
-        <p className="symbol-kicker text-cyan-soft">{activeLens ? "Aktive Linse" : "Orbit waehlen"}</p>
-        <p>{activeLens ? WATER_LENS_NOTES[activeLens] : "Hebraeisch, Zahl, Bedeutung, Thora oder Journey veraendern nur die Betrachtungsebene."}</p>
+        <p className="symbol-kicker text-cyan-soft">{activeLabel ? `${activeLabel}-Linse` : "Linse waehlen"}</p>
+        <p>{lensNote ?? "Hebraeisch, Zahl, Bedeutung, Thora, Journey oder Raum veraendern nur die Betrachtungsebene."}</p>
       </div>
+      {activeLensMode ? (
+        <div className="mt-5 grid gap-2 text-sm text-muted-soft">
+          {activeLensMode === "torah" && lensData.scriptureAnchors.length > 0 ? <p>{lensData.scriptureAnchors.slice(0, 2).join(" / ")}</p> : null}
+          {activeLensMode === "journey" && lensData.journeyTitles.length > 0 ? <p>{lensData.journeyTitles.slice(0, 2).join(" / ")}</p> : null}
+          {activeLensMode === "room" && lensData.roomHref ? (
+            <RoomTransitionButton href={lensData.roomHref} className="symbol-cta w-full">
+              {activeSymbol.label}-Raum oeffnen
+            </RoomTransitionButton>
+          ) : null}
+        </div>
+      ) : null}
       {visiblePaths.length > 0 ? (
         <div className="mt-6 grid gap-2">
           {visiblePaths.map((path) => (
@@ -434,7 +483,7 @@ function WaterFocusDetail({
 }
 
 export default function SymbolNetwork() {
-  const [activeId, setActiveId] = useState("wasser");
+  const [activeSymbolId, setActiveSymbolId] = useState("wasser");
   const [hasSymbolFocus, setHasSymbolFocus] = useState(false);
   const [activePathId, setActivePathId] = useState<string | null>(null);
   const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
@@ -444,20 +493,20 @@ export default function SymbolNetwork() {
   const [isLetterResonanceOpen, setIsLetterResonanceOpen] = useState(false);
   const [activeLetterResonanceId, setActiveLetterResonanceId] = useState<MeaningNodeId | null>(null);
   const [activeLetterSourcePathId, setActiveLetterSourcePathId] = useState<string | null>(null);
-  const [activeWaterOrbitId, setActiveWaterOrbitId] = useState<WaterOrbitNodeId | null>(null);
+  const [activeLensMode, setActiveLensMode] = useState<SymbolLensMode | null>(null);
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
   const { isEntering } = useRoomTransition();
-  const activeSymbol = network.nodes.find((node) => node.id === activeId) ?? network.nodes[0];
+  const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activeLetterSourcePath = network.paths.find((path) => path.id === activeLetterSourcePathId);
-  const activeDisclosureSymbolId = hasSymbolFocus ? activeId : null;
+  const activeDisclosureSymbolId = hasSymbolFocus ? activeSymbolId : null;
   const disclosureSymbolId = activeDisclosureSymbolId;
   const focusedSymbolId = activeDisclosureSymbolId;
   const hasGraphDisclosure = Boolean(disclosureSymbolId || activePathId || activeJourneyId || activeLetterId);
   const hasEdgeDisclosure = Boolean(activeDisclosureSymbolId || activePathId || activeJourneyId || activeLetterId);
   const activeJourney = network.journeys.find((journey) => journey.id === activeJourneyId);
-  const connectedPaths = network.paths.filter((path) => path.from === activeId || path.to === activeId);
+  const connectedPaths = network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId);
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
   const activeLetterNodeId = activeLetterId ? `${LETTER_NODE_PREFIX}${activeLetterId}` : null;
   const relationSymbolIds = useMemo(
@@ -469,16 +518,20 @@ export default function SymbolNetwork() {
     : hasSymbolFocus || activeJourney || activeLetterId
         ? "SYMBOL_FOCUS"
         : "OVERVIEW";
-  const isWaterOrbitVisible = disclosureSymbolId === "wasser"
+  const activeSymbolLensData = useMemo(
+    () => (disclosureSymbolId ? getSymbolLensData(disclosureSymbolId) : null),
+    [disclosureSymbolId],
+  );
+  const isSymbolLensVisible = Boolean(activeSymbolLensData)
     && !activeJourney
     && !activeCodexLetter
     && !activePathId;
-  const activeWaterOrbitNode = isWaterOrbitVisible && activeWaterOrbitId
-    ? WATER_ORBIT_NODES.find((node) => node.id === activeWaterOrbitId)
+  const activeSymbolLensNode = isSymbolLensVisible && activeLensMode && activeSymbolLensData
+    ? activeSymbolLensData.nodes.find((node) => node.id === activeLensMode)
     : undefined;
-  const activeWaterLensMeaningIds = useMemo(
-    () => new Set(activeWaterOrbitId ? WATER_LENS_MEANING_IDS[activeWaterOrbitId] ?? [] : []),
-    [activeWaterOrbitId],
+  const activeLensMeaningIds = useMemo(
+    () => new Set(activeLensMode && activeSymbolLensData ? activeSymbolLensData.meaningNodeIds[activeLensMode] ?? [] : []),
+    [activeLensMode, activeSymbolLensData],
   );
   const letterSymbolIds = useMemo(
     () => new Set(activeLetterId
@@ -553,10 +606,10 @@ export default function SymbolNetwork() {
   const activeBridgeOrEphemeral: MeaningBridge | undefined = activeBridge;
   const mobileLayerStep: SymbolMobileLayer = activePath
     ? "Beziehung"
-    : activeWaterOrbitId
-      ? "Orbit"
-      : isWaterOrbitVisible
-        ? "Orbit"
+    : activeLensMode
+      ? "Info"
+      : isSymbolLensVisible
+        ? "Linse"
         : hasSymbolFocus || activeLetterId
         ? "Symbol"
         : "Uebersicht";
@@ -594,8 +647,8 @@ export default function SymbolNetwork() {
       }
 
       if (graphViewMode === "SYMBOL_FOCUS") {
-        const center = getNodeCenter(activeId);
-        instance.setCenter(center.x, center.y, { zoom: activeId === "wasser" ? 1.04 : 0.86, duration: 680 });
+        const center = getNodeCenter(activeSymbolId);
+        instance.setCenter(center.x, center.y, { zoom: isSymbolLensVisible ? 1.04 : 0.86, duration: 680 });
         return;
       }
 
@@ -609,7 +662,7 @@ export default function SymbolNetwork() {
     });
 
     return () => window.cancelAnimationFrame(frameId);
-  }, [activeId, activeLetterId, activeLetterNodeId, activePath, graphViewMode, letterSymbolIds]);
+  }, [activeLetterId, activeLetterNodeId, activePath, activeSymbolId, graphViewMode, isSymbolLensVisible, letterSymbolIds]);
 
   const relatedIds = useMemo(
     () => activeJourney
@@ -676,7 +729,7 @@ export default function SymbolNetwork() {
         ];
       }
 
-      const showMeaningNodes = Boolean(hasSymbolFocus || activePathId || activeJourney || activeWaterLensMeaningIds.size > 0);
+      const showMeaningNodes = Boolean(hasSymbolFocus || activePathId || activeJourney || activeLensMeaningIds.size > 0);
 
       return [
         ...network.nodes.map((node) => {
@@ -686,11 +739,13 @@ export default function SymbolNetwork() {
               ? journeySymbolIds.has(node.id)
               : activePath
                 ? relationSymbolIds.has(node.id)
-                : activeWaterOrbitId === "journey"
+                : isSymbolLensVisible && activeLensMode === "journey"
                   ? MAIN_SYMBOL_IDS.includes(node.id)
-                : hasSymbolFocus && node.id === activeId;
+                : hasSymbolFocus && node.id === activeSymbolId;
           const isPreviewedSymbol = false;
-          const lensLabel = activeWaterOrbitId ? SYMBOL_LENS_LABELS[activeWaterOrbitId]?.[node.id] : undefined;
+          const lensLabel = activeLensMode && node.id === activeSymbolId
+            ? activeSymbolLensData?.labels[activeLensMode]
+            : undefined;
 
           return {
             id: node.id,
@@ -710,11 +765,11 @@ export default function SymbolNetwork() {
                   ? !journeySymbolIds.has(node.id)
                   : activePath
                     ? !relationSymbolIds.has(node.id)
-                  : isWaterOrbitVisible
+                  : isSymbolLensVisible
                     ? false
                     : hasGraphDisclosure && node.id !== disclosureSymbolId && !relatedIds.has(node.id),
-              showActions: (isActiveSymbol || isPreviewedSymbol) && !isWaterOrbitVisible,
-              activeLens: isWaterOrbitVisible ? activeWaterOrbitId : null,
+              showActions: (isActiveSymbol || isPreviewedSymbol) && !isSymbolLensVisible,
+              activeLens: isSymbolLensVisible && node.id === activeSymbolId ? activeLensMode : null,
               lensLabel,
               lensNote: undefined,
               emergenceIndex: activeLetterId && letterSymbolIds.has(node.id) ? letterSymbols.findIndex((symbol) => symbol.id === node.id) : undefined,
@@ -729,13 +784,13 @@ export default function SymbolNetwork() {
           data: {
             ...node,
             kind: "meaning" as const,
-            isRelated: activeLetterId ? letterMeaningIds.has(node.id) : activeWaterLensMeaningIds.has(node.id) || relatedIds.has(node.id),
-            isDimmed: activeLetterId ? !letterMeaningIds.has(node.id) : isWaterOrbitVisible ? !activeWaterLensMeaningIds.has(node.id) && !relatedIds.has(node.id) : !relatedIds.has(node.id),
+            isRelated: activeLetterId ? letterMeaningIds.has(node.id) : activeLensMeaningIds.has(node.id) || relatedIds.has(node.id),
+            isDimmed: activeLetterId ? !letterMeaningIds.has(node.id) : isSymbolLensVisible ? !activeLensMeaningIds.has(node.id) && !relatedIds.has(node.id) : !relatedIds.has(node.id),
           },
         })) : []),
       ];
     },
-    [activeCodexLetter, activeId, activeJourney, activeLetterId, activeLetterNodeId, activePath, activePathId, activeWaterLensMeaningIds, activeWaterOrbitId, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isLetterResonanceOpen, isWaterOrbitVisible, journeySymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds]
+    [activeCodexLetter, activeJourney, activeLensMeaningIds, activeLensMode, activeLetterId, activeLetterNodeId, activePath, activePathId, activeSymbolId, activeSymbolLensData, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isLetterResonanceOpen, isSymbolLensVisible, journeySymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds]
   );
 
   const edges: Edge[] = [
@@ -769,8 +824,8 @@ export default function SymbolNetwork() {
         const isFocused = focusedSymbolId ? path.from === focusedSymbolId || path.to === focusedSymbolId : false;
         const isSelected = path.id === activePathId || path.id === pendingPathId;
         const pathKey = getPathKey(path.from, path.to);
-        const isWaterLensPath = isWaterOrbitVisible && activeWaterOrbitId === "journey" && WATER_LENS_JOURNEY_PATH_KEYS.has(pathKey);
-        const isJourneyPath = journeyPathKeys.has(pathKey) || isWaterLensPath;
+        const isLensJourneyPath = isSymbolLensVisible && activeLensMode === "journey" && Boolean(activeSymbolLensData?.journeyPathKeys.has(pathKey));
+        const isJourneyPath = journeyPathKeys.has(pathKey) || isLensJourneyPath;
         const isTraveling = path.id === travelingPathId;
         const isLetterPath = Boolean(activeLetterId)
           && letterSymbolIds.has(path.from)
@@ -790,10 +845,10 @@ export default function SymbolNetwork() {
           },
         };
     }) : []),
-    ...((hasSymbolFocus || activeJourney || activeWaterLensMeaningIds.size > 0) && !activeLetterId ? network.meaningLinks.map((link) => {
+    ...((hasSymbolFocus || activeJourney || activeLensMeaningIds.size > 0) && !activeLetterId ? network.meaningLinks.map((link) => {
       const isFocused = activeJourney
         ? journeySymbolIds.has(link.symbolId) && journeyMeaningIds.has(link.meaningId)
-        : activeLetterId ? letterSymbolIds.has(link.symbolId) : activeWaterLensMeaningIds.has(link.meaningId) || link.symbolId === activeId;
+        : activeLetterId ? letterSymbolIds.has(link.symbolId) : activeLensMeaningIds.has(link.meaningId) || link.symbolId === activeSymbolId;
 
       return {
         id: `${link.symbolId}-${link.meaningId}`,
@@ -809,7 +864,7 @@ export default function SymbolNetwork() {
   ];
 
   function focusSymbol(symbolId: string) {
-    setActiveId(symbolId);
+    setActiveSymbolId(symbolId);
     setHasSymbolFocus(true);
     setActivePathId(null);
     setActiveJourneyId(null);
@@ -819,13 +874,12 @@ export default function SymbolNetwork() {
     setIsLetterResonanceOpen(false);
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
-    setActiveWaterOrbitId(null);
+    setActiveLensMode(null);
   }
 
-  function activateWaterOrbit(nodeId: WaterOrbitNodeId) {
-    setActiveWaterOrbitId(nodeId);
+  function activateSymbolLens(nodeId: SymbolLensMode) {
+    setActiveLensMode(nodeId);
     setHasSymbolFocus(true);
-    setActiveId("wasser");
     setActivePathId(null);
     setPendingPathId(null);
     setTravelingPathId(null);
@@ -851,12 +905,12 @@ export default function SymbolNetwork() {
     setPendingPathId(null);
     setTravelingPathId(null);
     setActiveJourneyId(null);
-    setActiveWaterOrbitId(null);
+    setActiveLensMode(null);
     setHasSymbolFocus(true);
   }
 
   function previewPath(path: SymbolMeaningPath) {
-    setActiveWaterOrbitId(null);
+    setActiveLensMode(null);
     setPendingPathId(path.id);
     setActivePathId(path.id);
     setActiveJourneyId(null);
@@ -887,8 +941,8 @@ export default function SymbolNetwork() {
                 key={node.id}
                 type="button"
                 onClick={() => focusSymbol(node.id)}
-                aria-pressed={hasSymbolFocus && activeId === node.id}
-                className={hasSymbolFocus && activeId === node.id ? "is-active" : ""}
+                aria-pressed={hasSymbolFocus && activeSymbolId === node.id}
+                className={hasSymbolFocus && activeSymbolId === node.id ? "is-active" : ""}
               >
                 {node.label}
               </button>
@@ -916,7 +970,7 @@ export default function SymbolNetwork() {
           ) : null}
 
           <div
-            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden ${isWaterOrbitVisible ? "is-water-focused" : ""}`}
+            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden ${isSymbolLensVisible ? "is-symbol-lens-focused" : ""}`}
           >
             <ReactFlow
               nodes={nodes}
@@ -950,13 +1004,13 @@ export default function SymbolNetwork() {
               }}
               className="symbol-network-flow bg-transparent"
             />
-            {isWaterOrbitVisible ? (
-              <WaterResonanceOrbit activeOrbitId={activeWaterOrbitId} onActivate={activateWaterOrbit} />
+            {isSymbolLensVisible && activeSymbolLensData ? (
+              <SymbolLensOrbit lensData={activeSymbolLensData} activeLensMode={activeLensMode} onActivate={activateSymbolLens} />
             ) : null}
           </div>
 
           <div className="symbol-mobile-layer-stepper mt-3 md:hidden" aria-label="Mobile Symbolnetz-Ebene">
-            {(["Uebersicht", "Symbol", "Orbit", "Detail", "Beziehung"] as const).map((layer) => (
+            {(["Uebersicht", "Symbol", "Linse", "Info", "Beziehung"] as const).map((layer) => (
               <span key={layer} className={mobileLayerStep === layer ? "is-active" : ""}>
                 {layer}
               </span>
@@ -964,15 +1018,16 @@ export default function SymbolNetwork() {
           </div>
         </div>
 
-        <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isWaterOrbitVisible ? "symbol-detail-panel--water-focus" : ""}`}>
+        <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isSymbolLensVisible ? "symbol-detail-panel--lens-focus" : ""}`}>
           <p className="symbol-kicker text-cyan-soft">
-            {activeWaterOrbitNode ? `Wasser-Linse: ${activeWaterOrbitNode.label}` : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
+            {activeSymbolLensNode ? `${activeSymbol.label}: ${activeSymbolLensNode.label}` : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
           </p>
-          {isWaterOrbitVisible ? (
-            <WaterFocusDetail
+          {isSymbolLensVisible && activeSymbolLensData ? (
+            <SymbolLensFocusDetail
               activeSymbol={activeSymbol}
               connectedPaths={connectedPaths}
-              activeLens={activeWaterOrbitId}
+              lensData={activeSymbolLensData}
+              activeLensMode={activeLensMode}
               onPreviewPath={previewPath}
             />
           ) : activeJourney ? (

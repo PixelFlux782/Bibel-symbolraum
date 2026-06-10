@@ -2497,7 +2497,7 @@ body {
   display: none;
 }
 
-.symbol-constellation-field.is-water-focused {
+.symbol-constellation-field.is-symbol-lens-focused {
   height: clamp(32rem, calc(100dvh - 11.2rem), 48rem) !important;
   min-height: 0;
   background:
@@ -2508,27 +2508,27 @@ body {
     radial-gradient(circle at 68% 66%, rgba(var(--gold-rgb), 0.022), transparent 24%);
 }
 
-.symbol-constellation-field.is-water-focused .react-flow__node:not(:has(.symbol-constellation-node.is-active, .symbol-constellation-node.is-previewed, .symbol-constellation-node.is-related)) {
+.symbol-constellation-field.is-symbol-lens-focused .react-flow__node:not(:has(.symbol-constellation-node.is-active, .symbol-constellation-node.is-previewed, .symbol-constellation-node.is-related)) {
   opacity: 0.82 !important;
   filter: none;
 }
 
-.symbol-constellation-field.is-water-focused .react-flow__edge,
-.symbol-constellation-field.is-water-focused .react-flow__edge-text,
-.symbol-constellation-field.is-water-focused .react-flow__edgeupdater {
+.symbol-constellation-field.is-symbol-lens-focused .react-flow__edge,
+.symbol-constellation-field.is-symbol-lens-focused .react-flow__edge-text,
+.symbol-constellation-field.is-symbol-lens-focused .react-flow__edgeupdater {
   opacity: 1 !important;
 }
 
-.symbol-constellation-field.is-water-focused .react-flow__nodes {
+.symbol-constellation-field.is-symbol-lens-focused .react-flow__nodes {
   z-index: 4;
 }
 
-.symbol-constellation-field.is-water-focused .react-flow__edges {
+.symbol-constellation-field.is-symbol-lens-focused .react-flow__edges {
   z-index: 1;
   pointer-events: none;
 }
 
-.symbol-water-orbit {
+.symbol-lens-orbit {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -2537,10 +2537,10 @@ body {
   height: 9.25rem;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  animation: symbol-water-orbit-arrive 1100ms ease both;
+  animation: symbol-lens-orbit-arrive 1100ms ease both;
 }
 
-.symbol-water-orbit__ring {
+.symbol-lens-orbit__ring {
   position: absolute;
   inset: 2.65rem;
   border: 1px solid rgba(var(--gold-rgb), 0.1);
@@ -2551,14 +2551,14 @@ body {
   pointer-events: none;
 }
 
-.symbol-water-orbit__ring--outer {
+.symbol-lens-orbit__ring--outer {
   inset: 1.4rem;
   border-color: rgba(var(--cyan-rgb), 0.055);
   box-shadow: 0 0 1.8rem rgba(var(--cyan-rgb), 0.03);
 }
 
-.symbol-water-orbit__ring::before,
-.symbol-water-orbit__ring::after {
+.symbol-lens-orbit__ring::before,
+.symbol-lens-orbit__ring::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -2569,11 +2569,11 @@ body {
   transform-origin: top center;
 }
 
-.symbol-water-orbit__ring::after {
+.symbol-lens-orbit__ring::after {
   transform: rotate(90deg);
 }
 
-.symbol-water-orbit__node {
+.symbol-lens-orbit__node {
   position: absolute;
   display: grid;
   width: 3.5rem;
@@ -2586,32 +2586,37 @@ body {
   transition: color 520ms ease, filter 520ms ease;
 }
 
-.symbol-water-orbit__node--journey {
+.symbol-lens-orbit__node--journey {
   left: 50%;
   top: 5%;
 }
 
-.symbol-water-orbit__node--torah {
+.symbol-lens-orbit__node--torah {
   left: 91%;
   top: 35%;
 }
 
-.symbol-water-orbit__node--hebrew {
+.symbol-lens-orbit__node--hebrew {
   left: 76%;
   top: 91%;
 }
 
-.symbol-water-orbit__node--meaning {
+.symbol-lens-orbit__node--meaning {
   left: 24%;
   top: 91%;
 }
 
-.symbol-water-orbit__node--number {
+.symbol-lens-orbit__node--number {
   left: 9%;
   top: 35%;
 }
 
-.symbol-water-orbit__dot {
+.symbol-lens-orbit__node--room {
+  left: 50%;
+  top: 112%;
+}
+
+.symbol-lens-orbit__dot {
   width: 0.48rem;
   height: 0.48rem;
   border: 1px solid rgba(var(--gold-rgb), 0.34);
@@ -2622,7 +2627,7 @@ body {
   transition: border-color 520ms ease, box-shadow 520ms ease, transform 520ms ease;
 }
 
-.symbol-water-orbit__label {
+.symbol-lens-orbit__label {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: 0.68rem;
   font-style: italic;
@@ -2632,7 +2637,7 @@ body {
   transition: opacity 220ms ease, transform 220ms ease;
 }
 
-.symbol-water-orbit__preview {
+.symbol-lens-orbit__preview {
   position: absolute;
   top: calc(100% + 0.45rem);
   display: grid;
@@ -2648,24 +2653,24 @@ body {
   transition: opacity 260ms ease, transform 260ms ease;
 }
 
-.symbol-water-orbit__node--journey .symbol-water-orbit__preview,
-.symbol-water-orbit__node--torah .symbol-water-orbit__preview,
-.symbol-water-orbit__node--number .symbol-water-orbit__preview {
+.symbol-lens-orbit__node--journey .symbol-lens-orbit__preview,
+.symbol-lens-orbit__node--torah .symbol-lens-orbit__preview,
+.symbol-lens-orbit__node--number .symbol-lens-orbit__preview {
   top: auto;
   bottom: calc(100% + 0.5rem);
   transform: translateY(-0.35rem);
 }
 
-.symbol-water-orbit__node--torah .symbol-water-orbit__preview,
-.symbol-water-orbit__node--hebrew .symbol-water-orbit__preview {
+.symbol-lens-orbit__node--torah .symbol-lens-orbit__preview,
+.symbol-lens-orbit__node--hebrew .symbol-lens-orbit__preview {
   right: 0;
 }
 
-.symbol-water-orbit__node--number .symbol-water-orbit__preview {
+.symbol-lens-orbit__node--number .symbol-lens-orbit__preview {
   left: 0;
 }
 
-.symbol-water-orbit__preview i {
+.symbol-lens-orbit__preview i {
   color: rgba(var(--cyan-rgb), 0.7);
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.56rem;
@@ -2674,7 +2679,7 @@ body {
   text-transform: uppercase;
 }
 
-.symbol-water-orbit__preview strong {
+.symbol-lens-orbit__preview strong {
   color: rgba(var(--foreground-rgb), 0.86);
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: 0.86rem;
@@ -2683,22 +2688,22 @@ body {
   line-height: 1.3;
 }
 
-.symbol-water-orbit__node:hover,
-.symbol-water-orbit__node:focus-visible,
-.symbol-water-orbit__node.is-active {
+.symbol-lens-orbit__node:hover,
+.symbol-lens-orbit__node:focus-visible,
+.symbol-lens-orbit__node.is-active {
   color: rgba(var(--gold-rgb), 0.92);
   filter: drop-shadow(0 0 1.1rem rgba(var(--gold-rgb), 0.18));
 }
 
-.symbol-water-orbit__node:hover .symbol-water-orbit__label,
-.symbol-water-orbit__node:focus-visible .symbol-water-orbit__label {
+.symbol-lens-orbit__node:hover .symbol-lens-orbit__label,
+.symbol-lens-orbit__node:focus-visible .symbol-lens-orbit__label {
   opacity: 1;
   transform: translateY(0);
 }
 
-.symbol-water-orbit__node:hover .symbol-water-orbit__dot,
-.symbol-water-orbit__node:focus-visible .symbol-water-orbit__dot,
-.symbol-water-orbit__node.is-active .symbol-water-orbit__dot {
+.symbol-lens-orbit__node:hover .symbol-lens-orbit__dot,
+.symbol-lens-orbit__node:focus-visible .symbol-lens-orbit__dot,
+.symbol-lens-orbit__node.is-active .symbol-lens-orbit__dot {
   border-color: rgba(var(--gold-rgb), 0.72);
   box-shadow:
     0 0 1.8rem rgba(var(--gold-rgb), 0.34),
@@ -2706,13 +2711,13 @@ body {
   transform: scale(1.18);
 }
 
-.symbol-water-orbit__node:hover .symbol-water-orbit__preview,
-.symbol-water-orbit__node:focus-visible .symbol-water-orbit__preview {
+.symbol-lens-orbit__node:hover .symbol-lens-orbit__preview,
+.symbol-lens-orbit__node:focus-visible .symbol-lens-orbit__preview {
   opacity: 1;
   transform: translateY(0);
 }
 
-.symbol-water-mobile-trace {
+.symbol-lens-mobile-trace {
   display: grid;
   justify-items: center;
 }
@@ -2742,7 +2747,7 @@ body {
   color: rgba(var(--gold-rgb), 0.86);
 }
 
-.symbol-water-mobile-trace__step {
+.symbol-lens-mobile-trace__step {
   display: grid;
   width: 100%;
   min-height: 6.8rem;
@@ -2757,7 +2762,7 @@ body {
   text-align: center;
 }
 
-.symbol-water-mobile-trace__step span {
+.symbol-lens-mobile-trace__step span {
   color: rgba(var(--gold-rgb), 0.9);
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
   font-size: 1.85rem;
@@ -2765,7 +2770,7 @@ body {
   line-height: 1;
 }
 
-.symbol-water-mobile-trace__step strong {
+.symbol-lens-mobile-trace__step strong {
   margin-top: 0.5rem;
   color: rgba(var(--foreground-rgb), 0.86);
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
@@ -2775,7 +2780,7 @@ body {
   line-height: 1.25;
 }
 
-.symbol-water-mobile-trace__step i {
+.symbol-lens-mobile-trace__step i {
   margin-top: 0.28rem;
   color: rgba(var(--cyan-rgb), 0.72);
   font-family: var(--font-sans), system-ui, sans-serif;
@@ -2785,13 +2790,13 @@ body {
   text-transform: uppercase;
 }
 
-.symbol-water-mobile-trace__thread {
+.symbol-lens-mobile-trace__thread {
   height: 1.7rem;
   width: 1px;
   background: linear-gradient(180deg, rgba(var(--gold-rgb), 0.28), rgba(var(--cyan-rgb), 0.08));
 }
 
-.symbol-water-mobile-trace__unfold {
+.symbol-lens-mobile-trace__unfold {
   width: min(100%, 18rem);
   min-height: 3.15rem;
   border-top: 1px solid rgba(var(--gold-rgb), 0.1);
@@ -3243,7 +3248,7 @@ body {
   scrollbar-gutter: stable;
 }
 
-.symbol-detail-panel--water-focus {
+.symbol-detail-panel--lens-focus {
   max-height: calc(100dvh - 6.25rem);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -3759,7 +3764,7 @@ body {
   to { opacity: 1; transform: scale(1); filter: none; }
 }
 
-@keyframes symbol-water-orbit-arrive {
+@keyframes symbol-lens-orbit-arrive {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); filter: blur(8px); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: none; }
 }
@@ -3996,7 +4001,7 @@ body {
   .living-connection-label.is-traveling,
   .letter-emergence-center,
   .letter-emergence-symbol,
-  .symbol-water-orbit,
+  .symbol-lens-orbit,
   .letter-emergence-mobile__symbol,
   .meaning-transition-scene__symbol--emerging,
   .room-transition,
