@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/preserve-manual-memoization */
+
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
@@ -31,6 +33,14 @@ import {
   type SymbolMeaningNetworkNode,
   type SymbolMeaningPath,
 } from "@/lib/meaning/buildSymbolMeaningNetwork";
+import {
+  getAllResonanceConnections,
+  getJourneysForNode,
+  getResonanceJourney,
+  type ResonanceConnection,
+  type ResonanceJourney,
+  type ResonanceType,
+} from "@/lib/resonance";
 import type { MeaningNodeId } from "@/types/meaningGraph";
 
 type SymbolNodeData = SymbolMeaningNetworkNode & {
@@ -69,6 +79,7 @@ type FirstResonanceData = {
 type LivingConnectionData = {
   isTraveling: boolean;
   relationType: "symbol" | "letter" | "meaning" | "journey";
+  resonanceType?: ResonanceType;
   routeIndex: number;
   routeOffset: number;
 };
@@ -99,6 +110,7 @@ type SymbolLensData = {
 };
 
 const network = buildSymbolMeaningNetwork();
+const resonanceConnections = getAllResonanceConnections();
 const positions: Record<string, { x: number; y: number }> = {
   wasser: { x: 90, y: 280 },
   licht: { x: 700, y: 70 },
@@ -146,6 +158,10 @@ const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 const LETTER_NODE_PREFIX = "letter:";
 const LETTER_RESONANCE_LIMIT = 3;
 const SYMBOL_LENS_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste"];
+const CURATED_RESONANCE_JOURNEY_ID = "journey-wasser-wueste-brot";
+const CURATED_RESONANCE_PRIMARY_CONNECTION_IDS = ["resonance-wasser-wueste", "resonance-wueste-brot"];
+const CURATED_RESONANCE_SECONDARY_CONNECTION_IDS = ["resonance-wasser-brot"];
+const CURATED_RESONANCE_INSCRIPTION = "Wasser ist Ursprung. Die Wueste ist der Weg. Das Brot ist die Erfuellung.";
 const FIRST_RESONANCE_BY_SYMBOL: Partial<Record<string, string>> = {
   wasser: "mem",
   licht: "aleph",
@@ -184,13 +200,10 @@ const LETTER_RESONANCE_PRIORITY: Partial<Record<string, MeaningNodeId[]>> = {
 };
 const PATH_RESONANCE_FALLBACKS: Record<string, string> = {
   "wasser:licht": "Licht macht sichtbar,\nwas im Wasser verborgen ruht.",
-  "wasser:wueste": "Erst die Leere zeigt,\nwonach die Tiefe sucht.",
-  "brot:wueste": "Im Mangel wird Versorgung\nals Gabe sichtbar.",
   "feuer:licht": "Feuer verwandelt,\nLicht offenbart.",
   "feuer:wasser": "Wasser birgt.\nFeuer wandelt.",
   "feuer:wueste": "In der Leere brennt,\nwas den Weg verwandelt.",
   "licht:wueste": "In der Orientierungslosigkeit\nwird Richtung sichtbar.",
-  "brot:wasser": "Was aus der Tiefe kommt,\nwird zur Gabe.",
   "brot:licht": "Erkenntnis wird Nahrung,\nwenn sie geteilt wird.",
   "brot:feuer": "Was verwandelt wird,\nkann nähren.",
 };
@@ -307,6 +320,10 @@ function getPathKey(from: string, to: string) {
   return [from, to].sort().join(":");
 }
 
+function getResonanceConnectionForPath(from: string, to: string): ResonanceConnection | undefined {
+  return resonanceConnections.find((connection) => getPathKey(connection.sourceId, connection.targetId) === getPathKey(from, to));
+}
+
 function compactResonanceText(text: string) {
   const normalizedLines = text
     .split(/\r?\n/)
@@ -322,11 +339,12 @@ function compactResonanceText(text: string) {
   return compacted.length <= 120 ? compacted : `${compacted.slice(0, 117).trimEnd()}...`;
 }
 
-function getPathResonanceText(path: SymbolMeaningPath, bridge?: MeaningBridge) {
+function getPathResonanceText(path: SymbolMeaningPath, bridge?: MeaningBridge, resonanceConnection?: ResonanceConnection) {
   const bridgeDescription = bridge && "description" in bridge
     ? (bridge as MeaningBridge & { description?: string }).description
     : undefined;
-  const sourceText = bridge?.summary
+  const sourceText = resonanceConnection?.shortResonance
+    ?? bridge?.summary
     ?? bridgeDescription
     ?? bridge?.title
     ?? PATH_RESONANCE_FALLBACKS[getPathKey(path.from, path.to)]
@@ -335,6 +353,25 @@ function getPathResonanceText(path: SymbolMeaningPath, bridge?: MeaningBridge) {
     ?? `${getSymbolLabel(path.from)} und ${getSymbolLabel(path.to)} gehoeren in einer gemeinsamen Bedeutung zusammen.`;
 
   return compactResonanceText(sourceText);
+}
+
+function getResonanceStroke(
+  resonanceType: ResonanceType | undefined,
+  state: "selected" | "focused" | "dormant",
+) {
+  if (resonanceType === "story") {
+    return state === "dormant" ? "rgba(189,160,109,0.2)" : state === "focused" ? "rgba(189,160,109,0.58)" : "rgba(211,180,112,0.86)";
+  }
+
+  if (resonanceType === "meaning") {
+    return state === "dormant" ? "rgba(127,184,201,0.13)" : state === "focused" ? "rgba(127,184,201,0.48)" : "rgba(151,204,203,0.74)";
+  }
+
+  if (resonanceType === "polarity") {
+    return state === "dormant" ? "rgba(189,160,109,0.16)" : state === "focused" ? "rgba(127,184,201,0.48)" : "rgba(221,194,128,0.78)";
+  }
+
+  return state === "dormant" ? "rgba(127,184,201,0.12)" : state === "focused" ? "rgba(127,184,201,0.48)" : "rgba(189,160,109,0.82)";
 }
 
 function getJourneyPathKeys(symbolId: string) {
@@ -567,6 +604,9 @@ function LivingConnectionEdge({
   const curveX = midpointX + normalX * (routeOffset + outwardLift);
   const curveY = midpointY + normalY * (routeOffset + outwardLift);
   const edgePath = `M ${sourceX},${sourceY} Q ${curveX},${curveY} ${targetX},${targetY}`;
+  const edgeStyle = data?.resonanceType === "polarity"
+    ? { ...style, strokeDasharray: "8 7" }
+    : style;
 
   if (relationType === "journey") {
     return (
@@ -580,12 +620,12 @@ function LivingConnectionEdge({
             filter: "blur(3px)",
           }}
         />
-        <BaseEdge id={id} path={edgePath} style={style} />
+        <BaseEdge id={id} path={edgePath} style={edgeStyle} />
       </>
     );
   }
 
-  return <BaseEdge id={id} path={edgePath} style={style} />;
+  return <BaseEdge id={id} path={edgePath} style={edgeStyle} />;
 }
 
 const nodeTypes = { symbol: SymbolGraphNode, meaning: MeaningGraphNode, letter: LetterGraphNode };
@@ -680,6 +720,41 @@ function SymbolLensFocusDetail({
   );
 }
 
+function ResonanceJourneyDetail({
+  journey,
+  connections,
+}: {
+  journey: ResonanceJourney;
+  connections: ResonanceConnection[];
+}) {
+  return (
+    <>
+      <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{journey.title}</h2>
+      <p className="symbol-copy mt-5 text-lg">{journey.summary.replace(/\s*\n\s*/g, " ")}</p>
+      <div className="mt-7 border-t border-white/[0.055] pt-5">
+        <p className="symbol-kicker text-cyan-soft">Schritte</p>
+        <p className="mt-4 font-serif text-xl italic leading-relaxed text-gold/80">
+          <JourneySequence items={journey.nodePath.map(getSymbolLabel)} />
+        </p>
+      </div>
+      <div className="mt-7 border-t border-white/[0.055] pt-5 max-md:hidden">
+        <p className="symbol-kicker text-cyan-soft">Connection-Resonanzen</p>
+        <div className="mt-4 grid gap-3">
+          {connections.map((connection) => (
+            <div key={connection.id} className="border-l border-gold/20 bg-white/[0.018] px-4 py-3">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">
+                {getSymbolLabel(connection.sourceId)} <span className="text-gold/65">&rarr;</span> {getSymbolLabel(connection.targetId)}
+              </p>
+              <h3 className="mt-2 font-serif text-xl italic text-foreground-strong/90">{connection.title}</h3>
+              <p className="symbol-copy mt-2 text-sm">{connection.shortResonance}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function SymbolNetwork() {
   const [activeSymbolId, setActiveSymbolId] = useState("wasser");
   const [hasSymbolFocus, setHasSymbolFocus] = useState(false);
@@ -693,6 +768,7 @@ export default function SymbolNetwork() {
   const [activeLetterSourcePathId, setActiveLetterSourcePathId] = useState<string | null>(null);
   const [activeLensMode, setActiveLensMode] = useState<SymbolLensMode | null>(null);
   const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(null);
+  const [activeResonanceJourneyId, setActiveResonanceJourneyId] = useState<string | null>(null);
   const [revealedResonanceId, setRevealedResonanceId] = useState<string | null>(null);
   const [resonanceHintVisible, setResonanceHintVisible] = useState(false);
   const [resonanceFocusTick, setResonanceFocusTick] = useState(0);
@@ -702,6 +778,8 @@ export default function SymbolNetwork() {
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activePath = network.paths.find((path) => path.id === activePathId);
+  const activePathFrom = activePath?.from;
+  const activePathTo = activePath?.to;
   const activeLetterSourcePath = network.paths.find((path) => path.id === activeLetterSourcePathId);
   const firstResonanceLetterId = FIRST_RESONANCE_BY_SYMBOL[activeSymbolId] ?? null;
   const firstResonanceLetter = firstResonanceLetterId
@@ -710,18 +788,48 @@ export default function SymbolNetwork() {
   const activeDisclosureSymbolId = hasSymbolFocus ? activeSymbolId : null;
   const disclosureSymbolId = activeDisclosureSymbolId;
   const focusedSymbolId = activeDisclosureSymbolId;
-  const hasGraphDisclosure = Boolean(disclosureSymbolId || activePathId || activeJourneyId || activeLetterId);
-  const hasEdgeDisclosure = Boolean(activeDisclosureSymbolId || activePathId || activeJourneyId || activeLetterId);
   const activeJourney = network.journeys.find((journey) => journey.id === activeJourneyId);
+  const activeJourneySymbolPathKey = activeJourney?.symbolPath.join("|") ?? "";
+  const activeResonanceJourney = activeResonanceJourneyId ? getResonanceJourney(activeResonanceJourneyId) : undefined;
+  const activeResonanceJourneyNodePathKey = activeResonanceJourney?.nodePath.join("|") ?? "";
+  const discoverableResonanceJourney = hasSymbolFocus
+    ? getJourneysForNode(activeSymbolId).find((journey) => journey.id === CURATED_RESONANCE_JOURNEY_ID)
+    : undefined;
+  const showResonanceJourneyOption = Boolean(
+    discoverableResonanceJourney
+    && !activeResonanceJourney
+    && !activeJourney
+    && !activePath
+    && !activeLetterId
+    && !isLetterResonanceOpen,
+  );
+  const activeResonanceJourneyConnections = activeResonanceJourney
+    ? activeResonanceJourney.connectionIds.flatMap((connectionId) => {
+      const connection = resonanceConnections.find((item) => item.id === connectionId);
+      return connection ? [connection] : [];
+    })
+    : [];
+  const activeResonancePrimaryConnections = activeResonanceJourneyConnections.filter((connection) => CURATED_RESONANCE_PRIMARY_CONNECTION_IDS.includes(connection.id));
+  const activeResonanceSecondaryConnections = activeResonanceJourneyConnections.filter((connection) => CURATED_RESONANCE_SECONDARY_CONNECTION_IDS.includes(connection.id));
+  const activeResonanceJourneySymbolIds = useMemo(
+    () => new Set(activeResonanceJourneyNodePathKey ? activeResonanceJourneyNodePathKey.split("|") : []),
+    [activeResonanceJourneyNodePathKey],
+  );
+  const hasGraphDisclosure = Boolean(disclosureSymbolId || activePathId || activeJourneyId || activeLetterId || activeResonanceJourney);
+  const hasEdgeDisclosure = Boolean(activeDisclosureSymbolId || activePathId || activeJourneyId || activeLetterId || activeResonanceJourney);
   const activeBridge = activePath
     ? getBridgeBySourceAndTarget(activePath.from as string, activePath.to as string) ?? getBridgeBySourceAndTarget(activePath.to as string, activePath.from as string)
     : undefined;
-  const activeResonanceText = activePath ? getPathResonanceText(activePath, activeBridge) : null;
+  const activeBridgeJourneyIds = activeBridge?.journeyIds?.join("|") ?? "";
+  const activeResonanceConnection = activePath ? getResonanceConnectionForPath(activePath.from, activePath.to) : undefined;
+  const activeResonanceText = activePath ? getPathResonanceText(activePath, activeBridge, activeResonanceConnection) : null;
+  const activePathTitle = activeResonanceConnection?.title ?? activePath?.label;
+  const activePathExplanation = activeResonanceConnection?.explanation.trim();
   const activeResonancePosition = useMemo(() => {
-    if (!activePath) return null;
+    if (!activePathFrom || !activePathTo) return null;
 
-    const sourceCenter = getNodeCenter(activePath.from);
-    const targetCenter = getNodeCenter(activePath.to);
+    const sourceCenter = getNodeCenter(activePathFrom);
+    const targetCenter = getNodeCenter(activePathTo);
     const dx = targetCenter.x - sourceCenter.x;
     const dy = targetCenter.y - sourceCenter.y;
     const distance = Math.max(Math.hypot(dx, dy), 1);
@@ -729,7 +837,7 @@ export default function SymbolNetwork() {
     const normalY = dx / distance;
     const midpointX = (sourceCenter.x + targetCenter.x) / 2;
     const midpointY = (sourceCenter.y + targetCenter.y) / 2;
-    const pathIndex = Math.max(network.paths.findIndex((path) => path.id === activePath.id), 0);
+    const pathIndex = Math.max(network.paths.findIndex((path) => path.id === activePathId), 0);
     const curveX = midpointX + normalX * (getRouteOffset(pathIndex, "symbol") + 8);
     const curveY = midpointY + normalY * (getRouteOffset(pathIndex, "symbol") + 8);
     const inscriptionX = sourceCenter.x * 0.25 + curveX * 0.5 + targetCenter.x * 0.25;
@@ -739,17 +847,31 @@ export default function SymbolNetwork() {
       x: inscriptionX * flowViewport.zoom + flowViewport.x,
       y: inscriptionY * flowViewport.zoom + flowViewport.y,
     };
-  }, [activePath, flowViewport]);
+  }, [activePathFrom, activePathId, activePathTo, flowViewport.x, flowViewport.y, flowViewport.zoom]);
+  const activeResonanceJourneyInscriptionPosition = useMemo(() => {
+    if (!activeResonanceJourneyNodePathKey) return null;
+
+    const centers = activeResonanceJourneyNodePathKey.split("|").map(getNodeCenter);
+    const average = centers.reduce(
+      (sum, center) => ({ x: sum.x + center.x, y: sum.y + center.y }),
+      { x: 0, y: 0 },
+    );
+
+    return {
+      x: (average.x / centers.length) * flowViewport.zoom + flowViewport.x,
+      y: ((average.y / centers.length) - 92) * flowViewport.zoom + flowViewport.y,
+    };
+  }, [activeResonanceJourneyNodePathKey, flowViewport.x, flowViewport.y, flowViewport.zoom]);
   const connectedPaths = network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId);
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
   const activeLetterNodeId = activeLetterId ? `${LETTER_NODE_PREFIX}${activeLetterId}` : null;
   const relationSymbolIds = useMemo(
-    () => new Set(activePath ? [activePath.from, activePath.to] : []),
-    [activePath],
+    () => new Set(activePathFrom && activePathTo ? [activePathFrom, activePathTo] : []),
+    [activePathFrom, activePathTo],
   );
-  const graphViewMode: SymbolGraphViewMode = activePath
+  const graphViewMode: SymbolGraphViewMode = activePathId
     ? "RELATION_FOCUS"
-    : hasSymbolFocus || activeJourney || activeLetterId
+    : hasSymbolFocus || activeJourney || activeResonanceJourney || activeLetterId
         ? "SYMBOL_FOCUS"
         : "OVERVIEW";
   const activeSymbolLensData = useMemo(
@@ -758,6 +880,7 @@ export default function SymbolNetwork() {
   );
   const isSymbolLensVisible = Boolean(activeLensMode && activeSymbolLensData)
     && !activeJourney
+    && !activeResonanceJourney
     && !activeCodexLetter
     && !activePathId;
   const activeSymbolLensNode = isSymbolLensVisible && activeLensMode && activeSymbolLensData
@@ -833,8 +956,11 @@ export default function SymbolNetwork() {
     [activeLensMode, activeSymbolLensData],
   );
   const bridgeJourneys = useMemo(
-    () => network.journeys.filter((journey) => activeBridge?.journeyIds?.includes(journey.id)),
-    [activeBridge],
+    () => {
+      const journeyIds = activeBridgeJourneyIds ? activeBridgeJourneyIds.split("|") : [];
+      return network.journeys.filter((journey) => journeyIds.includes(journey.id));
+    },
+    [activeBridgeJourneyIds],
   );
   const bridgeJourneySymbolIds = useMemo(
     () => new Set(bridgeJourneys.flatMap((journey) => journey.symbolPath)),
@@ -845,14 +971,15 @@ export default function SymbolNetwork() {
     [bridgeJourneys],
   );
   const isJourneyLensFocus = isSymbolLensVisible && activeLensMode === "journey" && Boolean(activeSymbolLensData);
-  const isJourneyFocus = Boolean(activeJourney || isJourneyLensFocus || bridgeJourneys.length > 0);
+  const isJourneyFocus = Boolean(activeJourney || activeResonanceJourney || isJourneyLensFocus || bridgeJourneys.length > 0);
   const journeyFocusSymbolIds = useMemo(
     () => new Set([
+      ...Array.from(activeResonanceJourneySymbolIds),
       ...Array.from(journeySymbolIds),
       ...Array.from(lensJourneySymbolIds),
       ...Array.from(bridgeJourneySymbolIds),
     ]),
-    [bridgeJourneySymbolIds, journeySymbolIds, lensJourneySymbolIds],
+    [activeResonanceJourneySymbolIds, bridgeJourneySymbolIds, journeySymbolIds, lensJourneySymbolIds],
   );
   const journeyFocusMeaningIds = useMemo(
     () => new Set<MeaningNodeId>([
@@ -876,7 +1003,12 @@ export default function SymbolNetwork() {
       return activeSymbolLensData.symbolId;
     }
 
-    const journeyStartId = activeJourney?.symbolPath.find((symbolId) => journeyFocusSymbolIds.has(symbolId));
+    const resonanceJourneyStartId = (activeResonanceJourneyNodePathKey ? activeResonanceJourneyNodePathKey.split("|") : [])
+      .find((symbolId) => journeyFocusSymbolIds.has(symbolId));
+    if (resonanceJourneyStartId) return resonanceJourneyStartId;
+
+    const journeyStartId = (activeJourneySymbolPathKey ? activeJourneySymbolPathKey.split("|") : [])
+      .find((symbolId) => journeyFocusSymbolIds.has(symbolId));
     if (journeyStartId) return journeyStartId;
 
     const bridgeStartId = bridgeJourneys
@@ -885,20 +1017,24 @@ export default function SymbolNetwork() {
     if (bridgeStartId) return bridgeStartId;
 
     return Array.from(journeyFocusSymbolIds)[0] ?? null;
-  }, [activeJourney, activeLensMode, activeSymbolLensData, bridgeJourneys, isJourneyFocus, journeyFocusSymbolIds]);
+  }, [activeJourneySymbolPathKey, activeLensMode, activeResonanceJourneyNodePathKey, activeSymbolLensData, bridgeJourneys, isJourneyFocus, journeyFocusSymbolIds]);
   const journeyStepId = activeJourneyStepId && journeyFocusSymbolIds.has(activeJourneyStepId)
     ? activeJourneyStepId
     : initialJourneyStepId ?? activeSymbolId;
   const journeyPathKeys = useMemo(
     () => new Set([
-      ...(activeJourney?.symbolPath.slice(1).map((symbolId, index) => getPathKey(activeJourney.symbolPath[index], symbolId)) ?? []),
+      ...(activeJourneySymbolPathKey
+        ? activeJourneySymbolPathKey.split("|").slice(1).map((symbolId, index) => getPathKey(activeJourneySymbolPathKey.split("|")[index], symbolId))
+        : []),
       ...bridgeJourneys.flatMap((journey) => journey.symbolPath.slice(1).map((symbolId, index) => getPathKey(journey.symbolPath[index], symbolId))),
     ]),
-    [activeJourney, bridgeJourneys]
+    [activeJourneySymbolPathKey, bridgeJourneys]
   );
 
-  const mobileLayerStep: SymbolMobileLayer = activePath
+  const mobileLayerStep: SymbolMobileLayer = activePathId
     ? "Beziehung"
+    : activeResonanceJourneyId
+      ? "Resonanz"
     : activeLensMode
       ? "Info"
       : isSymbolLensVisible
@@ -933,7 +1069,7 @@ export default function SymbolNetwork() {
     && activeSymbolLensData.symbolId === lensOrbitAnchorId,
   );
   const resonanceHintPosition = useMemo(() => {
-    if (!resonanceHintVisible || !revealedResonanceId || !firstResonanceLetter || activeLetterId || activePathId || activeJourney) return null;
+    if (!resonanceHintVisible || !revealedResonanceId || !firstResonanceLetter || activeLetterId || activePathId || activeJourneyId || activeResonanceJourneyId) return null;
 
     const center = getNodeCenter(activeSymbolId);
     const offset = activeSymbolId === "licht" || activeSymbolId === "feuer"
@@ -944,7 +1080,7 @@ export default function SymbolNetwork() {
       x: (center.x + offset.x) * flowViewport.zoom + flowViewport.x,
       y: (center.y + offset.y) * flowViewport.zoom + flowViewport.y,
     };
-  }, [activeJourney, activeLetterId, activePathId, activeSymbolId, firstResonanceLetter, flowViewport, resonanceHintVisible, revealedResonanceId]);
+  }, [activeJourneyId, activeLetterId, activePathId, activeResonanceJourneyId, activeSymbolId, firstResonanceLetter, flowViewport.x, flowViewport.y, flowViewport.zoom, resonanceHintVisible, revealedResonanceId]);
 
   const setJourneyViewport = useCallback((mode: JourneyViewportMode, duration = 680) => {
     const instance = reactFlowRef.current;
@@ -1003,9 +1139,9 @@ export default function SymbolNetwork() {
         return;
       }
 
-      if (graphViewMode === "RELATION_FOCUS" && activePath) {
+      if (graphViewMode === "RELATION_FOCUS" && activePathFrom && activePathTo) {
         instance.fitView({
-          nodes: [{ id: activePath.from }, { id: activePath.to }],
+          nodes: [{ id: activePathFrom }, { id: activePathTo }],
           padding: 0.36,
           minZoom: 0.5,
           maxZoom: 0.92,
@@ -1041,10 +1177,10 @@ export default function SymbolNetwork() {
     });
 
     return () => window.cancelAnimationFrame(frameId);
-  }, [activeLetterId, activeLetterNodeId, activePath, activeSymbolId, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, letterSymbolIds, setJourneyViewport]);
+  }, [activeLetterId, activeLetterNodeId, activePathFrom, activePathTo, activeSymbolId, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, letterSymbolIds, setJourneyViewport]);
 
   useEffect(() => {
-    if (!hasSymbolFocus || activeLetterId || activePathId || activeJourneyId || !firstResonanceLetterId) {
+    if (!hasSymbolFocus || activeLetterId || activePathId || activeJourneyId || activeResonanceJourneyId || !firstResonanceLetterId) {
       return;
     }
 
@@ -1054,7 +1190,7 @@ export default function SymbolNetwork() {
     }, 2000);
 
     return () => window.clearTimeout(timeoutId);
-  }, [activeJourneyId, activeLetterId, activePathId, activeSymbolId, firstResonanceLetterId, hasSymbolFocus, resonanceFocusTick]);
+  }, [activeJourneyId, activeLetterId, activePathId, activeResonanceJourneyId, activeSymbolId, firstResonanceLetterId, hasSymbolFocus, resonanceFocusTick]);
 
   const relatedIds = useMemo(
     () => isJourneyFocus
@@ -1129,7 +1265,7 @@ export default function SymbolNetwork() {
             ? letterSymbolIds.has(node.id)
             : isJourneyFocus
               ? journeyFocusSymbolIds.has(node.id)
-              : activePath
+                : activePathId
                 ? relationSymbolIds.has(node.id)
                 : hasSymbolFocus && node.id === activeSymbolId;
           const isPreviewedSymbol = false;
@@ -1153,7 +1289,7 @@ export default function SymbolNetwork() {
                 ? !letterSymbolIds.has(node.id)
                 : isJourneyFocus
                   ? !journeyFocusSymbolIds.has(node.id)
-                  : activePath
+                  : activePathId
                     ? !relationSymbolIds.has(node.id)
                   : isSymbolLensVisible
                     ? false
@@ -1186,7 +1322,7 @@ export default function SymbolNetwork() {
         })) : []),
       ];
     },
-    [activeCodexLetter, activeLensMeaningIds, activeLensMode, activeLetterId, activeLetterNodeId, activePath, activePathId, activeSymbolId, activeSymbolLensData, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds]
+    [activeCodexLetter, activeLensMeaningIds, activeLensMode, activeLetterId, activeLetterNodeId, activePathId, activeSymbolId, activeSymbolLensData, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds]
   );
 
   useEffect(() => {
@@ -1262,6 +1398,7 @@ export default function SymbolNetwork() {
         const isFocused = focusedSymbolId ? path.from === focusedSymbolId || path.to === focusedSymbolId : false;
         const isSelected = path.id === activePathId || path.id === pendingPathId;
         const pathKey = getPathKey(path.from, path.to);
+        const resonanceConnection = getResonanceConnectionForPath(path.from, path.to);
         const isLensJourneyPath = isSymbolLensVisible && activeLensMode === "journey" && Boolean(activeSymbolLensData?.journeyPathKeys.has(pathKey));
         const isJourneyPath = !activePath && (journeyPathKeys.has(pathKey) || isLensJourneyPath);
         const isTraveling = path.id === travelingPathId;
@@ -1280,17 +1417,76 @@ export default function SymbolNetwork() {
           type: "living",
           className: `${isJourneyPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isJourneyPath || isSelected || isLetterPath ? "is-selected-path" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
           style: {
-            stroke: isJourneyPath ? "rgba(189,160,109,0.68)" : isSelected || isLetterPath ? "rgba(189,160,109,0.82)" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "rgba(127,184,201,0.48)" : "rgba(127,184,201,0.12)",
+            stroke: isJourneyPath
+              ? "rgba(189,160,109,0.68)"
+              : isLetterPath
+                ? "rgba(189,160,109,0.82)"
+                : getResonanceStroke(
+                  resonanceConnection?.resonanceType,
+                  isSelected ? "selected" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "focused" : "dormant",
+                ),
             strokeWidth: isJourneyPath ? 4.6 : isSelected || isLetterPath ? 2.4 : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? 1.6 : 0.7,
           },
           data: {
             isTraveling,
             relationType,
+            resonanceType: resonanceConnection?.resonanceType,
             routeIndex: index,
             routeOffset: getRouteOffset(index, relationType),
           },
         };
     }) : []),
+    ...(activeResonanceJourney && !activeLetterId ? [
+      ...activeResonancePrimaryConnections.map((connection, index) => {
+        const ports = getConnectionPorts(connection.sourceId, connection.targetId);
+
+        return {
+          id: `journey:${connection.id}`,
+          source: connection.sourceId,
+          target: connection.targetId,
+          sourceHandle: ports.sourceHandle,
+          targetHandle: ports.targetHandle,
+          type: "living",
+          className: "is-journey-path is-selected-path",
+          style: {
+            stroke: "rgba(221,194,128,0.92)",
+            strokeWidth: 5,
+          },
+          data: {
+            isTraveling: false,
+            relationType: "journey" as const,
+            resonanceType: connection.resonanceType,
+            routeIndex: index,
+            routeOffset: getRouteOffset(index, "journey"),
+          },
+        };
+      }),
+      ...activeResonanceSecondaryConnections.map((connection, index) => {
+        const ports = getConnectionPorts(connection.sourceId, connection.targetId);
+
+        return {
+          id: `journey-secondary:${connection.id}`,
+          source: connection.sourceId,
+          target: connection.targetId,
+          sourceHandle: ports.sourceHandle,
+          targetHandle: ports.targetHandle,
+          type: "living",
+          className: "is-journey-path",
+          style: {
+            stroke: "rgba(221,194,128,0.36)",
+            strokeDasharray: "7 9",
+            strokeWidth: 2.2,
+          },
+          data: {
+            isTraveling: false,
+            relationType: "journey" as const,
+            resonanceType: connection.resonanceType,
+            routeIndex: activeResonancePrimaryConnections.length + index,
+            routeOffset: getRouteOffset(activeResonancePrimaryConnections.length + index, "journey"),
+          },
+        };
+      }),
+    ] : []),
     ...((activePathId || isJourneyFocus || activeLensMeaningIds.size > 0) && !activeLetterId ? network.meaningLinks.map((link, index) => {
       const isFocused = isJourneyFocus
         ? journeyFocusSymbolIds.has(link.symbolId) && journeyFocusMeaningIds.has(link.meaningId)
@@ -1325,6 +1521,7 @@ export default function SymbolNetwork() {
     setHasSymbolFocus(true);
     setActivePathId(null);
     setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
     setPendingPathId(null);
     setTravelingPathId(null);
     setActiveLetterId(null);
@@ -1350,6 +1547,7 @@ export default function SymbolNetwork() {
     setPendingPathId(null);
     setTravelingPathId(null);
     setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
     setActiveLensMode(null);
     setActiveJourneyStepId(null);
     setHasSymbolFocus(true);
@@ -1365,6 +1563,7 @@ export default function SymbolNetwork() {
     setPendingPathId(null);
     setTravelingPathId(null);
     setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
     setActiveLetterId(null);
     setIsLetterResonanceOpen(false);
     setActiveLetterResonanceId(null);
@@ -1388,6 +1587,7 @@ export default function SymbolNetwork() {
     setPendingPathId(null);
     setTravelingPathId(null);
     setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
     setActiveLensMode(null);
     setActiveJourneyStepId(null);
     setHasSymbolFocus(true);
@@ -1401,11 +1601,33 @@ export default function SymbolNetwork() {
     setPendingPathId(path.id);
     setActivePathId(path.id);
     setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
     setActiveLetterId(null);
     setIsLetterResonanceOpen(false);
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
     setHasSymbolFocus(true);
+    setResonanceHintVisible(false);
+    setRevealedResonanceId(null);
+  }
+
+  function activateResonanceJourney(journeyId: string) {
+    const journey = getResonanceJourney(journeyId);
+
+    if (!journey) return;
+
+    setActiveResonanceJourneyId(journey.id);
+    setActiveJourneyStepId(journey.nodePath[0] ?? null);
+    setHasSymbolFocus(true);
+    setActivePathId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
+    setActiveJourneyId(null);
+    setActiveLetterId(null);
+    setIsLetterResonanceOpen(false);
+    setActiveLetterResonanceId(null);
+    setActiveLetterSourcePathId(null);
+    setActiveLensMode(null);
     setResonanceHintVisible(false);
     setRevealedResonanceId(null);
   }
@@ -1518,6 +1740,18 @@ export default function SymbolNetwork() {
                 {activeResonanceText}
               </p>
             ) : null}
+            {activeResonanceJourney && activeResonanceJourneyInscriptionPosition ? (
+              <p
+                key={activeResonanceJourney.id}
+                className="symbol-connection-resonance"
+                style={{
+                  left: `${activeResonanceJourneyInscriptionPosition.x}px`,
+                  top: `${activeResonanceJourneyInscriptionPosition.y}px`,
+                }}
+              >
+                {CURATED_RESONANCE_INSCRIPTION}
+              </p>
+            ) : null}
             {resonanceHintPosition && firstResonanceLetter && revealedResonanceId ? (
               <FirstResonanceHint
                 data={{
@@ -1555,7 +1789,7 @@ export default function SymbolNetwork() {
 
           <div className="symbol-mobile-layer-stepper mt-3 md:hidden" aria-label="Mobile Symbolnetz-Ebene">
             {(["Uebersicht", "Symbol", "Resonanz", "Info", "Beziehung"] as const).map((layer) => (
-              <span key={layer} className={(layer === "Resonanz" ? resonanceHintVisible : mobileLayerStep === layer) ? "is-active" : ""}>
+              <span key={layer} className={(layer === "Resonanz" ? resonanceHintVisible || mobileLayerStep === layer : mobileLayerStep === layer) ? "is-active" : ""}>
                 {layer}
               </span>
             ))}
@@ -1569,11 +1803,34 @@ export default function SymbolNetwork() {
               Resonanz entdecken
             </button>
           ) : null}
+          {showResonanceJourneyOption && discoverableResonanceJourney ? (
+            <button
+              type="button"
+              className="symbol-mobile-resonance-hint md:hidden"
+              onClick={() => activateResonanceJourney(discoverableResonanceJourney.id)}
+            >
+              Resonanzpfad entdecken
+            </button>
+          ) : null}
+          {activeResonanceJourney ? (
+            <div className="mt-4 border-l border-gold/35 pl-4 md:hidden">
+              <p className="symbol-kicker text-cyan-soft">Resonanzpfad</p>
+              <div className="mt-3 grid gap-2 font-serif text-lg italic text-gold/85">
+                {activeResonanceJourney.nodePath.map((nodeId, index) => (
+                  <Fragment key={nodeId}>
+                    {index > 0 ? <span className="text-gold/45">&darr;</span> : null}
+                    <span>{getSymbolLabel(nodeId)}</span>
+                  </Fragment>
+                ))}
+              </div>
+              <p className="symbol-copy mt-3 text-sm">{activeResonanceJourney.summary.replace(/\s*\n\s*/g, " ")}</p>
+            </div>
+          ) : null}
         </div>
 
         <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isSymbolLensVisible ? "symbol-detail-panel--lens-focus" : ""}`}>
           <p className="symbol-kicker text-cyan-soft">
-            {activeSymbolLensNode ? `${activeSymbol.label}: ${activeSymbolLensNode.label}` : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
+            {activeSymbolLensNode ? `${activeSymbol.label}: ${activeSymbolLensNode.label}` : activeResonanceJourney ? "Resonanzpfad" : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
           </p>
           {isSymbolLensVisible && activeSymbolLensData ? (
             <SymbolLensFocusDetail
@@ -1582,6 +1839,11 @@ export default function SymbolNetwork() {
               lensData={activeSymbolLensData}
               activeLensMode={activeLensMode}
               onPreviewPath={previewPath}
+            />
+          ) : activeResonanceJourney ? (
+            <ResonanceJourneyDetail
+              journey={activeResonanceJourney}
+              connections={activeResonanceJourneyConnections}
             />
           ) : activeJourney ? (
             <>
@@ -1655,6 +1917,15 @@ export default function SymbolNetwork() {
                 <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">
                   {activeSymbol.label}-Raum öffnen
                 </RoomTransitionButton>
+                {showResonanceJourneyOption && discoverableResonanceJourney ? (
+                  <button
+                    type="button"
+                    onClick={() => activateResonanceJourney(discoverableResonanceJourney.id)}
+                    className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
+                  >
+                    Resonanzpfad entdecken
+                  </button>
+                ) : null}
                 {activeCodexEntry ? (
                   <Link
                     href={`/codex/${activeCodexEntry.id}`}
@@ -1673,10 +1944,10 @@ export default function SymbolNetwork() {
                 <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft">
                   {getSymbolLabel(activePath.from)} <span className="text-gold/65">&rarr;</span> {getSymbolLabel(activePath.to)}
                 </p>
-                <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activePath.label}</h2>
+                <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activePathTitle}</h2>
                 <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-gold/70">{activePath.evidence}</p>
                 <p className="symbol-copy mt-5 text-lg">{activePath.fromMeaning}<br /><span className="text-gold/65">→</span> {activePath.toMeaning}</p>
-                <p className="mt-5 font-serif text-lg italic leading-relaxed text-foreground-strong/85">{activePath.summary}</p>
+                <p className="mt-5 font-serif text-lg italic leading-relaxed text-foreground-strong/85">{activePathExplanation || activePath.summary}</p>
                 {activePath.joint ? (
                   <div className="mt-7 border-l border-gold/25 pl-4">
                     <button
