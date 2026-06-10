@@ -23,8 +23,10 @@ import {
   RoomExperience,
   RoomTransitionStage,
 } from "@/components/rooms/RoomGrammar";
+import { ResonanceGroup } from "@/components/rooms/engine/ResonanceGroup";
 import { codexRegistry } from "@/lib/codex/codexRegistry";
 import type { CodexEntry } from "@/lib/codex/types";
+import { getAllResonanceConnections } from "@/lib/resonance";
 import type {
   AtmosphereProfile,
   RoomEchoConfig,
@@ -397,6 +399,7 @@ function SymbolRoomExperience({ definition }: { definition: SymbolRoomDefinition
     .filter((label, index, labels) => labels.indexOf(label) === index)
     .slice(0, 5);
   const semanticEchoNodeIds = new Set(semanticEcho?.matchedNodes ?? []);
+  const resonanceConnections = getAllResonanceConnections();
 
   const handleSemanticEchoSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -463,6 +466,13 @@ function SymbolRoomExperience({ definition }: { definition: SymbolRoomDefinition
                 <p className="symbol-copy mt-3 text-sm text-gold/80">
                   {semanticEcho.interpretation}
                 </p>
+              ) : null}
+              {semanticEcho && activeNodeId ? (
+                <ResonanceGroup
+                  nodeId={activeNodeId}
+                  resonanceConnections={resonanceConnections}
+                  graph={definition.graph}
+                />
               ) : null}
               <p className={`symbol-room-oracle-murmur mt-3 ${semanticEcho ? "hidden" : ""}`}>
                 {(primaryQualities.length ? primaryQualities : theme.fallbackQualities).join(" \u00b7 ")}
