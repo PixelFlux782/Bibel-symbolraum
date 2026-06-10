@@ -2323,6 +2323,61 @@ body {
   opacity: 0.86;
 }
 
+.journey-viewport-controls {
+  position: absolute;
+  left: 0.8rem;
+  bottom: 0.8rem;
+  z-index: 9;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  opacity: 0.62;
+  transition: opacity 520ms ease;
+}
+
+.journey-viewport-controls:hover,
+.journey-viewport-controls:focus-within {
+  opacity: 0.92;
+}
+
+.journey-viewport-controls button {
+  position: relative;
+  display: inline-grid;
+  min-width: 0;
+  place-items: center;
+  border: 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.16);
+  background: rgba(2, 5, 12, 0.34);
+  padding: 0.34rem 0.18rem 0.42rem;
+  color: rgba(216, 209, 194, 0.52);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition:
+    border-color 520ms ease,
+    color 520ms ease,
+    background-color 520ms ease;
+}
+
+.journey-viewport-controls button::before {
+  content: "";
+  width: 0.22rem;
+  height: 0.22rem;
+  margin-bottom: 0.3rem;
+  border-radius: 999px;
+  background: rgba(var(--gold-rgb), 0.34);
+  box-shadow: 0 0 0.75rem rgba(var(--gold-rgb), 0.12);
+}
+
+.journey-viewport-controls button:hover,
+.journey-viewport-controls button:focus-visible {
+  border-color: rgba(var(--gold-rgb), 0.36);
+  background: rgba(2, 5, 12, 0.52);
+  color: rgba(var(--gold-rgb), 0.82);
+}
+
 .symbol-network-flow .react-flow__nodes {
   z-index: 5;
   pointer-events: auto;
@@ -2460,6 +2515,26 @@ body {
 
 .symbol-constellation-node.is-active p:last-child {
   color: rgba(var(--foreground-rgb), 0.72);
+}
+
+.symbol-constellation-field.is-journey-focused .react-flow__node:has(.symbol-constellation-node.is-active) {
+  filter:
+    drop-shadow(0 0 1rem rgba(var(--gold-rgb), 0.12))
+    drop-shadow(0 0 2.6rem rgba(var(--cyan-rgb), 0.055));
+}
+
+.symbol-constellation-field.is-journey-focused .symbol-constellation-node.is-active {
+  background:
+    radial-gradient(circle at 50% 26%, rgba(var(--gold-rgb), 0.13), transparent 42%),
+    rgba(1, 3, 8, 0.28);
+  box-shadow:
+    0 0 68px rgba(var(--gold-rgb), 0.17),
+    0 0 110px rgba(var(--cyan-rgb), 0.07),
+    inset 0 0 38px rgba(var(--gold-rgb), 0.05);
+}
+
+.symbol-constellation-field.is-journey-focused .symbol-constellation-node.is-active::after {
+  border-color: rgba(var(--gold-rgb), 0.16);
 }
 
 .symbol-network-port {
@@ -3029,11 +3104,11 @@ body {
 }
 
 .symbol-network-flow .react-flow__edge.is-journey-path .react-flow__edge-path {
-  opacity: 0.46;
+  opacity: 0.56;
   stroke-dasharray: none;
   filter:
-    drop-shadow(0 0 10px rgba(189, 160, 109, 0.16))
-    drop-shadow(0 0 24px rgba(189, 160, 109, 0.075));
+    drop-shadow(0 0 12px rgba(189, 160, 109, 0.2))
+    drop-shadow(0 0 28px rgba(189, 160, 109, 0.09));
 }
 
 .symbol-network-flow .react-flow__edge-text,
@@ -3050,7 +3125,7 @@ body {
 }
 
 .symbol-network-flow .react-flow__edge.is-journey-path.is-selected-path .react-flow__edge-path {
-  opacity: 0.52;
+  opacity: 0.66;
 }
 
 .symbol-network-flow .react-flow__edge.is-traveling-path .react-flow__edge-path {
@@ -4108,6 +4183,29 @@ body {
     height: min(49dvh, 29rem);
     min-height: 19rem;
     margin-top: 0.75rem;
+  }
+
+  .journey-viewport-controls {
+    left: 0.65rem;
+    right: 0.65rem;
+    bottom: 0.62rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+    opacity: 0.82;
+  }
+
+  .journey-viewport-controls button {
+    padding: 0.28rem 0.1rem 0.36rem;
+    background: rgba(2, 5, 12, 0.46);
+    font-size: 0.48rem;
+    letter-spacing: 0.08em;
+  }
+
+  .journey-viewport-controls button::before {
+    width: 0.18rem;
+    height: 0.18rem;
+    margin-bottom: 0.24rem;
   }
 
   .symbol-detail-panel {
