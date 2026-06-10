@@ -17,7 +17,7 @@ import ReactFlow, {
 
 import { RoomTransition, RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import { useRoomTransition } from "@/hooks/useRoomTransition";
-import { getCodexEntry, resolveCodexEntry } from "@/lib/codex/getCodexEntry";
+import { getCodexEntry } from "@/lib/codex/getCodexEntry";
 import { calculateGematria } from "@/lib/hebrew/gematria";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
@@ -170,6 +170,18 @@ const LETTER_RESONANCE_LABELS: Partial<Record<MeaningNodeId, string>> = {
 const LETTER_RESONANCE_PRIORITY: Partial<Record<string, MeaningNodeId[]>> = {
   mem: ["depth", "lack", "nourishment"],
 };
+const PATH_RESONANCE_FALLBACKS: Record<string, string> = {
+  "wasser:licht": "Licht macht sichtbar,\nwas im Wasser verborgen ruht.",
+  "wasser:wueste": "Erst die Leere zeigt,\nwonach die Tiefe sucht.",
+  "brot:wueste": "Im Mangel wird Versorgung\nals Gabe sichtbar.",
+  "feuer:licht": "Feuer verwandelt,\nLicht offenbart.",
+  "feuer:wasser": "Wasser birgt.\nFeuer wandelt.",
+  "feuer:wueste": "In der Leere brennt,\nwas den Weg verwandelt.",
+  "licht:wueste": "In der Orientierungslosigkeit\nwird Richtung sichtbar.",
+  "brot:wasser": "Was aus der Tiefe kommt,\nwird zur Gabe.",
+  "brot:licht": "Erkenntnis wird Nahrung,\nwenn sie geteilt wird.",
+  "brot:feuer": "Was verwandelt wird,\nkann nähren.",
+};
 const SYMBOL_PORTS = [
   "top",
   "right",
@@ -281,6 +293,36 @@ function getLetterResonanceLabel(meaningNodeId: MeaningNodeId) {
 
 function getPathKey(from: string, to: string) {
   return [from, to].sort().join(":");
+}
+
+function compactResonanceText(text: string) {
+  const normalizedLines = text
+    .split(/\r?\n/)
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+  const twoLineText = normalizedLines.length > 1
+    ? normalizedLines.slice(0, 2).join("\n")
+    : normalizedLines.join(" ");
+
+  if (twoLineText.length <= 120) return twoLineText;
+
+  const compacted = twoLineText.replace(/\s*\n\s*/g, " ");
+  return compacted.length <= 120 ? compacted : `${compacted.slice(0, 117).trimEnd()}...`;
+}
+
+function getPathResonanceText(path: SymbolMeaningPath, bridge?: MeaningBridge) {
+  const bridgeDescription = bridge && "description" in bridge
+    ? (bridge as MeaningBridge & { description?: string }).description
+    : undefined;
+  const sourceText = bridge?.summary
+    ?? bridgeDescription
+    ?? bridge?.title
+    ?? PATH_RESONANCE_FALLBACKS[getPathKey(path.from, path.to)]
+    ?? path.bridgeDescription
+    ?? path.summary
+    ?? `${getSymbolLabel(path.from)} und ${getSymbolLabel(path.to)} gehoeren in einer gemeinsamen Bedeutung zusammen.`;
+
+  return compactResonanceText(sourceText);
 }
 
 function getJourneyPathKeys(symbolId: string) {
@@ -631,6 +673,30 @@ export default function SymbolNetwork() {
   const activeBridge = activePath
     ? getBridgeBySourceAndTarget(activePath.from as string, activePath.to as string) ?? getBridgeBySourceAndTarget(activePath.to as string, activePath.from as string)
     : undefined;
+  const activeResonanceText = activePath ? getPathResonanceText(activePath, activeBridge) : null;
+  const activeResonancePosition = useMemo(() => {
+    if (!activePath) return null;
+
+    const sourceCenter = getNodeCenter(activePath.from);
+    const targetCenter = getNodeCenter(activePath.to);
+    const dx = targetCenter.x - sourceCenter.x;
+    const dy = targetCenter.y - sourceCenter.y;
+    const distance = Math.max(Math.hypot(dx, dy), 1);
+    const normalX = -dy / distance;
+    const normalY = dx / distance;
+    const midpointX = (sourceCenter.x + targetCenter.x) / 2;
+    const midpointY = (sourceCenter.y + targetCenter.y) / 2;
+    const pathIndex = Math.max(network.paths.findIndex((path) => path.id === activePath.id), 0);
+    const curveX = midpointX + normalX * (getRouteOffset(pathIndex, "symbol") + 8);
+    const curveY = midpointY + normalY * (getRouteOffset(pathIndex, "symbol") + 8);
+    const inscriptionX = sourceCenter.x * 0.25 + curveX * 0.5 + targetCenter.x * 0.25;
+    const inscriptionY = sourceCenter.y * 0.25 + curveY * 0.5 + targetCenter.y * 0.25;
+
+    return {
+      x: inscriptionX * flowViewport.zoom + flowViewport.x,
+      y: inscriptionY * flowViewport.zoom + flowViewport.y,
+    };
+  }, [activePath, flowViewport]);
   const connectedPaths = network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId);
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
   const activeLetterNodeId = activeLetterId ? `${LETTER_NODE_PREFIX}${activeLetterId}` : null;
@@ -788,7 +854,6 @@ export default function SymbolNetwork() {
     [activeJourney, bridgeJourneys]
   );
 
-  const activeBridgeOrEphemeral: MeaningBridge | undefined = activeBridge;
   const mobileLayerStep: SymbolMobileLayer = activePath
     ? "Beziehung"
     : activeLensMode
@@ -1129,7 +1194,7 @@ export default function SymbolNetwork() {
         const isSelected = path.id === activePathId || path.id === pendingPathId;
         const pathKey = getPathKey(path.from, path.to);
         const isLensJourneyPath = isSymbolLensVisible && activeLensMode === "journey" && Boolean(activeSymbolLensData?.journeyPathKeys.has(pathKey));
-        const isJourneyPath = journeyPathKeys.has(pathKey) || isLensJourneyPath;
+        const isJourneyPath = !activePath && (journeyPathKeys.has(pathKey) || isLensJourneyPath);
         const isTraveling = path.id === travelingPathId;
         const isLetterPath = Boolean(activeLetterId)
           && letterSymbolIds.has(path.from)
@@ -1144,10 +1209,10 @@ export default function SymbolNetwork() {
           sourceHandle: ports.sourceHandle,
           targetHandle: ports.targetHandle,
           type: "living",
-          className: `${isJourneyPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isJourneyPath || isSelected || isLetterPath ? "is-selected-path" : isFocused && !isJourneyFocus && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
+          className: `${isJourneyPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isJourneyPath || isSelected || isLetterPath ? "is-selected-path" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
           style: {
-            stroke: isJourneyPath ? "rgba(189,160,109,0.68)" : isSelected || isLetterPath ? "rgba(189,160,109,0.82)" : isFocused && !isJourneyFocus && !activeLetterId ? "rgba(127,184,201,0.48)" : "rgba(127,184,201,0.12)",
-            strokeWidth: isJourneyPath ? 4.6 : isSelected || isLetterPath ? 2.4 : isFocused && !isJourneyFocus && !activeLetterId ? 1.6 : 0.7,
+            stroke: isJourneyPath ? "rgba(189,160,109,0.68)" : isSelected || isLetterPath ? "rgba(189,160,109,0.82)" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "rgba(127,184,201,0.48)" : "rgba(127,184,201,0.12)",
+            strokeWidth: isJourneyPath ? 4.6 : isSelected || isLetterPath ? 2.4 : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? 1.6 : 0.7,
           },
           data: {
             isTraveling,
@@ -1343,6 +1408,18 @@ export default function SymbolNetwork() {
               }}
               className="symbol-network-flow bg-transparent"
             />
+            {activeResonanceText && activeResonancePosition ? (
+              <p
+                key={activePathId}
+                className="symbol-connection-resonance"
+                style={{
+                  left: `${activeResonancePosition.x}px`,
+                  top: `${activeResonancePosition.y}px`,
+                }}
+              >
+                {activeResonanceText}
+              </p>
+            ) : null}
             {isJourneyFocus ? (
               <div className="journey-viewport-controls" aria-label="Journey-Ansicht steuern">
                 <button type="button" onClick={() => setJourneyViewport("journey")} aria-label="Ganze Journey anzeigen">
@@ -1500,32 +1577,6 @@ export default function SymbolNetwork() {
                     <p className="mt-2 font-serif text-sm italic leading-relaxed text-gold/75">
                       {activePath.joint.meanings.join(". ")}.
                     </p>
-                  </div>
-                ) : null}
-                {activeBridgeOrEphemeral ? (
-                  <div className="mt-6 border-t border-white/[0.035] pt-5">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-cyan-soft">Bridge</p>
-                    <h3 className="mt-2 font-serif text-2xl italic text-foreground-strong">{activeBridgeOrEphemeral.title}</h3>
-                    <p className="symbol-copy mt-2 text-sm leading-relaxed">{activeBridgeOrEphemeral.summary}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {activeBridgeOrEphemeral.meaningFields.map((f) => (
-                        <span key={f} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-sm leading-tight text-muted-soft">
-                          {getMeaningNodeLabel(f)}
-                        </span>
-                      ))}
-                      {activeBridgeOrEphemeral.scriptureAnchors?.map((anchor) => {
-                        const linked = resolveCodexEntry(anchor);
-                        const label = linked?.title ?? anchor;
-
-                        return linked ? (
-                          <Link key={anchor} href={`/codex/${linked.id}`} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-sm leading-tight text-muted-soft hover:border-gold/20 hover:text-foreground-strong">
-                            {label}
-                          </Link>
-                        ) : (
-                          <span key={anchor} className="inline-flex border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-sm leading-tight text-muted-soft">{label}</span>
-                        );
-                      })}
-                    </div>
                   </div>
                 ) : null}
               </div>

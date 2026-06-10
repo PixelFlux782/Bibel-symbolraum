@@ -2093,6 +2093,19 @@ body {
   }
 }
 
+@keyframes connection-resonance-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 0.45rem));
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    filter: blur(0);
+  }
+}
+
 @keyframes portal-light-breath {
   0%, 100% {
     opacity: 0.38;
@@ -3124,6 +3137,11 @@ body {
   animation: light-pulse 3.8s ease-in-out infinite;
 }
 
+.symbol-constellation-field--relation-focus .symbol-network-flow .react-flow__edge:not(.is-selected-path) .react-flow__edge-path {
+  opacity: 0.08;
+  filter: drop-shadow(0 0 3px rgba(127, 184, 201, 0.02));
+}
+
 .symbol-network-flow .react-flow__edge.is-journey-path.is-selected-path .react-flow__edge-path {
   opacity: 0.66;
 }
@@ -3136,6 +3154,27 @@ body {
 .living-connection-foreign-object {
   overflow: visible;
   pointer-events: auto;
+}
+
+.symbol-connection-resonance {
+  position: absolute;
+  z-index: 8;
+  max-width: min(26rem, 72vw);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  white-space: pre-line;
+  color: rgba(var(--gold-rgb), 0.88);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(1.02rem, 1.8vw, 1.55rem);
+  font-style: italic;
+  line-height: 1.32;
+  letter-spacing: 0;
+  text-align: center;
+  text-shadow:
+    0 0 10px rgba(var(--gold-rgb), 0.24),
+    0 0 26px rgba(var(--gold-rgb), 0.14),
+    0 1px 14px rgba(0, 0, 0, 0.72);
+  animation: connection-resonance-in 680ms ease-out both;
 }
 
 .letter-bridge {
@@ -4111,6 +4150,7 @@ body {
   .symbol-room-depth-mark.is-active .symbol-room-depth-mark__light,
   .symbol-room-fragment-sign,
   .symbol-room-semantic-echo-active::before,
+  .symbol-connection-resonance,
   .symbol-network-flow .react-flow__edge.is-selected-path .react-flow__edge-path,
   .symbol-network-flow .react-flow__edge.is-traveling-path .react-flow__edge-path,
   .living-connection-label.is-traveling,
