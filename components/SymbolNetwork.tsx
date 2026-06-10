@@ -224,6 +224,10 @@ function getNodeCenter(nodeId: string) {
   };
 }
 
+function isMainSymbolId(nodeId: string | null | undefined) {
+  return Boolean(nodeId && network.nodes.some((node) => node.id === nodeId));
+}
+
 function pickPortForVector(dx: number, dy: number): SymbolPort {
   const absX = Math.abs(dx);
   const absY = Math.abs(dy);
@@ -511,14 +515,20 @@ const edgeTypes = { living: LivingConnectionEdge };
 function SymbolLensOrbit({
   lensData,
   activeLensMode,
+  position,
   onActivate,
 }: {
   lensData: SymbolLensData;
   activeLensMode: SymbolLensMode | null;
+  position: { x: number; y: number };
   onActivate: (nodeId: SymbolLensMode) => void;
 }) {
   return (
-    <div className="symbol-lens-orbit" aria-label={`${getSymbolLabel(lensData.symbolId)} Symbol-Linse`}>
+    <div
+      className="symbol-lens-orbit"
+      style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      aria-label={`${getSymbolLabel(lensData.symbolId)} Symbol-Linse`}
+    >
       <div className="symbol-lens-orbit__ring" aria-hidden="true" />
       <div className="symbol-lens-orbit__ring symbol-lens-orbit__ring--outer" aria-hidden="true" />
       {lensData.nodes.map((node) => (
@@ -605,6 +615,7 @@ export default function SymbolNetwork() {
   const [activeLetterSourcePathId, setActiveLetterSourcePathId] = useState<string | null>(null);
   const [activeLensMode, setActiveLensMode] = useState<SymbolLensMode | null>(null);
   const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(null);
+  const [flowViewport, setFlowViewport] = useState({ x: 0, y: 0, zoom: 1 });
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
   const { isEntering } = useRoomTransition();
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
@@ -749,11 +760,26 @@ export default function SymbolNetwork() {
     ]),
     [journeyFocusMeaningIds, journeyFocusSymbolIds],
   );
+  const initialJourneyStepId = useMemo(() => {
+    if (!isJourneyFocus) return null;
+
+    if (activeLensMode === "journey" && activeSymbolLensData?.symbolId && journeyFocusSymbolIds.has(activeSymbolLensData.symbolId)) {
+      return activeSymbolLensData.symbolId;
+    }
+
+    const journeyStartId = activeJourney?.symbolPath.find((symbolId) => journeyFocusSymbolIds.has(symbolId));
+    if (journeyStartId) return journeyStartId;
+
+    const bridgeStartId = bridgeJourneys
+      .flatMap((journey) => journey.symbolPath)
+      .find((symbolId) => journeyFocusSymbolIds.has(symbolId));
+    if (bridgeStartId) return bridgeStartId;
+
+    return Array.from(journeyFocusSymbolIds)[0] ?? null;
+  }, [activeJourney, activeLensMode, activeSymbolLensData, bridgeJourneys, isJourneyFocus, journeyFocusSymbolIds]);
   const journeyStepId = activeJourneyStepId && journeyFocusSymbolIds.has(activeJourneyStepId)
     ? activeJourneyStepId
-    : activeSymbolId && journeyFocusSymbolIds.has(activeSymbolId)
-      ? activeSymbolId
-      : Array.from(journeyFocusSymbolIds)[0] ?? activeSymbolId;
+    : initialJourneyStepId ?? activeSymbolId;
   const journeyPathKeys = useMemo(
     () => new Set([
       ...(activeJourney?.symbolPath.slice(1).map((symbolId, index) => getPathKey(activeJourney.symbolPath[index], symbolId)) ?? []),
@@ -772,6 +798,32 @@ export default function SymbolNetwork() {
         : hasSymbolFocus || activeLetterId
         ? "Symbol"
         : "Uebersicht";
+  const lensOrbitAnchorId = useMemo(() => {
+    const anchorId = activeLensMode && isSymbolLensVisible
+      ? activeSymbolId
+      : isJourneyFocus && journeyStepId
+        ? journeyStepId
+        : focusedSymbolId;
+
+    return isMainSymbolId(anchorId) ? anchorId : null;
+  }, [activeLensMode, activeSymbolId, focusedSymbolId, isJourneyFocus, isSymbolLensVisible, journeyStepId]);
+  const lensOrbitPosition = useMemo(() => {
+    if (!lensOrbitAnchorId) return null;
+
+    const center = getNodeCenter(lensOrbitAnchorId);
+
+    return {
+      x: center.x * flowViewport.zoom + flowViewport.x,
+      y: center.y * flowViewport.zoom + flowViewport.y,
+    };
+  }, [flowViewport, lensOrbitAnchorId]);
+  const isLensOrbitVisible = Boolean(
+    isSymbolLensVisible
+    && activeSymbolLensData
+    && lensOrbitAnchorId
+    && lensOrbitPosition
+    && activeSymbolLensData.symbolId === lensOrbitAnchorId,
+  );
 
   const setJourneyViewport = useCallback((mode: JourneyViewportMode, duration = 680) => {
     const instance = reactFlowRef.current;
@@ -803,6 +855,17 @@ export default function SymbolNetwork() {
       duration,
     });
   }, [journeyFocusNodeIds, journeyStepId]);
+
+  useEffect(() => {
+    if (!isJourneyFocus || !initialJourneyStepId) return;
+    if (activeJourneyStepId && journeyFocusSymbolIds.has(activeJourneyStepId)) return;
+
+    const frameId = window.requestAnimationFrame(() => {
+      setActiveJourneyStepId(initialJourneyStepId);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [activeJourneyStepId, initialJourneyStepId, isJourneyFocus, journeyFocusSymbolIds]);
 
   useEffect(() => {
     const instance = reactFlowRef.current;
@@ -991,6 +1054,30 @@ export default function SymbolNetwork() {
     },
     [activeCodexLetter, activeLensMeaningIds, activeLensMode, activeLetterId, activeLetterNodeId, activePath, activePathId, activeSymbolId, activeSymbolLensData, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds]
   );
+
+  useEffect(() => {
+    const instance = reactFlowRef.current;
+
+    if (!instance || !isJourneyFocus || journeyFocusNodeIds.size === 0) return;
+
+    const nodeIds = new Set(nodes.map((node) => node.id));
+    const hasJourneyNodes = Array.from(journeyFocusNodeIds).every((nodeId) => nodeIds.has(nodeId));
+
+    if (!hasJourneyNodes) return;
+
+    let timeoutId: number | undefined;
+    const frameId = window.requestAnimationFrame(() => {
+      timeoutId = window.setTimeout(() => {
+        setJourneyViewport("journey", 760);
+        setFlowViewport(instance.getViewport());
+      }, 32);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [isJourneyFocus, journeyFocusNodeIds, nodes, setJourneyViewport]);
 
   const edges: Edge[] = [
     ...(activeLetterId && activeLetterNodeId ? [
@@ -1220,7 +1307,9 @@ export default function SymbolNetwork() {
               fitViewOptions={{ padding: 0.2 }}
               onInit={(instance) => {
                 reactFlowRef.current = instance;
+                setFlowViewport(instance.getViewport());
               }}
+              onMove={(_, viewport) => setFlowViewport(viewport)}
               nodesDraggable={false}
               nodesConnectable={false}
               zoomOnScroll={false}
@@ -1243,6 +1332,10 @@ export default function SymbolNetwork() {
                   setActiveJourneyStepId(node.id);
                   const center = getNodeCenter(node.id);
                   reactFlowRef.current?.setCenter(center.x, center.y, { zoom: 0.98, duration: 560 });
+                  window.setTimeout(() => {
+                    const instance = reactFlowRef.current;
+                    if (instance) setFlowViewport(instance.getViewport());
+                  }, 32);
                   return;
                 }
 
@@ -1263,8 +1356,14 @@ export default function SymbolNetwork() {
                 </button>
               </div>
             ) : null}
-            {isSymbolLensVisible && activeSymbolLensData ? (
-              <SymbolLensOrbit lensData={activeSymbolLensData} activeLensMode={activeLensMode} onActivate={activateSymbolLens} />
+            {isLensOrbitVisible && activeSymbolLensData && lensOrbitPosition ? (
+              <SymbolLensOrbit
+                key={lensOrbitAnchorId}
+                lensData={activeSymbolLensData}
+                activeLensMode={activeLensMode}
+                position={lensOrbitPosition}
+                onActivate={activateSymbolLens}
+              />
             ) : null}
           </div>
 
