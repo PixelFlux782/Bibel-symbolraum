@@ -109,6 +109,14 @@ type SymbolLensData = {
   roomHref?: string;
 };
 
+type SearchResonanceGroupItem = {
+  id: string;
+  sourceId: string;
+  targetId: string;
+  text: string;
+  registryIndex: number;
+};
+
 const network = buildSymbolMeaningNetwork();
 const resonanceConnections = getAllResonanceConnections();
 const positions: Record<string, { x: number; y: number }> = {
@@ -302,6 +310,32 @@ function getOtherSymbolId(path: SymbolMeaningPath, symbolId: string) {
   return path.from === symbolId ? path.to : path.from;
 }
 
+function normalizeSymbolSearchTerm(value: string) {
+  return value
+    .trim()
+    .toLocaleLowerCase("de")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function findSymbolBySearchTerm(value: string, allowPartial = true) {
+  const query = normalizeSymbolSearchTerm(value);
+
+  if (!query) return undefined;
+
+  return network.nodes.find((node) => {
+    const values = [
+      node.id,
+      node.label,
+      node.transliteration,
+      node.hebrew,
+      node.shortMeaning,
+    ].map(normalizeSymbolSearchTerm);
+
+    return values.some((term) => term === query || (allowPartial && term.includes(query)));
+  });
+}
+
 function getSymbolLabel(symbolId: string) {
   return network.nodes.find((node) => node.id === symbolId)?.label ?? symbolId;
 }
@@ -322,6 +356,11 @@ function getPathKey(from: string, to: string) {
 
 function getResonanceConnectionForPath(from: string, to: string): ResonanceConnection | undefined {
   return resonanceConnections.find((connection) => getPathKey(connection.sourceId, connection.targetId) === getPathKey(from, to));
+}
+
+function getBridgeForPath(path: SymbolMeaningPath) {
+  return getBridgeBySourceAndTarget(path.from as string, path.to as string)
+    ?? getBridgeBySourceAndTarget(path.to as string, path.from as string);
 }
 
 function compactResonanceText(text: string) {
@@ -353,6 +392,36 @@ function getPathResonanceText(path: SymbolMeaningPath, bridge?: MeaningBridge, r
     ?? `${getSymbolLabel(path.from)} und ${getSymbolLabel(path.to)} gehoeren in einer gemeinsamen Bedeutung zusammen.`;
 
   return compactResonanceText(sourceText);
+}
+
+function formatGermanList(items: string[]) {
+  if (items.length <= 1) return items.join("");
+  if (items.length === 2) return items.join(" und ");
+
+  return `${items.slice(0, -1).join(", ")} und ${items[items.length - 1]}`;
+}
+
+function getSearchResonanceGroup(symbolId: string): SearchResonanceGroupItem[] {
+  return network.paths
+    .filter((path) => path.from === symbolId || path.to === symbolId)
+    .map((path) => {
+      const resonanceConnection = getResonanceConnectionForPath(path.from, path.to);
+      const registryIndex = resonanceConnection
+        ? resonanceConnections.findIndex((connection) => connection.id === resonanceConnection.id)
+        : Number.MAX_SAFE_INTEGER;
+
+      return {
+        id: path.id,
+        sourceId: resonanceConnection?.sourceId ?? path.from,
+        targetId: resonanceConnection?.targetId ?? path.to,
+        text: getPathResonanceText(path, getBridgeForPath(path), resonanceConnection).replace(/\s*\n\s*/g, " "),
+        registryIndex,
+      };
+    })
+    .sort((left, right) => {
+      if (left.registryIndex !== right.registryIndex) return left.registryIndex - right.registryIndex;
+      return left.id.localeCompare(right.id, "de");
+    });
 }
 
 function getResonanceStroke(
@@ -755,8 +824,46 @@ function ResonanceJourneyDetail({
   );
 }
 
+function SearchResonanceGroup({
+  centerId,
+  centerLabel,
+  items,
+}: {
+  centerId: string;
+  centerLabel: string;
+  items: SearchResonanceGroupItem[];
+}) {
+  if (items.length === 0) return null;
+
+  const neighborLabels = items.map((item) => {
+    const neighborId = item.sourceId === centerId ? item.targetId : item.sourceId;
+    return getSymbolLabel(neighborId);
+  });
+
+  return (
+    <div className="mt-7 border-t border-white/[0.055] pt-5">
+      <p className="symbol-kicker text-cyan-soft">Resonanzgruppe</p>
+      <p className="symbol-copy mt-4 text-base italic text-gold/80">
+        {centerLabel} resoniert mit {formatGermanList(neighborLabels)}.
+      </p>
+      <div className="mt-5 grid gap-3">
+        {items.map((item) => (
+          <div key={item.id} className="border-l border-gold/20 bg-white/[0.018] px-4 py-3">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">
+              {getSymbolLabel(item.sourceId)} <span className="text-gold/65">&rarr;</span> {getSymbolLabel(item.targetId)}
+            </p>
+            <p className="symbol-copy mt-2 text-sm">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function SymbolNetwork() {
   const [activeSymbolId, setActiveSymbolId] = useState("wasser");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchFocusSymbolId, setSearchFocusSymbolId] = useState<string | null>(null);
   const [hasSymbolFocus, setHasSymbolFocus] = useState(false);
   const [activePathId, setActivePathId] = useState<string | null>(null);
   const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
@@ -863,6 +970,10 @@ export default function SymbolNetwork() {
     };
   }, [activeResonanceJourneyNodePathKey, flowViewport.x, flowViewport.y, flowViewport.zoom]);
   const connectedPaths = network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId);
+  const searchResonanceGroup = useMemo(
+    () => searchFocusSymbolId === activeSymbolId ? getSearchResonanceGroup(activeSymbolId) : [],
+    [activeSymbolId, searchFocusSymbolId],
+  );
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
   const activeLetterNodeId = activeLetterId ? `${LETTER_NODE_PREFIX}${activeLetterId}` : null;
   const relationSymbolIds = useMemo(
@@ -1517,6 +1628,7 @@ export default function SymbolNetwork() {
 
   function focusSymbol(symbolId: string) {
     setActiveSymbolId(symbolId);
+    setSearchFocusSymbolId(null);
     setActiveJourneyStepId(null);
     setHasSymbolFocus(true);
     setActivePathId(null);
@@ -1532,6 +1644,19 @@ export default function SymbolNetwork() {
     setRevealedResonanceId(null);
     setResonanceHintVisible(false);
     setResonanceFocusTick((tick) => tick + 1);
+  }
+
+  function focusSearchMatch(value: string, allowPartial = true) {
+    const match = findSymbolBySearchTerm(value, allowPartial);
+
+    if (!match) {
+      setSearchFocusSymbolId(null);
+      return;
+    }
+
+    focusSymbol(match.id);
+    setSearchFocusSymbolId(match.id);
+    setSearchQuery(match.label);
   }
 
   function activateFirstResonance(letterId: string) {
@@ -1683,6 +1808,37 @@ export default function SymbolNetwork() {
           <div
             className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden ${isSymbolLensVisible ? "is-symbol-lens-focused" : ""} ${isJourneyFocus ? "is-journey-focused" : ""}`}
           >
+            <form
+              className="symbol-network-search"
+              role="search"
+              aria-label="Symbolnetz durchsuchen"
+              onSubmit={(event) => {
+                event.preventDefault();
+                focusSearchMatch(searchQuery);
+              }}
+              onPointerDown={(event) => event.stopPropagation()}
+            >
+              <label htmlFor="symbol-network-search" className="sr-only">Wort suchen</label>
+              <input
+                id="symbol-network-search"
+                list="symbol-network-search-options"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => {
+                  const nextValue = event.target.value;
+                  setSearchQuery(nextValue);
+                  focusSearchMatch(nextValue, false);
+                }}
+                placeholder="Wort suchen…"
+                className="symbol-network-search__input"
+                autoComplete="off"
+              />
+              <datalist id="symbol-network-search-options">
+                {network.nodes.map((node) => (
+                  <option key={node.id} value={node.label} />
+                ))}
+              </datalist>
+            </form>
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -1935,6 +2091,11 @@ export default function SymbolNetwork() {
                   </Link>
                 ) : null}
               </div>
+              <SearchResonanceGroup
+                centerId={activeSymbol.id}
+                centerLabel={activeSymbol.label}
+                items={searchResonanceGroup}
+              />
             </>
           )}
 
