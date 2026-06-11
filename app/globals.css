@@ -2680,6 +2680,49 @@ body {
   pointer-events: none !important;
 }
 
+.hierarchy-satellite-node {
+  display: grid;
+  width: 5.75rem;
+  height: 5.75rem;
+  place-items: center;
+  align-content: center;
+  border: 1px solid rgba(var(--cyan-rgb), 0.14);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(var(--cyan-rgb), 0.055), transparent 42%),
+    rgba(1, 3, 8, 0.2);
+  box-shadow:
+    0 0 24px rgba(var(--cyan-rgb), 0.045),
+    inset 0 0 18px rgba(var(--cyan-rgb), 0.02);
+  padding: 0.68rem;
+  text-align: center;
+}
+
+.hierarchy-satellite-node span {
+  color: rgba(var(--foreground-rgb), 0.72);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.1;
+}
+
+.hierarchy-satellite-node i {
+  display: block;
+  margin-top: 0.25rem;
+  color: rgba(216, 209, 194, 0.46);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.58rem;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.hierarchy-satellite-node--deep {
+  border-color: rgba(var(--gold-rgb), 0.16);
+  box-shadow:
+    0 0 26px rgba(var(--gold-rgb), 0.05),
+    inset 0 0 18px rgba(var(--gold-rgb), 0.022);
+}
+
 .symbol-constellation-node__lens {
   position: absolute;
   right: 0.45rem;
@@ -3776,6 +3819,31 @@ body {
   font-size: 0.78rem;
   font-style: italic;
   line-height: 1.45;
+}
+
+.symbol-subspaces p:not(.symbol-kicker) {
+  border-left: 1px solid rgba(var(--cyan-rgb), 0.14);
+  background: rgba(255, 255, 255, 0.014);
+  padding: 0.58rem 0.72rem;
+}
+
+.symbol-subspaces span {
+  display: block;
+  color: rgba(var(--foreground-rgb), 0.78);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.96rem;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.symbol-subspaces i {
+  display: block;
+  margin-top: 0.22rem;
+  color: rgba(216, 209, 194, 0.54);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.78rem;
+  font-style: italic;
+  line-height: 1.35;
 }
 
 .symbol-detail-accordion {
