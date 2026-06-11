@@ -106,6 +106,7 @@ type LivingConnectionData = {
 type SymbolGraphViewMode = "OVERVIEW" | "SYMBOL_FOCUS" | "RELATION_FOCUS";
 type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Resonanz" | "Info" | "Beziehung";
 type SymbolLensMode = "meaning" | "story" | "hebrew" | "gematria" | "journey";
+type SymbolInspectorFocus = "meaning" | "hebrew" | "gematria" | "story" | "subspaces" | "codex" | "room";
 type SymbolViewportMode = SymbolZoomLevel;
 
 type SymbolLensOrbitNode = {
@@ -1111,25 +1112,40 @@ function SymbolLensFocusDetail({
   connectedPaths,
   lensData,
   activeResonanceLens,
+  activeInspectorFocus,
+  activeCodexEntry,
   detailHierarchyChildren,
   storyDeepHierarchyAnchors,
   verseDeepHierarchyAnchors,
+  searchResonanceGroup,
+  showResonanceJourneyOption,
+  discoverableResonanceJourney,
+  onSelectFocus,
   onPreviewPath,
+  onActivateResonanceJourney,
 }: {
   activeSymbol: SymbolMeaningNetworkNode;
   connectedPaths: SymbolMeaningPath[];
   lensData: SymbolLensData;
   activeResonanceLens: SymbolLensMode | null;
+  activeInspectorFocus: SymbolInspectorFocus | null;
+  activeCodexEntry?: CodexEntry;
   detailHierarchyChildren: SymbolHierarchyEntry[];
   storyDeepHierarchyAnchors: SymbolHierarchyEntry[];
   verseDeepHierarchyAnchors: SymbolHierarchyEntry[];
+  searchResonanceGroup: SearchResonanceGroupItem[];
+  showResonanceJourneyOption: boolean;
+  discoverableResonanceJourney?: ResonanceJourney;
+  onSelectFocus: (focus: SymbolInspectorFocus) => void;
   onPreviewPath: (path: SymbolMeaningPath) => void;
+  onActivateResonanceJourney: (journeyId: string) => void;
 }) {
-  const visiblePaths = activeResonanceLens === "meaning" ? connectedPaths.slice(0, 3) : [];
-  const lensNote = activeResonanceLens ? lensData.notes[activeResonanceLens] : undefined;
-  const activeLabel = activeResonanceLens ? SYMBOL_LENS_MODE_LABELS[activeResonanceLens] : undefined;
   const profile = getSymbolHebrewProfile(activeSymbol.id);
   const hebrewWord = profile.hebrewWord;
+  const meaningItems = network.meaningLinks
+    .filter((link) => link.symbolId === activeSymbol.id)
+    .slice(0, 3)
+    .map((link) => getMeaningNodeLabel(link.meaningId));
   const hebrewLettersText = profile.letters.map((letter) => letter.name).join(" - ");
   const uniqueLetters = getUniqueHebrewLettersForLens(activeSymbol.id);
   const storyJourney = getJourneysForNode(activeSymbol.id)[0];
@@ -1137,69 +1153,152 @@ function SymbolLensFocusDetail({
   const narrativePath = storyJourney?.nodePath.map(getSymbolLabel).join(" -> ");
   const hebrew = hebrewWord?.hebrew ?? activeSymbol.hebrew;
   const gematria = hebrew ? calculateGematria(hebrew) : 0;
+  const activeLabel = activeInspectorFocus
+    ? {
+      meaning: "Bedeutung",
+      hebrew: "Hebraeisch",
+      gematria: "Zahl",
+      story: "Erzaehlspur",
+      subspaces: "Unterraeume",
+      codex: "Codex",
+      room: "Raum",
+    }[activeInspectorFocus]
+    : activeResonanceLens
+      ? SYMBOL_LENS_MODE_LABELS[activeResonanceLens]
+      : null;
+  const firstSearchResonance = searchResonanceGroup[0];
+  const firstSearchPath = firstSearchResonance
+    ? connectedPaths.find((path) =>
+      (path.from === firstSearchResonance.sourceId && path.to === firstSearchResonance.targetId)
+      || (path.from === firstSearchResonance.targetId && path.to === firstSearchResonance.sourceId),
+    )
+    : undefined;
+  const subspaceEntries = detailHierarchyChildren.slice(0, 5);
+  const storyAnchor = storyDeepHierarchyAnchors[0] ?? verseDeepHierarchyAnchors[0];
 
   return (
     <>
-      <p className="symbol-breathe mt-5 font-serif text-5xl leading-none text-gold/90" lang="he" dir="rtl">{activeSymbol.hebrew}</p>
-      <h2 className="mt-4 font-serif text-2xl italic text-foreground-strong">{activeSymbol.label}</h2>
-      <p className="symbol-copy mt-4 text-sm">{activeSymbol.shortMeaning}</p>
-      <div className="symbol-focus-hints mt-6">
-        <p className="symbol-kicker text-cyan-soft">{activeLabel ? `${activeLabel}-Linse` : "Resonanz-Linse waehlen"}</p>
-        <p>{lensNote ?? "Waehle eine Resonanz-Linse: Bedeutung, Hebraeisch, Zahl oder Erzaehlung."}</p>
+      <div className="symbol-inspector-head">
+        <p className="symbol-breathe font-serif text-6xl leading-none text-gold/90" lang="he" dir="rtl">{activeSymbol.hebrew}</p>
+        <h2 className="font-serif text-3xl italic text-foreground-strong">{activeSymbol.label}</h2>
+        <p className="text-[11px] uppercase tracking-[0.28em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
+        <p className="symbol-copy text-base">{activeSymbol.shortMeaning}</p>
+        {activeLabel ? (
+          <p className="symbol-inspector-current">
+            <span>Aktiver Fokus</span>
+            <strong>{activeLabel}</strong>
+          </p>
+        ) : null}
       </div>
-      {activeResonanceLens ? (
-        <div className="mt-5 grid gap-2 text-sm text-muted-soft">
-          {activeResonanceLens === "story" ? (
-            <>
-              <p className="symbol-kicker text-cyan-soft">Erzaehlung</p>
+
+      <div className="symbol-inspector-accordion" aria-label={`${activeSymbol.label} vertiefen`}>
+        <section className={activeInspectorFocus === "meaning" ? "is-open" : ""}>
+          <button type="button" onClick={() => onSelectFocus("meaning")} aria-expanded={activeInspectorFocus === "meaning"}>
+            Bedeutung vertiefen
+          </button>
+          {activeInspectorFocus === "meaning" ? (
+            <div className="symbol-inspector-accordion__content">
+              <p>{meaningItems.join(" / ") || lensData.labels.meaning || activeSymbol.shortMeaning}</p>
+              {firstSearchResonance && firstSearchPath ? (
+                <button type="button" onClick={() => onPreviewPath(firstSearchPath)} className="symbol-focus-path">
+                  <span>{getSymbolLabel(firstSearchResonance.sourceId)} - {getSymbolLabel(firstSearchResonance.targetId)}</span>
+                  <i>{firstSearchResonance.text}</i>
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+        </section>
+
+        <section className={activeInspectorFocus === "hebrew" ? "is-open" : ""}>
+          <button type="button" onClick={() => onSelectFocus("hebrew")} aria-expanded={activeInspectorFocus === "hebrew"}>
+            Hebraeisch entdecken
+          </button>
+          {activeInspectorFocus === "hebrew" ? (
+            <div className="symbol-inspector-accordion__content">
+              <p lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</p>
+              <p>{hebrewWord?.transliteration ?? activeSymbol.transliteration}</p>
+              <p>{hebrewLettersText || uniqueLetters.map((letter) => letter.name).join(" - ") || "Buchstaben noch nicht hinterlegt"}</p>
+            </div>
+          ) : null}
+        </section>
+
+        <section className={activeInspectorFocus === "gematria" ? "is-open" : ""}>
+          <button type="button" onClick={() => onSelectFocus("gematria")} aria-expanded={activeInspectorFocus === "gematria"}>
+            Zahl / Gematria ansehen
+          </button>
+          {activeInspectorFocus === "gematria" ? (
+            <div className="symbol-inspector-accordion__content">
+              <p>{gematria > 0 ? `${gematria}` : "Noch kein Zahlenwert hinterlegt"}</p>
+              <p>{profile.letters.slice(0, 3).map((letter) => `${letter.numericValue} als ${letter.name}-Resonanz`).join(" / ")}</p>
+            </div>
+          ) : null}
+        </section>
+
+        <section className={activeInspectorFocus === "story" ? "is-open" : ""}>
+          <button type="button" onClick={() => onSelectFocus("story")} aria-expanded={activeInspectorFocus === "story"}>
+            Erzaehlspur oeffnen
+          </button>
+          {activeInspectorFocus === "story" ? (
+            <div className="symbol-inspector-accordion__content">
               {narrativePath ? <p className="font-serif text-base italic text-gold/80">{narrativePath}</p> : null}
-              {lensData.journeyTitles.length > 0 ? <p>{lensData.journeyTitles.slice(0, 2).join(" / ")}</p> : null}
-              {storyConnections.length > 0 ? <p>{storyConnections.map((connection) => connection.title).join(" / ")}</p> : null}
-              {storyJourney ? <p>{storyJourney.summary.replace(/\s*\n\s*/g, " ")}</p> : null}
-            </>
+              {storyJourney ? <p>{storyJourney.title}</p> : storyConnections[0] ? <p>{storyConnections[0].title}</p> : null}
+              {storyAnchor ? <p>{storyAnchor.title}</p> : null}
+              {showResonanceJourneyOption && discoverableResonanceJourney ? (
+                <button type="button" onClick={() => onActivateResonanceJourney(discoverableResonanceJourney.id)} className="symbol-archive-action">
+                  Resonanzpfad entdecken
+                </button>
+              ) : null}
+            </div>
           ) : null}
-          {activeResonanceLens === "hebrew" ? (
-            <>
-              <p className="symbol-kicker text-cyan-soft">Hebraeische Resonanz</p>
-              <p>{hebrewWord ? `${hebrewWord.hebrew} / ${hebrewWord.transliteration}` : `${activeSymbol.hebrew} / ${activeSymbol.transliteration}`}</p>
-              <p>Buchstaben: {hebrewLettersText || "noch nicht hinterlegt"}</p>
-              <p>{uniqueLetters.map((letter) => letter.name).join(", ") || "Diese Spur"} verbindet vorhandene Symbolfelder im Hebrew Codex.</p>
-            </>
+        </section>
+
+        <section className={activeInspectorFocus === "subspaces" ? "is-open" : ""}>
+          <button type="button" onClick={() => onSelectFocus("subspaces")} aria-expanded={activeInspectorFocus === "subspaces"}>
+            Unterraeume ansehen
+          </button>
+          {activeInspectorFocus === "subspaces" ? (
+            <div className="symbol-inspector-accordion__content">
+              {subspaceEntries.length > 0 ? (
+                <div className="symbol-inspector-chip-list">
+                  {subspaceEntries.map((entry) => <span key={entry.id}>{entry.title}</span>)}
+                </div>
+              ) : (
+                <p>Keine Unterraeume fuer diesen Fokus sichtbar.</p>
+              )}
+            </div>
           ) : null}
-          {activeResonanceLens === "gematria" ? (
-            <>
-              <p className="symbol-kicker text-cyan-soft">Zahlenresonanz</p>
-              <p>{hebrew} = {gematria}</p>
-              <p>{profile.letters.map((letter) => `${letter.name}: ${letter.numericValue}`).join(" / ")}</p>
-            </>
-          ) : null}
-        </div>
-      ) : null}
-      {visiblePaths.length > 0 ? (
-        <div className="mt-6 grid gap-2">
-          {visiblePaths.map((path) => (
-            <button key={path.id} type="button" onClick={() => onPreviewPath(path)} className="symbol-focus-path">
-              <span>{path.label}</span>
-              <i>{path.summary}</i>
+        </section>
+
+        {activeCodexEntry ? (
+          <section className={activeInspectorFocus === "codex" ? "is-open" : ""}>
+            <button type="button" onClick={() => onSelectFocus("codex")} aria-expanded={activeInspectorFocus === "codex"}>
+              Im Codex lesen
             </button>
-          ))}
-        </div>
-      ) : null}
-      {activeResonanceLens === "meaning" ? (
-        <>
-          <HierarchyChildrenDetail entries={detailHierarchyChildren} title={getSubspacesTitle(activeSymbol.label)} />
-          <HierarchyChildrenDetail
-            entries={storyDeepHierarchyAnchors}
-            title="Biblische Tiefenpunkte"
-            className="symbol-subspaces--deep"
-          />
-          <HierarchyChildrenDetail
-            entries={verseDeepHierarchyAnchors}
-            title="Versanker"
-            className="symbol-subspaces--verse"
-          />
-        </>
-      ) : null}
+            {activeInspectorFocus === "codex" ? (
+              <div className="symbol-inspector-accordion__content">
+                <p>{activeCodexEntry.subtitle ?? activeCodexEntry.title}</p>
+                <Link href={`/codex/${activeCodexEntry.id}`} className="symbol-archive-action">
+                  /codex/{activeCodexEntry.id}
+                </Link>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        <section className={activeInspectorFocus === "room" ? "is-open" : ""}>
+          <button type="button" onClick={() => onSelectFocus("room")} aria-expanded={activeInspectorFocus === "room"}>
+            Raum betreten
+          </button>
+          {activeInspectorFocus === "room" ? (
+            <div className="symbol-inspector-accordion__content">
+              <p>{activeSymbol.label}-Raum</p>
+              <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">
+                {activeSymbol.roomHref}
+              </RoomTransitionButton>
+            </div>
+          ) : null}
+        </section>
+      </div>
     </>
   );
 }
@@ -1316,6 +1415,7 @@ export default function SymbolNetwork() {
   const [activeLetterResonanceId, setActiveLetterResonanceId] = useState<MeaningNodeId | null>(null);
   const [activeLetterSourcePathId, setActiveLetterSourcePathId] = useState<string | null>(null);
   const [activeResonanceLens, setActiveResonanceLens] = useState<SymbolLensMode | null>(null);
+  const [activeInspectorFocus, setActiveInspectorFocus] = useState<SymbolInspectorFocus | null>(null);
   const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(null);
   const [activeResonanceJourneyId, setActiveResonanceJourneyId] = useState<string | null>(null);
   const [symbolViewportMode, setSymbolViewportMode] = useState<SymbolViewportMode>("overview");
@@ -1434,6 +1534,10 @@ export default function SymbolNetwork() {
   const activeSymbolLensData = useMemo(
     () => (disclosureSymbolId ? getSymbolLensData(disclosureSymbolId) : null),
     [disclosureSymbolId],
+  );
+  const inspectorSymbolLensData = useMemo(
+    () => activeSymbolLensData ?? getSymbolLensData(activeSymbol.id),
+    [activeSymbol.id, activeSymbolLensData],
   );
   const isSymbolLensVisible = Boolean(activeResonanceLens && activeSymbolLensData)
     && !activeJourney
@@ -1652,7 +1756,7 @@ export default function SymbolNetwork() {
     ? "Beziehung"
     : activeResonanceJourneyId
       ? "Resonanz"
-    : activeResonanceLens
+    : activeInspectorFocus || activeResonanceLens
       ? "Info"
       : isSymbolLensVisible
         ? "Resonanz"
@@ -1661,6 +1765,7 @@ export default function SymbolNetwork() {
         : "Uebersicht";
   const hasTransientBackState = Boolean(
     activeResonanceLens
+    || activeInspectorFocus
     || activeResonanceJourneyId
     || activeJourneyId
     || activePathId
@@ -1678,6 +1783,16 @@ export default function SymbolNetwork() {
 
     if (activeResonanceLens) {
       items.push(SYMBOL_LENS_MODE_LABELS[activeResonanceLens]);
+    } else if (activeInspectorFocus) {
+      items.push({
+        meaning: "Bedeutung",
+        hebrew: "Hebraeisch",
+        gematria: "Zahl",
+        story: "Erzaehlspur",
+        subspaces: "Unterraeume",
+        codex: "Codex",
+        room: "Raum",
+      }[activeInspectorFocus]);
     } else if (activeResonanceJourney) {
       items.push("Resonanzpfad");
     } else if (activeJourney) {
@@ -1697,6 +1812,7 @@ export default function SymbolNetwork() {
     activePath,
     activeResonanceJourney,
     activeResonanceLens,
+    activeInspectorFocus,
     activeSymbol.label,
     hasSymbolFocus,
     hasTransientBackState,
@@ -2463,6 +2579,7 @@ export default function SymbolNetwork() {
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
     setActiveResonanceLens(null);
+    setActiveInspectorFocus(null);
   }
 
   function focusSearchMatch(value: string, allowPartial = true) {
@@ -2500,6 +2617,7 @@ export default function SymbolNetwork() {
   function activateSymbolLens(nodeId: SymbolLensMode) {
     const nextLens = nodeId === "journey" ? "story" : nodeId;
     setActiveResonanceLens(nextLens);
+    setActiveInspectorFocus(nextLens);
     setActiveJourneyStepId(nextLens === "story" ? activeSymbolId : null);
     setHasSymbolFocus(true);
     setActivePathId(null);
@@ -2511,6 +2629,34 @@ export default function SymbolNetwork() {
     setIsLetterResonanceOpen(false);
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
+  }
+
+  function selectInspectorFocus(focus: SymbolInspectorFocus) {
+    const nextFocus = activeInspectorFocus === focus ? null : focus;
+    setActiveInspectorFocus(nextFocus);
+    setHasSymbolFocus(true);
+    setActivePathId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
+    setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
+    setActiveLetterId(null);
+    setIsLetterResonanceOpen(false);
+    setActiveLetterResonanceId(null);
+    setActiveLetterSourcePathId(null);
+
+    if (nextFocus === "meaning" || nextFocus === "hebrew" || nextFocus === "gematria" || nextFocus === "story") {
+      setActiveResonanceLens(nextFocus);
+      setActiveJourneyStepId(nextFocus === "story" ? activeSymbolId : null);
+      return;
+    }
+
+    setActiveResonanceLens(null);
+    setActiveJourneyStepId(null);
+
+    if (nextFocus === "subspaces") {
+      setSymbolViewport("detail");
+    }
   }
 
   function openLetterBridge(path: SymbolMeaningPath) {
@@ -2530,12 +2676,14 @@ export default function SymbolNetwork() {
     setActiveJourneyId(null);
     setActiveResonanceJourneyId(null);
     setActiveResonanceLens(null);
+    setActiveInspectorFocus(null);
     setActiveJourneyStepId(null);
     setHasSymbolFocus(true);
   }
 
   function previewPath(path: SymbolMeaningPath) {
     setActiveResonanceLens(null);
+    setActiveInspectorFocus(null);
     setActiveJourneyStepId(null);
     setPendingPathId(path.id);
     setActivePathId(path.id);
@@ -2565,9 +2713,19 @@ export default function SymbolNetwork() {
     setActiveLetterResonanceId(null);
     setActiveLetterSourcePathId(null);
     setActiveResonanceLens(null);
+    setActiveInspectorFocus(null);
   }
 
   function navigateSymbolBack() {
+    if (activeInspectorFocus) {
+      setActiveInspectorFocus(null);
+      if (activeResonanceLens) {
+        setActiveResonanceLens(null);
+        setActiveJourneyStepId(null);
+      }
+      return;
+    }
+
     if (activeResonanceLens) {
       setActiveResonanceLens(null);
       setActiveJourneyStepId(null);
@@ -2924,18 +3082,7 @@ export default function SymbolNetwork() {
             <p>Aktuelle Ebene: {SYMBOL_VIEWPORT_LABELS[symbolViewportMode]}</p>
             <p className="mt-1 text-gold/60">{SYMBOL_VIEWPORT_HINTS[symbolViewportMode]}</p>
           </div>
-          {isSymbolLensVisible && activeSymbolLensData ? (
-            <SymbolLensFocusDetail
-              activeSymbol={activeSymbol}
-              connectedPaths={connectedPaths}
-              lensData={activeSymbolLensData}
-              activeResonanceLens={activeResonanceLens}
-              detailHierarchyChildren={symbolViewportMode === "detail" || symbolViewportMode === "deep" ? activeDetailHierarchyChildren : []}
-              storyDeepHierarchyAnchors={symbolViewportMode === "deep" ? activeStoryDeepHierarchyAnchors : []}
-              verseDeepHierarchyAnchors={symbolViewportMode === "deep" ? activeVerseDeepHierarchyAnchors : []}
-              onPreviewPath={previewPath}
-            />
-          ) : activeResonanceJourney ? (
+          {activeResonanceJourney ? (
             <ResonanceJourneyDetail
               journey={activeResonanceJourney}
               connections={activeResonanceJourneyConnections}
@@ -3002,6 +3149,24 @@ export default function SymbolNetwork() {
                 </details>
               </div>
             </>
+          ) : inspectorSymbolLensData ? (
+            <SymbolLensFocusDetail
+              activeSymbol={activeSymbol}
+              connectedPaths={connectedPaths}
+              lensData={inspectorSymbolLensData}
+              activeResonanceLens={activeResonanceLens}
+              activeInspectorFocus={activeInspectorFocus}
+              activeCodexEntry={activeCodexEntry}
+              detailHierarchyChildren={activeDetailHierarchyChildren}
+              storyDeepHierarchyAnchors={activeStoryDeepHierarchyAnchors}
+              verseDeepHierarchyAnchors={activeVerseDeepHierarchyAnchors}
+              searchResonanceGroup={searchResonanceGroup}
+              showResonanceJourneyOption={showResonanceJourneyOption}
+              discoverableResonanceJourney={discoverableResonanceJourney}
+              onSelectFocus={selectInspectorFocus}
+              onPreviewPath={previewPath}
+              onActivateResonanceJourney={activateResonanceJourney}
+            />
           ) : (
             <>
               <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeSymbol.hebrew}</p>

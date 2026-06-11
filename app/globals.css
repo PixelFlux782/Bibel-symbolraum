@@ -3926,6 +3926,126 @@ body {
   line-height: 1.45;
 }
 
+.symbol-inspector-head {
+  display: grid;
+  gap: 0.85rem;
+  padding-top: 1rem;
+}
+
+.symbol-inspector-current {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.65rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.26);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.035), transparent);
+  padding: 0.55rem 0.8rem;
+}
+
+.symbol-inspector-current span {
+  color: rgba(var(--cyan-rgb), 0.68);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.symbol-inspector-current strong {
+  color: rgba(var(--gold-rgb), 0.82);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.symbol-inspector-accordion {
+  display: grid;
+  margin-top: 1.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.symbol-inspector-accordion section {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+.symbol-inspector-accordion section > button {
+  display: flex;
+  width: 100%;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  color: rgba(216, 209, 194, 0.58);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-align: left;
+  text-transform: uppercase;
+  transition: color 520ms ease;
+}
+
+.symbol-inspector-accordion section > button::after {
+  content: "+";
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.16);
+  border-radius: 999px;
+  color: rgba(var(--gold-rgb), 0.72);
+  font-size: 0.82rem;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.symbol-inspector-accordion section.is-open > button {
+  color: rgba(var(--gold-rgb), 0.86);
+}
+
+.symbol-inspector-accordion section.is-open > button::after {
+  content: "-";
+}
+
+.symbol-inspector-accordion__content {
+  display: grid;
+  gap: 0.72rem;
+  padding: 0.05rem 0 1rem;
+  animation: symbol-fade-in 420ms ease both;
+}
+
+.symbol-inspector-accordion__content p {
+  color: rgba(216, 209, 194, 0.66);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.symbol-inspector-accordion__content p[lang="he"] {
+  color: rgba(var(--gold-rgb), 0.9);
+  font-size: 2rem;
+  font-style: normal;
+  line-height: 1;
+}
+
+.symbol-inspector-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.symbol-inspector-chip-list span {
+  border: 1px solid rgba(var(--cyan-rgb), 0.13);
+  background: rgba(255, 255, 255, 0.016);
+  padding: 0.42rem 0.6rem;
+  color: rgba(var(--foreground-rgb), 0.72);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
 .symbol-subspaces p:not(.symbol-kicker) {
   border-left: 1px solid rgba(var(--cyan-rgb), 0.14);
   background: rgba(255, 255, 255, 0.014);
@@ -4716,6 +4836,56 @@ body {
     max-height: min(34dvh, 18rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+  }
+
+  .symbol-detail-panel.symbol-archive-fragment {
+    border-top-color: rgba(var(--gold-rgb), 0.09);
+    background:
+      radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.05), transparent 38%),
+      linear-gradient(180deg, rgba(2, 5, 12, 0.88), rgba(2, 5, 12, 0.72));
+  }
+
+  .symbol-inspector-head {
+    gap: 0.55rem;
+    padding-top: 0.2rem;
+  }
+
+  .symbol-inspector-head .symbol-breathe {
+    font-size: 3.35rem;
+  }
+
+  .symbol-inspector-head h2 {
+    font-size: 1.85rem;
+  }
+
+  .symbol-inspector-head .symbol-copy {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .symbol-inspector-current {
+    padding: 0.42rem 0.62rem;
+  }
+
+  .symbol-inspector-accordion {
+    margin-top: 0.9rem;
+  }
+
+  .symbol-inspector-accordion section > button {
+    min-height: 2.65rem;
+    padding: 0.58rem 0;
+    font-size: 0.52rem;
+    letter-spacing: 0.16em;
+  }
+
+  .symbol-inspector-accordion__content {
+    gap: 0.55rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .symbol-inspector-accordion__content p {
+    font-size: 0.88rem;
+    line-height: 1.48;
   }
 
   .symbol-network-orientation {
