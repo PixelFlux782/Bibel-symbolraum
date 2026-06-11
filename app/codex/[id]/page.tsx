@@ -279,6 +279,44 @@ function getOntologyResonance(entry: CodexEntry) {
   });
 }
 
+function getPatternMovement(entityId: string): string[] {
+  const movements: Record<string, string[]> = {
+    "pattern-gabe-im-mangel": ["Mangel", "Empfangen", "Gabe"],
+    "pattern-pruefung-durch-entzug": ["Entzug", "Klaerung", "Reifung"],
+    "pattern-schwelle-durch-wasser": ["Grenze", "Durchgang", "Neuwerdung"],
+    "pattern-offenbarung-im-feuer": ["Brennen", "Gegenwart", "Offenbarung"],
+    "pattern-weg-der-reifung": ["Aufbruch", "Pruefung", "Verwandlung"],
+  };
+
+  return movements[entityId] ?? [];
+}
+
+function getPatternCarriers(entity: OntologyEntity) {
+  const registry = getOntologyRegistry();
+
+  return sortOntologyRelations(registry.relationsByTarget.get(entity.id) ?? [])
+    .filter((relation) => relation.type === "contains_pattern")
+    .map((relation) => ({
+      relation,
+      endpoint: resolveOntologyEndpoint(relation.sourceId),
+    }))
+    .filter(({ endpoint }) => getOntologyEntity(endpoint.id));
+}
+
+function getPatternFallbackMovement(entity: OntologyEntity): string[] {
+  const mappedMovement = getPatternMovement(entity.id);
+
+  if (mappedMovement.length > 0) {
+    return mappedMovement;
+  }
+
+  return [entity.polarity?.visiblePole, entity.polarity?.hiddenPole].filter(Boolean) as string[];
+}
+
+function getPatternResonance(entry: CodexEntry, excludedRelationIds: Set<string>) {
+  return getOntologyResonance(entry).filter(({ relation }) => !excludedRelationIds.has(relation.id));
+}
+
 function getLetterResonance(entry: CodexEntry) {
   if (entry.type !== "hebrew-letter") {
     return null;
@@ -511,6 +549,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   }
 
   const ontologyEntity = getOntologyEntity(entry.id);
+  const isPatternEntity = ontologyEntity?.domain === "pattern";
   const symbolNetworkReturnLens =
     normalizeSymbolNetworkReturnLens(getSearchParamValue(resolvedSearchParams, "lens"))
     ?? normalizeSymbolNetworkReturnLens(activeFocus ?? undefined);
@@ -553,7 +592,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
         <header className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
           <div>
-            <p className="symbol-kicker text-cyan-soft">{formatType(entry.type)}</p>
+            <p className="symbol-kicker text-cyan-soft">{isPatternEntity ? "Biblisches Muster" : formatType(entry.type)}</p>
             <h1 className="mt-6 font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
               {entry.title}
             </h1>
@@ -589,8 +628,16 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="grid gap-5">
             <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
+            {isPatternEntity ? (
+              <PatternCodexSection
+                entity={ontologyEntity}
+                entry={entry}
+                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
+            ) : null}
 
-            <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
+            {!isPatternEntity ? (
+              <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
               {entry.meaningFields.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {entry.meaningFields.map((field) => {
@@ -617,14 +664,24 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               ) : (
                 <p className="symbol-copy text-base italic text-muted-soft">Keine Bedeutungsfelder hinterlegt.</p>
               )}
-            </DetailSection>
+              </DetailSection>
+            ) : null}
 
-            <OntologyMetadataSection
-              entity={ontologyEntity}
-              activeContext={activeFocus === "meaning" ? "meaning" : undefined}
-            />
-            <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
-            <OntologyResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
+            {!isPatternEntity ? (
+              <OntologyMetadataSection
+                entity={ontologyEntity}
+                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
+            ) : null}
+            {!isPatternEntity ? (
+              <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
+            ) : null}
+            {!isPatternEntity ? (
+              <OntologyResonanceSection
+                entry={entry}
+                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
+            ) : null}
             <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} />
             <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} />
             <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
@@ -635,7 +692,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           <aside className="grid content-start gap-5">
             <DetailSection title="Einordnung">
               <dl>
-                <FieldRow label="Typ" value={formatType(entry.type)} />
+                <FieldRow label="Typ" value={isPatternEntity ? "Biblisches Muster" : formatType(entry.type)} />
                 {entry.symbolRoomSlug ? (
                   <FieldRow
                     label="Symbolraum"
@@ -655,14 +712,16 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </dl>
             </DetailSection>
 
-            <DetailSection title="Quellen">
-              <dl>
-                <FieldRow label="Status" value={entry.meta.status} />
-                <FieldRow label="Quellen" value={formatSourceList(entry.meta.source)} />
-                {entry.meta.tags?.length ? <FieldRow label="Tags" value={formatList(entry.meta.tags)} /> : null}
-                {entry.meta.notes ? <FieldRow label="Notizen" value={entry.meta.notes} /> : null}
-              </dl>
-            </DetailSection>
+            {!isPatternEntity ? (
+              <DetailSection title="Quellen">
+                <dl>
+                  <FieldRow label="Status" value={entry.meta.status} />
+                  <FieldRow label="Quellen" value={formatSourceList(entry.meta.source)} />
+                  {entry.meta.tags?.length ? <FieldRow label="Tags" value={formatList(entry.meta.tags)} /> : null}
+                  {entry.meta.notes ? <FieldRow label="Notizen" value={entry.meta.notes} /> : null}
+                </dl>
+              </DetailSection>
+            ) : null}
 
             <NearbyEntriesSection entry={entry} />
           </aside>
@@ -1213,8 +1272,130 @@ function OntologyEndpointLink({
   );
 }
 
-function OntologyResonanceSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
-  const resonance = getOntologyResonance(entry);
+function PatternCodexSection({
+  entity,
+  entry,
+  activeContext,
+}: {
+  entity: OntologyEntity;
+  entry: CodexEntry;
+  activeContext?: CodexContextFocus;
+}) {
+  const movement = getPatternFallbackMovement(entity);
+  const carriers = getPatternCarriers(entity);
+  const excludedRelationIds = new Set(carriers.map(({ relation }) => relation.id));
+  const resonance = getPatternResonance(entry, excludedRelationIds);
+  const hasPolarity = Boolean(entity.polarity);
+
+  if (movement.length === 0 && !hasPolarity && carriers.length === 0 && resonance.length === 0) {
+    return null;
+  }
+
+  return (
+    <DetailSection title="Musterraum" activeContext={activeContext}>
+      <div className="grid gap-7">
+        {movement.length > 0 ? (
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Musterbewegung</p>
+              <span className="border border-gold/20 bg-gold/[0.045] px-3 py-1 text-[0.56rem] uppercase tracking-[0.18em] text-gold/75">
+                Muster
+              </span>
+            </div>
+            <ol className="mt-4 flex flex-wrap items-center gap-3">
+              {movement.map((step, index) => (
+                <li key={`${step}-${index}`} className="flex items-center gap-3">
+                  <span className="border border-gold/15 bg-black/[0.14] px-4 py-3 font-serif text-xl italic text-foreground-strong">
+                    {step}
+                  </span>
+                  {index < movement.length - 1 ? (
+                    <span className="text-sm text-cyan-soft/70" aria-hidden="true">-&gt;</span>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : null}
+
+        {entity.polarity ? (
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Innere Spannung</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+              {entity.polarity.visiblePole ? (
+                <p className="font-serif text-2xl italic text-foreground-strong">{entity.polarity.visiblePole}</p>
+              ) : null}
+              {entity.polarity.visiblePole && entity.polarity.hiddenPole ? (
+                <span className="text-center text-sm text-gold/55" aria-hidden="true">/</span>
+              ) : null}
+              {entity.polarity.hiddenPole ? (
+                <p className="font-serif text-2xl italic text-gold/85">{entity.polarity.hiddenPole}</p>
+              ) : null}
+            </div>
+            <p className="symbol-copy mt-3 text-sm uppercase tracking-[0.16em] text-cyan-soft/70">
+              {entity.polarity.axis}
+            </p>
+            {entity.polarity.note ? (
+              <p className="symbol-copy mt-3 text-base italic text-muted-soft">{entity.polarity.note}</p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {carriers.length > 0 ? (
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Getragen von</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {carriers.map(({ relation, endpoint }) => {
+                const className = "border border-cyan-soft/15 bg-cyan-soft/[0.04] px-3 py-2 text-xs uppercase tracking-[0.18em] text-cyan-soft/85 transition-colors duration-500";
+
+                return endpoint.href ? (
+                  <Link key={relation.id} href={endpoint.href} className={`${className} hover:border-cyan-soft/30 hover:text-cyan-soft`}>
+                    {endpoint.label}
+                  </Link>
+                ) : (
+                  <span key={relation.id} className={className}>
+                    {endpoint.label}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        {resonance.length > 0 ? (
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Resonanzbeziehungen</p>
+            <div className="mt-4 grid gap-3">
+              {resonance.map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
+                <article key={relation.id} className="border border-white/[0.06] bg-black/[0.1] p-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-3">
+                    <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">{label}</span>
+                    <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
+                      {markerLabel}
+                    </span>
+                  </div>
+                  <OntologyEndpointLink endpoint={endpoint} className="mt-3 block text-2xl" />
+                  {note ? <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{note}</p> : null}
+                  {explanation ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </DetailSection>
+  );
+}
+
+function OntologyResonanceSection({
+  entry,
+  activeContext,
+  excludedRelationIds = new Set<string>(),
+}: {
+  entry: CodexEntry;
+  activeContext?: CodexContextFocus;
+  excludedRelationIds?: Set<string>;
+}) {
+  const resonance = getOntologyResonance(entry).filter(({ relation }) => !excludedRelationIds.has(relation.id));
 
   if (resonance.length === 0) {
     return null;

@@ -24,6 +24,21 @@ Keine Entity nur anlegen, damit eine Warning verschwindet. Sie braucht einen tra
 
 `X ist im SYMBOLRAUM eine Entity, weil ...`
 
+## Core-Concepts
+
+Core-Concepts sind keine Tags, sondern Bedeutungsachsen.
+
+Sie werden nur angelegt, wenn mehrere bestehende Symbole, Unterraeume oder Relationen auf sie zulaufen.
+
+Neue Core-Concepts brauchen:
+
+- `type: "concept"`
+- `domain`
+- `archetypalRole`
+- `summary`
+- moeglichst `polarity`
+- wenige starke Relationen, keine Flut
+
 ## 3. Neue Relation anlegen
 
 Jede neue Relation braucht:
