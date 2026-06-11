@@ -30,6 +30,9 @@ const CODEX_ENTRY_IDS = [
   "genesis-1-1",
   "genesis-1-2",
   "genesis-1-3",
+  "schoepfung-wasser",
+  "schilfmeer",
+  "felswasser",
   "zahl-1",
   "zahl-40",
   "zahl-90",
@@ -63,6 +66,9 @@ const CODEX_ALIASES = {
   "genesis-1-1": ["Genesis 1,1", "1 Mose 1,1", "Bereschit 1:1", "Im Anfang"],
   "genesis-1-2": ["Genesis 1,2", "1 Mose 1,2", "Bereschit 1:2", "Tohu wabohu", "Ruach"],
   "genesis-1-3": ["Genesis 1,3", "1 Mose 1,3", "Bereschit 1:3", "Es werde Licht", "Jehi or"],
+  "schoepfung-wasser": ["Wasser der Schöpfung", "Anfangswasser", "Geist ueber den Wassern"],
+  schilfmeer: ["Schilfmeer", "Meer als Durchgang", "Exodus Wasser"],
+  felswasser: ["Wasser aus dem Felsen", "Felswasser", "Wasser in der Wueste"],
   "zahl-1": ["Zahl 1", "Eins", "Alephwert", "Ursprungszahl", "Einheit im Codex"],
   "zahl-40": ["Zahl 40", "Vierzig", "Memwert", "Schwellenzahl", "Wasserzeit"],
   "zahl-90": ["Zahl 90", "Neunzig", "Majimwert", "Wasserzahl", "Mem-Jod-Mem"],
@@ -329,6 +335,43 @@ function minimalMeaningEntry({
       sourceIds: [id],
       tags: ["codex-seed", "relation-target"],
       notes: "Minimaler Codex-Zielanker fuer Genesis 1.",
+    },
+  };
+}
+
+function storyAnchorEntry({
+  id,
+  title,
+  subtitle,
+  summary,
+  relations,
+}: {
+  id: Extract<CodexEntryId, "schoepfung-wasser" | "schilfmeer" | "felswasser">;
+  title: string;
+  subtitle: string;
+  summary: string;
+  relations: CodexRelation[];
+}): CodexEntry {
+  return {
+    id,
+    type: "meaning",
+    title,
+    subtitle,
+    hebrew: null,
+    transliteration: null,
+    aliases: aliasesFor(id),
+    summary,
+    meaningFields: ["depth", "transition", "life"],
+    relations,
+    scriptureAnchors: [],
+    symbolRoomSlug: "wasser",
+    journeyIds: [],
+    meta: {
+      status: "seed",
+      source: ["meaning-graph", "scripture-reference"],
+      sourceIds: [id],
+      tags: ["codex-seed", "story-anchor", "wasser"],
+      notes: "Minimaler referenzierbarer Anker fuer den Tiefe-Zoom.",
     },
   };
 }
@@ -919,6 +962,35 @@ export const codexRegistry = [
   scriptureEntry("genesis-1-1"),
   scriptureEntry("genesis-1-2"),
   scriptureEntry("genesis-1-3"),
+  storyAnchorEntry({
+    id: "schoepfung-wasser",
+    title: "Wasser der Schöpfung",
+    subtitle: "Genesis 1:2",
+    summary: "Der Geist schwebt ueber den Wassern.",
+    relations: [
+      { targetId: "wasser", type: "anchors-scripture", label: "Wasser als Anfangstiefe.", source: "scripture-reference" },
+      { targetId: "genesis-1-2", type: "anchors-scripture", label: "Genesis 1:2 verankert das Anfangswasser.", source: "scripture-reference" },
+    ],
+  }),
+  storyAnchorEntry({
+    id: "schilfmeer",
+    title: "Schilfmeer",
+    subtitle: "Wasser als Durchgang",
+    summary: "Das Wasser wird zum Durchgang.",
+    relations: [
+      { targetId: "wasser", type: "anchors-scripture", label: "Wasser wird Grenze und Weg.", source: "scripture-reference" },
+    ],
+  }),
+  storyAnchorEntry({
+    id: "felswasser",
+    title: "Wasser aus dem Felsen",
+    subtitle: "Quelle in der Wueste",
+    summary: "In der Wueste wird der Fels zur Quelle.",
+    relations: [
+      { targetId: "wasser", type: "anchors-scripture", label: "Wasser erscheint als Versorgung in der Wueste.", source: "scripture-reference" },
+      { targetId: "wueste", type: "related", label: "Die Wueste macht den Mangel sichtbar.", source: "meaning-graph" },
+    ],
+  }),
   numberEntry({
     id: "zahl-1",
     title: "1",

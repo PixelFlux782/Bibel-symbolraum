@@ -198,11 +198,16 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   meer: { x: 306, y: 288 },
   fluss: { x: 202, y: 438 },
   tau: { x: 26, y: 424 },
+  "schoepfung-wasser": { x: 410, y: 120 },
+  schilfmeer: { x: 480, y: 278 },
+  felswasser: { x: 390, y: 430 },
+  "genesis-1-2": { x: 572, y: 118 },
 };
 const missingPositionWarnings = new Set<string>();
 const SYMBOL_NODE_SIZE = 176;
 const MEANING_NODE_SIZE = 96;
 const HIERARCHY_NODE_SIZE = 92;
+const DEEP_HIERARCHY_NODE_SIZE = 76;
 const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 const LETTER_NODE_PREFIX = "letter:";
 const LENS_LETTER_NODE_PREFIX = "lens-letter:";
@@ -238,6 +243,10 @@ const SYMBOL_VIEWPORT_HINTS: Record<SymbolViewportMode, string> = {
   focus: "Zeigt Archetypen + Resonanzen",
   detail: "Zeigt Archetypen + Symbole",
   deep: "Zeigt Archetypen + Symbole + Erzaehlungen",
+};
+const BACK_VIEWPORT_TARGETS: Partial<Record<SymbolViewportMode, SymbolViewportMode>> = {
+  deep: "detail",
+  detail: "focus",
 };
 const OVERVIEW_HIERARCHY_LEVELS = new Set<SymbolHierarchyLevel>(["archetype", "cosmic_frame"]);
 const DETAIL_HIERARCHY_LEVELS = new Set<SymbolHierarchyLevel>(["symbol"]);
@@ -309,7 +318,9 @@ function getNodePosition(nodeId: string) {
 
 function getNodeSize(nodeId: string) {
   if (network.meaningNodes.some((node) => node.id === nodeId)) return MEANING_NODE_SIZE;
-  if (getHierarchyEntry(nodeId)?.parentId) return HIERARCHY_NODE_SIZE;
+  const hierarchyEntry = getHierarchyEntry(nodeId);
+  if (hierarchyEntry?.level === "story_anchor" || hierarchyEntry?.level === "verse_anchor") return DEEP_HIERARCHY_NODE_SIZE;
+  if (hierarchyEntry?.parentId) return HIERARCHY_NODE_SIZE;
   return SYMBOL_NODE_SIZE;
 }
 
@@ -773,6 +784,14 @@ function getExistingDeepHierarchyAnchors(symbolId: string) {
   return candidates.filter((entry) => DEEP_HIERARCHY_LEVELS.has(entry.level) && Boolean(getCodexEntry(entry.id)));
 }
 
+function getStoryDeepHierarchyAnchors(symbolId: string) {
+  return getExistingDeepHierarchyAnchors(symbolId).filter((entry) => entry.level === "story_anchor");
+}
+
+function getVerseDeepHierarchyAnchors(symbolId: string) {
+  return getExistingDeepHierarchyAnchors(symbolId).filter((entry) => entry.level === "verse_anchor");
+}
+
 function getGematriaNumberIdsForLens(symbolId: string) {
   const profile = getSymbolHebrewProfile(symbolId);
   const numberIds = new Set<string>();
@@ -1068,6 +1087,8 @@ function SymbolLensFocusDetail({
   lensData,
   activeResonanceLens,
   detailHierarchyChildren,
+  storyDeepHierarchyAnchors,
+  verseDeepHierarchyAnchors,
   onPreviewPath,
 }: {
   activeSymbol: SymbolMeaningNetworkNode;
@@ -1075,6 +1096,8 @@ function SymbolLensFocusDetail({
   lensData: SymbolLensData;
   activeResonanceLens: SymbolLensMode | null;
   detailHierarchyChildren: SymbolHierarchyEntry[];
+  storyDeepHierarchyAnchors: SymbolHierarchyEntry[];
+  verseDeepHierarchyAnchors: SymbolHierarchyEntry[];
   onPreviewPath: (path: SymbolMeaningPath) => void;
 }) {
   const visiblePaths = activeResonanceLens === "meaning" ? connectedPaths.slice(0, 3) : [];
@@ -1137,7 +1160,21 @@ function SymbolLensFocusDetail({
           ))}
         </div>
       ) : null}
-      {activeResonanceLens === "meaning" ? <HierarchyChildrenDetail entries={detailHierarchyChildren} /> : null}
+      {activeResonanceLens === "meaning" ? (
+        <>
+          <HierarchyChildrenDetail entries={detailHierarchyChildren} title="Unterraeume von Wasser" />
+          <HierarchyChildrenDetail
+            entries={storyDeepHierarchyAnchors}
+            title="Biblische Tiefenpunkte"
+            className="symbol-subspaces--deep"
+          />
+          <HierarchyChildrenDetail
+            entries={verseDeepHierarchyAnchors}
+            title="Versanker"
+            className="symbol-subspaces--verse"
+          />
+        </>
+      ) : null}
     </>
   );
 }
@@ -1177,12 +1214,20 @@ function ResonanceJourneyDetail({
   );
 }
 
-function HierarchyChildrenDetail({ entries }: { entries: SymbolHierarchyEntry[] }) {
+function HierarchyChildrenDetail({
+  entries,
+  title,
+  className = "",
+}: {
+  entries: SymbolHierarchyEntry[];
+  title: string;
+  className?: string;
+}) {
   if (entries.length === 0) return null;
 
   return (
-    <div className="symbol-subspaces mt-7 border-t border-white/[0.055] pt-5">
-      <p className="symbol-kicker text-cyan-soft">Unterraeume von Wasser</p>
+    <div className={`symbol-subspaces mt-7 border-t border-white/[0.055] pt-5 ${className}`}>
+      <p className="symbol-kicker text-cyan-soft">{title}</p>
       <div className="mt-4 grid gap-2">
         {entries.map((entry) => (
           <p key={entry.id}>
@@ -1259,6 +1304,8 @@ export default function SymbolNetwork() {
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activeDetailHierarchyChildren = useMemo(() => getDetailHierarchyChildren(activeSymbolId), [activeSymbolId]);
   const activeDeepHierarchyAnchors = useMemo(() => getExistingDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
+  const activeStoryDeepHierarchyAnchors = useMemo(() => getStoryDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
+  const activeVerseDeepHierarchyAnchors = useMemo(() => getVerseDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activePathFrom = activePath?.from;
   const activePathTo = activePath?.to;
@@ -1587,6 +1634,49 @@ export default function SymbolNetwork() {
         : hasSymbolFocus || activeLetterId
         ? "Symbol"
         : "Uebersicht";
+  const hasTransientBackState = Boolean(
+    activeResonanceLens
+    || activeResonanceJourneyId
+    || activeJourneyId
+    || activePathId
+    || activeLetterId
+    || isLetterResonanceOpen
+    || searchFocusSymbolId,
+  );
+  const canNavigateBack = hasTransientBackState || hasSymbolFocus || symbolViewportMode !== "overview";
+  const breadcrumbItems = useMemo(() => {
+    const items = ["Uebersicht"];
+
+    if (hasSymbolFocus || hasTransientBackState || symbolViewportMode !== "overview") {
+      items.push(activeSymbol.label);
+    }
+
+    if (activeResonanceLens) {
+      items.push(SYMBOL_LENS_MODE_LABELS[activeResonanceLens]);
+    } else if (activeResonanceJourney) {
+      items.push("Resonanzpfad");
+    } else if (activeJourney) {
+      items.push("Journey");
+    } else if (activePath) {
+      items.push("Beziehung");
+    } else if (activeCodexLetter) {
+      items.push("Hebraeisch");
+    } else if (symbolViewportMode !== "overview") {
+      items.push(SYMBOL_VIEWPORT_LABELS[symbolViewportMode]);
+    }
+
+    return items;
+  }, [
+    activeCodexLetter,
+    activeJourney,
+    activePath,
+    activeResonanceJourney,
+    activeResonanceLens,
+    activeSymbol.label,
+    hasSymbolFocus,
+    hasTransientBackState,
+    symbolViewportMode,
+  ]);
   const lensOrbitAnchorId = useMemo(() => {
     const anchorId = isLensPickerVisible
       ? activeSymbolId
@@ -2452,6 +2542,70 @@ export default function SymbolNetwork() {
     setActiveResonanceLens(null);
   }
 
+  function navigateSymbolBack() {
+    if (activeResonanceLens) {
+      setActiveResonanceLens(null);
+      setActiveJourneyStepId(null);
+      return;
+    }
+
+    if (activeResonanceJourneyId) {
+      setActiveResonanceJourneyId(null);
+      setActiveJourneyStepId(null);
+      setSymbolViewport("focus");
+      return;
+    }
+
+    if (activeJourneyId) {
+      setActiveJourneyId(null);
+      setActiveJourneyStepId(null);
+      setSymbolViewport("focus");
+      return;
+    }
+
+    if (activePathId) {
+      setActivePathId(null);
+      setPendingPathId(null);
+      setTravelingPathId(null);
+      setSymbolViewport("focus");
+      return;
+    }
+
+    if (isLetterResonanceOpen) {
+      setIsLetterResonanceOpen(false);
+      setActiveLetterResonanceId(null);
+      return;
+    }
+
+    if (activeLetterId) {
+      setActiveLetterId(null);
+      setActiveLetterResonanceId(null);
+      setActiveLetterSourcePathId(null);
+      setSymbolViewport("focus");
+      return;
+    }
+
+    if (searchFocusSymbolId) {
+      setSearchFocusSymbolId(null);
+      setSearchQuery("");
+      setIsSearchSuggestionsOpen(false);
+      setSymbolViewport("focus");
+      return;
+    }
+
+    const nextViewport = BACK_VIEWPORT_TARGETS[symbolViewportMode];
+    if (nextViewport) {
+      setSymbolViewport(nextViewport);
+      return;
+    }
+
+    if (symbolViewportMode === "focus" || hasSymbolFocus) {
+      setHasSymbolFocus(false);
+      setActiveJourneyStepId(null);
+      setSymbolViewport("overview");
+    }
+  }
+
   return (
     <section className="symbol-page symbol-section symbol-network-page relative min-h-[100svh]">
       <div className="absolute inset-0">
@@ -2563,6 +2717,22 @@ export default function SymbolNetwork() {
                 </div>
               ) : null}
             </form>
+            {canNavigateBack ? (
+              <div className="symbol-network-back-trace max-md:hidden">
+                <button type="button" className="symbol-network-back-button" onClick={navigateSymbolBack}>
+                  <span aria-hidden="true">&larr;</span>
+                  Zur&uuml;ck
+                </button>
+                <p className="symbol-network-breadcrumb" aria-label="Aktuelle Position im Symbolnetz">
+                  {breadcrumbItems.map((item, index) => (
+                    <Fragment key={`${item}-${index}`}>
+                      {index > 0 ? <span aria-hidden="true">&gt;</span> : null}
+                      <span>{item}</span>
+                    </Fragment>
+                  ))}
+                </p>
+              </div>
+            ) : null}
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -2665,6 +2835,22 @@ export default function SymbolNetwork() {
               </span>
             ))}
           </div>
+          {canNavigateBack ? (
+            <div className="symbol-mobile-back-row md:hidden">
+              <button type="button" className="symbol-network-back-button" onClick={navigateSymbolBack}>
+                <span aria-hidden="true">&larr;</span>
+                Zur&uuml;ck
+              </button>
+              <p className="symbol-network-breadcrumb" aria-label="Aktuelle Position im Symbolnetz">
+                {breadcrumbItems.map((item, index) => (
+                  <Fragment key={`${item}-${index}`}>
+                    {index > 0 ? <span aria-hidden="true">&gt;</span> : null}
+                    <span>{item}</span>
+                  </Fragment>
+                ))}
+              </p>
+            </div>
+          ) : null}
           {isLensPickerVisible && activeSymbolLensData ? (
             <div className="symbol-mobile-lens-bar md:hidden" aria-label="Resonanz-Linse waehlen">
               {activeSymbolLensData.nodes.map((node) => (
@@ -2720,6 +2906,8 @@ export default function SymbolNetwork() {
               lensData={activeSymbolLensData}
               activeResonanceLens={activeResonanceLens}
               detailHierarchyChildren={symbolViewportMode === "detail" || symbolViewportMode === "deep" ? activeDetailHierarchyChildren : []}
+              storyDeepHierarchyAnchors={symbolViewportMode === "deep" ? activeStoryDeepHierarchyAnchors : []}
+              verseDeepHierarchyAnchors={symbolViewportMode === "deep" ? activeVerseDeepHierarchyAnchors : []}
               onPreviewPath={previewPath}
             />
           ) : activeResonanceJourney ? (
@@ -2796,7 +2984,21 @@ export default function SymbolNetwork() {
               <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
               <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
               {symbolViewportMode === "detail" || symbolViewportMode === "deep" ? (
-                <HierarchyChildrenDetail entries={activeDetailHierarchyChildren} />
+                <HierarchyChildrenDetail entries={activeDetailHierarchyChildren} title="Unterraeume von Wasser" />
+              ) : null}
+              {symbolViewportMode === "deep" ? (
+                <>
+                  <HierarchyChildrenDetail
+                    entries={activeStoryDeepHierarchyAnchors}
+                    title="Biblische Tiefenpunkte"
+                    className="symbol-subspaces--deep"
+                  />
+                  <HierarchyChildrenDetail
+                    entries={activeVerseDeepHierarchyAnchors}
+                    title="Versanker"
+                    className="symbol-subspaces--verse"
+                  />
+                </>
               ) : null}
               <div className="symbol-detail-panel__cta">
                 <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">

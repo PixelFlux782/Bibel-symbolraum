@@ -2440,6 +2440,67 @@ body {
   font-size: 0.72rem;
 }
 
+.symbol-network-back-trace {
+  position: absolute;
+  top: 4.35rem;
+  left: 0.75rem;
+  z-index: 13;
+  display: grid;
+  justify-items: start;
+  gap: 0.28rem;
+  max-width: min(21rem, calc(100% - 1.5rem));
+  pointer-events: auto;
+}
+
+.symbol-network-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  min-height: 1.75rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.11);
+  border-radius: 999px;
+  background: rgba(2, 5, 12, 0.54);
+  padding: 0.24rem 0.58rem 0.28rem;
+  color: rgba(216, 209, 194, 0.68);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  box-shadow: 0 0.65rem 1.6rem rgba(0, 0, 0, 0.18);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition:
+    border-color 260ms ease,
+    color 260ms ease,
+    background-color 260ms ease;
+}
+
+.symbol-network-back-button:hover,
+.symbol-network-back-button:focus-visible {
+  border-color: rgba(var(--gold-rgb), 0.28);
+  background: rgba(2, 5, 12, 0.74);
+  color: rgba(var(--gold-rgb), 0.86);
+  outline: none;
+}
+
+.symbol-network-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  margin: 0;
+  color: rgba(var(--cyan-rgb), 0.54);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.54rem;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.symbol-network-breadcrumb span {
+  min-width: 0;
+}
+
 .symbol-constellation-field .react-flow__renderer,
 .symbol-constellation-field .react-flow__pane,
 .symbol-constellation-field .react-flow__viewport {
@@ -2717,10 +2778,26 @@ body {
 }
 
 .hierarchy-satellite-node--deep {
+  width: 4.75rem;
+  height: 4.75rem;
   border-color: rgba(var(--gold-rgb), 0.16);
+  border-radius: 38% 62% 45% 55%;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(var(--gold-rgb), 0.06), transparent 43%),
+    rgba(7, 5, 2, 0.2);
   box-shadow:
     0 0 26px rgba(var(--gold-rgb), 0.05),
     inset 0 0 18px rgba(var(--gold-rgb), 0.022);
+}
+
+.hierarchy-satellite-node--deep span {
+  color: rgba(var(--gold-rgb), 0.78);
+  font-size: 0.78rem;
+}
+
+.hierarchy-satellite-node--deep i {
+  color: rgba(216, 209, 194, 0.42);
+  font-size: 0.5rem;
 }
 
 .symbol-constellation-node__lens {
@@ -3118,6 +3195,34 @@ body {
   border-color: rgba(var(--gold-rgb), 0.54);
   color: rgba(var(--gold-rgb), 0.9);
   outline: none;
+}
+
+.symbol-mobile-back-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: -0.5rem 0 0.45rem;
+}
+
+.symbol-mobile-back-row .symbol-network-back-button {
+  flex: 0 0 auto;
+  min-height: 1.65rem;
+  padding-inline: 0.52rem;
+  font-size: 0.56rem;
+}
+
+.symbol-mobile-back-row .symbol-network-breadcrumb {
+  flex: 1 1 auto;
+  overflow: hidden;
+  color: rgba(var(--cyan-rgb), 0.5);
+  font-size: 0.48rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.symbol-mobile-back-row .symbol-network-breadcrumb span {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .symbol-mobile-resonance-hint {
@@ -3825,6 +3930,15 @@ body {
   border-left: 1px solid rgba(var(--cyan-rgb), 0.14);
   background: rgba(255, 255, 255, 0.014);
   padding: 0.58rem 0.72rem;
+}
+
+.symbol-subspaces--deep p:not(.symbol-kicker) {
+  border-left-color: rgba(var(--gold-rgb), 0.22);
+}
+
+.symbol-subspaces--verse p:not(.symbol-kicker) {
+  border-left-color: rgba(var(--gold-rgb), 0.14);
+  background: rgba(var(--gold-rgb), 0.018);
 }
 
 .symbol-subspaces span {
