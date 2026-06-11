@@ -2755,8 +2755,8 @@ body {
   left: 50%;
   top: 50%;
   z-index: 8;
-  width: 9.25rem;
-  height: 9.25rem;
+  width: 8.85rem;
+  height: 8.85rem;
   pointer-events: none;
   transform: translate(-50%, -50%);
   animation: symbol-lens-orbit-arrive 1100ms ease both;
@@ -2813,29 +2813,24 @@ body {
   top: 5%;
 }
 
-.symbol-lens-orbit__node--torah {
-  left: 91%;
-  top: 35%;
+.symbol-lens-orbit__node--story {
+  left: 88%;
+  top: 32%;
 }
 
 .symbol-lens-orbit__node--hebrew {
-  left: 76%;
-  top: 91%;
+  left: 73%;
+  top: 90%;
 }
 
 .symbol-lens-orbit__node--meaning {
-  left: 24%;
-  top: 91%;
+  left: 12%;
+  top: 32%;
 }
 
-.symbol-lens-orbit__node--number {
-  left: 9%;
-  top: 35%;
-}
-
-.symbol-lens-orbit__node--room {
-  left: 50%;
-  top: 112%;
+.symbol-lens-orbit__node--gematria {
+  left: 27%;
+  top: 90%;
 }
 
 .symbol-lens-orbit__dot {
@@ -2876,19 +2871,20 @@ body {
 }
 
 .symbol-lens-orbit__node--journey .symbol-lens-orbit__preview,
-.symbol-lens-orbit__node--torah .symbol-lens-orbit__preview,
-.symbol-lens-orbit__node--number .symbol-lens-orbit__preview {
+.symbol-lens-orbit__node--story .symbol-lens-orbit__preview,
+.symbol-lens-orbit__node--meaning .symbol-lens-orbit__preview {
   top: auto;
   bottom: calc(100% + 0.5rem);
   transform: translateY(-0.35rem);
 }
 
-.symbol-lens-orbit__node--torah .symbol-lens-orbit__preview,
+.symbol-lens-orbit__node--story .symbol-lens-orbit__preview,
 .symbol-lens-orbit__node--hebrew .symbol-lens-orbit__preview {
   right: 0;
 }
 
-.symbol-lens-orbit__node--number .symbol-lens-orbit__preview {
+.symbol-lens-orbit__node--meaning .symbol-lens-orbit__preview,
+.symbol-lens-orbit__node--gematria .symbol-lens-orbit__preview {
   left: 0;
 }
 
@@ -3012,9 +3008,73 @@ body {
     0 0 3rem rgba(var(--gold-rgb), 0.14);
 }
 
+.number-resonance-node {
+  display: grid;
+  width: 4.65rem;
+  height: 4.65rem;
+  place-items: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.2);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(var(--gold-rgb), 0.12), transparent 46%),
+    rgba(2, 5, 12, 0.76);
+  color: rgba(var(--gold-rgb), 0.9);
+  text-align: center;
+  box-shadow:
+    0 0 1.8rem rgba(var(--gold-rgb), 0.08),
+    inset 0 0 1.4rem rgba(var(--cyan-rgb), 0.025);
+}
+
+.number-resonance-node__value {
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1;
+}
+
+.number-resonance-node__label {
+  max-width: 3.5rem;
+  color: rgba(216, 209, 194, 0.58);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 .symbol-lens-mobile-trace {
   display: grid;
   justify-items: center;
+}
+
+.symbol-mobile-lens-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0.55rem 0 0.35rem;
+}
+
+.symbol-mobile-lens-bar button {
+  min-width: 0;
+  min-height: 2.4rem;
+  border: 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.14);
+  background: rgba(2, 5, 12, 0.34);
+  padding: 0.36rem 0.2rem 0.44rem;
+  color: rgba(216, 209, 194, 0.58);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.symbol-mobile-lens-bar button.is-active,
+.symbol-mobile-lens-bar button:focus-visible {
+  border-color: rgba(var(--gold-rgb), 0.54);
+  color: rgba(var(--gold-rgb), 0.9);
+  outline: none;
 }
 
 .symbol-mobile-resonance-hint {
@@ -4419,6 +4479,10 @@ body {
 }
 
 @media (max-width: 639px) {
+  .symbol-lens-orbit {
+    display: none;
+  }
+
   .symbol-network-page {
     height: 100dvh;
     overflow: hidden;
