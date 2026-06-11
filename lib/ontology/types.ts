@@ -123,6 +123,10 @@ export interface OntologyEntity {
   firstMention?: OntologyFirstMention;
   domain?: OntologyEntityDomain;
   imageSymbol?: string;
+  /**
+   * Inner polarity of this entity itself. Use has_polarity only when the polarity
+   * is modeled as a separate concept/pattern entity.
+   */
   polarity?: OntologyPolarity;
   clusterId?: string;
 }

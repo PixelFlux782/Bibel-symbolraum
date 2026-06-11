@@ -6,8 +6,21 @@ import type { OntologyEntity, OntologyRelation, OntologyValidationResult } from 
 
 const symbolicEntityTypes = new Set<OntologyEntity["type"]>(["archetype", "symbol"]);
 const archetypalRoleEntityTypes = new Set<OntologyEntity["type"]>(["archetype", "symbol", "concept"]);
+const fulfillsPatternTargetTypes = new Set<OntologyEntity["type"]>(["story_anchor", "verse_anchor", "symbol"]);
 const validEntityDomains = new Set<string>(ONTOLOGY_ENTITY_DOMAINS);
 const validRelationTypes = new Set<string>(ONTOLOGY_RELATION_TYPES);
+
+function isPatternEntity(entity: OntologyEntity | undefined) {
+  return entity?.domain === "pattern";
+}
+
+function isPolarityRelationTarget(entity: OntologyEntity | undefined) {
+  return Boolean(entity && (entity.domain === "pattern" || entity.type === "concept"));
+}
+
+function isFulfillsPatternTarget(entity: OntologyEntity | undefined) {
+  return Boolean(entity && (entity.domain === "pattern" || fulfillsPatternTargetTypes.has(entity.type)));
+}
 
 function duplicateEntityIds(entities: OntologyEntity[]): string[] {
   const seen = new Set<string>();
@@ -102,6 +115,14 @@ export function validateOntology(
       errors.push(`ERROR: Entity "${entity.id}" has polarity without axis.`);
     }
 
+    if (entity.domain === "pattern" && !entity.archetypalRole?.trim()) {
+      errors.push(`ERROR: Pattern entity "${entity.id}" needs archetypalRole.`);
+    }
+
+    if (entity.domain === "pattern" && !entity.polarity) {
+      warnings.push(`WARN: Pattern entity "${entity.id}" has no polarity.`);
+    }
+
     if (archetypalRoleEntityTypes.has(entity.type) && !entity.archetypalRole?.trim()) {
       warnings.push(`WARN: Entity "${entity.id}" has no archetypalRole.`);
     }
@@ -163,6 +184,35 @@ export function validateOntology(
 
     if (relation.type === "fulfills") {
       warnings.push(`OntologyRelation "${relation.id}": For biblical pattern fulfillment, prefer fulfills_pattern_of.`);
+    }
+
+    if (relation.type === "has_polarity") {
+      const source = entitiesById.get(relation.sourceId);
+      const target = entitiesById.get(relation.targetId);
+
+      if (!isPolarityRelationTarget(target)) {
+        warnings.push(`WARN: Relation "${relation.sourceId} has_polarity ${relation.targetId}" points to a non-pattern/non-concept entity. Prefer entity.polarity or contrasts_with.`);
+      }
+
+      if (source?.polarity && !isPatternEntity(target)) {
+        warnings.push(`WARN: Entity "${relation.sourceId}" already has internal polarity. Avoid has_polarity unless target is a polarity/pattern concept.`);
+      }
+    }
+
+    if (relation.type === "contains_pattern") {
+      const target = entitiesById.get(relation.targetId);
+
+      if (!isPatternEntity(target)) {
+        errors.push(`ERROR: contains_pattern relation must target an entity with domain "pattern".`);
+      }
+    }
+
+    if (relation.type === "fulfills_pattern_of") {
+      const target = entitiesById.get(relation.targetId);
+
+      if (!isFulfillsPatternTarget(target)) {
+        warnings.push(`WARN: fulfills_pattern_of should target a pattern, story, verse or symbol.`);
+      }
     }
 
     if (

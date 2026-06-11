@@ -13,6 +13,7 @@ export type {
 
 export {
   ONTOLOGY_ENTITY_DOMAINS,
+  ONTOLOGY_RELATION_TYPES,
 } from "./types";
 
 export {
