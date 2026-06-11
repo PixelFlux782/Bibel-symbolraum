@@ -83,7 +83,20 @@ Fokus/Detail duerfen mehr zeigen.
 Inspector erklaert.
 Codex vertieft.
 
-## 8. Qualitaetsschwelle
+## 8. Unterraeume anbinden
+
+Unterraeume aus der Hierarchie werden nicht automatisch zu ontologischer Wahrheit.
+
+Wenn ein Unterraum ontologisch relevant ist, bekommt er:
+
+- eine OntologyEntity
+- `primaryHierarchyId`
+- `domain`
+- `archetypalRole`
+- maximal 2-4 Kernrelationen
+- bevorzugt `is_expression_of`, `opens_into`, `is_threshold_to`, `contains_pattern`
+
+## 9. Qualitaetsschwelle
 
 Keine Relation ohne guten Satz:
 
@@ -91,7 +104,7 @@ Keine Relation ohne guten Satz:
 
 Wenn dieser Satz schwach klingt, Relation nicht anlegen.
 
-## 9. Bewusst akzeptierte Warnings
+## 10. Bewusst akzeptierte Warnings
 
 Eine Warning darf stehen bleiben, wenn sie einen legitimen Uebergangszustand markiert:
 
@@ -102,7 +115,7 @@ Eine Warning darf stehen bleiben, wenn sie einen legitimen Uebergangszustand mar
 
 Akzeptierte Warnings werden im Phasenbericht genannt und nicht stillschweigend ignoriert.
 
-## 10. Validierung
+## 11. Validierung
 
 Vor Abschluss ausfuehren:
 
