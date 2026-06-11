@@ -21,7 +21,40 @@ export type OntologyRelationType =
   | "tests"
   | "shares_letter"
   | "shares_number"
-  | "appears_in_story";
+  | "appears_in_story"
+  | "is_expression_of"
+  | "is_threshold_to"
+  | "opens_into"
+  | "contrasts_with"
+  | "contains_pattern"
+  | "fulfills_pattern_of"
+  | "has_polarity"
+  | "structures_journey"
+  | "passes_through";
+
+export const ONTOLOGY_RELATION_TYPES = [
+  "belongs_to",
+  "resonates_with",
+  "emerges_from",
+  "transforms_into",
+  "opposes",
+  "fulfills",
+  "reveals",
+  "nourishes",
+  "tests",
+  "shares_letter",
+  "shares_number",
+  "appears_in_story",
+  "is_expression_of",
+  "is_threshold_to",
+  "opens_into",
+  "contrasts_with",
+  "contains_pattern",
+  "fulfills_pattern_of",
+  "has_polarity",
+  "structures_journey",
+  "passes_through",
+] as const satisfies readonly OntologyRelationType[];
 
 export interface OntologyEntity {
   id: string;

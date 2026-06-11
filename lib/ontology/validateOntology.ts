@@ -1,7 +1,11 @@
 import { getHierarchyEntry } from "@/lib/symbols/hierarchy";
 
 import { ontologyEntities, ontologyRelations } from "./registry";
+import { ONTOLOGY_RELATION_TYPES } from "./types";
 import type { OntologyEntity, OntologyRelation, OntologyValidationResult } from "./types";
+
+const symbolicEntityTypes = new Set<OntologyEntity["type"]>(["archetype", "symbol"]);
+const validRelationTypes = new Set<string>(ONTOLOGY_RELATION_TYPES);
 
 function duplicateEntityIds(entities: OntologyEntity[]): string[] {
   const seen = new Set<string>();
@@ -40,7 +44,9 @@ export function validateOntology(
   const errors = [...duplicateEntityIds(entities), ...duplicateRelationIds(relations)];
   const warnings: string[] = [];
   const entityIds = new Set(entities.map((entity) => entity.id));
+  const entitiesById = new Map(entities.map((entity) => [entity.id, entity]));
   const externalTargets = new Set<string>();
+  const outgoingResonatesWithCounts = new Map<string, number>();
 
   for (const entity of entities) {
     if (!entity.id.trim()) {
@@ -74,10 +80,61 @@ export function validateOntology(
       warnings.push(`OntologyRelation "${relation.id}" nutzt externes target "${relation.targetId}".`);
     }
 
+    if (!validRelationTypes.has(relation.type)) {
+      errors.push(`OntologyRelation "${relation.id}" nutzt unbekannten type "${relation.type}".`);
+    }
+
     if (!relation.title.trim()) {
       errors.push(`OntologyRelation "${relation.id}" benoetigt einen title.`);
     }
+
+    if (!relation.shortResonance.trim()) {
+      errors.push(`OntologyRelation "${relation.id}" benoetigt eine shortResonance.`);
+    }
+
+    if ("strength" in relation && relation.strength === undefined) {
+      errors.push(`OntologyRelation "${relation.id}" benoetigt eine strength, wenn das Feld vorhanden ist.`);
+    }
+
+    if (relation.type === "resonates_with") {
+      outgoingResonatesWithCounts.set(
+        relation.sourceId,
+        (outgoingResonatesWithCounts.get(relation.sourceId) ?? 0) + 1,
+      );
+    }
+
+    if (relation.type === "belongs_to") {
+      const source = entitiesById.get(relation.sourceId);
+      const target = entitiesById.get(relation.targetId);
+
+      if (source && target && symbolicEntityTypes.has(source.type) && symbolicEntityTypes.has(target.type)) {
+        warnings.push(`"${relation.sourceId} belongs_to ${relation.targetId}" may be hierarchical, not ontological. Consider is_expression_of.`);
+      }
+    }
+
+    if (relation.type === "opposes") {
+      warnings.push(`OntologyRelation "${relation.id}": "opposes" is a hard opposition. Consider contrasts_with for symbolic polarity.`);
+    }
+
+    if (relation.type === "fulfills") {
+      warnings.push(`OntologyRelation "${relation.id}": For biblical pattern fulfillment, prefer fulfills_pattern_of.`);
+    }
+
+    if (
+      typeof relation.strength === "number" &&
+      relation.strength >= 80 &&
+      !relation.scriptureAnchors?.length &&
+      !relation.hebrewAnchors?.length
+    ) {
+      warnings.push(`OntologyRelation "${relation.id}": Strong relation has no scripture or hebrew anchor.`);
+    }
   }
+
+  outgoingResonatesWithCounts.forEach((count, entityId) => {
+    if (count > 3) {
+      warnings.push(`Entity "${entityId}" uses many generic resonates_with relations. Consider more precise relation types.`);
+    }
+  });
 
   return {
     errors,

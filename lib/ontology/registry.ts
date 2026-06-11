@@ -107,53 +107,53 @@ export const ontologyEntities: OntologyEntity[] = [
 
 export const ontologyRelations: OntologyRelation[] = [
   {
-    id: "ontology-brunnen-belongs-to-wasser",
+    id: "ontology-brunnen-is-expression-of-wasser",
     sourceId: "brunnen",
     targetId: "wasser",
-    type: "belongs_to",
-    title: "Brunnen gehoert zu Wasser",
+    type: "is_expression_of",
+    title: "Brunnen ist Ausdruck von Wasser",
     shortResonance: "Die Tiefe des Brunnens ist ein Wasserraum.",
-    explanation: "Der Brunnen bleibt im Semantic Zoom unter Wasser sichtbar, bekommt aber im Ontologie-Layer eigene Bedeutungsbeziehungen.",
+    explanation: "Im Brunnen sammelt sich Wasser als verborgene Tiefe.",
     strength: 1,
   },
   {
-    id: "ontology-brunnen-resonates-with-begegnung",
+    id: "ontology-brunnen-is-threshold-to-begegnung",
     sourceId: "brunnen",
     targetId: "begegnung",
-    type: "resonates_with",
-    title: "Brunnen und Begegnung",
+    type: "is_threshold_to",
+    title: "Brunnen ist Schwelle zur Begegnung",
     shortResonance: "Am Brunnen wird Tiefe zum Ort der Begegnung.",
-    explanation: "Begegnung ist hier ein externer Bedeutungsanker, bis ein eigener Ontologie-Knoten angelegt wird.",
+    explanation: "Wo Wasser geschoepft wird, koennen Wege einander begegnen.",
     strength: 0.75,
   },
   {
-    id: "ontology-brunnen-resonates-with-tiefe",
+    id: "ontology-brunnen-opens-into-tiefe",
     sourceId: "brunnen",
     targetId: "tiefe",
-    type: "resonates_with",
-    title: "Brunnen und Tiefe",
+    type: "opens_into",
+    title: "Brunnen oeffnet in die Tiefe",
     shortResonance: "Der Brunnen macht verborgene Tiefe erreichbar.",
-    explanation: "Tiefe bleibt vorerst ein externer Bedeutungsanker aus dem Codex-Kontext.",
+    explanation: "Der Brunnen fuehrt unter die Oberflaeche.",
     strength: 0.9,
   },
   {
-    id: "ontology-manna-belongs-to-brot",
+    id: "ontology-manna-is-expression-of-brot",
     sourceId: "manna",
     targetId: "brot",
-    type: "belongs_to",
-    title: "Manna gehoert zu Brot",
+    type: "is_expression_of",
+    title: "Manna ist Ausdruck von Brot",
     shortResonance: "Manna ist Brot als Gabe im Mangel.",
-    explanation: "Der primaere Anzeige-Kontext von Manna bleibt Brot, die Ontologie kann zugleich Wuesten- und Versorgungsspuren halten.",
+    explanation: "Manna zeigt Brot als taegliche Gabe auf dem Weg.",
     strength: 1,
   },
   {
-    id: "ontology-manna-resonates-with-wueste",
+    id: "ontology-manna-is-threshold-to-wueste",
     sourceId: "manna",
     targetId: "wueste",
-    type: "resonates_with",
-    title: "Manna und Wueste",
+    type: "is_threshold_to",
+    title: "Manna ist Schwelle zur Wueste",
     shortResonance: "Im Mangel wird Versorgung als Gabe sichtbar.",
-    explanation: "Manna resoniert mit Wueste, obwohl der primaere Hierarchie-Kontext Brot ist.",
+    explanation: "Die Wueste macht Manna als unerwartete Versorgung lesbar.",
     strength: 0.95,
   },
   {
@@ -163,18 +163,8 @@ export const ontologyRelations: OntologyRelation[] = [
     type: "emerges_from",
     title: "Manna aus dem Tau",
     shortResonance: "Die Gabe erscheint auf der Schwelle des Taus.",
-    explanation: "Tau wird als interner Ontologie-Knoten gefuehrt, weil er bereits als Unterraum von Wasser existiert.",
+    explanation: "Aus der feinen Feuchte des Morgens tritt die Gabe hervor.",
     strength: 0.85,
-  },
-  {
-    id: "ontology-manna-nourishes-brot",
-    sourceId: "manna",
-    targetId: "brot",
-    type: "nourishes",
-    title: "Manna naehrt Brot",
-    shortResonance: "Manna verdichtet Brot zur taeglichen Versorgung.",
-    explanation: "Die Relation beschreibt keine Taxonomie, sondern eine Bedeutungsrolle von Manna innerhalb des Brot-Feldes.",
-    strength: 0.8,
   },
   {
     id: "ontology-manna-appears-in-exodus-16",
@@ -183,17 +173,17 @@ export const ontologyRelations: OntologyRelation[] = [
     type: "appears_in_story",
     title: "Manna in Exodus 16",
     shortResonance: "Exodus 16 verankert Manna als Gabe in der Wueste.",
-    explanation: "Exodus 16 bleibt vorerst ein externer String-Target, solange kein CodexEntry existiert.",
+    explanation: "Die Erzaehlung der Wueste gibt Manna seinen Ort.",
     scriptureAnchors: ["exodus-16"],
   },
   {
-    id: "ontology-dornbusch-belongs-to-feuer",
+    id: "ontology-dornbusch-is-expression-of-feuer",
     sourceId: "dornbusch",
     targetId: "feuer",
-    type: "belongs_to",
-    title: "Dornbusch gehoert zu Feuer",
+    type: "is_expression_of",
+    title: "Dornbusch ist Ausdruck von Feuer",
     shortResonance: "Der Dornbusch ist Feuer als rufende Gegenwart.",
-    explanation: "Der Anzeige-Kontext Feuer bleibt erhalten, waehrend der Ontologie-Layer Stimme und Offenbarung mitfuehrt.",
+    explanation: "Im Dornbusch brennt Feuer als Gegenwart, die ruft.",
     strength: 1,
   },
   {
@@ -203,7 +193,7 @@ export const ontologyRelations: OntologyRelation[] = [
     type: "reveals",
     title: "Dornbusch offenbart Stimme",
     shortResonance: "Im Feuer wird die Stimme hoerbar.",
-    explanation: "Stimme existiert bereits als Unterraum der Wueste und kann vom Dornbusch aus semantisch erreicht werden.",
+    explanation: "Im Feuer wird die Stimme hoerbar.",
     strength: 0.9,
   },
   {
@@ -213,43 +203,121 @@ export const ontologyRelations: OntologyRelation[] = [
     type: "appears_in_story",
     title: "Dornbusch in Exodus 3:2",
     shortResonance: "Der brennende Dornbusch verankert Feuer als nicht verzehrende Gegenwart.",
-    explanation: "Exodus 3:2 ist als Versanker vorhanden, aber hier bewusst als Ziel-ID der Story-Relation modelliert.",
+    explanation: "Exodus 3:2 zeigt Feuer als Gegenwart, die brennt und nicht verzehrt.",
     scriptureAnchors: ["exodus-3-2"],
     strength: 1,
   },
   {
-    id: "ontology-weg-belongs-to-wueste",
+    id: "ontology-dornbusch-has-polarity-feuer",
+    sourceId: "dornbusch",
+    targetId: "feuer",
+    type: "has_polarity",
+    title: "Dornbusch traegt die Spannung des Feuers",
+    shortResonance: "Feuer ist Gegenwart und kann doch verzehren.",
+    explanation: "Im Dornbusch erscheint Feuer als Gegenwart, die brennt, aber nicht verzehrt.",
+    strength: 0.85,
+  },
+  {
+    id: "ontology-weg-is-threshold-to-wueste",
     sourceId: "weg",
     targetId: "wueste",
-    type: "belongs_to",
-    title: "Weg gehoert zu Wueste",
+    type: "is_threshold_to",
+    title: "Weg ist Schwelle zur Wueste",
     shortResonance: "Der Weg fuehrt durch den Raum der Reduktion.",
-    explanation: "Der Weg bleibt im Anzeige-Modell unter Wueste, kann aber mit Erzaehlung, Pruefung und Licht resonieren.",
+    explanation: "In der Wueste wird der Weg zur Pruefung und Erzaehlung.",
     strength: 1,
   },
   {
-    id: "ontology-weg-resonates-with-erzaehlung",
-    sourceId: "weg",
-    targetId: "erzaehlung",
-    type: "resonates_with",
-    title: "Weg und Erzaehlung",
-    shortResonance: "Ein Weg wird lesbar, wenn er erzaehlt wird.",
-    explanation: "Erzaehlung bleibt vorerst ein externer Bedeutungsanker.",
-    strength: 0.7,
-  },
-  {
-    id: "ontology-weg-tests-pruefung",
+    id: "ontology-weg-contains-pattern-pruefung",
     sourceId: "weg",
     targetId: "pruefung",
-    type: "tests",
-    title: "Weg prueft",
+    type: "contains_pattern",
+    title: "Weg enthaelt das Muster der Pruefung",
+    shortResonance: "Der Weg enthaelt Pruefung als wiederkehrendes Muster.",
+    explanation: "Auf dem Weg wird Pruefung nicht Ziel, sondern Erfahrungsform.",
+    strength: 0.8,
+  },
+  {
+    id: "ontology-weg-passes-through-pruefung",
+    sourceId: "weg",
+    targetId: "pruefung",
+    type: "passes_through",
+    title: "Weg fuehrt durch Pruefung",
     shortResonance: "Der Weg macht sichtbar, was im Inneren traegt.",
-    explanation: "Pruefung ist ein vorhandener Unterraum der Wueste und wird als interner Ontologie-Knoten referenziert.",
+    explanation: "Auf dem Weg zeigt sich, was im Inneren traegt.",
     strength: 0.85,
   },
 ];
 
 let registry: OntologyRegistry | null = null;
+
+const technicalOntologyTextPatterns = [
+  /existiert bereits/i,
+  /als Unterraum/i,
+  /semantisch erreicht/i,
+  /\btarget\b/i,
+  /Ontology/i,
+  /CodexEntry/i,
+  /\bID\b/,
+  /Fallback/i,
+  /extern/i,
+  /interner/i,
+  /modelliert/i,
+  /TODO/i,
+  /Semantic Zoom/i,
+];
+
+function normalizeOntologyText(value: string) {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function normalizeOntologyTextForComparison(value: string) {
+  return normalizeOntologyText(value)
+    .toLocaleLowerCase("de")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .trim();
+}
+
+function isUserFacingOntologyText(value: string) {
+  const text = normalizeOntologyText(value);
+
+  return text.length > 0 && !technicalOntologyTextPatterns.some((pattern) => pattern.test(text));
+}
+
+function areOntologyTextsNearDuplicate(left: string, right: string) {
+  const normalizedLeft = normalizeOntologyTextForComparison(left);
+  const normalizedRight = normalizeOntologyTextForComparison(right);
+
+  if (!normalizedLeft || !normalizedRight) return false;
+  if (normalizedLeft === normalizedRight) return true;
+  if (normalizedLeft.includes(normalizedRight) || normalizedRight.includes(normalizedLeft)) return true;
+
+  const leftWords = new Set(normalizedLeft.split(/\s+/));
+  const rightWords = new Set(normalizedRight.split(/\s+/));
+  const sharedWords = Array.from(leftWords).filter((word) => rightWords.has(word)).length;
+  const unionSize = new Set([...leftWords, ...rightWords]).size;
+
+  return unionSize > 0 && sharedWords / unionSize >= 0.82;
+}
+
+export function getOntologyDisplayText(relation: OntologyRelation): string {
+  const shortResonance = normalizeOntologyText(relation.shortResonance);
+  const explanation = normalizeOntologyText(relation.explanation);
+  const hasShortResonance = isUserFacingOntologyText(shortResonance);
+  const hasExplanation = isUserFacingOntologyText(explanation);
+
+  if (hasShortResonance) {
+    return shortResonance;
+  }
+
+  if (hasExplanation && !areOntologyTextsNearDuplicate(shortResonance, explanation)) {
+    return explanation;
+  }
+
+  return "";
+}
 
 function createRegistry(): OntologyRegistry {
   const byId = new Map<string, OntologyEntity>();

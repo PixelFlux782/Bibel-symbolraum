@@ -44,6 +44,7 @@ import {
   type ResonanceType,
 } from "@/lib/resonance";
 import {
+  getOntologyDisplayText,
   getOntologyEntity,
   getOntologyRelationsForEntity,
   type OntologyRelation,
@@ -327,19 +328,37 @@ const ONTOLOGY_RELATION_LABELS: Record<OntologyRelationType, string> = {
   belongs_to: "gehoert zu",
   resonates_with: "klingt mit",
   emerges_from: "entsteht aus",
-  transforms_into: "wandelt sich zu",
-  opposes: "steht gegenueber",
+  transforms_into: "verwandelt sich in",
+  opposes: "steht entgegen",
   fulfills: "erfuellt",
   reveals: "offenbart",
   nourishes: "naehrt",
   tests: "prueft",
-  shares_letter: "teilt Buchstaben",
-  shares_number: "teilt Zahl",
+  shares_letter: "teilt Buchstaben mit",
+  shares_number: "teilt Zahl mit",
   appears_in_story: "erscheint in",
+  is_expression_of: "ist Ausdruck von",
+  is_threshold_to: "ist Schwelle zu",
+  opens_into: "oeffnet in",
+  contrasts_with: "steht in Spannung zu",
+  contains_pattern: "enthaelt das Muster",
+  fulfills_pattern_of: "erfuellt das Muster von",
+  has_polarity: "traegt die Spannung",
+  structures_journey: "strukturiert den Weg",
+  passes_through: "fuehrt durch",
 };
 const INSPECTOR_ONTOLOGY_RELATION_TYPES = new Set<OntologyRelationType>([
   "resonates_with",
   "emerges_from",
+  "is_expression_of",
+  "is_threshold_to",
+  "opens_into",
+  "contrasts_with",
+  "contains_pattern",
+  "fulfills_pattern_of",
+  "has_polarity",
+  "structures_journey",
+  "passes_through",
   "reveals",
   "nourishes",
   "tests",
@@ -833,30 +852,14 @@ function getOntologyCodexHref(id: string) {
   return getCodexEntry(id) ? `/codex/${id}?from=symbolnetz&focus=overview` : undefined;
 }
 
-function getLimitedOntologyText(value: string) {
-  return value
-    .replace(/\s+/g, " ")
-    .split(/(?<=[.!?])\s+/)
-    .filter(Boolean)
-    .slice(0, 3)
-    .join(" ")
-    .trim();
-}
-
-function isDisplayOntologyText(value: string) {
-  return value.trim().length > 0 && !/(ontologie|ontology|semantic zoom|externer|externes|target-id|ziel-id)/i.test(value);
-}
-
 function getOntologyRelationDeepeningText(relation: OntologyRelation) {
   const source = getOntologyEntity(relation.sourceId);
   const target = getOntologyEntity(relation.targetId);
-  const explanation = getLimitedOntologyText(relation.explanation);
-  const shortResonance = getLimitedOntologyText(relation.shortResonance);
+  const displayText = getOntologyDisplayText(relation);
 
-  if (isDisplayOntologyText(explanation)) return explanation;
-  if (isDisplayOntologyText(shortResonance)) return shortResonance;
+  if (displayText) return displayText;
   if (source?.summary && target?.title) {
-    return getLimitedOntologyText(`${source.summary} So beruehrt ${source.title} ${target.title}.`);
+    return `${source.summary} So beruehrt ${source.title} ${target.title}.`;
   }
 
   return `${getOntologyDisplayLabel(relation.sourceId)} und ${getOntologyDisplayLabel(relation.targetId)} oeffnen hier eine gemeinsame Bedeutungsspur.`;
@@ -1409,7 +1412,6 @@ function OntologyResonanceRows({
               <span aria-hidden="true">-&gt;</span>
               <OntologyResonanceToken label={row.targetLabel} />
             </button>
-            <p>{row.relation.shortResonance}</p>
             {isActive ? (
               <div className="symbol-ontology-resonance__deepening">
                 <p>{row.deepeningText}</p>

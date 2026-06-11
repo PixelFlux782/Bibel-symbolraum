@@ -9,6 +9,7 @@ import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import {
+  getOntologyDisplayText,
   getOntologyEntity,
   getOntologyRegistry,
   getOntologyRelationsForEntity,
@@ -72,16 +73,25 @@ function formatOntologyRelationType(type: OntologyRelation["type"]) {
   const labels: Record<OntologyRelation["type"], string> = {
     appears_in_story: "erscheint in",
     belongs_to: "gehoert zu",
+    contains_pattern: "enthaelt das Muster",
+    contrasts_with: "steht in Spannung zu",
     emerges_from: "entsteht aus",
     fulfills: "erfuellt",
+    fulfills_pattern_of: "erfuellt das Muster von",
+    has_polarity: "traegt die Spannung",
+    is_expression_of: "ist Ausdruck von",
+    is_threshold_to: "ist Schwelle zu",
     nourishes: "naehrt",
-    opposes: "steht gegenueber",
+    opens_into: "oeffnet in",
+    opposes: "steht entgegen",
+    passes_through: "fuehrt durch",
     resonates_with: "klingt mit",
     reveals: "offenbart",
-    shares_letter: "teilt Buchstaben",
-    shares_number: "teilt Zahl",
+    shares_letter: "teilt Buchstaben mit",
+    shares_number: "teilt Zahl mit",
+    structures_journey: "strukturiert den Weg",
     tests: "prueft",
-    transforms_into: "verwandelt sich zu",
+    transforms_into: "verwandelt sich in",
   };
 
   return labels[type];
@@ -249,7 +259,7 @@ function getOntologyResonance(entry: CodexEntry) {
     source: resolveOntologyEndpoint(relation.sourceId),
     target: resolveOntologyEndpoint(relation.targetId),
     label: formatOntologyRelationType(relation.type),
-    note: relation.shortResonance || relation.explanation,
+    note: getOntologyDisplayText(relation),
   }));
 }
 

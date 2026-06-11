@@ -10,6 +10,7 @@ export type {
 
 export {
   getOntologyEntitiesByTag,
+  getOntologyDisplayText,
   getOntologyEntity,
   getOntologyNeighbors,
   getOntologyRegistry,
