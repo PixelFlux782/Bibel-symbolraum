@@ -16,7 +16,11 @@ type ResolveRoomInitialStateIdOptions = {
 };
 
 function getSingleSearchParam(value: string | string[] | undefined): string | undefined {
-  return typeof value === "string" && value ? value : undefined;
+  if (typeof value !== "string" || !value) {
+    return undefined;
+  }
+
+  return value.split(/[?#]/, 1)[0] || undefined;
 }
 
 function normalizeSymbolNetworkRoomLens(value: string | undefined): SymbolNetworkRoomLens {

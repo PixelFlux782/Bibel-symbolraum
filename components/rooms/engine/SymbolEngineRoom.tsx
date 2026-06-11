@@ -27,6 +27,10 @@ const SYMBOL_NETWORK_LENS_HINTS: Partial<Record<SymbolNetworkRoomLens, (symbolLa
   story: (symbolLabel) => `Du betrittst ${symbolLabel} aus einer Erzaehlspur.`,
 };
 
+function getRoomTitle(symbolLabel: string) {
+  return `${symbolLabel}-Raum`;
+}
+
 function buildSymbolNetworkReturnHref(context: SymbolNetworkRoomContext) {
   const params = new URLSearchParams({
     symbol: context.symbol,
@@ -71,6 +75,7 @@ function SymbolNetworkRoomTrace({
 export function SymbolEngineRoom({ data, initialStateId, symbolNetworkContext }: SymbolEngineRoomProps) {
   const engine = useSymbolEngine(data, { initialStateId });
   const { activeState } = engine;
+  const roomTitle = getRoomTitle(data.symbolLabel);
 
   useEffect(() => {
     recordRoomVisitForRoute({
@@ -85,6 +90,12 @@ export function SymbolEngineRoom({ data, initialStateId, symbolNetworkContext }:
       <EngineNavigation states={data.states} activeIndex={engine.activeIndex} onSelect={engine.selectState} />
 
       <section className="symbol-engine__content" key={`${activeState.id}-content`}>
+        <nav className="mb-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-foreground-strong/45" aria-label="Raumpfad">
+          <span>/Raeume</span>
+          <span aria-hidden="true">/</span>
+          <span>{data.symbolLabel}</span>
+        </nav>
+        <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-gold/75">{roomTitle}</p>
         {symbolNetworkContext ? (
           <SymbolNetworkRoomTrace context={symbolNetworkContext} symbolLabel={data.symbolLabel} />
         ) : null}

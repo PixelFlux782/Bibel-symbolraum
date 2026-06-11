@@ -7,7 +7,7 @@ import {
 } from "@/lib/meaning/resolveRoomInitialStateId";
 
 export const metadata = {
-  title: "Brotraum",
+  title: "Brot-Raum",
   description: "Ein Symbolraum zu \u05dc\u05d7\u05dd / Lechem / Brot.",
 };
 

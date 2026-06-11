@@ -7,7 +7,7 @@ import {
 } from "@/lib/meaning/resolveRoomInitialStateId";
 
 export const metadata = {
-  title: "Wasserraum",
+  title: "Wasser-Raum",
   description: "Ein cineastischer Symbolraum zu \u05de\u05d9\u05dd / Majim / Wasser.",
 };
 

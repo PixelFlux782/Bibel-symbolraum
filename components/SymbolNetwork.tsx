@@ -1437,7 +1437,7 @@ function SymbolLensFocusDetail({
             <div className="symbol-inspector-accordion__content">
               <p>{activeSymbol.label}-Raum</p>
               <RoomTransitionButton href={roomHref} className="symbol-cta w-full">
-                {roomHref}
+                {activeSymbol.label}-Raum oeffnen
               </RoomTransitionButton>
             </div>
           ) : null}

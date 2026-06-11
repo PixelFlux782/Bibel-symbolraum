@@ -7,7 +7,7 @@ import {
 } from "@/lib/meaning/resolveRoomInitialStateId";
 
 export const metadata = {
-  title: "Lichtraum",
+  title: "Licht-Raum",
   description: "Ein minimaler Symbolraum zu \u05d0\u05d5\u05e8 / Or / Licht.",
 };
 

@@ -7,7 +7,7 @@ import {
 } from "@/lib/meaning/resolveRoomInitialStateId";
 
 export const metadata = {
-  title: "Feuerraum",
+  title: "Feuer-Raum",
   description: "Ein Symbolraum zu \u05d0\u05e9 / Esh / Feuer.",
 };
 
