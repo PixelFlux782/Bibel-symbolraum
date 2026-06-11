@@ -1,4 +1,4 @@
-import { getHierarchyEntry } from "@/lib/symbols/hierarchy";
+import { getHierarchyEntry } from "../symbols/hierarchy";
 
 import { validateOntologyProjection } from "./projections";
 import { ontologyEntities, ontologyRelations } from "./registry";
