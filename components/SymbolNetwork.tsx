@@ -208,6 +208,17 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   glanz: { x: 785, y: 292 },
   auge: { x: 582, y: 276 },
   "genesis-1-3": { x: 1010, y: 78 },
+  flamme: { x: 580, y: 410 },
+  glut: { x: 820, y: 412 },
+  dornbusch: { x: 860, y: 560 },
+  altar: { x: 700, y: 655 },
+  laeuterung: { x: 545, y: 560 },
+  "exodus-3-2": { x: 1010, y: 650 },
+  leere: { x: 100, y: 440 },
+  pruefung: { x: 255, y: 405 },
+  stimme: { x: 405, y: 455 },
+  weg: { x: 380, y: 620 },
+  manna: { x: 160, y: 660 },
 };
 const missingPositionWarnings = new Set<string>();
 const SYMBOL_NODE_SIZE = 176;
@@ -799,7 +810,7 @@ function getVerseDeepHierarchyAnchors(symbolId: string) {
 }
 
 function getSubspacesTitle(symbolLabel: string) {
-  return `Unterraeume von ${symbolLabel}`;
+  return `Unterräume von ${symbolLabel}`;
 }
 
 function getGematriaNumberIdsForLens(symbolId: string) {
