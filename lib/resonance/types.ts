@@ -2,9 +2,14 @@ export type ResonanceType =
   | "meaning"
   | "story"
   | "hebrew"
+  | "number"
   | "gematria"
   | "shared_letter"
   | "polarity"
+  | "pattern"
+  | "threshold"
+  | "expression"
+  | "revelation"
   | "journey";
 
 export interface ResonanceConnection {
@@ -18,6 +23,8 @@ export interface ResonanceConnection {
   strength: number;
   scriptureAnchors: string[];
   hebrewAnchors: string[];
+  sourceRelationId?: string;
+  derivedFromOntology?: boolean;
 }
 
 export interface ResonanceJourney {

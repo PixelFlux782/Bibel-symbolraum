@@ -1,5 +1,6 @@
 import { getHierarchyEntry } from "@/lib/symbols/hierarchy";
 
+import { validateOntologyProjection } from "./projections";
 import { ontologyEntities, ontologyRelations } from "./registry";
 import { ONTOLOGY_ENTITY_DOMAINS, ONTOLOGY_RELATION_TYPES } from "./types";
 import type { OntologyEntity, OntologyRelation, OntologyValidationResult } from "./types";
@@ -230,6 +231,8 @@ export function validateOntology(
       warnings.push(`Entity "${entityId}" uses many generic resonates_with relations. Consider more precise relation types.`);
     }
   });
+
+  warnings.push(...validateOntologyProjection(relations, entities));
 
   return {
     errors,

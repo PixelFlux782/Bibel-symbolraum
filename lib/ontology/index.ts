@@ -28,4 +28,13 @@ export {
   ontologyRelations,
 } from "./registry";
 
+export {
+  deriveResonanceConnectionFromOntologyRelation,
+  deriveResonanceConnectionsFromOntology,
+  mapOntologyRelationToResonanceType,
+  mergeResonanceConnections,
+  shouldProjectOntologyRelationToSymbolNetwork,
+  validateOntologyProjection,
+} from "./projections";
+
 export { validateOntology } from "./validateOntology";
