@@ -46,35 +46,58 @@ function formatType(type: CodexEntryType) {
     .join(" ");
 }
 
-function formatList(items: string[]) {
-  return items.length > 0 ? items.join(", ") : "n/a";
-}
-
-function formatSourceKind(source: string) {
-  return source
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatSourceList(items: string[]) {
-  return items.length > 0 ? items.map(formatSourceKind).join(", ") : "n/a";
-}
-
 function formatRelationType(type: CodexRelation["type"]) {
   const labels: Record<CodexRelation["type"], string> = {
     "anchors-scripture": "Bibelanker",
-    "contains-letter": "Enthaelt Buchstaben",
-    "continues-journey": "Fuehrt weiter",
-    contrasts: "Kontrastiert",
-    "has-hebrew-word": "Hebraeisches Wort",
-    related: "Verwandt",
-    "shares-meaning": "Teilt Bedeutung",
-    symbolizes: "Symbolisiert",
-    transforms: "Verwandelt",
+    "contains-letter": "traegt den Buchstaben",
+    "continues-journey": "fuehrt weiter zu",
+    contrasts: "steht im Gegenueber zu",
+    "has-hebrew-word": "klingt hebraeisch mit",
+    related: "steht nahe bei",
+    "shares-meaning": "teilt Bedeutung mit",
+    symbolizes: "macht sichtbar",
+    transforms: "wandelt sich zu",
   };
 
   return labels[type];
+}
+
+function normalizeText(value: string) {
+  return value
+    .toLocaleLowerCase("de-DE")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function humanizeId(value: string) {
+  return value
+    .replace(/^(pattern|ontology|rel)-/, "")
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toLocaleUpperCase("de-DE") + part.slice(1))
+    .join(" ");
+}
+
+function isTechnicalVisibleText(value: string) {
+  return [
+    /_/,
+    /\bderivedFromOntology\b/i,
+    /\bsourceRelationId\b/i,
+    /\bcoreConceptIds?\b/i,
+    /\bcontains_pattern\b/i,
+    /\bis_expression_of\b/i,
+    /\bresonates_with\b/i,
+  ].some((pattern) => pattern.test(value));
+}
+
+function getDisplayRelationNote(relation: CodexRelation, targetLabel: string) {
+  const note = relation.label?.trim() ?? "";
+
+  if (!note || isTechnicalVisibleText(note)) {
+    return "";
+  }
+
+  return normalizeText(note) === normalizeText(targetLabel) ? "" : note;
 }
 
 function relationTarget(relation: CodexRelation) {
@@ -413,7 +436,8 @@ type NumberResonanceItem = NonNullable<ReturnType<typeof getNumberResonance>>["l
 function resolveTargetLabel(target: string) {
   return resolveLinkedCodexEntry(target)?.title
     ?? hebrewWords.find((word) => word.id === target)?.transliteration
-    ?? target;
+    ?? getOntologyEntityTitle(target)
+    ?? humanizeId(target);
 }
 
 function getMeaningResonance(entry: CodexEntry) {
@@ -433,7 +457,7 @@ function getMeaningResonance(entry: CodexEntry) {
         target,
         linkedEntry,
         hebrewWord,
-        label: linkedEntry?.title ?? hebrewWord?.transliteration ?? target,
+        label: linkedEntry?.title ?? hebrewWord?.transliteration ?? resolveTargetLabel(target),
       };
     })
     .filter(({ target }) => Boolean(target));
@@ -668,9 +692,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               />
             ) : null}
 
-            {!isPatternEntity && !isCoreConceptEntity ? (
+            {!isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
               <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
-              {entry.meaningFields.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {entry.meaningFields.map((field) => {
                     const linkedEntry = resolveLinkedCodexEntry(field);
@@ -693,9 +716,6 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                     );
                   })}
                 </div>
-              ) : (
-                <p className="symbol-copy text-base italic text-muted-soft">Keine Bedeutungsfelder hinterlegt.</p>
-              )}
               </DetailSection>
             ) : null}
 
@@ -745,17 +765,6 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 ) : null}
               </dl>
             </DetailSection>
-
-            {!isPatternEntity && !isCoreConceptEntity ? (
-              <DetailSection title="Quellen">
-                <dl>
-                  <FieldRow label="Status" value={entry.meta.status} />
-                  <FieldRow label="Quellen" value={formatSourceList(entry.meta.source)} />
-                  {entry.meta.tags?.length ? <FieldRow label="Tags" value={formatList(entry.meta.tags)} /> : null}
-                  {entry.meta.notes ? <FieldRow label="Notizen" value={entry.meta.notes} /> : null}
-                </dl>
-              </DetailSection>
-            ) : null}
 
             {!isCoreConceptEntity ? <NearbyEntriesSection entry={entry} /> : null}
           </aside>
@@ -947,7 +956,7 @@ function ResonanceLinkList({
   return (
     <div className="mt-3 flex flex-wrap gap-2">
       {items.map(({ id, target, linkedEntry }) => {
-        const label = linkedEntry?.title ?? target;
+        const label = linkedEntry?.title ?? resolveTargetLabel(target);
 
         return linkedEntry ? (
           <Link
@@ -1254,7 +1263,7 @@ function SymbolicTrailSection({ entry, activeContext }: { entry: CodexEntry; act
                       {linkedEntry.title}
                     </Link>
                   ) : (
-                    <p className="font-serif text-xl italic text-foreground-strong">{target}</p>
+                    <p className="font-serif text-xl italic text-foreground-strong">{resolveTargetLabel(target)}</p>
                   )}
                   {relation.label ? <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{relation.label}</p> : null}
                 </article>
@@ -1273,7 +1282,7 @@ function SymbolicTrailSection({ entry, activeContext }: { entry: CodexEntry; act
                   href={linkedEntry ? `/codex/${linkedEntry.id}` : `/codex/${target}`}
                   className="block border border-gold/15 bg-gold/[0.035] p-4 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.06]"
                 >
-                  <p className="font-serif text-xl italic text-foreground-strong">{linkedEntry?.title ?? target}</p>
+                  <p className="font-serif text-xl italic text-foreground-strong">{linkedEntry?.title ?? resolveTargetLabel(target)}</p>
                   {relation.label ? <p className="symbol-copy mt-3 text-sm italic text-gold/75">{relation.label}</p> : null}
                 </Link>
               ))}
@@ -1336,14 +1345,17 @@ function PatternCodexSection({
                 Muster
               </span>
             </div>
-            <ol className="mt-4 flex flex-wrap items-center gap-3">
+            <ol className="mt-4 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
               {movement.map((step, index) => (
-                <li key={`${step}-${index}`} className="flex items-center gap-3">
-                  <span className="border border-gold/15 bg-black/[0.14] px-4 py-3 font-serif text-xl italic text-foreground-strong">
+                <li key={`${step}-${index}`} className="grid justify-items-start gap-2 sm:flex sm:items-center sm:gap-3">
+                  <span className="min-w-32 border border-gold/15 bg-black/[0.14] px-4 py-3 font-serif text-xl italic text-foreground-strong">
                     {step}
                   </span>
                   {index < movement.length - 1 ? (
-                    <span className="text-sm text-cyan-soft/70" aria-hidden="true">-&gt;</span>
+                    <span className="pl-5 text-sm text-cyan-soft/70 sm:pl-0" aria-hidden="true">
+                      <span className="sm:hidden">&darr;</span>
+                      <span className="hidden sm:inline">-&gt;</span>
+                    </span>
                   ) : null}
                 </li>
               ))}
@@ -1378,15 +1390,16 @@ function PatternCodexSection({
           <div className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Getragen von</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {carriers.map(({ relation, endpoint }) => {
+              {carriers.map(({ relation, endpoint }, index) => {
                 const className = "border border-cyan-soft/15 bg-cyan-soft/[0.04] px-3 py-2 text-xs uppercase tracking-[0.18em] text-cyan-soft/85 transition-colors duration-500";
+                const visibilityClassName = index > 2 ? "hidden sm:inline-flex" : "";
 
                 return endpoint.href ? (
-                  <Link key={relation.id} href={endpoint.href} className={`${className} hover:border-cyan-soft/30 hover:text-cyan-soft`}>
+                  <Link key={relation.id} href={endpoint.href} className={`${className} ${visibilityClassName} hover:border-cyan-soft/30 hover:text-cyan-soft`}>
                     {endpoint.label}
                   </Link>
                 ) : (
-                  <span key={relation.id} className={className}>
+                  <span key={relation.id} className={`${className} ${visibilityClassName}`}>
                     {endpoint.label}
                   </span>
                 );
@@ -1399,8 +1412,8 @@ function PatternCodexSection({
           <div className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Resonanzbeziehungen</p>
             <div className="mt-4 grid gap-3">
-              {resonance.map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
-                <article key={relation.id} className="border border-white/[0.06] bg-black/[0.1] p-4">
+              {resonance.map(({ relation, endpoint, label, markerLabel, note, explanation }, index) => (
+                <article key={relation.id} className={`${index > 2 ? "hidden sm:block" : "block"} border border-white/[0.06] bg-black/[0.1] p-4`}>
                   <div className="flex flex-wrap items-baseline justify-between gap-3">
                     <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">{label}</span>
                     <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
@@ -1412,6 +1425,28 @@ function PatternCodexSection({
                   {explanation ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
                 </article>
               ))}
+              {resonance.length > 3 ? (
+                <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:hidden">
+                  <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
+                    Weitere Resonanzen oeffnen
+                  </summary>
+                  <div className="mt-4 grid gap-3">
+                    {resonance.slice(3).map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
+                      <article key={`mobile-${relation.id}`} className="border border-white/[0.06] bg-black/[0.1] p-4">
+                        <div className="flex flex-wrap items-baseline justify-between gap-3">
+                          <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">{label}</span>
+                          <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
+                            {markerLabel}
+                          </span>
+                        </div>
+                        <OntologyEndpointLink endpoint={endpoint} className="mt-3 block text-2xl" />
+                        {note ? <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{note}</p> : null}
+                        {explanation ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
+                      </article>
+                    ))}
+                  </div>
+                </details>
+              ) : null}
             </div>
           </div>
         ) : null}
@@ -1422,11 +1457,13 @@ function PatternCodexSection({
 
 function CoreConceptRelationCard({
   item,
+  className = "",
 }: {
   item: ReturnType<typeof buildOntologyRelationItems>[number];
+  className?: string;
 }) {
   return (
-    <article className="border border-white/[0.06] bg-black/[0.1] p-4">
+    <article className={`border border-white/[0.06] bg-black/[0.1] p-4 ${className}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
           {item.label}
@@ -1499,8 +1536,8 @@ function CoreConceptCodexSection({
           <div className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zulaufende Symbole</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {relations.incoming.map((item) => (
-                <CoreConceptRelationCard key={item.relation.id} item={item} />
+              {relations.incoming.map((item, index) => (
+                <CoreConceptRelationCard key={item.relation.id} item={item} className={index > 2 ? "hidden sm:block" : ""} />
               ))}
             </div>
           </div>
@@ -1510,8 +1547,8 @@ function CoreConceptCodexSection({
           <div className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Oeffnet sich in</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {relations.outgoing.map((item) => (
-                <CoreConceptRelationCard key={item.relation.id} item={item} />
+              {relations.outgoing.map((item, index) => (
+                <CoreConceptRelationCard key={item.relation.id} item={item} className={index > 2 ? "hidden sm:block" : ""} />
               ))}
             </div>
           </div>
@@ -1521,8 +1558,8 @@ function CoreConceptCodexSection({
           <div className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitere Resonanzen</p>
             <div className="mt-4 grid gap-3">
-              {relations.further.map((item) => (
-                <CoreConceptRelationCard key={item.relation.id} item={item} />
+              {relations.further.map((item, index) => (
+                <CoreConceptRelationCard key={item.relation.id} item={item} className={index > 2 ? "hidden sm:block" : ""} />
               ))}
             </div>
           </div>
@@ -1553,7 +1590,7 @@ function OntologyResonanceSection({
         {resonance.map(({ relation, endpoint, label, markerLabel, note, explanation }, index) => (
           <div
             key={relation.id}
-            className={`${index > 5 ? "hidden sm:grid" : "grid"} gap-3 border border-white/[0.06] bg-black/[0.1] p-4`}
+            className={`${index > 2 ? "hidden sm:grid" : "grid"} gap-3 border border-white/[0.06] bg-black/[0.1] p-4`}
           >
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
@@ -1568,93 +1605,154 @@ function OntologyResonanceSection({
             {explanation ? <p className="symbol-copy text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
           </div>
         ))}
+        {resonance.length > 3 ? (
+          <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:hidden">
+            <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
+              Weitere Resonanzen oeffnen
+            </summary>
+            <div className="mt-4 grid gap-3">
+              {resonance.slice(3).map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
+                <div key={`mobile-${relation.id}`} className="grid gap-3 border border-white/[0.06] bg-black/[0.1] p-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-3">
+                    <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
+                      {label}
+                    </span>
+                    <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
+                      {markerLabel}
+                    </span>
+                  </div>
+                  <OntologyEndpointLink endpoint={endpoint} className="text-2xl" />
+                  {note ? <p className="symbol-copy text-sm italic text-muted-soft">{note}</p> : null}
+                  {explanation ? <p className="symbol-copy text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
+                </div>
+              ))}
+            </div>
+          </details>
+        ) : null}
       </div>
     </DetailSection>
   );
 }
 
+function getVisibleCodexRelations(entry: CodexEntry) {
+  const ontologyResonance = getOntologyResonance(entry);
+  const ontologyTargetIds = new Set(ontologyResonance.map(({ endpoint }) => endpoint.id));
+  const ontologyTexts = new Set(
+    ontologyResonance
+      .flatMap(({ note, explanation }) => [note, explanation])
+      .filter((value): value is string => Boolean(value?.trim()))
+      .map(normalizeText),
+  );
+  const seenRelationKeys = new Set<string>();
+
+  return entry.relations.filter((relation) => {
+    const target = relationTarget(relation);
+    const normalizedNote = normalizeText(relation.label ?? "");
+    const relationKey = `${entry.id}:${target}:${relation.type}:${normalizedNote}`;
+
+    if (!target || seenRelationKeys.has(relationKey)) {
+      return false;
+    }
+
+    if (ontologyTargetIds.has(target)) {
+      return false;
+    }
+
+    if (normalizedNote && ontologyTexts.has(normalizedNote)) {
+      return false;
+    }
+
+    seenRelationKeys.add(relationKey);
+    return true;
+  });
+}
+
 function RelationsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
+  const visibleRelations = getVisibleCodexRelations(entry);
+
+  if (visibleRelations.length === 0) {
+    return null;
+  }
+
   return (
     <DetailSection title="Relationen" activeContext={activeContext}>
-      {entry.relations.length > 0 ? (
-        <div className="grid gap-3">
-          {entry.relations.map((relation, index) => {
-            const target = relationTarget(relation);
-            const linkedEntry = resolveLinkedCodexEntry(target);
+      <div className="grid gap-3">
+        {visibleRelations.map((relation, index) => {
+          const target = relationTarget(relation);
+          const linkedEntry = resolveLinkedCodexEntry(target);
+          const targetLabel = linkedEntry?.title ?? resolveTargetLabel(target);
+          const relationNote = getDisplayRelationNote(relation, targetLabel);
 
-            return (
-              <article key={`${relation.type}-${target}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">{formatRelationType(relation.type)}</p>
-                  {linkedEntry ? (
-                    <Link
-                      href={`/codex/${linkedEntry.id}`}
-                      className="font-mono text-xs text-gold/75 transition-colors duration-500 hover:text-gold"
-                    >
-                      {linkedEntry.title}
-                    </Link>
-                  ) : (
-                    <p className="font-mono text-xs text-muted-soft">{relation.label || "nicht im Codex"}</p>
-                  )}
-                </div>
-                {relation.label ? (
-                  <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{relation.label}</p>
-                ) : null}
-              </article>
-            );
-          })}
-        </div>
-      ) : (
-        <p className="symbol-copy text-base italic text-muted-soft">Keine Relationen hinterlegt.</p>
-      )}
+          return (
+            <article key={`${relation.type}-${target}-${index}`} className={`${index > 2 ? "hidden sm:block" : "block"} border border-white/[0.06] bg-black/[0.12] p-4`}>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">{formatRelationType(relation.type)}</p>
+                {linkedEntry ? (
+                  <Link
+                    href={`/codex/${linkedEntry.id}`}
+                    className="font-serif text-lg italic text-foreground-strong transition-colors duration-500 hover:text-gold"
+                  >
+                    {targetLabel}
+                  </Link>
+                ) : (
+                  <p className="font-serif text-lg italic text-foreground-strong">{targetLabel}</p>
+                )}
+              </div>
+              {relationNote ? (
+                <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{relationNote}</p>
+              ) : null}
+            </article>
+          );
+        })}
+      </div>
     </DetailSection>
   );
 }
 
 function ScriptureAnchorsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
+  if (entry.scriptureAnchors.length === 0) {
+    return null;
+  }
+
   return (
     <DetailSection title="Bibelanker" activeContext={activeContext}>
-      {entry.scriptureAnchors.length > 0 ? (
-        <div className="grid gap-3">
-          {entry.scriptureAnchors.map((anchor, index) => {
-            const linkedEntry =
-              resolveLinkedCodexEntry(anchor.id) ??
-              resolveLinkedCodexEntry(anchor.reference) ??
-              resolveLinkedCodexEntry(anchor.label);
+      <div className="grid gap-3">
+        {entry.scriptureAnchors.map((anchor, index) => {
+          const linkedEntry =
+            resolveLinkedCodexEntry(anchor.id) ??
+            resolveLinkedCodexEntry(anchor.reference) ??
+            resolveLinkedCodexEntry(anchor.label);
 
-            return (
-              <article key={`${anchor.reference}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4">
-                <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
-                  <div>
-                    <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Stelle</p>
-                    {linkedEntry ? (
-                      <Link
-                        href={`/codex/${linkedEntry.id}`}
-                        className="mt-2 inline-block font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold"
-                      >
-                        {anchor.reference}
-                      </Link>
-                    ) : (
-                      <p className="mt-2 font-serif text-xl italic text-foreground-strong">{anchor.reference}</p>
-                    )}
-                  </div>
-                  {anchor.label ? (
-                    <div className="sm:text-right">
-                      <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Rolle</p>
-                      <p className="mt-2 text-xs uppercase tracking-[0.18em] text-gold/75">{anchor.label}</p>
-                    </div>
-                  ) : null}
+          return (
+            <article key={`${anchor.reference}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4">
+              <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
+                <div>
+                  <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Stelle</p>
+                  {linkedEntry ? (
+                    <Link
+                      href={`/codex/${linkedEntry.id}`}
+                      className="mt-2 inline-block font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold"
+                    >
+                      {anchor.reference}
+                    </Link>
+                  ) : (
+                    <p className="mt-2 font-serif text-xl italic text-foreground-strong">{anchor.reference}</p>
+                  )}
                 </div>
-                {anchor.note ? (
-                  <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{anchor.note}</p>
+                {anchor.label ? (
+                  <div className="sm:text-right">
+                    <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Rolle</p>
+                    <p className="mt-2 text-xs uppercase tracking-[0.18em] text-gold/75">{anchor.label}</p>
+                  </div>
                 ) : null}
-              </article>
-            );
-          })}
-        </div>
-      ) : (
-        <p className="symbol-copy text-base italic text-muted-soft">Keine Bibelanker hinterlegt.</p>
-      )}
+              </div>
+              {anchor.note ? (
+                <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{anchor.note}</p>
+              ) : null}
+            </article>
+          );
+        })}
+      </div>
     </DetailSection>
   );
 }

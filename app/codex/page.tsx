@@ -9,7 +9,7 @@ import { getCodexEntriesByType, resolveCodexEntry, searchCodexEntries } from "@/
 import type { CodexEntry, CodexEntryType } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
-import { CORE_CONCEPT_IDS, getOntologyEntity, isCoreConceptId } from "@/lib/ontology";
+import { CORE_CONCEPT_IDS, getOntologyEntity, isCoreConceptId, ontologyEntities } from "@/lib/ontology";
 import type { HebrewWord } from "@/types/hebrew";
 
 type CodexViewId =
@@ -243,6 +243,16 @@ function getCoreConceptOverviewEntries() {
       summary: codexEntry?.summary ?? ontologyEntity?.summary ?? "",
     }];
   });
+}
+
+function getPatternOverviewEntries() {
+  return ontologyEntities
+    .filter((entity) => entity.domain === "pattern")
+    .map((entity) => ({
+      id: entity.id,
+      title: entity.title,
+      summary: entity.summary,
+    }));
 }
 
 function filterCoreConceptOverviewEntries(query: string) {
@@ -616,7 +626,7 @@ function HebrewWordCard({
           </div>
         ) : null}
 
-        <div className="mt-auto grid grid-cols-2 gap-3 pt-8">
+        <div className="mt-auto grid grid-cols-2 gap-3 pt-8 max-sm:hidden">
           <div className="border-t border-white/[0.06] pt-4">
             <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">Relationen</p>
             <p className="mt-2 font-serif text-2xl text-gold/85">{entry.relations.length}</p>
@@ -1091,6 +1101,62 @@ function CoreConceptOverviewStrip({
   );
 }
 
+function MobileCodexMeaningTrails({
+  coreConceptEntries,
+  patternEntries,
+  onSelectView,
+}: {
+  coreConceptEntries: ReturnType<typeof getCoreConceptOverviewEntries>;
+  patternEntries: ReturnType<typeof getPatternOverviewEntries>;
+  onSelectView: (viewId: CodexViewId) => void;
+}) {
+  return (
+    <section className="mt-8 grid gap-4 md:hidden" aria-label="Mobile Bedeutungsspuren">
+      <div>
+        <p className="symbol-kicker text-cyan-soft">Bedeutungsspuren</p>
+        <h2 className="mt-3 font-serif text-3xl italic leading-tight text-foreground-strong">
+          Waehle eine Spur.
+        </h2>
+      </div>
+
+      {coreConceptEntries.length > 0 ? (
+        <div className="codex-mobile-trail">
+          <p>Bedeutungsachsen</p>
+          <div>
+            {coreConceptEntries.slice(0, 6).map((entry) => (
+              <Link key={entry.id} href={`/codex/${entry.id}`}>
+                {entry.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {patternEntries.length > 0 ? (
+        <div className="codex-mobile-trail">
+          <p>Musterbewegungen</p>
+          <div>
+            {patternEntries.slice(0, 5).map((entry) => (
+              <Link key={entry.id} href={`/codex/${entry.id}`}>
+                {entry.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="codex-mobile-trail codex-mobile-trail--views">
+        <button type="button" onClick={() => onSelectView("symbols")}>Symbole</button>
+        <button type="button" onClick={() => onSelectView("hebrew")}>Hebraeische Woerter</button>
+        <button type="button" onClick={() => onSelectView("letters")}>Buchstaben</button>
+        <button type="button" onClick={() => onSelectView("gematria")}>Zahlen</button>
+        <button type="button" onClick={() => onSelectView("torah")}>Thora</button>
+        <button type="button" onClick={() => onSelectView("journeys")}>Journeys</button>
+      </div>
+    </section>
+  );
+}
+
 function TorahSequence({ entries, activeCodexId, onActivateCodexEntry }: { entries: CodexEntry[] } & CodexCardFocusProps) {
   const entryMap = new Map(entries.map((entry) => [entry.id, entry]));
   const visibleIds = new Set(entries.map((entry) => entry.id));
@@ -1198,6 +1264,7 @@ export default function CodexPage() {
     () => filterCoreConceptOverviewEntries(trimmedQuery),
     [trimmedQuery],
   );
+  const patternOverviewEntries = useMemo(() => getPatternOverviewEntries(), []);
 
   const groups = useMemo(
     () => activeViewId === "all" ? groupEntries(visibleEntries) : [],
@@ -1230,7 +1297,32 @@ export default function CodexPage() {
           </p>
         </header>
 
-        <section className="mt-12">
+        <section className="mt-10 max-w-2xl md:mt-12">
+          <label htmlFor="codex-search" className="symbol-kicker text-cyan-soft">
+            Suche
+          </label>
+          <input
+            id="codex-search"
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Symbol, Buchstabe, Bibelstelle..."
+            className="mt-4 w-full border border-white/[0.08] bg-white/[0.035] px-5 py-4 font-serif text-lg italic text-foreground outline-none backdrop-blur-md transition-colors duration-500 placeholder:text-muted/55 focus:border-gold/30"
+          />
+          {trimmedQuery ? (
+            <p className="mt-4 text-[0.62rem] uppercase tracking-[0.24em] text-muted-soft">
+              {visibleEntries.length} Treffer in {activeView.label}
+            </p>
+          ) : null}
+        </section>
+
+        <MobileCodexMeaningTrails
+          coreConceptEntries={visibleCoreConceptEntries}
+          patternEntries={patternOverviewEntries}
+          onSelectView={setActiveViewId}
+        />
+
+        <section className="mt-9 md:mt-12">
           <div
             role="tablist"
             aria-label="Codex-Ansichten"
@@ -1254,7 +1346,7 @@ export default function CodexPage() {
                   }`}
                 >
                   {view.label}
-                  <span className="ml-2 text-gold/55">{viewCount}</span>
+                  <span className="ml-2 text-gold/55 max-sm:text-gold/35">{viewCount}</span>
                 </button>
               );
             })}
@@ -1268,25 +1360,6 @@ export default function CodexPage() {
                 onActivateCodexEntry={setActiveCodexId}
               />
             </>
-          ) : null}
-        </section>
-
-        <section className="mt-9 max-w-2xl">
-          <label htmlFor="codex-search" className="symbol-kicker text-cyan-soft">
-            Suche
-          </label>
-          <input
-            id="codex-search"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Symbol, Buchstabe, Bibelstelle..."
-            className="mt-4 w-full border border-white/[0.08] bg-white/[0.035] px-5 py-4 font-serif text-lg italic text-foreground outline-none backdrop-blur-md transition-colors duration-500 placeholder:text-muted/55 focus:border-gold/30"
-          />
-          {trimmedQuery ? (
-            <p className="mt-4 text-[0.62rem] uppercase tracking-[0.24em] text-muted-soft">
-              {visibleEntries.length} Treffer in {activeView.label}
-            </p>
           ) : null}
         </section>
 

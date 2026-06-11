@@ -271,6 +271,7 @@ const MEANING_NODE_SIZE = 96;
 const HIERARCHY_NODE_SIZE = 92;
 const DEEP_HIERARCHY_NODE_SIZE = 76;
 const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
+const MOBILE_GATE_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste"];
 const LETTER_NODE_PREFIX = "letter:";
 const LENS_LETTER_NODE_PREFIX = "lens-letter:";
 const NUMBER_NODE_PREFIX = "number:";
@@ -360,6 +361,7 @@ const INSPECTOR_ONTOLOGY_RELATION_TYPES = new Set<OntologyRelationType>([
   "appears_in_story",
 ]);
 const ONTOLOGY_RESONANCE_LIMIT = 5;
+const MOBILE_SYMBOL_RELATION_LIMIT = 3;
 const PATH_RESONANCE_FALLBACKS: Record<string, string> = {
   "wasser:licht": "Licht macht sichtbar,\nwas im Wasser verborgen ruht.",
   "feuer:licht": "Feuer verwandelt,\nLicht offenbart.",
@@ -1808,6 +1810,100 @@ function SearchResonanceGroup({
         ))}
       </div>
     </div>
+  );
+}
+
+function MobileSymbolJourney({
+  activeSymbol,
+  hasSymbolFocus,
+  connectedPaths,
+  activeCodexEntry,
+  codexHref,
+  roomHref,
+  onFocusSymbol,
+}: {
+  activeSymbol: SymbolMeaningNetworkNode;
+  hasSymbolFocus: boolean;
+  connectedPaths: SymbolMeaningPath[];
+  activeCodexEntry?: CodexEntry;
+  codexHref?: string;
+  roomHref: string;
+  onFocusSymbol: (symbolId: string) => void;
+}) {
+  const profile = getSymbolHebrewProfile(activeSymbol.id);
+  const hebrew = profile.hebrewWord?.hebrew ?? activeSymbol.hebrew;
+  const transliteration = profile.hebrewWord?.transliteration ?? activeSymbol.transliteration;
+  const gematria = hebrew ? calculateGematria(hebrew) : 0;
+  const closeRelations = connectedPaths.slice(0, MOBILE_SYMBOL_RELATION_LIMIT);
+  const gateSymbols = MOBILE_GATE_SYMBOL_IDS.flatMap((symbolId) => {
+    const node = network.nodes.find((candidate) => candidate.id === symbolId);
+    return node ? [node] : [];
+  });
+
+  if (!hasSymbolFocus) {
+    return (
+      <section className="symbol-mobile-guide md:hidden" aria-label="Mobile Symbolreise">
+        <p className="symbol-kicker text-cyan-soft">Vier Tore</p>
+        <h2>Waehle eine Bedeutungsspur.</h2>
+        <div className="symbol-mobile-gates">
+          {gateSymbols.map((node) => (
+            <button
+              key={node.id}
+              type="button"
+              className="symbol-mobile-gate"
+              onClick={() => onFocusSymbol(node.id)}
+            >
+              <span className="symbol-mobile-gate__hebrew" lang="he" dir="rtl">{node.hebrew}</span>
+              <span className="symbol-mobile-gate__title">{node.label}</span>
+              <span className="symbol-mobile-gate__meaning">{node.shortMeaning}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="symbol-mobile-focus md:hidden" aria-label={`${activeSymbol.label} im mobilen Symbolnetz`}>
+      <p className="symbol-kicker text-cyan-soft">Symbol-Fokus</p>
+      <div className="symbol-mobile-focus__head">
+        <p className="symbol-mobile-focus__hebrew" lang="he" dir="rtl">{hebrew}</p>
+        <div>
+          <h2>{activeSymbol.label}</h2>
+          <p>{[transliteration, gematria > 0 ? `${gematria}` : null].filter(Boolean).join(" · ")}</p>
+        </div>
+      </div>
+      <p className="symbol-mobile-focus__essence">{activeSymbol.shortMeaning}</p>
+
+      {closeRelations.length > 0 ? (
+        <div className="symbol-mobile-relations">
+          <p>Nahe Resonanzen</p>
+          <ul>
+            {closeRelations.map((path) => {
+              const neighborId = getOtherSymbolId(path, activeSymbol.id);
+
+              return (
+                <li key={path.id}>
+                  <span>{getSymbolLabel(neighborId)}</span>
+                  <i>{path.summary}</i>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
+
+      <div className="symbol-mobile-actions">
+        <RoomTransitionButton href={roomHref} className="symbol-cta">
+          {activeSymbol.label}-Raum oeffnen
+        </RoomTransitionButton>
+        {activeCodexEntry ? (
+          <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-cta symbol-cta-secondary">
+            Im Codex vertiefen
+          </Link>
+        ) : null}
+      </div>
+    </section>
   );
 }
 
@@ -3270,6 +3366,16 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             <span>Waehle ein Symbol. Folge einer Spur.</span>
           </div>
 
+          <MobileSymbolJourney
+            activeSymbol={activeSymbol}
+            hasSymbolFocus={hasSymbolFocus}
+            connectedPaths={connectedPaths}
+            activeCodexEntry={activeCodexEntry}
+            codexHref={activeCodexHref}
+            roomHref={activeRoomHref}
+            onFocusSymbol={focusSymbol}
+          />
+
           <div className={`${hasSymbolFocus ? "symbol-symbol-strip" : "hidden"} max-md:hidden`} aria-label="Symbol fokussieren">
             {network.nodes.map((node) => (
               <button
@@ -3305,7 +3411,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           ) : null}
 
           <div
-            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden ${isSymbolLensVisible ? "is-symbol-lens-focused" : ""} ${isJourneyFocus ? "is-journey-focused" : ""}`}
+            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden max-md:hidden ${isSymbolLensVisible ? "is-symbol-lens-focused" : ""} ${isJourneyFocus ? "is-journey-focused" : ""}`}
           >
             <form
               className="symbol-network-search"
