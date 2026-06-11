@@ -202,6 +202,12 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   schilfmeer: { x: 480, y: 278 },
   felswasser: { x: 390, y: 430 },
   "genesis-1-2": { x: 572, y: 118 },
+  morgenlicht: { x: 575, y: -18 },
+  leuchte: { x: 827, y: -16 },
+  stern: { x: 918, y: 138 },
+  glanz: { x: 785, y: 292 },
+  auge: { x: 582, y: 276 },
+  "genesis-1-3": { x: 1010, y: 78 },
 };
 const missingPositionWarnings = new Set<string>();
 const SYMBOL_NODE_SIZE = 176;
@@ -792,6 +798,10 @@ function getVerseDeepHierarchyAnchors(symbolId: string) {
   return getExistingDeepHierarchyAnchors(symbolId).filter((entry) => entry.level === "verse_anchor");
 }
 
+function getSubspacesTitle(symbolLabel: string) {
+  return `Unterraeume von ${symbolLabel}`;
+}
+
 function getGematriaNumberIdsForLens(symbolId: string) {
   const profile = getSymbolHebrewProfile(symbolId);
   const numberIds = new Set<string>();
@@ -1162,7 +1172,7 @@ function SymbolLensFocusDetail({
       ) : null}
       {activeResonanceLens === "meaning" ? (
         <>
-          <HierarchyChildrenDetail entries={detailHierarchyChildren} title="Unterraeume von Wasser" />
+          <HierarchyChildrenDetail entries={detailHierarchyChildren} title={getSubspacesTitle(activeSymbol.label)} />
           <HierarchyChildrenDetail
             entries={storyDeepHierarchyAnchors}
             title="Biblische Tiefenpunkte"
@@ -2984,7 +2994,7 @@ export default function SymbolNetwork() {
               <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
               <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
               {symbolViewportMode === "detail" || symbolViewportMode === "deep" ? (
-                <HierarchyChildrenDetail entries={activeDetailHierarchyChildren} title="Unterraeume von Wasser" />
+                <HierarchyChildrenDetail entries={activeDetailHierarchyChildren} title={getSubspacesTitle(activeSymbol.label)} />
               ) : null}
               {symbolViewportMode === "deep" ? (
                 <>
