@@ -1,10 +1,12 @@
 import { getHierarchyEntry } from "@/lib/symbols/hierarchy";
 
 import { ontologyEntities, ontologyRelations } from "./registry";
-import { ONTOLOGY_RELATION_TYPES } from "./types";
+import { ONTOLOGY_ENTITY_DOMAINS, ONTOLOGY_RELATION_TYPES } from "./types";
 import type { OntologyEntity, OntologyRelation, OntologyValidationResult } from "./types";
 
 const symbolicEntityTypes = new Set<OntologyEntity["type"]>(["archetype", "symbol"]);
+const archetypalRoleEntityTypes = new Set<OntologyEntity["type"]>(["archetype", "symbol", "concept"]);
+const validEntityDomains = new Set<string>(ONTOLOGY_ENTITY_DOMAINS);
 const validRelationTypes = new Set<string>(ONTOLOGY_RELATION_TYPES);
 
 function duplicateEntityIds(entities: OntologyEntity[]): string[] {
@@ -59,6 +61,49 @@ export function validateOntology(
 
     if (entity.primaryHierarchyId && !getHierarchyEntry(entity.primaryHierarchyId)) {
       warnings.push(`OntologyEntity "${entity.id}" referenziert einen externen primaryHierarchyId "${entity.primaryHierarchyId}".`);
+    }
+
+    if (entity.domain && !validEntityDomains.has(entity.domain)) {
+      errors.push(`ERROR: Entity "${entity.id}" has invalid domain "${entity.domain}".`);
+    }
+
+    if (!entity.domain) {
+      warnings.push(`WARN: Entity "${entity.id}" has no domain.`);
+    }
+
+    if ("aliases" in entity && entity.aliases !== undefined) {
+      if (!Array.isArray(entity.aliases)) {
+        errors.push(`ERROR: Entity "${entity.id}" has invalid aliases.`);
+      } else {
+        const normalizedAliases = entity.aliases.map((alias) => alias.trim().toLocaleLowerCase("de"));
+        const uniqueAliases = new Set(normalizedAliases);
+
+        if (uniqueAliases.size !== normalizedAliases.length) {
+          warnings.push(`WARN: Entity "${entity.id}" has duplicate aliases.`);
+        }
+      }
+    }
+
+    if (
+      entity.gematria !== undefined &&
+      (typeof entity.gematria !== "number" || !Number.isFinite(entity.gematria) || entity.gematria <= 0)
+    ) {
+      errors.push(`ERROR: Entity "${entity.id}" has invalid gematria.`);
+    }
+
+    if (
+      entity.firstMention &&
+      (!entity.firstMention.ref?.trim() || !entity.firstMention.role?.trim())
+    ) {
+      errors.push(`ERROR: Entity "${entity.id}" has incomplete firstMention.`);
+    }
+
+    if (entity.polarity && !entity.polarity.axis?.trim()) {
+      errors.push(`ERROR: Entity "${entity.id}" has polarity without axis.`);
+    }
+
+    if (archetypalRoleEntityTypes.has(entity.type) && !entity.archetypalRole?.trim()) {
+      warnings.push(`WARN: Entity "${entity.id}" has no archetypalRole.`);
     }
   }
 

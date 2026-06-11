@@ -14,7 +14,7 @@ import {
   getOntologyRegistry,
   getOntologyRelationsForEntity,
 } from "@/lib/ontology";
-import type { OntologyRelation } from "@/lib/ontology";
+import type { OntologyEntity, OntologyRelation } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
 
 type CodexDetailPageProps = {
@@ -487,6 +487,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
     notFound();
   }
 
+  const ontologyEntity = getOntologyEntity(entry.id);
   const symbolNetworkReturnLens =
     normalizeSymbolNetworkReturnLens(getSearchParamValue(resolvedSearchParams, "lens"))
     ?? normalizeSymbolNetworkReturnLens(activeFocus ?? undefined);
@@ -595,6 +596,10 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               )}
             </DetailSection>
 
+            <OntologyMetadataSection
+              entity={ontologyEntity}
+              activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+            />
             <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             <OntologyResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} />
@@ -641,6 +646,120 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         </div>
       </div>
     </main>
+  );
+}
+
+function OntologyMetadataSection({
+  entity,
+  activeContext,
+}: {
+  entity?: OntologyEntity;
+  activeContext?: CodexContextFocus;
+}) {
+  if (!entity) {
+    return null;
+  }
+
+  const hasPrimaryValues =
+    Boolean(entity.hebrew) ||
+    Boolean(entity.transliteration) ||
+    entity.gematria !== undefined ||
+    Boolean(entity.archetypalRole) ||
+    Boolean(entity.firstMention) ||
+    Boolean(entity.polarity) ||
+    Boolean(entity.imageSymbol) ||
+    Boolean(entity.aliases?.length);
+
+  if (!hasPrimaryValues) {
+    return null;
+  }
+
+  return (
+    <DetailSection title="Symbolische Identitaet" activeContext={activeContext}>
+      <div className="grid gap-6">
+        {entity.hebrew || entity.transliteration || entity.gematria !== undefined ? (
+          <dl className="grid gap-4 sm:grid-cols-3">
+            {entity.hebrew ? (
+              <div className="border border-gold/15 bg-gold/[0.035] p-4">
+                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeisch</dt>
+                <dd className="mt-3 font-serif text-4xl leading-none text-gold/90" lang="he" dir="rtl">
+                  {entity.hebrew}
+                </dd>
+              </div>
+            ) : null}
+            {entity.transliteration ? (
+              <div className="border border-white/[0.06] bg-black/[0.12] p-4">
+                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Umschrift</dt>
+                <dd className="mt-3 text-sm uppercase tracking-[0.18em] text-foreground-strong">
+                  {entity.transliteration}
+                </dd>
+              </div>
+            ) : null}
+            {entity.gematria !== undefined ? (
+              <div className="border border-white/[0.06] bg-black/[0.12] p-4">
+                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlenwert</dt>
+                <dd className="mt-3 font-serif text-4xl italic leading-none text-gold/85">
+                  {entity.gematria}
+                </dd>
+              </div>
+            ) : null}
+          </dl>
+        ) : null}
+
+        <dl className="divide-y divide-white/[0.06]">
+          {entity.archetypalRole ? (
+            <FieldRow label="Archetypische Rolle" value={entity.archetypalRole} />
+          ) : null}
+          {entity.firstMention ? (
+            <FieldRow
+              label="Erste Erwaehnung"
+              value={
+                <span>
+                  <span className="font-serif italic text-gold/85">{entity.firstMention.ref}</span>
+                  <span className="text-muted-soft"> - {entity.firstMention.role}</span>
+                </span>
+              }
+            />
+          ) : null}
+          {entity.polarity ? (
+            <FieldRow
+              label="Innere Spannung"
+              value={
+                <span>
+                  <span className="font-serif italic text-foreground-strong">{entity.polarity.axis}</span>
+                  {entity.polarity.visiblePole || entity.polarity.hiddenPole ? (
+                    <span className="mt-2 block text-sm text-muted-soft">
+                      {[entity.polarity.visiblePole, entity.polarity.hiddenPole].filter(Boolean).join(" / ")}
+                    </span>
+                  ) : null}
+                  {entity.polarity.note ? (
+                    <span className="mt-2 block text-sm italic text-muted-soft">{entity.polarity.note}</span>
+                  ) : null}
+                </span>
+              }
+            />
+          ) : null}
+          {entity.imageSymbol ? <FieldRow label="Bildsymbol" value={entity.imageSymbol} /> : null}
+          {entity.aliases?.length ? (
+            <FieldRow
+              label="Weitere Namen"
+              value={
+                <span className="flex flex-wrap gap-2">
+                  {entity.aliases.map((alias) => (
+                    <span
+                      key={alias}
+                      className="border border-white/[0.07] bg-white/[0.025] px-3 py-2 text-xs uppercase tracking-[0.16em] text-muted-soft"
+                    >
+                      {alias}
+                    </span>
+                  ))}
+                </span>
+              }
+            />
+          ) : null}
+        </dl>
+      </div>
+    </DetailSection>
   );
 }
 

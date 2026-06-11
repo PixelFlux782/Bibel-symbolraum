@@ -9,6 +9,57 @@ export type OntologyEntityType =
   | "meta"
   | "concept";
 
+export type OntologyEntityDomain =
+  | "element"
+  | "place"
+  | "action"
+  | "ritual"
+  | "body"
+  | "divine"
+  | "time"
+  | "number"
+  | "letter"
+  | "word"
+  | "story"
+  | "concept"
+  | "pattern"
+  | "threshold"
+  | "unknown";
+
+export const ONTOLOGY_ENTITY_DOMAINS = [
+  "element",
+  "place",
+  "action",
+  "ritual",
+  "body",
+  "divine",
+  "time",
+  "number",
+  "letter",
+  "word",
+  "story",
+  "concept",
+  "pattern",
+  "threshold",
+  "unknown",
+] as const satisfies readonly OntologyEntityDomain[];
+
+export type OntologyFirstMention = {
+  ref: string;
+  role: string;
+};
+
+export type OntologyPolarity = {
+  axis: string;
+  upperPole?: string;
+  lowerPole?: string;
+  leftPole?: string;
+  rightPole?: string;
+  visiblePole?: string;
+  hiddenPole?: string;
+  note?: string;
+};
+
 export type OntologyRelationType =
   | "belongs_to"
   | "resonates_with"
@@ -63,6 +114,17 @@ export interface OntologyEntity {
   primaryHierarchyId?: string;
   tags: string[];
   summary: string;
+  hebrew?: string;
+  transliteration?: string;
+  gematria?: number;
+  rootId?: string;
+  aliases?: string[];
+  archetypalRole?: string;
+  firstMention?: OntologyFirstMention;
+  domain?: OntologyEntityDomain;
+  imageSymbol?: string;
+  polarity?: OntologyPolarity;
+  clusterId?: string;
 }
 
 export interface OntologyRelation {
