@@ -163,9 +163,9 @@ type OntologyResonanceRow = {
   relation: OntologyRelation;
   sourceLabel: string;
   targetLabel: string;
-  sourceHref?: string;
   targetHref?: string;
   relationLabel: string;
+  deepeningText: string;
 };
 
 type SymbolNetworkInitialUrlState = {
@@ -833,6 +833,35 @@ function getOntologyCodexHref(id: string) {
   return getCodexEntry(id) ? `/codex/${id}?from=symbolnetz&focus=overview` : undefined;
 }
 
+function getLimitedOntologyText(value: string) {
+  return value
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .filter(Boolean)
+    .slice(0, 3)
+    .join(" ")
+    .trim();
+}
+
+function isDisplayOntologyText(value: string) {
+  return value.trim().length > 0 && !/(ontologie|ontology|semantic zoom|externer|externes|target-id|ziel-id)/i.test(value);
+}
+
+function getOntologyRelationDeepeningText(relation: OntologyRelation) {
+  const source = getOntologyEntity(relation.sourceId);
+  const target = getOntologyEntity(relation.targetId);
+  const explanation = getLimitedOntologyText(relation.explanation);
+  const shortResonance = getLimitedOntologyText(relation.shortResonance);
+
+  if (isDisplayOntologyText(explanation)) return explanation;
+  if (isDisplayOntologyText(shortResonance)) return shortResonance;
+  if (source?.summary && target?.title) {
+    return getLimitedOntologyText(`${source.summary} So beruehrt ${source.title} ${target.title}.`);
+  }
+
+  return `${getOntologyDisplayLabel(relation.sourceId)} und ${getOntologyDisplayLabel(relation.targetId)} oeffnen hier eine gemeinsame Bedeutungsspur.`;
+}
+
 function collectOntologyContextIds(symbolId: string) {
   return new Set([
     symbolId,
@@ -877,9 +906,9 @@ function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
       relation,
       sourceLabel: getOntologyDisplayLabel(relation.sourceId),
       targetLabel: getOntologyDisplayLabel(relation.targetId),
-      sourceHref: getOntologyCodexHref(relation.sourceId),
       targetHref: getOntologyCodexHref(relation.targetId),
       relationLabel: ONTOLOGY_RELATION_LABELS[relation.type],
+      deepeningText: getOntologyRelationDeepeningText(relation),
     }));
 }
 
@@ -1347,34 +1376,53 @@ function SymbolLensOrbit({
   );
 }
 
-function OntologyResonanceToken({ label, href }: { label: string; href?: string }) {
-  if (href) {
-    return (
-      <Link href={href} className="symbol-ontology-resonance__token">
-        {label}
-      </Link>
-    );
-  }
-
+function OntologyResonanceToken({ label }: { label: string }) {
   return <span className="symbol-ontology-resonance__token">{label}</span>;
 }
 
-function OntologyResonanceRows({ rows }: { rows: OntologyResonanceRow[] }) {
+function OntologyResonanceRows({
+  rows,
+  activeOntologyRelationId,
+  onToggleRelation,
+}: {
+  rows: OntologyResonanceRow[];
+  activeOntologyRelationId: string | null;
+  onToggleRelation: (relationId: string) => void;
+}) {
   if (rows.length === 0) return null;
 
   return (
     <div className="symbol-ontology-resonances" aria-label="Ontologie-Resonanzen">
-      {rows.map((row) => (
-        <div key={row.relation.id} className="symbol-ontology-resonance">
-          <div className="symbol-ontology-resonance__line">
-            <OntologyResonanceToken label={row.sourceLabel} href={row.sourceHref} />
-            <span>{row.relationLabel}</span>
-            <span aria-hidden="true">-&gt;</span>
-            <OntologyResonanceToken label={row.targetLabel} href={row.targetHref} />
+      {rows.map((row) => {
+        const isActive = activeOntologyRelationId === row.relation.id;
+
+        return (
+          <div key={row.relation.id} className={`symbol-ontology-resonance ${isActive ? "is-active" : ""}`}>
+            <button
+              type="button"
+              className="symbol-ontology-resonance__line"
+              onClick={() => onToggleRelation(row.relation.id)}
+              aria-expanded={isActive}
+            >
+              <OntologyResonanceToken label={row.sourceLabel} />
+              <span>{row.relationLabel}</span>
+              <span aria-hidden="true">-&gt;</span>
+              <OntologyResonanceToken label={row.targetLabel} />
+            </button>
+            <p>{row.relation.shortResonance}</p>
+            {isActive ? (
+              <div className="symbol-ontology-resonance__deepening">
+                <p>{row.deepeningText}</p>
+                {row.targetHref ? (
+                  <Link href={row.targetHref} className="symbol-ontology-resonance__codex-link">
+                    Im Codex ansehen
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
           </div>
-          <p>{row.relation.shortResonance}</p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -1451,7 +1499,15 @@ function SymbolLensFocusDetail({
     : undefined;
   const subspaceEntries = detailHierarchyChildren.slice(0, 5);
   const storyAnchor = storyDeepHierarchyAnchors[0] ?? verseDeepHierarchyAnchors[0];
-  const ontologyRows = getInspectorOntologyRows(activeSymbol.id);
+  const ontologyRows = useMemo(() => getInspectorOntologyRows(activeSymbol.id), [activeSymbol.id]);
+  const [activeOntologyRelationId, setActiveOntologyRelationId] = useState<string | null>(null);
+  const visibleActiveOntologyRelationId = ontologyRows.some((row) => row.relation.id === activeOntologyRelationId)
+    ? activeOntologyRelationId
+    : null;
+
+  const toggleOntologyRelation = useCallback((relationId: string) => {
+    setActiveOntologyRelationId((currentRelationId) => currentRelationId === relationId ? null : relationId);
+  }, []);
 
   return (
     <>
@@ -1476,7 +1532,11 @@ function SymbolLensFocusDetail({
           {activeInspectorFocus === "meaning" ? (
             <div className="symbol-inspector-accordion__content">
               <p>{meaningItems.join(" / ") || lensData.labels.meaning || activeSymbol.shortMeaning}</p>
-              <OntologyResonanceRows rows={ontologyRows} />
+              <OntologyResonanceRows
+                rows={ontologyRows}
+                activeOntologyRelationId={visibleActiveOntologyRelationId}
+                onToggleRelation={toggleOntologyRelation}
+              />
               {firstSearchResonance && firstSearchPath ? (
                 <button type="button" onClick={() => onPreviewPath(firstSearchPath)} className="symbol-focus-path">
                   <span>{getSymbolLabel(firstSearchResonance.sourceId)} - {getSymbolLabel(firstSearchResonance.targetId)}</span>

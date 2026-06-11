@@ -4045,12 +4045,25 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.36rem;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
   color: rgba(var(--cyan-rgb), 0.68);
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.58rem;
   letter-spacing: 0.12em;
   line-height: 1.5;
+  text-align: left;
   text-transform: uppercase;
+  cursor: pointer;
+  transition: color 320ms ease;
+}
+
+.symbol-ontology-resonance__line:hover,
+.symbol-ontology-resonance__line:focus-visible,
+.symbol-ontology-resonance.is-active .symbol-ontology-resonance__line {
+  color: rgba(var(--gold-rgb), 0.82);
 }
 
 .symbol-ontology-resonance__token {
@@ -4066,14 +4079,41 @@ body {
   text-transform: none;
 }
 
-a.symbol-ontology-resonance__token {
-  transition: border-color 420ms ease, color 420ms ease, background 420ms ease;
+.symbol-ontology-resonance__line:hover .symbol-ontology-resonance__token,
+.symbol-ontology-resonance__line:focus-visible .symbol-ontology-resonance__token,
+.symbol-ontology-resonance.is-active .symbol-ontology-resonance__token {
+  border-color: rgba(var(--gold-rgb), 0.3);
+  background: rgba(var(--gold-rgb), 0.035);
+  color: rgba(var(--gold-rgb), 0.9);
 }
 
-a.symbol-ontology-resonance__token:hover,
-a.symbol-ontology-resonance__token:focus-visible {
-  border-color: rgba(var(--gold-rgb), 0.34);
-  background: rgba(var(--gold-rgb), 0.04);
+.symbol-ontology-resonance__deepening {
+  margin-top: 0.42rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.18);
+  padding-left: 0.64rem;
+}
+
+.symbol-inspector-accordion__content .symbol-ontology-resonance__deepening p {
+  margin-top: 0;
+  color: rgba(216, 209, 194, 0.72);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.symbol-ontology-resonance__codex-link {
+  display: inline-flex;
+  margin-top: 0.32rem;
+  color: rgba(var(--gold-rgb), 0.75);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  transition: color 320ms ease;
+}
+
+.symbol-ontology-resonance__codex-link:hover,
+.symbol-ontology-resonance__codex-link:focus-visible {
   color: rgba(var(--gold-rgb), 0.9);
 }
 
@@ -4942,8 +4982,9 @@ a.symbol-ontology-resonance__token:focus-visible {
     line-height: 1.48;
   }
 
-  .symbol-ontology-resonance:nth-child(n + 4) {
-    display: none;
+  .symbol-inspector-accordion__content .symbol-ontology-resonance__deepening p {
+    font-size: 0.76rem;
+    line-height: 1.38;
   }
 
   .symbol-network-orientation {
