@@ -19,7 +19,8 @@ import ReactFlow, {
 
 import { RoomTransition, RoomTransitionButton } from "@/components/transitions/RoomTransition";
 import { useRoomTransition } from "@/hooks/useRoomTransition";
-import { getCodexEntry } from "@/lib/codex/getCodexEntry";
+import { getCodexEntry, searchCodexEntries } from "@/lib/codex/getCodexEntry";
+import type { CodexEntry } from "@/lib/codex/types";
 import { calculateGematria } from "@/lib/hebrew/gematria";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
@@ -27,6 +28,7 @@ import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import type { MeaningBridge } from "@/lib/meaning-bridges";
 import { recordActivatedLetter } from "@/lib/pathActivity";
 import { meaningNodes as allMeaningNodes } from "@/lib/meaning/meaningNodes";
+import { biblicalMeaningLinks, hebrewMeaningLinks, symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
 import {
   buildSymbolMeaningNetwork,
   type SymbolMeaningSatellite,
@@ -115,6 +117,18 @@ type SearchResonanceGroupItem = {
   targetId: string;
   text: string;
   registryIndex: number;
+};
+
+type SymbolSearchSuggestionKind = "Symbol" | "Hebraeisch" | "Bedeutung" | "Thora" | "Journey";
+
+type SymbolSearchSuggestion = {
+  id: string;
+  title: string;
+  detail?: string;
+  kind: SymbolSearchSuggestionKind;
+  symbolId: string;
+  value: string;
+  priority: number;
 };
 
 const network = buildSymbolMeaningNetwork();
@@ -334,6 +348,208 @@ function findSymbolBySearchTerm(value: string, allowPartial = true) {
 
     return values.some((term) => term === query || (allowPartial && term.includes(query)));
   });
+}
+
+function searchTermMatches(query: string, values: Array<string | null | undefined>) {
+  const normalizedQuery = normalizeSymbolSearchTerm(query);
+
+  if (!normalizedQuery) return false;
+
+  return values.some((value) => {
+    const normalizedValue = normalizeSymbolSearchTerm(value ?? "");
+    return normalizedValue === normalizedQuery || normalizedValue.includes(normalizedQuery);
+  });
+}
+
+function suggestionScore(query: string, values: Array<string | null | undefined>, priority: number) {
+  const normalizedQuery = normalizeSymbolSearchTerm(query);
+  const normalizedValues = values
+    .map((value) => normalizeSymbolSearchTerm(value ?? ""))
+    .filter(Boolean);
+
+  if (normalizedValues.some((value) => value === normalizedQuery)) return priority;
+  if (normalizedValues.some((value) => value.startsWith(normalizedQuery))) return priority + 10;
+  return priority + 20;
+}
+
+function getSymbolIdForHebrewWordId(hebrewWordId: string) {
+  return network.nodes.find((node) => getSymbolHebrewProfile(node.id).hebrewWord?.id === hebrewWordId)?.id;
+}
+
+function getSymbolIdForMeaningNode(meaningNodeId: MeaningNodeId) {
+  return network.meaningLinks.find((link) => link.meaningId === meaningNodeId)?.symbolId;
+}
+
+function getSymbolIdForCodexEntry(entry: CodexEntry) {
+  if (isMainSymbolId(entry.id)) return entry.id;
+  if (isMainSymbolId(entry.symbolRoomSlug)) return entry.symbolRoomSlug ?? undefined;
+
+  const directRelation = entry.relations.find((relation) => isMainSymbolId(relation.targetId));
+  if (directRelation) return directRelation.targetId;
+
+  const hebrewRelation = entry.relations.find((relation) => relation.type === "has-hebrew-word");
+  if (hebrewRelation) {
+    const symbolId = getSymbolIdForHebrewWordId(hebrewRelation.targetId);
+    if (symbolId) return symbolId;
+  }
+
+  return entry.meaningFields.flatMap((meaningNodeId) => getSymbolIdForMeaningNode(meaningNodeId)).find(Boolean);
+}
+
+function getCodexSuggestionKind(entry: CodexEntry): SymbolSearchSuggestionKind {
+  if (entry.type === "symbol") return "Symbol";
+  if (entry.type === "hebrew-word" || entry.type === "hebrew-letter" || entry.type === "number") return "Hebraeisch";
+  if (entry.type === "scripture") return "Thora";
+  if (entry.type === "journey") return "Journey";
+  return "Bedeutung";
+}
+
+function uniqueSearchSuggestions(suggestions: SymbolSearchSuggestion[]) {
+  const seen = new Set<string>();
+
+  return suggestions
+    .sort((left, right) => left.priority - right.priority || left.title.localeCompare(right.title, "de"))
+    .filter((suggestion) => {
+      const key = `${suggestion.kind}:${suggestion.title}:${suggestion.symbolId}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 5);
+}
+
+function getSymbolSearchSuggestions(query: string): SymbolSearchSuggestion[] {
+  const normalizedQuery = normalizeSymbolSearchTerm(query);
+  if (!normalizedQuery) return [];
+
+  const suggestions: SymbolSearchSuggestion[] = [];
+
+  for (const node of network.nodes) {
+    const symbolLink = symbolMeaningLinks.find((link) => link.symbolId === node.id);
+    const profile = getSymbolHebrewProfile(node.id);
+    const values = [
+      node.id,
+      node.label,
+      node.hebrew,
+      node.transliteration,
+      node.shortMeaning,
+      profile.hebrewWord?.hebrew,
+      profile.hebrewWord?.transliteration,
+      ...(symbolLink?.aliases ?? []),
+    ];
+
+    if (searchTermMatches(query, values)) {
+      suggestions.push({
+        id: `symbol:${node.id}`,
+        title: node.label,
+        detail: [node.hebrew, node.transliteration].filter(Boolean).join(" / "),
+        kind: "Symbol",
+        symbolId: node.id,
+        value: node.label,
+        priority: suggestionScore(query, values, 0),
+      });
+    }
+  }
+
+  for (const entry of searchCodexEntries(query)) {
+    const symbolId = getSymbolIdForCodexEntry(entry);
+    if (!symbolId) continue;
+
+    const values = [
+      entry.id,
+      entry.title,
+      entry.subtitle,
+      entry.hebrew,
+      entry.transliteration,
+      ...(entry.aliases ?? []),
+      ...(entry.searchTerms ?? []),
+    ];
+
+    suggestions.push({
+      id: `codex:${entry.id}`,
+      title: entry.title,
+      detail: [entry.hebrew, entry.transliteration].filter(Boolean).join(" / ") || entry.subtitle || undefined,
+      kind: getCodexSuggestionKind(entry),
+      symbolId,
+      value: entry.title,
+      priority: suggestionScore(query, values, entry.type === "symbol" ? 1 : 30),
+    });
+  }
+
+  for (const link of hebrewMeaningLinks) {
+    const values = [link.hebrewWordId, link.hebrew, link.transliteration];
+    if (!searchTermMatches(query, values)) continue;
+
+    const symbolId = getSymbolIdForHebrewWordId(link.hebrewWordId)
+      ?? link.nodeIds.flatMap((meaningNodeId) => getSymbolIdForMeaningNode(meaningNodeId)).find(Boolean);
+    if (!symbolId) continue;
+
+    suggestions.push({
+      id: `hebrew:${link.id}`,
+      title: getSymbolLabel(symbolId),
+      detail: `${link.hebrew} / ${link.transliteration}`,
+      kind: "Hebraeisch",
+      symbolId,
+      value: link.transliteration,
+      priority: suggestionScore(query, values, 12),
+    });
+  }
+
+  for (const meaningNode of network.meaningNodes) {
+    const values = [meaningNode.id, meaningNode.label, meaningNode.shortMeaning];
+    if (!searchTermMatches(query, values)) continue;
+
+    const symbolId = getSymbolIdForMeaningNode(meaningNode.id);
+    if (!symbolId) continue;
+
+    suggestions.push({
+      id: `meaning:${meaningNode.id}`,
+      title: meaningNode.label,
+      detail: getSymbolLabel(symbolId),
+      kind: "Bedeutung",
+      symbolId,
+      value: meaningNode.label,
+      priority: suggestionScore(query, values, 42),
+    });
+  }
+
+  for (const link of biblicalMeaningLinks) {
+    const values = [link.biblicalReferenceId, link.label, ...(link.aliases ?? [])];
+    if (!searchTermMatches(query, values)) continue;
+
+    const symbolId = link.nodeIds.flatMap((meaningNodeId) => getSymbolIdForMeaningNode(meaningNodeId)).find(Boolean);
+    if (!symbolId) continue;
+
+    suggestions.push({
+      id: `torah:${link.id}`,
+      title: link.label,
+      detail: getSymbolLabel(symbolId),
+      kind: "Thora",
+      symbolId,
+      value: link.label,
+      priority: suggestionScore(query, values, 52),
+    });
+  }
+
+  for (const journey of network.journeys) {
+    const values = [journey.id, journey.title, journey.description, ...journey.symbolLabels, ...journey.meaningNodeLabels];
+    if (!searchTermMatches(query, values)) continue;
+
+    const symbolId = journey.symbolPath.find((nodeId) => searchTermMatches(query, [nodeId, getSymbolLabel(nodeId)]))
+      ?? journey.symbolPath[0];
+
+    suggestions.push({
+      id: `journey:${journey.id}`,
+      title: journey.title,
+      detail: journey.symbolLabels.slice(0, 3).join(" -> "),
+      kind: "Journey",
+      symbolId,
+      value: journey.title,
+      priority: suggestionScore(query, values, 62),
+    });
+  }
+
+  return uniqueSearchSuggestions(suggestions);
 }
 
 function getSymbolLabel(symbolId: string) {
@@ -864,6 +1080,7 @@ export default function SymbolNetwork() {
   const [activeSymbolId, setActiveSymbolId] = useState("wasser");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocusSymbolId, setSearchFocusSymbolId] = useState<string | null>(null);
+  const [isSearchSuggestionsOpen, setIsSearchSuggestionsOpen] = useState(false);
   const [hasSymbolFocus, setHasSymbolFocus] = useState(false);
   const [activePathId, setActivePathId] = useState<string | null>(null);
   const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
@@ -882,6 +1099,9 @@ export default function SymbolNetwork() {
   const [flowViewport, setFlowViewport] = useState({ x: 0, y: 0, zoom: 1 });
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
   const { isEntering } = useRoomTransition();
+  const searchSuggestions = useMemo(() => getSymbolSearchSuggestions(searchQuery), [searchQuery]);
+  const hasSearchInput = normalizeSymbolSearchTerm(searchQuery).length > 0;
+  const showSearchSuggestions = isSearchSuggestionsOpen && hasSearchInput;
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activePath = network.paths.find((path) => path.id === activePathId);
@@ -1659,6 +1879,25 @@ export default function SymbolNetwork() {
     setSearchQuery(match.label);
   }
 
+  function activateSearchSuggestion(suggestion: SymbolSearchSuggestion) {
+    setSearchQuery(suggestion.value);
+    setIsSearchSuggestionsOpen(false);
+    focusSymbol(suggestion.symbolId);
+    setSearchFocusSymbolId(suggestion.symbolId);
+  }
+
+  function submitSearch() {
+    const bestSuggestion = searchSuggestions[0];
+
+    if (bestSuggestion) {
+      activateSearchSuggestion(bestSuggestion);
+      return;
+    }
+
+    setIsSearchSuggestionsOpen(false);
+    focusSearchMatch(searchQuery);
+  }
+
   function activateFirstResonance(letterId: string) {
     recordActivatedLetter({
       letterId,
@@ -1814,30 +2053,59 @@ export default function SymbolNetwork() {
               aria-label="Symbolnetz durchsuchen"
               onSubmit={(event) => {
                 event.preventDefault();
-                focusSearchMatch(searchQuery);
+                submitSearch();
               }}
               onPointerDown={(event) => event.stopPropagation()}
             >
               <label htmlFor="symbol-network-search" className="sr-only">Wort suchen</label>
               <input
                 id="symbol-network-search"
-                list="symbol-network-search-options"
                 type="search"
                 value={searchQuery}
                 onChange={(event) => {
                   const nextValue = event.target.value;
                   setSearchQuery(nextValue);
+                  setIsSearchSuggestionsOpen(Boolean(normalizeSymbolSearchTerm(nextValue)));
                   focusSearchMatch(nextValue, false);
+                }}
+                onFocus={() => setIsSearchSuggestionsOpen(Boolean(normalizeSymbolSearchTerm(searchQuery)))}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    setIsSearchSuggestionsOpen(false);
+                    event.currentTarget.blur();
+                  }
                 }}
                 placeholder="Wort suchen…"
                 className="symbol-network-search__input"
                 autoComplete="off"
               />
-              <datalist id="symbol-network-search-options">
-                {network.nodes.map((node) => (
-                  <option key={node.id} value={node.label} />
-                ))}
-              </datalist>
+              {showSearchSuggestions ? (
+                <div
+                  id="symbol-network-search-suggestions"
+                  className="symbol-network-search__suggestions"
+                  role="listbox"
+                  aria-label="Suchvorschlaege"
+                >
+                  {searchSuggestions.length > 0 ? searchSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.id}
+                      type="button"
+                      className="symbol-network-search__suggestion"
+                      role="option"
+                      aria-selected={false}
+                      onClick={() => activateSearchSuggestion(suggestion)}
+                    >
+                      <span>
+                        <strong>{suggestion.title}</strong>
+                        {suggestion.detail ? <small>{suggestion.detail}</small> : null}
+                      </span>
+                      <em>{suggestion.kind}</em>
+                    </button>
+                  )) : (
+                    <p className="symbol-network-search__empty">Keine Resonanz gefunden</p>
+                  )}
+                </div>
+              ) : null}
             </form>
             <ReactFlow
               nodes={nodes}

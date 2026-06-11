@@ -2364,6 +2364,82 @@ body {
     0 0 1.2rem rgba(var(--gold-rgb), 0.045);
 }
 
+.symbol-network-search__suggestions {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 24;
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(var(--gold-rgb), 0.12);
+  border-radius: 0.45rem;
+  background: rgba(1, 4, 10, 0.92);
+  box-shadow:
+    0 1rem 2.5rem rgba(0, 0, 0, 0.34),
+    0 0 1.5rem rgba(var(--cyan-rgb), 0.035);
+  backdrop-filter: blur(14px);
+}
+
+.symbol-network-search__suggestion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  min-height: 3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+  padding: 0.58rem 0.68rem;
+  text-align: left;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.symbol-network-search__suggestion:last-child {
+  border-bottom: 0;
+}
+
+.symbol-network-search__suggestion:hover,
+.symbol-network-search__suggestion:focus-visible {
+  background: rgba(var(--gold-rgb), 0.07);
+  outline: none;
+}
+
+.symbol-network-search__suggestion strong,
+.symbol-network-search__suggestion small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.symbol-network-search__suggestion strong {
+  color: rgba(var(--foreground-rgb), 0.9);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.symbol-network-search__suggestion small {
+  margin-top: 0.1rem;
+  color: rgba(216, 209, 194, 0.52);
+  font-size: 0.68rem;
+}
+
+.symbol-network-search__suggestion em {
+  color: rgba(var(--cyan-rgb), 0.68);
+  font-size: 0.56rem;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.symbol-network-search__empty {
+  margin: 0;
+  padding: 0.68rem 0.75rem;
+  color: rgba(216, 209, 194, 0.56);
+  font-size: 0.72rem;
+}
+
 .symbol-constellation-field .react-flow__renderer,
 .symbol-constellation-field .react-flow__pane,
 .symbol-constellation-field .react-flow__viewport {
