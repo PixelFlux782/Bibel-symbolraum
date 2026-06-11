@@ -85,9 +85,14 @@ export function mapOntologyRelationToResonanceType(
 export function shouldProjectOntologyRelationToSymbolNetwork(
   relation: OntologyRelation,
 ): boolean {
+  const strength = relation.strength;
+  const normalizedStrength = typeof strength === "number" && strength > 1
+    ? strength / 100
+    : strength;
+
   return (
-    typeof relation.strength === "number"
-    && relation.strength >= 70
+    typeof normalizedStrength === "number"
+    && normalizedStrength >= 0.7
     && PROJECTABLE_SYMBOL_NETWORK_RELATION_TYPES.has(relation.type)
   );
 }

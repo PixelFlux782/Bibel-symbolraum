@@ -4100,6 +4100,17 @@ body {
   line-height: 1.45;
 }
 
+.symbol-ontology-resonance__source {
+  display: inline-flex;
+  margin-top: 0.42rem;
+  color: rgba(var(--gold-rgb), 0.62);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
 .symbol-ontology-resonance__codex-link {
   display: inline-flex;
   margin-top: 0.32rem;

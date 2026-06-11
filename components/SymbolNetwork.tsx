@@ -44,9 +44,14 @@ import {
   type ResonanceType,
 } from "@/lib/resonance";
 import {
+  deriveResonanceConnectionsFromOntology,
   getOntologyDisplayText,
   getOntologyEntity,
   getOntologyRelationsForEntity,
+  mergeResonanceConnections,
+  ontologyEntities,
+  ontologyRelations,
+  shouldProjectOntologyRelationToSymbolNetwork,
   type OntologyRelation,
   type OntologyRelationType,
 } from "@/lib/ontology";
@@ -167,6 +172,7 @@ type OntologyResonanceRow = {
   targetHref?: string;
   relationLabel: string;
   deepeningText: string;
+  originLabel?: string;
 };
 
 type SymbolNetworkInitialUrlState = {
@@ -176,7 +182,14 @@ type SymbolNetworkInitialUrlState = {
 };
 
 const network = buildSymbolMeaningNetwork();
-const resonanceConnections = getAllResonanceConnections();
+const manualResonanceConnections = getAllResonanceConnections();
+const ontologyResonanceConnections = ontologyRelations
+  ? deriveResonanceConnectionsFromOntology(ontologyRelations, { entityReferences: ontologyEntities })
+  : [];
+const resonanceConnections = mergeResonanceConnections(
+  manualResonanceConnections,
+  ontologyResonanceConnections,
+);
 const positions: Record<string, { x: number; y: number }> = {
   wasser: { x: 90, y: 280 },
   licht: { x: 700, y: 70 },
@@ -324,6 +337,8 @@ const LETTER_RESONANCE_LABELS: Partial<Record<MeaningNodeId, string>> = {
 const LETTER_RESONANCE_PRIORITY: Partial<Record<string, MeaningNodeId[]>> = {
   mem: ["depth", "lack", "nourishment"],
 };
+const MAX_ONTOLOGY_CONNECTIONS_PER_ACTIVE_ENTITY = 6;
+const MAX_ONTOLOGY_PATTERN_CONNECTIONS_PER_ACTIVE_ENTITY = 2;
 const ONTOLOGY_RELATION_LABELS: Record<OntologyRelationType, string> = {
   belongs_to: "gehoert zu",
   resonates_with: "klingt mit",
@@ -877,6 +892,8 @@ function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
   const childIds = new Set(getChildrenOf(symbolId).map((entry) => entry.id));
   const relationById = new Map<string, { relation: OntologyRelation; tier: number }>();
   const connectedEntityIds = new Set<string>();
+  const seenRelationKeys = new Set<string>();
+  const seenDisplayTexts = new Set(manualResonanceConnections.map(getResonanceTextKey).filter(Boolean));
 
   contextIds.forEach((contextId) => {
     getOntologyRelationsForEntity(contextId).forEach((relation) => {
@@ -904,6 +921,17 @@ function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
 
   return Array.from(relationById.values())
     .sort((left, right) => left.tier - right.tier || (right.relation.strength ?? 0) - (left.relation.strength ?? 0))
+    .filter(({ relation }) => {
+      const relationKey = `${getPathKey(relation.sourceId, relation.targetId)}:${relation.type}`;
+      const displayTextKey = normalizeResonanceDisplayText(getOntologyRelationDeepeningText(relation));
+
+      if (seenRelationKeys.has(relationKey)) return false;
+      if (displayTextKey && seenDisplayTexts.has(displayTextKey)) return false;
+
+      seenRelationKeys.add(relationKey);
+      if (displayTextKey) seenDisplayTexts.add(displayTextKey);
+      return true;
+    })
     .slice(0, ONTOLOGY_RESONANCE_LIMIT)
     .map(({ relation }) => ({
       relation,
@@ -912,6 +940,7 @@ function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
       targetHref: getOntologyCodexHref(relation.targetId),
       relationLabel: ONTOLOGY_RELATION_LABELS[relation.type],
       deepeningText: getOntologyRelationDeepeningText(relation),
+      originLabel: shouldProjectOntologyRelationToSymbolNetwork(relation) ? "Bedeutungsbeziehung" : undefined,
     }));
 }
 
@@ -923,8 +952,50 @@ function getPathKey(from: string, to: string) {
   return [from, to].sort().join(":");
 }
 
+function normalizeResonanceDisplayText(value: string) {
+  return value
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase("de")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .trim();
+}
+
+function getResonanceTextKey(connection: Pick<ResonanceConnection, "shortResonance" | "explanation" | "title">) {
+  return normalizeResonanceDisplayText(connection.shortResonance)
+    || normalizeResonanceDisplayText(connection.explanation)
+    || normalizeResonanceDisplayText(connection.title);
+}
+
 function getResonanceConnectionForPath(from: string, to: string): ResonanceConnection | undefined {
   return resonanceConnections.find((connection) => getPathKey(connection.sourceId, connection.targetId) === getPathKey(from, to));
+}
+
+function getVisibleOntologyConnectionsForActiveEntity(activeId: string): ResonanceConnection[] {
+  const manualPathKeys = new Set(manualResonanceConnections.map((connection) => getPathKey(connection.sourceId, connection.targetId)));
+  const seenTextKeys = new Set(manualResonanceConnections.map(getResonanceTextKey).filter(Boolean));
+  let patternCount = 0;
+
+  return ontologyResonanceConnections
+    .filter((connection) => connection.sourceId === activeId || connection.targetId === activeId)
+    .sort((left, right) => right.strength - left.strength)
+    .filter((connection) => {
+      if (manualPathKeys.has(getPathKey(connection.sourceId, connection.targetId))) return false;
+
+      const textKey = getResonanceTextKey(connection);
+      if (textKey && seenTextKeys.has(textKey)) return false;
+
+      if (connection.resonanceType === "pattern") {
+        if (patternCount >= MAX_ONTOLOGY_PATTERN_CONNECTIONS_PER_ACTIVE_ENTITY) return false;
+        patternCount += 1;
+      }
+
+      if (textKey) seenTextKeys.add(textKey);
+      return true;
+    })
+    .slice(0, MAX_ONTOLOGY_CONNECTIONS_PER_ACTIVE_ENTITY);
 }
 
 function getBridgeForPath(path: SymbolMeaningPath) {
@@ -1415,6 +1486,9 @@ function OntologyResonanceRows({
             {isActive ? (
               <div className="symbol-ontology-resonance__deepening">
                 <p>{row.deepeningText}</p>
+                {row.originLabel ? (
+                  <span className="symbol-ontology-resonance__source">{row.originLabel}</span>
+                ) : null}
                 {row.targetHref ? (
                   <Link href={row.targetHref} className="symbol-ontology-resonance__codex-link">
                     Im Codex ansehen
@@ -1873,6 +1947,10 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const connectedPaths = useMemo(
     () => network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId),
     [activeSymbolId],
+  );
+  const visibleOntologyResonanceConnections = useMemo(
+    () => symbolViewportMode === "overview" ? [] : getVisibleOntologyConnectionsForActiveEntity(activeSymbolId),
+    [activeSymbolId, symbolViewportMode],
   );
   const searchResonanceGroup = useMemo(
     () => searchFocusSymbolId === activeSymbolId ? getSearchResonanceGroup(activeSymbolId) : [],
@@ -2707,6 +2785,40 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             routeOffset: getRouteOffset(index, relationType),
           },
         }];
+    }) : []),
+    ...(hasEdgeDisclosure && !activeLetterId && symbolViewportMode !== "overview" ? visibleOntologyResonanceConnections.flatMap((connection, index) => {
+      if (!renderedNodeIds.has(connection.sourceId) || !renderedNodeIds.has(connection.targetId)) return [];
+
+      const ports = getConnectionPorts(connection.sourceId, connection.targetId);
+      const isPattern = connection.resonanceType === "pattern";
+      const isThreshold = connection.resonanceType === "threshold";
+      const isFocused = connection.sourceId === activeSymbolId || connection.targetId === activeSymbolId;
+
+      return [{
+        id: `ontology-edge:${connection.id}`,
+        source: connection.sourceId,
+        target: connection.targetId,
+        sourceHandle: ports.sourceHandle,
+        targetHandle: ports.targetHandle,
+        type: "living",
+        className: `is-symbol-path ${isFocused ? "is-awake" : "is-dormant"}`,
+        style: {
+          stroke: isThreshold
+            ? "rgba(189,160,109,0.42)"
+            : isPattern
+              ? "rgba(127,184,201,0.24)"
+              : "rgba(127,184,201,0.3)",
+          strokeDasharray: isPattern ? "3 8" : "4 10",
+          strokeWidth: isPattern ? 0.9 : 1.1,
+        },
+        data: {
+          isTraveling: false,
+          relationType: "symbol" as const,
+          resonanceType: connection.resonanceType,
+          routeIndex: network.paths.length + index,
+          routeOffset: getRouteOffset(network.paths.length + index, "symbol"),
+        },
+      }];
     }) : []),
     ...(activeResonanceJourney && !activeLetterId ? [
       ...activeResonancePrimaryConnections.flatMap((connection, index) => {
