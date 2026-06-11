@@ -13,6 +13,18 @@ export const resonanceJourneys: ResonanceJourney[] = [
     ],
     scriptureAnchors: ["exodus-14", "manna", "psalm-104"],
   },
+  {
+    id: "journey-licht-feuer-wort",
+    title: "Von der Offenbarung zur Stimme",
+    summary: "Licht macht sichtbar.\nFeuer verwandelt.\nDas Wort ruft.",
+    nodePath: ["licht", "feuer", "wort"],
+    connectionIds: [
+      "resonance-licht-feuer",
+      "resonance-feuer-wort",
+      "resonance-licht-wort",
+    ],
+    scriptureAnchors: ["genesis-1-3", "exodus-3-2", "john-1-1"],
+  },
 ];
 
 export function getResonanceJourney(id: string): ResonanceJourney | undefined {
