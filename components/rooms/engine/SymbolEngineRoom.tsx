@@ -1,8 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import type { SymbolEngineData } from "@/types/engine";
+import type { SymbolNetworkRoomContext, SymbolNetworkRoomLens } from "@/lib/meaning/resolveRoomInitialStateId";
 import { recordRoomVisitForRoute } from "@/lib/pathActivity";
+import { getResonanceJourney } from "@/lib/resonance";
 import { BiblicalSceneLayer } from "./BiblicalSceneLayer";
 import { EngineNavigation } from "./EngineNavigation";
 import { EngineStage } from "./EngineStage";
@@ -14,9 +17,58 @@ import { useSymbolEngine } from "./useSymbolEngine";
 type SymbolEngineRoomProps = {
   data: SymbolEngineData;
   initialStateId?: string;
+  symbolNetworkContext?: SymbolNetworkRoomContext;
 };
 
-export function SymbolEngineRoom({ data, initialStateId }: SymbolEngineRoomProps) {
+const SYMBOL_NETWORK_LENS_HINTS: Partial<Record<SymbolNetworkRoomLens, (symbolLabel: string) => string>> = {
+  meaning: (symbolLabel) => `Du betrittst ${symbolLabel} als Bedeutungsraum.`,
+  hebrew: (symbolLabel) => `Du betrittst ${symbolLabel} von seiner hebraeischen Spur her.`,
+  gematria: (symbolLabel) => `Du betrittst ${symbolLabel} von seiner Zahl her.`,
+  story: (symbolLabel) => `Du betrittst ${symbolLabel} aus einer Erzaehlspur.`,
+};
+
+function buildSymbolNetworkReturnHref(context: SymbolNetworkRoomContext) {
+  const params = new URLSearchParams({
+    symbol: context.symbol,
+    lens: context.lens,
+  });
+
+  if (context.path) {
+    params.set("path", context.path);
+  }
+
+  return `/symbolnetz?${params.toString()}`;
+}
+
+function SymbolNetworkRoomTrace({
+  context,
+  symbolLabel,
+}: {
+  context: SymbolNetworkRoomContext;
+  symbolLabel: string;
+}) {
+  const lensHint = SYMBOL_NETWORK_LENS_HINTS[context.lens]?.(symbolLabel);
+  const resonanceJourney = context.path ? getResonanceJourney(context.path) : undefined;
+
+  return (
+    <div className="mb-8 max-w-xl border-l border-gold/20 pl-4 text-[10px] uppercase tracking-[0.18em] text-gold/70">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <p>Aus dem Symbolnetz</p>
+        <Link href={buildSymbolNetworkReturnHref(context)} className="text-cyan-soft/80 transition-colors hover:text-cyan-soft focus-visible:text-cyan-soft">
+          Zur&uuml;ck zur Karte
+        </Link>
+      </div>
+      {lensHint ? <p className="mt-2 normal-case tracking-normal text-foreground-strong/65">{lensHint}</p> : null}
+      {resonanceJourney ? (
+        <p className="mt-2 normal-case tracking-normal text-gold/75">
+          Resonanzpfad: {resonanceJourney.title}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+export function SymbolEngineRoom({ data, initialStateId, symbolNetworkContext }: SymbolEngineRoomProps) {
   const engine = useSymbolEngine(data, { initialStateId });
   const { activeState } = engine;
 
@@ -33,6 +85,9 @@ export function SymbolEngineRoom({ data, initialStateId }: SymbolEngineRoomProps
       <EngineNavigation states={data.states} activeIndex={engine.activeIndex} onSelect={engine.selectState} />
 
       <section className="symbol-engine__content" key={`${activeState.id}-content`}>
+        {symbolNetworkContext ? (
+          <SymbolNetworkRoomTrace context={symbolNetworkContext} symbolLabel={data.symbolLabel} />
+        ) : null}
         <p className="symbol-engine__eyebrow">
           {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
           {activeState.eyebrow}

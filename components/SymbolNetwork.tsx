@@ -108,6 +108,7 @@ type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Resonanz" | "Info" | "Bezieh
 type SymbolLensMode = "meaning" | "story" | "hebrew" | "gematria" | "journey";
 type SymbolInspectorFocus = "meaning" | "hebrew" | "gematria" | "story" | "subspaces" | "codex" | "room";
 type SymbolCodexFocusParam = "overview" | "meaning" | "hebrew" | "gematria" | "story" | "spaces";
+type SymbolRoomLensParam = "overview" | "meaning" | "hebrew" | "gematria" | "story";
 type SymbolViewportMode = SymbolZoomLevel;
 
 type SymbolLensOrbitNode = {
@@ -397,6 +398,45 @@ function buildSymbolNetworkCodexHref({
   }
 
   return `/codex/${entryId}?${params.toString()}`;
+}
+
+function buildSymbolNetworkRoomHref({
+  roomHref,
+  symbolId,
+  activeInspectorFocus,
+  activeResonanceLens,
+  activeResonanceJourneyId,
+}: {
+  roomHref: string;
+  symbolId: string;
+  activeInspectorFocus: SymbolInspectorFocus | null;
+  activeResonanceLens: SymbolLensMode | null;
+  activeResonanceJourneyId: string | null;
+}) {
+  const params = new URLSearchParams({
+    from: "symbolnetz",
+    symbol: symbolId,
+    lens: "overview",
+  });
+  const lens =
+    activeResonanceJourneyId
+      ? "story"
+      : activeResonanceLens === "journey"
+        ? "story"
+        : activeResonanceLens
+          ?? (activeInspectorFocus === "meaning" || activeInspectorFocus === "hebrew" || activeInspectorFocus === "gematria" || activeInspectorFocus === "story"
+            ? activeInspectorFocus
+            : null);
+
+  if (lens) {
+    params.set("lens", lens satisfies SymbolRoomLensParam);
+  }
+
+  if (activeResonanceJourneyId) {
+    params.set("path", activeResonanceJourneyId);
+  }
+
+  return `${roomHref}?${params.toString()}`;
 }
 
 function getNodeSize(nodeId: string) {
@@ -1215,6 +1255,7 @@ function SymbolLensFocusDetail({
   activeInspectorFocus,
   activeCodexEntry,
   codexHref,
+  roomHref,
   detailHierarchyChildren,
   storyDeepHierarchyAnchors,
   verseDeepHierarchyAnchors,
@@ -1232,6 +1273,7 @@ function SymbolLensFocusDetail({
   activeInspectorFocus: SymbolInspectorFocus | null;
   activeCodexEntry?: CodexEntry;
   codexHref?: string;
+  roomHref: string;
   detailHierarchyChildren: SymbolHierarchyEntry[];
   storyDeepHierarchyAnchors: SymbolHierarchyEntry[];
   verseDeepHierarchyAnchors: SymbolHierarchyEntry[];
@@ -1394,8 +1436,8 @@ function SymbolLensFocusDetail({
           {activeInspectorFocus === "room" ? (
             <div className="symbol-inspector-accordion__content">
               <p>{activeSymbol.label}-Raum</p>
-              <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">
-                {activeSymbol.roomHref}
+              <RoomTransitionButton href={roomHref} className="symbol-cta w-full">
+                {roomHref}
               </RoomTransitionButton>
             </div>
           ) : null}
@@ -1539,6 +1581,13 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         activeResonanceJourneyId,
       })
     : undefined;
+  const activeRoomHref = buildSymbolNetworkRoomHref({
+    roomHref: activeSymbol.roomHref,
+    symbolId: activeSymbol.id,
+    activeInspectorFocus,
+    activeResonanceLens,
+    activeResonanceJourneyId,
+  });
 
   const activeDetailHierarchyChildren = useMemo(() => getDetailHierarchyChildren(activeSymbolId), [activeSymbolId]);
   const activeDeepHierarchyAnchors = useMemo(() => getExistingDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
@@ -3271,6 +3320,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               activeInspectorFocus={activeInspectorFocus}
               activeCodexEntry={activeCodexEntry}
               codexHref={activeCodexHref}
+              roomHref={activeRoomHref}
               detailHierarchyChildren={activeDetailHierarchyChildren}
               storyDeepHierarchyAnchors={activeStoryDeepHierarchyAnchors}
               verseDeepHierarchyAnchors={activeVerseDeepHierarchyAnchors}
@@ -3305,7 +3355,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 </>
               ) : null}
               <div className="symbol-detail-panel__cta">
-                <RoomTransitionButton href={activeSymbol.roomHref} className="symbol-cta w-full">
+                <RoomTransitionButton href={activeRoomHref} className="symbol-cta w-full">
                   {activeSymbol.label}-Raum öffnen
                 </RoomTransitionButton>
                 {showResonanceJourneyOption && discoverableResonanceJourney ? (

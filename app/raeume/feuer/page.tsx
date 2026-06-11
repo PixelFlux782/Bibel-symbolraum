@@ -2,6 +2,7 @@ import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
 import { fireEngineData } from "@/components/rooms/fire/fireEngineData";
 import {
   resolveRoomInitialStateId,
+  resolveSymbolNetworkRoomContext,
   type RoomSearchParams,
 } from "@/lib/meaning/resolveRoomInitialStateId";
 
@@ -11,11 +12,13 @@ export const metadata = {
 };
 
 export default async function FeuerRaumPage({ searchParams }: { searchParams: RoomSearchParams }) {
+  const resolvedSearchParams = await searchParams;
   const initialStateId = resolveRoomInitialStateId({
-    searchParams: await searchParams,
+    searchParams: resolvedSearchParams,
     toSymbolSlug: "feuer",
     validStateIds: fireEngineData.states.map((state) => state.id),
   });
+  const symbolNetworkContext = resolveSymbolNetworkRoomContext(resolvedSearchParams, "feuer");
 
-  return <SymbolEngineRoom data={fireEngineData} initialStateId={initialStateId} />;
+  return <SymbolEngineRoom data={fireEngineData} initialStateId={initialStateId} symbolNetworkContext={symbolNetworkContext} />;
 }

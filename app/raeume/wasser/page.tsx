@@ -2,6 +2,7 @@ import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
 import { waterEngineData } from "@/components/rooms/water/waterEngineData";
 import {
   resolveRoomInitialStateId,
+  resolveSymbolNetworkRoomContext,
   type RoomSearchParams,
 } from "@/lib/meaning/resolveRoomInitialStateId";
 
@@ -11,11 +12,13 @@ export const metadata = {
 };
 
 export default async function WasserRaumPage({ searchParams }: { searchParams: RoomSearchParams }) {
+  const resolvedSearchParams = await searchParams;
   const initialStateId = resolveRoomInitialStateId({
-    searchParams: await searchParams,
+    searchParams: resolvedSearchParams,
     toSymbolSlug: "wasser",
     validStateIds: waterEngineData.states.map((state) => state.id),
   });
+  const symbolNetworkContext = resolveSymbolNetworkRoomContext(resolvedSearchParams, "wasser");
 
-  return <SymbolEngineRoom data={waterEngineData} initialStateId={initialStateId} />;
+  return <SymbolEngineRoom data={waterEngineData} initialStateId={initialStateId} symbolNetworkContext={symbolNetworkContext} />;
 }
