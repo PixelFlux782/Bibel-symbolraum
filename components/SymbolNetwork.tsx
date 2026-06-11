@@ -47,11 +47,15 @@ import {
   deriveResonanceConnectionsFromOntology,
   getOntologyDisplayText,
   getOntologyEntity,
+  getOntologyEntityTitle,
+  getOntologyRelationLabel,
+  getOntologyRelationMarkerLabel,
   getOntologyRelationsForEntity,
+  normalizeOntologyStrength,
   mergeResonanceConnections,
   ontologyEntities,
   ontologyRelations,
-  shouldProjectOntologyRelationToSymbolNetwork,
+  sortOntologyRelations,
   type OntologyRelation,
   type OntologyRelationType,
 } from "@/lib/ontology";
@@ -167,12 +171,11 @@ type SymbolSearchSuggestion = {
 
 type OntologyResonanceRow = {
   relation: OntologyRelation;
-  sourceLabel: string;
-  targetLabel: string;
-  targetHref?: string;
+  endpointLabel: string;
+  endpointHref?: string;
   relationLabel: string;
   deepeningText: string;
-  originLabel?: string;
+  markerLabel: string;
 };
 
 type SymbolNetworkInitialUrlState = {
@@ -339,29 +342,6 @@ const LETTER_RESONANCE_PRIORITY: Partial<Record<string, MeaningNodeId[]>> = {
 };
 const MAX_ONTOLOGY_CONNECTIONS_PER_ACTIVE_ENTITY = 6;
 const MAX_ONTOLOGY_PATTERN_CONNECTIONS_PER_ACTIVE_ENTITY = 2;
-const ONTOLOGY_RELATION_LABELS: Record<OntologyRelationType, string> = {
-  belongs_to: "gehoert zu",
-  resonates_with: "klingt mit",
-  emerges_from: "entsteht aus",
-  transforms_into: "verwandelt sich in",
-  opposes: "steht entgegen",
-  fulfills: "erfuellt",
-  reveals: "offenbart",
-  nourishes: "naehrt",
-  tests: "prueft",
-  shares_letter: "teilt Buchstaben mit",
-  shares_number: "teilt Zahl mit",
-  appears_in_story: "erscheint in",
-  is_expression_of: "ist Ausdruck von",
-  is_threshold_to: "ist Schwelle zu",
-  opens_into: "oeffnet in",
-  contrasts_with: "steht in Spannung zu",
-  contains_pattern: "enthaelt das Muster",
-  fulfills_pattern_of: "erfuellt das Muster von",
-  has_polarity: "traegt die Spannung",
-  structures_journey: "strukturiert den Weg",
-  passes_through: "fuehrt durch",
-};
 const INSPECTOR_ONTOLOGY_RELATION_TYPES = new Set<OntologyRelationType>([
   "resonates_with",
   "emerges_from",
@@ -856,15 +836,19 @@ function getMeaningNodeLabel(meaningNodeId: string) {
 }
 
 function getOntologyDisplayLabel(id: string) {
-  return getOntologyEntity(id)?.title
-    ?? getCodexEntry(id)?.title
+  const meaningNodeLabel = network.meaningNodes.find((node) => node.id === id)?.label
+    ?? allMeaningNodes.find((node) => node.id === id)?.label;
+
+  return getCodexEntry(id)?.title
+    ?? getOntologyEntity(id)?.title
     ?? getHierarchyEntry(id)?.title
     ?? network.nodes.find((node) => node.id === id)?.label
-    ?? getMeaningNodeLabel(id);
+    ?? meaningNodeLabel
+    ?? getOntologyEntityTitle(id);
 }
 
 function getOntologyCodexHref(id: string) {
-  return getCodexEntry(id) ? `/codex/${id}?from=symbolnetz&focus=overview` : undefined;
+  return getCodexEntry(id) || getOntologyEntity(id) ? `/codex/${id}?from=symbolnetz&focus=overview` : undefined;
 }
 
 function getOntologyRelationDeepeningText(relation: OntologyRelation) {
@@ -919,29 +903,46 @@ function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
     });
   });
 
+  let patternCount = 0;
+
   return Array.from(relationById.values())
-    .sort((left, right) => left.tier - right.tier || (right.relation.strength ?? 0) - (left.relation.strength ?? 0))
+    .sort((left, right) => {
+      if (left.tier !== right.tier) return left.tier - right.tier;
+
+      const [sortedLeft, sortedRight] = sortOntologyRelations([left.relation, right.relation]);
+      if (sortedLeft.id !== sortedRight.id) return sortedLeft.id === left.relation.id ? -1 : 1;
+
+      return normalizeOntologyStrength(right.relation.strength) - normalizeOntologyStrength(left.relation.strength);
+    })
     .filter(({ relation }) => {
       const relationKey = `${getPathKey(relation.sourceId, relation.targetId)}:${relation.type}`;
       const displayTextKey = normalizeResonanceDisplayText(getOntologyRelationDeepeningText(relation));
+      const isPatternRelation = relation.type === "contains_pattern" || relation.type === "fulfills_pattern_of";
 
       if (seenRelationKeys.has(relationKey)) return false;
       if (displayTextKey && seenDisplayTexts.has(displayTextKey)) return false;
+      if (isPatternRelation) {
+        if (patternCount >= MAX_ONTOLOGY_PATTERN_CONNECTIONS_PER_ACTIVE_ENTITY) return false;
+        patternCount += 1;
+      }
 
       seenRelationKeys.add(relationKey);
       if (displayTextKey) seenDisplayTexts.add(displayTextKey);
       return true;
     })
     .slice(0, ONTOLOGY_RESONANCE_LIMIT)
-    .map(({ relation }) => ({
-      relation,
-      sourceLabel: getOntologyDisplayLabel(relation.sourceId),
-      targetLabel: getOntologyDisplayLabel(relation.targetId),
-      targetHref: getOntologyCodexHref(relation.targetId),
-      relationLabel: ONTOLOGY_RELATION_LABELS[relation.type],
-      deepeningText: getOntologyRelationDeepeningText(relation),
-      originLabel: shouldProjectOntologyRelationToSymbolNetwork(relation) ? "Bedeutungsbeziehung" : undefined,
-    }));
+    .map(({ relation }) => {
+      const endpointId = contextIds.has(relation.sourceId) ? relation.targetId : relation.sourceId;
+
+      return {
+        relation,
+        endpointLabel: getOntologyDisplayLabel(endpointId),
+        endpointHref: getOntologyCodexHref(endpointId),
+        relationLabel: getOntologyRelationLabel(relation.type),
+        deepeningText: getOntologyRelationDeepeningText(relation),
+        markerLabel: getOntologyRelationMarkerLabel(relation.type),
+      };
+    });
 }
 
 function getLetterResonanceLabel(meaningNodeId: MeaningNodeId) {
@@ -980,7 +981,7 @@ function getVisibleOntologyConnectionsForActiveEntity(activeId: string): Resonan
 
   return ontologyResonanceConnections
     .filter((connection) => connection.sourceId === activeId || connection.targetId === activeId)
-    .sort((left, right) => right.strength - left.strength)
+    .sort((left, right) => normalizeOntologyStrength(right.strength) - normalizeOntologyStrength(left.strength))
     .filter((connection) => {
       if (manualPathKeys.has(getPathKey(connection.sourceId, connection.targetId))) return false;
 
@@ -1478,19 +1479,15 @@ function OntologyResonanceRows({
               onClick={() => onToggleRelation(row.relation.id)}
               aria-expanded={isActive}
             >
-              <OntologyResonanceToken label={row.sourceLabel} />
-              <span>{row.relationLabel}</span>
-              <span aria-hidden="true">-&gt;</span>
-              <OntologyResonanceToken label={row.targetLabel} />
+              <span className="symbol-ontology-resonance__marker">{row.markerLabel}</span>
+              <OntologyResonanceToken label={row.endpointLabel} />
             </button>
             {isActive ? (
               <div className="symbol-ontology-resonance__deepening">
+                <p className="symbol-ontology-resonance__relation-label">{row.relationLabel}</p>
                 <p>{row.deepeningText}</p>
-                {row.originLabel ? (
-                  <span className="symbol-ontology-resonance__source">{row.originLabel}</span>
-                ) : null}
-                {row.targetHref ? (
-                  <Link href={row.targetHref} className="symbol-ontology-resonance__codex-link">
+                {row.endpointHref ? (
+                  <Link href={row.endpointHref} className="symbol-ontology-resonance__codex-link">
                     Im Codex ansehen
                   </Link>
                 ) : null}

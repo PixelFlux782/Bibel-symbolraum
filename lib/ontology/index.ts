@@ -17,15 +17,22 @@ export {
 } from "./types";
 
 export {
+  ONTOLOGY_RELATION_LABELS,
+  getOntologyEntityTitle,
   getOntologyEntitiesByTag,
   getOntologyDisplayText,
   getOntologyEntity,
   getOntologyNeighbors,
+  getOntologyRelationLabel,
+  getOntologyRelationMarkerLabel,
   getOntologyRegistry,
   getOntologyRelationsByType,
   getOntologyRelationsForEntity,
+  normalizeOntologyStrength,
   ontologyEntities,
   ontologyRelations,
+  shouldShowOntologyExplanation,
+  sortOntologyRelations,
 } from "./registry";
 
 export {

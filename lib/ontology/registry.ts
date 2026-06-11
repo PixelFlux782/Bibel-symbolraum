@@ -6,6 +6,71 @@ import type {
   OntologyRelationType,
 } from "./types";
 
+export const ONTOLOGY_RELATION_LABELS: Record<OntologyRelationType, string> = {
+  is_expression_of: "ist Ausdruck von",
+  is_threshold_to: "ist Schwelle zu",
+  opens_into: "oeffnet in",
+  contrasts_with: "steht in Spannung zu",
+  contains_pattern: "enthaelt das Muster",
+  fulfills_pattern_of: "erfuellt das Muster von",
+  has_polarity: "traegt die Spannung",
+  structures_journey: "strukturiert den Weg",
+  passes_through: "fuehrt durch",
+  emerges_from: "entsteht aus",
+  transforms_into: "verwandelt sich in",
+  reveals: "offenbart",
+  nourishes: "naehrt",
+  tests: "prueft",
+  shares_letter: "teilt Buchstaben mit",
+  shares_number: "teilt Zahl mit",
+  appears_in_story: "erscheint in",
+  belongs_to: "gehoert zu",
+  resonates_with: "klingt mit",
+  opposes: "steht entgegen",
+  fulfills: "erfuellt",
+};
+
+const ONTOLOGY_RELATION_MARKER_LABELS: Record<OntologyRelationType, string> = {
+  is_expression_of: "Ausdruck",
+  is_threshold_to: "Schwelle",
+  opens_into: "Schwelle",
+  contrasts_with: "Spannung",
+  contains_pattern: "Muster",
+  fulfills_pattern_of: "Muster",
+  has_polarity: "Spannung",
+  structures_journey: "Wegspur",
+  passes_through: "Wegspur",
+  emerges_from: "Bedeutungsbeziehung",
+  transforms_into: "Bedeutungsbeziehung",
+  reveals: "Offenbarung",
+  nourishes: "Bedeutungsbeziehung",
+  tests: "Wegspur",
+  shares_letter: "Hebraeisch",
+  shares_number: "Zahl",
+  appears_in_story: "Erzaehlspur",
+  belongs_to: "Bedeutungsbeziehung",
+  resonates_with: "Bedeutungsbeziehung",
+  opposes: "Spannung",
+  fulfills: "Bedeutungsbeziehung",
+};
+
+const ONTOLOGY_RELATION_PRIORITY: Partial<Record<OntologyRelationType, number>> = {
+  is_expression_of: 1,
+  opens_into: 2,
+  is_threshold_to: 3,
+  reveals: 4,
+  contains_pattern: 5,
+  emerges_from: 6,
+  structures_journey: 7,
+  passes_through: 8,
+  shares_letter: 9,
+  shares_number: 10,
+  appears_in_story: 11,
+  contrasts_with: 12,
+  resonates_with: 13,
+  belongs_to: 14,
+};
+
 export const ontologyEntities: OntologyEntity[] = [
   {
     id: "brunnen",
@@ -603,6 +668,66 @@ function areOntologyTextsNearDuplicate(left: string, right: string) {
   const unionSize = new Set([...leftWords, ...rightWords]).size;
 
   return unionSize > 0 && sharedWords / unionSize >= 0.82;
+}
+
+function formatOntologyExternalLabel(id: string) {
+  const scriptureLikeId = id.match(/^([a-z]+)-(\d+)(?:-(\d+))?$/);
+
+  if (scriptureLikeId) {
+    const [, book, chapter, verse] = scriptureLikeId;
+    const bookLabel = book.charAt(0).toUpperCase() + book.slice(1);
+
+    return verse ? `${bookLabel} ${chapter}:${verse}` : `${bookLabel} ${chapter}`;
+  }
+
+  return id
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export function getOntologyRelationLabel(type: OntologyRelationType): string {
+  return ONTOLOGY_RELATION_LABELS[type];
+}
+
+export function getOntologyRelationMarkerLabel(type: OntologyRelationType): string {
+  return ONTOLOGY_RELATION_MARKER_LABELS[type];
+}
+
+export function getOntologyEntityTitle(id: string): string {
+  return getOntologyEntity(id)?.title ?? formatOntologyExternalLabel(id);
+}
+
+export function normalizeOntologyStrength(strength?: number): number {
+  if (!strength) return 0;
+  return strength <= 1 ? strength * 100 : strength;
+}
+
+export function sortOntologyRelations(relations: OntologyRelation[]): OntologyRelation[] {
+  return [...relations].sort((left, right) => {
+    const leftPriority = ONTOLOGY_RELATION_PRIORITY[left.type] ?? 99;
+    const rightPriority = ONTOLOGY_RELATION_PRIORITY[right.type] ?? 99;
+
+    return leftPriority - rightPriority
+      || normalizeOntologyStrength(right.strength) - normalizeOntologyStrength(left.strength)
+      || left.id.localeCompare(right.id, "de-DE");
+  });
+}
+
+export function shouldShowOntologyExplanation(
+  shortResonance?: string,
+  explanation?: string,
+): boolean {
+  const shortText = normalizeOntologyText(shortResonance ?? "");
+  const explanationText = normalizeOntologyText(explanation ?? "");
+
+  if (!isUserFacingOntologyText(explanationText)) return false;
+  if (!shortText) return true;
+  if (areOntologyTextsNearDuplicate(shortText, explanationText)) return false;
+  if (explanationText.length <= shortText.length + 18 && areOntologyTextsNearDuplicate(shortText, explanationText)) return false;
+
+  return true;
 }
 
 export function getOntologyDisplayText(relation: OntologyRelation): string {

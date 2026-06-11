@@ -11,11 +11,18 @@ import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import {
   getOntologyDisplayText,
   getOntologyEntity,
+  getOntologyEntityTitle,
+  getOntologyRelationLabel,
+  getOntologyRelationMarkerLabel,
   getOntologyRegistry,
   getOntologyRelationsForEntity,
+  ontologyEntities,
+  shouldShowOntologyExplanation,
+  sortOntologyRelations,
 } from "@/lib/ontology";
 import type { OntologyEntity, OntologyRelation } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
+import type { MeaningNodeId } from "@/types/meaningGraph";
 
 type CodexDetailPageProps = {
   params: Promise<{
@@ -69,40 +76,58 @@ function formatRelationType(type: CodexRelation["type"]) {
   return labels[type];
 }
 
-function formatOntologyRelationType(type: OntologyRelation["type"]) {
-  const labels: Record<OntologyRelation["type"], string> = {
-    appears_in_story: "erscheint in",
-    belongs_to: "gehoert zu",
-    contains_pattern: "enthaelt das Muster",
-    contrasts_with: "steht in Spannung zu",
-    emerges_from: "entsteht aus",
-    fulfills: "erfuellt",
-    fulfills_pattern_of: "erfuellt das Muster von",
-    has_polarity: "traegt die Spannung",
-    is_expression_of: "ist Ausdruck von",
-    is_threshold_to: "ist Schwelle zu",
-    nourishes: "naehrt",
-    opens_into: "oeffnet in",
-    opposes: "steht entgegen",
-    passes_through: "fuehrt durch",
-    resonates_with: "klingt mit",
-    reveals: "offenbart",
-    shares_letter: "teilt Buchstaben mit",
-    shares_number: "teilt Zahl mit",
-    structures_journey: "strukturiert den Weg",
-    tests: "prueft",
-    transforms_into: "verwandelt sich in",
-  };
-
-  return labels[type];
-}
-
 function relationTarget(relation: CodexRelation) {
   return relation.targetId || ("target" in relation && typeof relation.target === "string" ? relation.target : "");
 }
 
 function resolveLinkedCodexEntry(value: string | null | undefined) {
   return value ? resolveCodexEntry(value) : undefined;
+}
+
+function isMeaningNodeId(value: string): value is MeaningNodeId {
+  return meaningNodes.some((node) => node.id === value);
+}
+
+function codexTypeForOntologyEntity(entity: OntologyEntity): CodexEntryType {
+  if (entity.type === "hebrew_word") return "hebrew-word";
+  if (entity.type === "letter") return "hebrew-letter";
+  if (entity.type === "number") return "number";
+  if (entity.type === "story_anchor" || entity.type === "verse_anchor") return "scripture";
+  if (entity.type === "concept" || entity.type === "meta") return "meaning";
+
+  return "symbol";
+}
+
+function codexEntryFromOntologyEntity(entity: OntologyEntity): CodexEntry {
+  return {
+    id: entity.id,
+    type: codexTypeForOntologyEntity(entity),
+    title: entity.title,
+    subtitle: entity.archetypalRole ?? null,
+    hebrew: entity.hebrew ?? null,
+    transliteration: entity.transliteration ?? null,
+    aliases: entity.aliases,
+    searchTerms: entity.tags,
+    summary: entity.summary,
+    meaningFields: entity.tags.filter(isMeaningNodeId),
+    relations: [],
+    scriptureAnchors: entity.firstMention
+      ? [{
+          reference: entity.firstMention.ref,
+          label: entity.firstMention.ref,
+          note: entity.firstMention.role,
+          source: "meaning-graph",
+        }]
+      : [],
+    symbolRoomSlug: null,
+    journeyIds: [],
+    meta: {
+      status: "seed",
+      source: ["meaning-graph"],
+      sourceIds: [entity.id],
+      tags: entity.tags,
+    },
+  };
 }
 
 function getSearchParamValue(params: Record<string, string | string[] | undefined>, key: string) {
@@ -194,31 +219,15 @@ function getScriptureAnchorLabel(anchorId: string) {
   return linkedEntry?.title ?? anchorId.replace(/-/g, " ");
 }
 
-function formatOntologyExternalLabel(id: string) {
-  const scriptureLikeId = id.match(/^([a-z]+)-(\d+)(?:-(\d+))?$/);
-
-  if (scriptureLikeId) {
-    const [, book, chapter, verse] = scriptureLikeId;
-    const bookLabel = book.charAt(0).toUpperCase() + book.slice(1);
-
-    return verse ? `${bookLabel} ${chapter}:${verse}` : `${bookLabel} ${chapter}`;
-  }
-
-  return id
-    .split("-")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 function resolveOntologyEndpoint(id: string) {
   const linkedEntry = resolveLinkedCodexEntry(id);
-  const entity = getOntologyEntity(id);
+  const ontologyEntity = getOntologyEntity(id);
 
   return {
     id,
-    label: linkedEntry?.title ?? entity?.title ?? formatOntologyExternalLabel(id),
+    label: linkedEntry?.title ?? getOntologyEntityTitle(id),
     linkedEntry,
+    href: linkedEntry ? `/codex/${linkedEntry.id}` : ontologyEntity ? `/codex/${id}` : undefined,
   };
 }
 
@@ -254,13 +263,20 @@ function getOntologyResonance(entry: CodexEntry) {
     });
   });
 
-  return Array.from(relationsById.values()).slice(0, 6).map((relation) => ({
-    relation,
-    source: resolveOntologyEndpoint(relation.sourceId),
-    target: resolveOntologyEndpoint(relation.targetId),
-    label: formatOntologyRelationType(relation.type),
-    note: getOntologyDisplayText(relation),
-  }));
+  return sortOntologyRelations(Array.from(relationsById.values())).slice(0, 10).map((relation) => {
+    const endpointId = relation.sourceId === entry.id ? relation.targetId : relation.sourceId;
+
+    return {
+      relation,
+      endpoint: resolveOntologyEndpoint(endpointId),
+      label: getOntologyRelationLabel(relation.type),
+      markerLabel: getOntologyRelationMarkerLabel(relation.type),
+      note: getOntologyDisplayText(relation),
+      explanation: shouldShowOntologyExplanation(relation.shortResonance, relation.explanation)
+        ? relation.explanation
+        : "",
+    };
+  });
 }
 
 function getLetterResonance(entry: CodexEntry) {
@@ -451,12 +467,17 @@ function FieldRow({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function generateStaticParams() {
-  return codexEntryIds.map((id) => ({ id }));
+  return Array.from(new Set([
+    ...codexEntryIds,
+    ...ontologyEntities.map((entity) => entity.id),
+  ])).map((id) => ({ id }));
 }
 
 export async function generateMetadata({ params }: CodexDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const entry = resolveCodexEntry(id);
+  const codexEntry = resolveCodexEntry(id);
+  const ontologyEntity = codexEntry ? undefined : getOntologyEntity(id);
+  const entry = codexEntry ?? (ontologyEntity ? codexEntryFromOntologyEntity(ontologyEntity) : undefined);
 
   if (!entry) {
     return {
@@ -481,7 +502,9 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const activePathId = isFromSymbolNetwork ? getSearchParamValue(resolvedSearchParams, "path") : undefined;
   const activeResonanceJourney = activePathId ? getResonanceJourney(activePathId) : undefined;
   const activePathLabel = activeResonanceJourney?.title;
-  const entry = resolveCodexEntry(id);
+  const codexEntry = resolveCodexEntry(id);
+  const ontologyRouteEntity = codexEntry ? undefined : getOntologyEntity(id);
+  const entry = codexEntry ?? (ontologyRouteEntity ? codexEntryFromOntologyEntity(ontologyRouteEntity) : undefined);
 
   if (!entry) {
     notFound();
@@ -1169,15 +1192,21 @@ function SymbolicTrailSection({ entry, activeContext }: { entry: CodexEntry; act
   );
 }
 
-function OntologyEndpointLink({ endpoint }: { endpoint: ReturnType<typeof resolveOntologyEndpoint> }) {
-  if (!endpoint.linkedEntry) {
-    return <span className="font-serif text-lg italic text-foreground-strong">{endpoint.label}</span>;
+function OntologyEndpointLink({
+  endpoint,
+  className = "",
+}: {
+  endpoint: ReturnType<typeof resolveOntologyEndpoint>;
+  className?: string;
+}) {
+  if (!endpoint.href) {
+    return <span className={`font-serif text-lg italic text-foreground-strong ${className}`}>{endpoint.label}</span>;
   }
 
   return (
     <Link
-      href={`/codex/${endpoint.linkedEntry.id}`}
-      className="font-serif text-lg italic text-foreground-strong transition-colors duration-500 hover:text-gold"
+      href={endpoint.href}
+      className={`font-serif text-lg italic text-foreground-strong transition-colors duration-500 hover:text-gold ${className}`}
     >
       {endpoint.label}
     </Link>
@@ -1193,22 +1222,23 @@ function OntologyResonanceSection({ entry, activeContext }: { entry: CodexEntry;
 
   return (
     <DetailSection title="Mitschwingende Beziehungen" activeContext={activeContext}>
-      <div className="divide-y divide-white/[0.06]">
-        {resonance.map(({ relation, source, target, label, note }, index) => (
+      <div className="grid gap-3">
+        {resonance.map(({ relation, endpoint, label, markerLabel, note, explanation }, index) => (
           <div
             key={relation.id}
-            className={`${index > 3 ? "hidden sm:grid" : "grid"} gap-2 py-3 first:pt-0 last:pb-0`}
+            className={`${index > 5 ? "hidden sm:grid" : "grid"} gap-3 border border-white/[0.06] bg-black/[0.1] p-4`}
           >
-            <div className="grid gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-baseline">
-              <OntologyEndpointLink endpoint={source} />
-              <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70 sm:text-center">
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
                 {label}
               </span>
-              <div className="sm:text-right">
-                <OntologyEndpointLink endpoint={target} />
-              </div>
+              <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
+                {markerLabel}
+              </span>
             </div>
+            <OntologyEndpointLink endpoint={endpoint} className="text-2xl" />
             {note ? <p className="symbol-copy text-sm italic text-muted-soft">{note}</p> : null}
+            {explanation ? <p className="symbol-copy text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
           </div>
         ))}
       </div>

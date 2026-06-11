@@ -4079,6 +4079,15 @@ body {
   text-transform: none;
 }
 
+.symbol-ontology-resonance__marker {
+  color: rgba(var(--gold-rgb), 0.72);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.15em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
 .symbol-ontology-resonance__line:hover .symbol-ontology-resonance__token,
 .symbol-ontology-resonance__line:focus-visible .symbol-ontology-resonance__token,
 .symbol-ontology-resonance.is-active .symbol-ontology-resonance__token {
@@ -4098,6 +4107,17 @@ body {
   color: rgba(216, 209, 194, 0.72);
   font-size: 0.82rem;
   line-height: 1.45;
+}
+
+.symbol-inspector-accordion__content .symbol-ontology-resonance__deepening .symbol-ontology-resonance__relation-label {
+  margin-bottom: 0.26rem;
+  color: rgba(var(--gold-rgb), 0.58);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  font-style: normal;
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
 }
 
 .symbol-ontology-resonance__source {
