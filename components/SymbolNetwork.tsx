@@ -218,7 +218,11 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   pruefung: { x: 255, y: 405 },
   stimme: { x: 405, y: 455 },
   weg: { x: 380, y: 620 },
-  manna: { x: 160, y: 660 },
+  manna: { x: 320, y: 430 },
+  korn: { x: 285, y: 188 },
+  mehl: { x: 445, y: 132 },
+  teig: { x: 615, y: 208 },
+  tisch: { x: 575, y: 430 },
 };
 const missingPositionWarnings = new Set<string>();
 const SYMBOL_NODE_SIZE = 176;
