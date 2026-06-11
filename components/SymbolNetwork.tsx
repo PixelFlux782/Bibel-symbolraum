@@ -339,6 +339,7 @@ const LETTER_RESONANCE_LABELS: Partial<Record<MeaningNodeId, string>> = {
   lack: "Leere",
 };
 const LETTER_RESONANCE_PRIORITY: Partial<Record<string, MeaningNodeId[]>> = {
+  aleph: ["light", "fire", "word"],
   mem: ["depth", "lack", "nourishment"],
 };
 const MAX_ONTOLOGY_CONNECTIONS_PER_ACTIVE_ENTITY = 6;
@@ -949,6 +950,18 @@ function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
 
 function getLetterResonanceLabel(meaningNodeId: MeaningNodeId) {
   return LETTER_RESONANCE_LABELS[meaningNodeId] ?? getMeaningNodeLabel(meaningNodeId);
+}
+
+function getLetterDiscoveryText(letterId: string) {
+  if (letterId === "aleph") {
+    return "Der stille Anfang vor dem Wort. Licht und Feuer tragen beide diese erste Spur.";
+  }
+
+  if (letterId === "mem") {
+    return "Die Wasserform des Werdens. Mem umhuellt, traegt und verbirgt den Ursprung im Inneren.";
+  }
+
+  return "";
 }
 
 function getPathKey(from: string, to: string) {
@@ -3676,6 +3689,14 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               <p className="symbol-breathe mt-6 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeCodexLetter.glyph}</p>
               <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{activeCodexLetter.name.toUpperCase()}</h2>
               <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeCodexLetter.transcription}</p>
+              <p className="mt-3 text-[10px] uppercase tracking-[0.24em] text-gold/65">
+                {activeCodexLetter.glyph} · {activeCodexLetter.numericValue}
+              </p>
+              {getLetterDiscoveryText(activeCodexLetter.id) ? (
+                <p className="symbol-copy mt-5 text-base italic text-gold/80">
+                  {getLetterDiscoveryText(activeCodexLetter.id)}
+                </p>
+              ) : null}
               <div className="mt-7 border-t border-white/[0.055] pt-5">
                 <p className="symbol-kicker text-cyan-soft">Verbunden mit</p>
                 <p className="mt-4 font-serif text-xl italic leading-relaxed text-gold/80">

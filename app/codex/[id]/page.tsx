@@ -327,7 +327,7 @@ function getCoreConceptRelations(entity: OntologyEntity) {
 
 function getPatternMovement(entityId: string): string[] {
   const movements: Record<string, string[]> = {
-    "pattern-gabe-im-mangel": ["Mangel", "Empfangen", "Gabe"],
+    "pattern-gabe-im-mangel": ["Mangel", "Schwelle", "Empfangen", "Gabe"],
     "pattern-pruefung-durch-entzug": ["Entzug", "Klaerung", "Reifung"],
     "pattern-schwelle-durch-wasser": ["Grenze", "Durchgang", "Neuwerdung"],
     "pattern-offenbarung-im-feuer": ["Brennen", "Gegenwart", "Offenbarung"],
@@ -822,7 +822,7 @@ function OntologyMetadataSection({
             ) : null}
             {entity.gematria !== undefined ? (
               <div className="border border-white/[0.06] bg-black/[0.12] p-4">
-                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlenwert</dt>
+                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlkoerper</dt>
                 <dd className="mt-3 font-serif text-4xl italic leading-none text-gold/85">
                   {entity.gematria}
                 </dd>
@@ -1091,7 +1091,7 @@ function NumberResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
             {resonance.value}
           </p>
           <p className="mt-4 text-[0.58rem] uppercase tracking-[0.22em] text-muted-soft">
-            Zahlenwert
+            Zahlkoerper
           </p>
         </div>
 
@@ -1146,7 +1146,7 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
           ) : null}
           {resonance.numericValue ? (
             <p className="mt-3 text-[0.58rem] uppercase tracking-[0.22em] text-muted-soft">
-              Zahlenwert {resonance.numericValue}
+              Zahlkoerper {resonance.numericValue}
             </p>
           ) : null}
         </div>

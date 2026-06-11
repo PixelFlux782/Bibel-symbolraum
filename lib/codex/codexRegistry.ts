@@ -122,7 +122,7 @@ const LETTER_CODEX_PROFILES = {
     glyph: "\u05de",
     transliteration: "m / Mem",
     essence:
-      "Mem ist die lebendige Schwelle von Wasser, Tiefe und Werden: offen als bewegte Flut, geschlossen als bewahrte Verborgenheit.",
+      "Mem ist die Wasserform des Werdens. Sie umhuellt, traegt und verbirgt den Ursprung im Inneren: offen als fliessendes Wasser, geschlossen als bewahrte Tiefe.",
     meaningFields: ["depth", "chaos", "birth", "transition", "purification", "life", "hiddenness", "desert", "word"],
     searchTerms: ["Maim", "Mayim", "Majim", "Wasserbuchstabe", "finales Mem", "geschlossene Tiefe"],
     scriptureAnchors: [
@@ -157,7 +157,7 @@ const LETTER_CODEX_PROFILES = {
     glyph: "\u05d0",
     transliteration: "\u02be / Aleph",
     essence:
-      "Aleph ist der stille Ursprung vor dem Laut: Einheit, Atem und erste Ausrichtung, aus der Licht, Feuer und Wort hervortreten.",
+      "Aleph ist der stille Anfang vor dem gesprochenen Wort. Es traegt die Einheit, aus der Licht und Feuer hervortreten.",
     meaningFields: ["light", "revelation", "awareness", "guidance", "presence", "fire", "calling", "hiddenness", "word"],
     searchTerms: ["Alef", "Anfangsbuchstabe", "stiller Atem", "Ursprung", "Einheit"],
     scriptureAnchors: [
@@ -491,7 +491,7 @@ function letterEntry(letterId: "mem" | "aleph"): CodexEntry {
     id: letter.id,
     type: "hebrew-letter",
     title: letter.name,
-    subtitle: `Buchstabe ${letter.alphabetPosition}, Zahlenwert ${letter.numericValue}`,
+    subtitle: `Buchstabe ${letter.alphabetPosition}, Zahlkoerper ${letter.numericValue}`,
     hebrew: profile.glyph,
     transliteration: profile.transliteration,
     aliases: aliasesFor(letterId),
@@ -1033,6 +1033,7 @@ export const codexRegistry = [
     meaningFields: ["depth", "chaos", "birth", "transition", "purification", "life", "hiddenness"],
     relations: [
       { targetId: "wasser", type: "has-hebrew-word", label: "\u05de\u05d9\u05dd / majim wird im Codex als Wasser gelesen.", source: "hebrew-word" },
+      { targetId: "manna", type: "shares-meaning", label: "Wasser und Manna teilen die Spur der 90: Gabe und Tiefe beruehren sich.", source: "meaning-graph" },
       { targetId: "mem", type: "contains-letter", label: "Majim beginnt und endet mit Mem: 40 + 10 + 40.", source: "hebrew-letter" },
       { targetId: "genesis-1-2", type: "anchors-scripture", label: "Genesis 1,2 verankert die Wasser vor der ersten Ordnung.", source: "scripture-reference" },
     ],
@@ -1045,8 +1046,8 @@ export const codexRegistry = [
         source: "scripture-reference",
       },
     ],
-    sourceIds: ["majim", "wasser", "mem", "genesis-1-2"],
-    tags: ["majim-zahl", "wasser", "anfangswasser", "mem-jod-mem"],
+    sourceIds: ["majim", "wasser", "manna", "mem", "genesis-1-2"],
+    tags: ["majim-zahl", "wasser", "manna", "anfangswasser", "mem-jod-mem"],
   }),
 ] satisfies CodexEntry[];
 
