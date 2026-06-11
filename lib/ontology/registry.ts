@@ -55,18 +55,18 @@ const ONTOLOGY_RELATION_MARKER_LABELS: Record<OntologyRelationType, string> = {
 };
 
 const ONTOLOGY_RELATION_PRIORITY: Partial<Record<OntologyRelationType, number>> = {
-  is_expression_of: 1,
-  opens_into: 2,
+  opens_into: 1,
+  reveals: 2,
   is_threshold_to: 3,
-  reveals: 4,
+  is_expression_of: 4,
   contains_pattern: 5,
-  emerges_from: 6,
-  structures_journey: 7,
-  passes_through: 8,
+  contrasts_with: 6,
+  emerges_from: 7,
+  structures_journey: 8,
   shares_letter: 9,
   shares_number: 10,
   appears_in_story: 11,
-  contrasts_with: 12,
+  passes_through: 12,
   resonates_with: 13,
   belongs_to: 14,
 };

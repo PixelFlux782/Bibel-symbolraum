@@ -16,6 +16,7 @@ import {
   getOntologyRelationMarkerLabel,
   getOntologyRegistry,
   getOntologyRelationsForEntity,
+  isCoreConceptId,
   ontologyEntities,
   shouldShowOntologyExplanation,
   sortOntologyRelations,
@@ -263,8 +264,12 @@ function getOntologyResonance(entry: CodexEntry) {
     });
   });
 
-  return sortOntologyRelations(Array.from(relationsById.values())).slice(0, 10).map((relation) => {
-    const endpointId = relation.sourceId === entry.id ? relation.targetId : relation.sourceId;
+  return buildOntologyRelationItems(entry.id, sortOntologyRelations(Array.from(relationsById.values())).slice(0, 10));
+}
+
+function buildOntologyRelationItems(entryId: string, relations: OntologyRelation[]) {
+  return relations.map((relation) => {
+    const endpointId = relation.sourceId === entryId ? relation.targetId : relation.sourceId;
 
     return {
       relation,
@@ -277,6 +282,24 @@ function getOntologyResonance(entry: CodexEntry) {
         : "",
     };
   });
+}
+
+function getCoreConceptRelations(entity: OntologyEntity) {
+  const registry = getOntologyRegistry();
+  const incomingRelations = sortOntologyRelations(registry.relationsByTarget.get(entity.id) ?? []);
+  const outgoingRelations = sortOntologyRelations(registry.relationsBySource.get(entity.id) ?? []);
+  const highlightedRelationIds = new Set([
+    ...incomingRelations.map((relation) => relation.id),
+    ...outgoingRelations.map((relation) => relation.id),
+  ]);
+  const furtherRelations = sortOntologyRelations(getOntologyRelationsForEntity(entity.id))
+    .filter((relation) => !highlightedRelationIds.has(relation.id));
+
+  return {
+    incoming: buildOntologyRelationItems(entity.id, incomingRelations),
+    outgoing: buildOntologyRelationItems(entity.id, outgoingRelations),
+    further: buildOntologyRelationItems(entity.id, furtherRelations),
+  };
 }
 
 function getPatternMovement(entityId: string): string[] {
@@ -550,6 +573,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
   const ontologyEntity = getOntologyEntity(entry.id);
   const isPatternEntity = ontologyEntity?.domain === "pattern";
+  const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
   const symbolNetworkReturnLens =
     normalizeSymbolNetworkReturnLens(getSearchParamValue(resolvedSearchParams, "lens"))
     ?? normalizeSymbolNetworkReturnLens(activeFocus ?? undefined);
@@ -592,7 +616,9 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
         <header className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
           <div>
-            <p className="symbol-kicker text-cyan-soft">{isPatternEntity ? "Biblisches Muster" : formatType(entry.type)}</p>
+            <p className="symbol-kicker text-cyan-soft">
+              {isPatternEntity ? "Biblisches Muster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)}
+            </p>
             <h1 className="mt-6 font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
               {entry.title}
             </h1>
@@ -635,8 +661,14 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
+            {!isPatternEntity && isCoreConceptEntity && ontologyEntity ? (
+              <CoreConceptCodexSection
+                entity={ontologyEntity}
+                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
+            ) : null}
 
-            {!isPatternEntity ? (
+            {!isPatternEntity && !isCoreConceptEntity ? (
               <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
               {entry.meaningFields.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -667,16 +699,16 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </DetailSection>
             ) : null}
 
-            {!isPatternEntity ? (
+            {!isPatternEntity && !isCoreConceptEntity ? (
               <OntologyMetadataSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
-            {!isPatternEntity ? (
+            {!isPatternEntity && !isCoreConceptEntity ? (
               <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             ) : null}
-            {!isPatternEntity ? (
+            {!isPatternEntity && !isCoreConceptEntity ? (
               <OntologyResonanceSection
                 entry={entry}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
@@ -685,14 +717,16 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} />
             <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} />
             <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
-            <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
+            {!isCoreConceptEntity ? (
+              <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
+            ) : null}
             <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
           </div>
 
           <aside className="grid content-start gap-5">
             <DetailSection title="Einordnung">
               <dl>
-                <FieldRow label="Typ" value={isPatternEntity ? "Biblisches Muster" : formatType(entry.type)} />
+                <FieldRow label="Typ" value={isPatternEntity ? "Biblisches Muster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} />
                 {entry.symbolRoomSlug ? (
                   <FieldRow
                     label="Symbolraum"
@@ -712,7 +746,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </dl>
             </DetailSection>
 
-            {!isPatternEntity ? (
+            {!isPatternEntity && !isCoreConceptEntity ? (
               <DetailSection title="Quellen">
                 <dl>
                   <FieldRow label="Status" value={entry.meta.status} />
@@ -723,7 +757,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </DetailSection>
             ) : null}
 
-            <NearbyEntriesSection entry={entry} />
+            {!isCoreConceptEntity ? <NearbyEntriesSection entry={entry} /> : null}
           </aside>
         </div>
       </div>
@@ -1377,6 +1411,118 @@ function PatternCodexSection({
                   {note ? <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{note}</p> : null}
                   {explanation ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
                 </article>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </DetailSection>
+  );
+}
+
+function CoreConceptRelationCard({
+  item,
+}: {
+  item: ReturnType<typeof buildOntologyRelationItems>[number];
+}) {
+  return (
+    <article className="border border-white/[0.06] bg-black/[0.1] p-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
+          {item.label}
+        </span>
+        <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
+          {item.markerLabel}
+        </span>
+      </div>
+      <OntologyEndpointLink endpoint={item.endpoint} className="mt-3 block text-2xl" />
+      {item.note ? <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{item.note}</p> : null}
+      {item.explanation ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/78">{item.explanation}</p> : null}
+    </article>
+  );
+}
+
+function CoreConceptCodexSection({
+  entity,
+  activeContext,
+}: {
+  entity: OntologyEntity;
+  activeContext?: CodexContextFocus;
+}) {
+  const relations = getCoreConceptRelations(entity);
+  const hasContent =
+    Boolean(entity.polarity) ||
+    relations.incoming.length > 0 ||
+    relations.outgoing.length > 0 ||
+    relations.further.length > 0;
+
+  if (!hasContent) {
+    return null;
+  }
+
+  return (
+    <DetailSection title="Bedeutungsachse" activeContext={activeContext}>
+      <div className="grid gap-7">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="symbol-copy max-w-2xl text-base italic text-foreground-strong">
+            {entity.summary}
+          </p>
+          <span className="border border-gold/20 bg-gold/[0.045] px-3 py-1 text-[0.56rem] uppercase tracking-[0.18em] text-gold/75">
+            Bedeutungsachse
+          </span>
+        </div>
+
+        {entity.polarity ? (
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Innere Spannung</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+              {entity.polarity.visiblePole ? (
+                <p className="font-serif text-2xl italic text-foreground-strong">{entity.polarity.visiblePole}</p>
+              ) : null}
+              {entity.polarity.visiblePole && entity.polarity.hiddenPole ? (
+                <span className="text-center text-sm text-gold/55" aria-hidden="true">/</span>
+              ) : null}
+              {entity.polarity.hiddenPole ? (
+                <p className="font-serif text-2xl italic text-gold/85">{entity.polarity.hiddenPole}</p>
+              ) : null}
+            </div>
+            <p className="symbol-copy mt-3 text-sm uppercase tracking-[0.16em] text-cyan-soft/70">
+              {entity.polarity.axis}
+            </p>
+            {entity.polarity.note ? (
+              <p className="symbol-copy mt-3 text-base italic text-muted-soft">{entity.polarity.note}</p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {relations.incoming.length > 0 ? (
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zulaufende Symbole</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {relations.incoming.map((item) => (
+                <CoreConceptRelationCard key={item.relation.id} item={item} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {relations.outgoing.length > 0 ? (
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Oeffnet sich in</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {relations.outgoing.map((item) => (
+                <CoreConceptRelationCard key={item.relation.id} item={item} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {relations.further.length > 0 ? (
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitere Resonanzen</p>
+            <div className="mt-4 grid gap-3">
+              {relations.further.map((item) => (
+                <CoreConceptRelationCard key={item.relation.id} item={item} />
               ))}
             </div>
           </div>

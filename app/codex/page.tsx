@@ -9,6 +9,7 @@ import { getCodexEntriesByType, resolveCodexEntry, searchCodexEntries } from "@/
 import type { CodexEntry, CodexEntryType } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
+import { CORE_CONCEPT_IDS, getOntologyEntity, isCoreConceptId } from "@/lib/ontology";
 import type { HebrewWord } from "@/types/hebrew";
 
 type CodexViewId =
@@ -225,6 +226,36 @@ function buildCodexResonanceTeaser(entry: CodexEntry) {
 
 function getCodexEntryById(entryId: string) {
   return codexRegistry.find((entry) => entry.id === entryId);
+}
+
+function getCoreConceptOverviewEntries() {
+  return CORE_CONCEPT_IDS.flatMap((conceptId) => {
+    const codexEntry = resolveCodexEntry(conceptId);
+    const ontologyEntity = getOntologyEntity(conceptId);
+
+    if (!codexEntry && !ontologyEntity) {
+      return [];
+    }
+
+    return [{
+      id: conceptId,
+      title: codexEntry?.title ?? ontologyEntity?.title ?? conceptId,
+      summary: codexEntry?.summary ?? ontologyEntity?.summary ?? "",
+    }];
+  });
+}
+
+function filterCoreConceptOverviewEntries(query: string) {
+  const normalizedQuery = query.trim().toLocaleLowerCase("de-DE");
+  const entries = getCoreConceptOverviewEntries();
+
+  if (!normalizedQuery) {
+    return entries;
+  }
+
+  return entries.filter((entry) =>
+    [entry.title, entry.summary].some((value) => value.toLocaleLowerCase("de-DE").includes(normalizedQuery)),
+  );
 }
 
 function uniqueCodexEntries(entries: Array<CodexEntry | null | undefined>) {
@@ -748,6 +779,7 @@ function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { ent
 
 function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: CodexEntry } & CodexCardFocusProps) {
   const isActive = activeCodexId === entry.id;
+  const isCoreConcept = isCoreConceptId(entry.id);
 
   return (
     <Link
@@ -764,7 +796,7 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
       <div className="relative flex h-full flex-col">
         <div className="flex items-start justify-between gap-5">
           <div>
-            <p className="symbol-kicker text-cyan-soft">{formatType(entry.type)}</p>
+            <p className="symbol-kicker text-cyan-soft">{isCoreConcept ? "Bedeutungsachse" : formatType(entry.type)}</p>
             <h3 className="mt-4 font-serif text-3xl italic leading-tight text-foreground-strong">
               {entry.title}
             </h3>
@@ -779,6 +811,10 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
             <p className="shrink-0 font-serif text-5xl leading-none text-gold/85" lang="he" dir="rtl">
               {entry.hebrew}
             </p>
+          ) : isCoreConcept ? (
+            <span className="shrink-0 border border-gold/20 bg-gold/[0.045] px-3 py-1 text-[0.56rem] uppercase tracking-[0.18em] text-gold/75">
+              Achse
+            </span>
           ) : null}
         </div>
 
@@ -850,6 +886,7 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
 
 function MeaningCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: CodexEntry } & CodexCardFocusProps) {
   const isActive = activeCodexId === entry.id;
+  const isCoreConcept = isCoreConceptId(entry.id);
   const relationChips = entry.relations.slice(0, 6).map((relation) => ({
     id: `${relation.type}-${relation.targetId}`,
     targetId: relation.targetId,
@@ -872,7 +909,14 @@ function MeaningCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Co
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(127,184,201,0.07),transparent_34%),radial-gradient(circle_at_86%_10%,rgba(189,160,109,0.075),transparent_38%)] opacity-70 transition-opacity duration-700 group-hover:opacity-100" />
 
       <div className="relative flex h-full flex-col">
-        <p className="symbol-kicker text-cyan-soft">Bedeutungsfeld</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="symbol-kicker text-cyan-soft">{isCoreConcept ? "Bedeutungsachse" : "Bedeutungsfeld"}</p>
+          {isCoreConcept ? (
+            <span className="border border-gold/20 bg-gold/[0.045] px-3 py-1 text-[0.56rem] uppercase tracking-[0.18em] text-gold/75">
+              Achse
+            </span>
+          ) : null}
+        </div>
         <h3 className="mt-4 font-serif text-4xl italic leading-tight text-foreground-strong md:text-5xl">
           {entry.title}
         </h3>
@@ -1006,6 +1050,47 @@ function GematriaNumberCard({ entry, activeCodexId, onActivateCodexEntry }: { en
   );
 }
 
+function CoreConceptOverviewStrip({
+  entries,
+  onActivateCodexEntry,
+}: {
+  entries: ReturnType<typeof getCoreConceptOverviewEntries>;
+  onActivateCodexEntry: (entryId: string) => void;
+}) {
+  if (entries.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="border border-gold/[0.12] bg-black/[0.12] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="symbol-kicker text-cyan-soft">Bedeutungsachsen</p>
+          <h2 className="mt-3 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
+            Zentrale Achsen
+          </h2>
+        </div>
+        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/65">
+          {entries.length} Knoten
+        </p>
+      </div>
+      <div className="mt-5 flex flex-wrap gap-2">
+        {entries.map((entry) => (
+          <Link
+            key={entry.id}
+            href={`/codex/${entry.id}`}
+            onClick={() => onActivateCodexEntry(entry.id)}
+            onFocus={() => onActivateCodexEntry(entry.id)}
+            className="border border-gold/15 bg-gold/[0.04] px-3 py-2 text-xs uppercase tracking-[0.16em] text-gold/80 transition-colors duration-500 hover:border-gold/30 hover:text-gold"
+          >
+            {entry.title}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function TorahSequence({ entries, activeCodexId, onActivateCodexEntry }: { entries: CodexEntry[] } & CodexCardFocusProps) {
   const entryMap = new Map(entries.map((entry) => [entry.id, entry]));
   const visibleIds = new Set(entries.map((entry) => entry.id));
@@ -1109,6 +1194,11 @@ export default function CodexPage() {
     return searchCodexEntries(trimmedQuery).filter((entry) => activeIds.has(entry.id));
   }, [activeViewEntries, trimmedQuery]);
 
+  const visibleCoreConceptEntries = useMemo(
+    () => filterCoreConceptOverviewEntries(trimmedQuery),
+    [trimmedQuery],
+  );
+
   const groups = useMemo(
     () => activeViewId === "all" ? groupEntries(visibleEntries) : [],
     [activeViewId, visibleEntries],
@@ -1201,6 +1291,13 @@ export default function CodexPage() {
         </section>
 
         <div className="mt-16 grid gap-16 md:mt-20">
+          {(activeViewId === "all" || activeViewId === "meaning") ? (
+            <CoreConceptOverviewStrip
+              entries={visibleCoreConceptEntries}
+              onActivateCodexEntry={setActiveCodexId}
+            />
+          ) : null}
+
           {activeViewId === "all" ? (
             groups.map((group) => (
               <section key={group.type}>

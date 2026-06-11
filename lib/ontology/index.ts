@@ -36,6 +36,13 @@ export {
 } from "./registry";
 
 export {
+  CORE_CONCEPT_IDS,
+  isCoreConceptId,
+} from "./coreConcepts";
+
+export type { CoreConceptId } from "./coreConcepts";
+
+export {
   deriveResonanceConnectionFromOntologyRelation,
   deriveResonanceConnectionsFromOntology,
   mapOntologyRelationToResonanceType,
