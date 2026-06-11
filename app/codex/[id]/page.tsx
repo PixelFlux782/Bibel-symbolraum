@@ -8,12 +8,17 @@ import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
+import { getResonanceJourney } from "@/lib/resonance";
 
 type CodexDetailPageProps = {
   params: Promise<{
     id: string;
   }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
+
+type CodexContextFocus = "overview" | "meaning" | "hebrew" | "gematria" | "story" | "spaces";
+type SymbolNetworkReturnLens = "meaning" | "hebrew" | "gematria" | "story";
 
 function formatType(type: CodexEntryType) {
   if (type === "meaning") {
@@ -36,6 +41,59 @@ function relationTarget(relation: CodexRelation) {
 
 function resolveLinkedCodexEntry(value: string | null | undefined) {
   return value ? resolveCodexEntry(value) : undefined;
+}
+
+function getSearchParamValue(params: Record<string, string | string[] | undefined>, key: string) {
+  const value = params[key];
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function normalizeCodexContextFocus(value: string | undefined): CodexContextFocus {
+  if (
+    value === "meaning" ||
+    value === "hebrew" ||
+    value === "gematria" ||
+    value === "story" ||
+    value === "spaces"
+  ) {
+    return value;
+  }
+
+  return "overview";
+}
+
+function normalizeSymbolNetworkReturnLens(value: string | undefined): SymbolNetworkReturnLens | undefined {
+  if (value === "meaning" || value === "hebrew" || value === "gematria" || value === "story") {
+    return value;
+  }
+
+  if (value === "journey") {
+    return "story";
+  }
+
+  return undefined;
+}
+
+function buildSymbolNetworkReturnHref({
+  symbol,
+  lens,
+  path,
+}: {
+  symbol: string;
+  lens?: SymbolNetworkReturnLens;
+  path?: string;
+}) {
+  const params = new URLSearchParams({ symbol });
+
+  if (lens) {
+    params.set("lens", lens);
+  }
+
+  if (path) {
+    params.set("path", path);
+  }
+
+  return `/symbolnetz?${params.toString()}`;
 }
 
 function sharedScriptureAnchorIds(entry: CodexEntry) {
@@ -231,12 +289,21 @@ function getSymbolicTrail(entry: CodexEntry) {
 function DetailSection({
   title,
   children,
+  activeContext,
 }: {
   title: string;
   children: React.ReactNode;
+  activeContext?: CodexContextFocus;
 }) {
   return (
-    <section className="border border-white/[0.075] bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-7">
+    <section
+      data-active-context={activeContext}
+      className={`border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-7 ${
+        activeContext
+          ? "border-gold/35 shadow-[0_24px_80px_rgba(189,160,109,0.12)]"
+          : "border-white/[0.075]"
+      }`}
+    >
       <h2 className="symbol-kicker text-cyan-soft">{title}</h2>
       <div className="mt-5">{children}</div>
     </section>
@@ -272,13 +339,31 @@ export async function generateMetadata({ params }: CodexDetailPageProps): Promis
   };
 }
 
-export default async function CodexDetailPage({ params }: CodexDetailPageProps) {
+export default async function CodexDetailPage({ params, searchParams }: CodexDetailPageProps) {
   const { id } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const from = getSearchParamValue(resolvedSearchParams, "from");
+  const isFromSymbolNetwork = from === "symbolnetz";
+  const activeFocus = isFromSymbolNetwork
+    ? normalizeCodexContextFocus(getSearchParamValue(resolvedSearchParams, "focus"))
+    : null;
+  const activePathId = isFromSymbolNetwork ? getSearchParamValue(resolvedSearchParams, "path") : undefined;
+  const activeResonanceJourney = activePathId ? getResonanceJourney(activePathId) : undefined;
+  const activePathLabel = activeResonanceJourney?.title;
   const entry = resolveCodexEntry(id);
 
   if (!entry) {
     notFound();
   }
+
+  const symbolNetworkReturnLens =
+    normalizeSymbolNetworkReturnLens(getSearchParamValue(resolvedSearchParams, "lens"))
+    ?? normalizeSymbolNetworkReturnLens(activeFocus ?? undefined);
+  const symbolNetworkReturnHref = buildSymbolNetworkReturnHref({
+    symbol: getSearchParamValue(resolvedSearchParams, "symbol") ?? entry.id,
+    lens: activeResonanceJourney ? "story" : symbolNetworkReturnLens,
+    path: activeResonanceJourney?.id,
+  });
 
   return (
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-28 md:py-36">
@@ -288,12 +373,28 @@ export default async function CodexDetailPage({ params }: CodexDetailPageProps) 
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl">
-        <Link
-          href="/codex"
-          className="symbol-kicker inline-flex text-gold/70 transition-colors duration-500 hover:text-gold"
-        >
-          Zurueck zum Codex
-        </Link>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <Link
+            href="/codex"
+            className="symbol-kicker inline-flex text-gold/70 transition-colors duration-500 hover:text-gold"
+          >
+            Zurueck zum Codex
+          </Link>
+          {isFromSymbolNetwork ? (
+            <Link
+              href={symbolNetworkReturnHref}
+              className="symbol-kicker inline-flex border-l border-gold/25 pl-4 text-gold/80 transition-colors duration-500 hover:text-gold"
+            >
+              Aus dem Symbolnetz
+            </Link>
+          ) : null}
+        </div>
+
+        {isFromSymbolNetwork && activePathLabel ? (
+          <p className="mt-5 max-w-2xl border-l border-gold/35 pl-4 text-[0.62rem] uppercase tracking-[0.22em] text-gold/70">
+            Resonanzpfad: {activePathLabel}
+          </p>
+        ) : null}
 
         <header className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
           <div>
@@ -310,7 +411,14 @@ export default async function CodexDetailPage({ params }: CodexDetailPageProps) 
           </div>
 
           {entry.hebrew ? (
-            <div className="border border-white/[0.075] bg-white/[0.025] px-8 py-7 text-left backdrop-blur-md lg:min-w-64">
+            <div
+              data-active-context={activeFocus === "hebrew" ? "hebrew" : undefined}
+              className={`border bg-white/[0.025] px-8 py-7 text-left backdrop-blur-md lg:min-w-64 ${
+                activeFocus === "hebrew"
+                  ? "border-gold/35 shadow-[0_20px_70px_rgba(189,160,109,0.12)]"
+                  : "border-white/[0.075]"
+              }`}
+            >
               <p className="font-serif text-6xl leading-none text-gold/85" lang="he" dir="rtl">
                 {entry.hebrew}
               </p>
@@ -325,9 +433,9 @@ export default async function CodexDetailPage({ params }: CodexDetailPageProps) 
 
         <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="grid gap-5">
-            <JourneyStepsSection entry={entry} />
+            <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
 
-            <DetailSection title="Bedeutungsfelder">
+            <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
               {entry.meaningFields.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {entry.meaningFields.map((field) => {
@@ -356,12 +464,12 @@ export default async function CodexDetailPage({ params }: CodexDetailPageProps) 
               )}
             </DetailSection>
 
-            <MeaningResonanceSection entry={entry} />
-            <LetterResonanceSection entry={entry} />
-            <NumberResonanceSection entry={entry} />
-            <SymbolicTrailSection entry={entry} />
-            <RelationsSection entry={entry} />
-            <ScriptureAnchorsSection entry={entry} />
+            <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
+            <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} />
+            <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} />
+            <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
+            <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
+            <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
           </div>
 
           <aside className="grid content-start gap-5">
@@ -406,13 +514,13 @@ export default async function CodexDetailPage({ params }: CodexDetailPageProps) 
   );
 }
 
-function JourneyStepsSection({ entry }: { entry: CodexEntry }) {
+function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
   if (!entry.steps?.length) {
     return null;
   }
 
   return (
-    <DetailSection title="Gefuehrter Pfad">
+    <DetailSection title="Gefuehrter Pfad" activeContext={activeContext}>
       <ol className="grid gap-4">
         {entry.steps.map((step, index) => {
           const linkedEntry = resolveLinkedCodexEntry(step.codexId);
@@ -527,7 +635,7 @@ function MeaningResonanceLinkList({
   );
 }
 
-function MeaningResonanceSection({ entry }: { entry: CodexEntry }) {
+function MeaningResonanceSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
   const resonance = getMeaningResonance(entry);
 
   if (!resonance) {
@@ -535,7 +643,7 @@ function MeaningResonanceSection({ entry }: { entry: CodexEntry }) {
   }
 
   return (
-    <DetailSection title="Bedeutungs-Resonanz">
+    <DetailSection title="Bedeutungs-Resonanz" activeContext={activeContext}>
       <div className="grid gap-6">
         <div>
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Essenz</p>
@@ -594,7 +702,7 @@ function MeaningResonanceSection({ entry }: { entry: CodexEntry }) {
   );
 }
 
-function NumberResonanceSection({ entry }: { entry: CodexEntry }) {
+function NumberResonanceSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
   const resonance = getNumberResonance(entry);
 
   if (!resonance) {
@@ -602,7 +710,7 @@ function NumberResonanceSection({ entry }: { entry: CodexEntry }) {
   }
 
   return (
-    <DetailSection title="Zahlen-Resonanz">
+    <DetailSection title="Zahlen-Resonanz" activeContext={activeContext}>
       <div className="grid gap-6 md:grid-cols-[auto_1fr] md:items-start">
         <div className="border border-gold/15 bg-gold/[0.045] px-8 py-7 text-center">
           <p className="font-serif text-8xl italic leading-none text-gold">
@@ -643,7 +751,7 @@ function NumberResonanceSection({ entry }: { entry: CodexEntry }) {
   );
 }
 
-function LetterResonanceSection({ entry }: { entry: CodexEntry }) {
+function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
   const resonance = getLetterResonance(entry);
 
   if (!resonance) {
@@ -651,7 +759,7 @@ function LetterResonanceSection({ entry }: { entry: CodexEntry }) {
   }
 
   return (
-    <DetailSection title="Buchstaben-Resonanz">
+    <DetailSection title="Buchstaben-Resonanz" activeContext={activeContext}>
       <div className="grid gap-6 md:grid-cols-[auto_1fr] md:items-start">
         <div className="border border-gold/15 bg-gold/[0.045] px-8 py-7 text-center">
           <p className="font-serif text-8xl leading-none text-gold" lang="he" dir="rtl">
@@ -739,7 +847,7 @@ function LetterResonanceSection({ entry }: { entry: CodexEntry }) {
   );
 }
 
-function SymbolicTrailSection({ entry }: { entry: CodexEntry }) {
+function SymbolicTrailSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
   if (entry.type !== "scripture") {
     return null;
   }
@@ -752,7 +860,7 @@ function SymbolicTrailSection({ entry }: { entry: CodexEntry }) {
   }
 
   return (
-    <DetailSection title="Symbolische Spur">
+    <DetailSection title="Symbolische Spur" activeContext={activeContext}>
       <div className="grid gap-5">
         {trail.fields.length > 0 ? (
           <div>
@@ -812,9 +920,9 @@ function SymbolicTrailSection({ entry }: { entry: CodexEntry }) {
   );
 }
 
-function RelationsSection({ entry }: { entry: CodexEntry }) {
+function RelationsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
   return (
-    <DetailSection title="Relationen">
+    <DetailSection title="Relationen" activeContext={activeContext}>
       {entry.relations.length > 0 ? (
         <div className="grid gap-3">
           {entry.relations.map((relation, index) => {
@@ -850,9 +958,9 @@ function RelationsSection({ entry }: { entry: CodexEntry }) {
   );
 }
 
-function ScriptureAnchorsSection({ entry }: { entry: CodexEntry }) {
+function ScriptureAnchorsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
   return (
-    <DetailSection title="Bibelanker">
+    <DetailSection title="Bibelanker" activeContext={activeContext}>
       {entry.scriptureAnchors.length > 0 ? (
         <div className="grid gap-3">
           {entry.scriptureAnchors.map((anchor, index) => {

@@ -107,6 +107,7 @@ type SymbolGraphViewMode = "OVERVIEW" | "SYMBOL_FOCUS" | "RELATION_FOCUS";
 type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Resonanz" | "Info" | "Beziehung";
 type SymbolLensMode = "meaning" | "story" | "hebrew" | "gematria" | "journey";
 type SymbolInspectorFocus = "meaning" | "hebrew" | "gematria" | "story" | "subspaces" | "codex" | "room";
+type SymbolCodexFocusParam = "overview" | "meaning" | "hebrew" | "gematria" | "story" | "spaces";
 type SymbolViewportMode = SymbolZoomLevel;
 
 type SymbolLensOrbitNode = {
@@ -149,6 +150,12 @@ type SymbolSearchSuggestion = {
   symbolId: string;
   value: string;
   priority: number;
+};
+
+type SymbolNetworkInitialUrlState = {
+  symbol?: string;
+  lens?: string;
+  path?: string;
 };
 
 const network = buildSymbolMeaningNetwork();
@@ -280,6 +287,20 @@ const SYMBOL_LENS_CLASS_NAMES: Record<SymbolLensMode, string> = {
   gematria: "symbol-lens-orbit__node--gematria",
   journey: "symbol-lens-orbit__node--journey",
 };
+const INSPECTOR_CODEX_FOCUS_PARAMS: Partial<Record<SymbolInspectorFocus, SymbolCodexFocusParam>> = {
+  meaning: "meaning",
+  hebrew: "hebrew",
+  gematria: "gematria",
+  story: "story",
+  subspaces: "spaces",
+};
+const LENS_CODEX_FOCUS_PARAMS: Partial<Record<SymbolLensMode, SymbolCodexFocusParam>> = {
+  meaning: "meaning",
+  hebrew: "hebrew",
+  gematria: "gematria",
+  story: "story",
+  journey: "story",
+};
 const LETTER_RESONANCE_LABELS: Partial<Record<MeaningNodeId, string>> = {
   lack: "Leere",
 };
@@ -338,6 +359,46 @@ function getNodePosition(nodeId: string) {
   return position ?? fallbackPosition;
 }
 
+function buildSymbolNetworkCodexHref({
+  entryId,
+  symbolId,
+  activeInspectorFocus,
+  activeResonanceLens,
+  activeResonanceJourneyId,
+}: {
+  entryId: string;
+  symbolId: string;
+  activeInspectorFocus: SymbolInspectorFocus | null;
+  activeResonanceLens: SymbolLensMode | null;
+  activeResonanceJourneyId: string | null;
+}) {
+  const params = new URLSearchParams({ from: "symbolnetz" });
+  const lens =
+    activeResonanceJourneyId
+      ? "story"
+      : activeResonanceLens
+        ?? (activeInspectorFocus === "meaning" || activeInspectorFocus === "hebrew" || activeInspectorFocus === "gematria" || activeInspectorFocus === "story"
+          ? activeInspectorFocus
+          : null);
+  const focus =
+    (activeInspectorFocus ? INSPECTOR_CODEX_FOCUS_PARAMS[activeInspectorFocus] : undefined)
+    ?? (lens ? LENS_CODEX_FOCUS_PARAMS[lens] : undefined)
+    ?? "overview";
+
+  params.set("symbol", symbolId);
+  params.set("focus", focus);
+
+  if (lens) {
+    params.set("lens", lens);
+  }
+
+  if (activeResonanceJourneyId) {
+    params.set("path", activeResonanceJourneyId);
+  }
+
+  return `/codex/${entryId}?${params.toString()}`;
+}
+
 function getNodeSize(nodeId: string) {
   if (network.meaningNodes.some((node) => node.id === nodeId)) return MEANING_NODE_SIZE;
   const hierarchyEntry = getHierarchyEntry(nodeId);
@@ -356,8 +417,47 @@ function getNodeCenter(nodeId: string) {
   };
 }
 
-function isMainSymbolId(nodeId: string | null | undefined) {
+function isMainSymbolId(nodeId: string | null | undefined): nodeId is string {
   return Boolean(nodeId && network.nodes.some((node) => node.id === nodeId));
+}
+
+function normalizeSymbolNetworkLensParam(value: string | null): SymbolLensMode | null {
+  if (value === "meaning" || value === "story" || value === "hebrew" || value === "gematria" || value === "journey") {
+    return value === "journey" ? "story" : value;
+  }
+
+  return null;
+}
+
+function getInitialSymbolNetworkState(initialUrlState: SymbolNetworkInitialUrlState) {
+  const symbolId = initialUrlState.symbol;
+
+  if (!isMainSymbolId(symbolId)) {
+    return {
+      activeSymbolId: "wasser",
+      hasSymbolFocus: false,
+      activeResonanceLens: null,
+      activeJourneyStepId: null,
+      activeResonanceJourneyId: null,
+    };
+  }
+
+  const activeResonanceLens = normalizeSymbolNetworkLensParam(initialUrlState.lens ?? null);
+  const resonanceJourney = initialUrlState.path ? getResonanceJourney(initialUrlState.path) : undefined;
+
+  return {
+    activeSymbolId: symbolId,
+    hasSymbolFocus: true,
+    activeResonanceLens,
+    activeJourneyStepId: resonanceJourney
+      ? resonanceJourney.nodePath.includes(symbolId)
+        ? symbolId
+        : resonanceJourney.nodePath[0] ?? null
+      : activeResonanceLens === "story"
+        ? symbolId
+        : null,
+    activeResonanceJourneyId: resonanceJourney?.id ?? null,
+  };
 }
 
 function getNodeHierarchyLevel(nodeId: string): SymbolHierarchyLevel {
@@ -1114,6 +1214,7 @@ function SymbolLensFocusDetail({
   activeResonanceLens,
   activeInspectorFocus,
   activeCodexEntry,
+  codexHref,
   detailHierarchyChildren,
   storyDeepHierarchyAnchors,
   verseDeepHierarchyAnchors,
@@ -1130,6 +1231,7 @@ function SymbolLensFocusDetail({
   activeResonanceLens: SymbolLensMode | null;
   activeInspectorFocus: SymbolInspectorFocus | null;
   activeCodexEntry?: CodexEntry;
+  codexHref?: string;
   detailHierarchyChildren: SymbolHierarchyEntry[];
   storyDeepHierarchyAnchors: SymbolHierarchyEntry[];
   verseDeepHierarchyAnchors: SymbolHierarchyEntry[];
@@ -1277,7 +1379,7 @@ function SymbolLensFocusDetail({
             {activeInspectorFocus === "codex" ? (
               <div className="symbol-inspector-accordion__content">
                 <p>{activeCodexEntry.subtitle ?? activeCodexEntry.title}</p>
-                <Link href={`/codex/${activeCodexEntry.id}`} className="symbol-archive-action">
+                <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-archive-action">
                   /codex/{activeCodexEntry.id}
                 </Link>
               </div>
@@ -1400,12 +1502,13 @@ function SearchResonanceGroup({
   );
 }
 
-export default function SymbolNetwork() {
-  const [activeSymbolId, setActiveSymbolId] = useState("wasser");
+export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlState?: SymbolNetworkInitialUrlState }) {
+  const initialSymbolNetworkState = getInitialSymbolNetworkState(initialUrlState);
+  const [activeSymbolId, setActiveSymbolId] = useState(initialSymbolNetworkState.activeSymbolId);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocusSymbolId, setSearchFocusSymbolId] = useState<string | null>(null);
   const [isSearchSuggestionsOpen, setIsSearchSuggestionsOpen] = useState(false);
-  const [hasSymbolFocus, setHasSymbolFocus] = useState(false);
+  const [hasSymbolFocus, setHasSymbolFocus] = useState(initialSymbolNetworkState.hasSymbolFocus);
   const [activePathId, setActivePathId] = useState<string | null>(null);
   const [activeJourneyId, setActiveJourneyId] = useState<string | null>(null);
   const [pendingPathId, setPendingPathId] = useState<string | null>(null);
@@ -1414,10 +1517,10 @@ export default function SymbolNetwork() {
   const [isLetterResonanceOpen, setIsLetterResonanceOpen] = useState(false);
   const [activeLetterResonanceId, setActiveLetterResonanceId] = useState<MeaningNodeId | null>(null);
   const [activeLetterSourcePathId, setActiveLetterSourcePathId] = useState<string | null>(null);
-  const [activeResonanceLens, setActiveResonanceLens] = useState<SymbolLensMode | null>(null);
+  const [activeResonanceLens, setActiveResonanceLens] = useState<SymbolLensMode | null>(initialSymbolNetworkState.activeResonanceLens);
   const [activeInspectorFocus, setActiveInspectorFocus] = useState<SymbolInspectorFocus | null>(null);
-  const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(null);
-  const [activeResonanceJourneyId, setActiveResonanceJourneyId] = useState<string | null>(null);
+  const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(initialSymbolNetworkState.activeJourneyStepId);
+  const [activeResonanceJourneyId, setActiveResonanceJourneyId] = useState<string | null>(initialSymbolNetworkState.activeResonanceJourneyId);
   const [symbolViewportMode, setSymbolViewportMode] = useState<SymbolViewportMode>("overview");
   const [flowViewport, setFlowViewport] = useState({ x: 0, y: 0, zoom: 1 });
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
@@ -1427,6 +1530,16 @@ export default function SymbolNetwork() {
   const showSearchSuggestions = isSearchSuggestionsOpen && hasSearchInput;
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
+  const activeCodexHref = activeCodexEntry
+    ? buildSymbolNetworkCodexHref({
+        entryId: activeCodexEntry.id,
+        symbolId: activeSymbol.id,
+        activeInspectorFocus,
+        activeResonanceLens,
+        activeResonanceJourneyId,
+      })
+    : undefined;
+
   const activeDetailHierarchyChildren = useMemo(() => getDetailHierarchyChildren(activeSymbolId), [activeSymbolId]);
   const activeDeepHierarchyAnchors = useMemo(() => getExistingDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
   const activeStoryDeepHierarchyAnchors = useMemo(() => getStoryDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
@@ -3157,6 +3270,7 @@ export default function SymbolNetwork() {
               activeResonanceLens={activeResonanceLens}
               activeInspectorFocus={activeInspectorFocus}
               activeCodexEntry={activeCodexEntry}
+              codexHref={activeCodexHref}
               detailHierarchyChildren={activeDetailHierarchyChildren}
               storyDeepHierarchyAnchors={activeStoryDeepHierarchyAnchors}
               verseDeepHierarchyAnchors={activeVerseDeepHierarchyAnchors}
@@ -3205,7 +3319,7 @@ export default function SymbolNetwork() {
                 ) : null}
                 {activeCodexEntry ? (
                   <Link
-                    href={`/codex/${activeCodexEntry.id}`}
+                    href={activeCodexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`}
                     className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
                   >
                     Codex öffnen
