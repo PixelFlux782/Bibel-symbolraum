@@ -44,6 +44,12 @@ import {
   type ResonanceType,
 } from "@/lib/resonance";
 import {
+  getOntologyEntity,
+  getOntologyRelationsForEntity,
+  type OntologyRelation,
+  type OntologyRelationType,
+} from "@/lib/ontology";
+import {
   getChildrenOf,
   getHierarchyEntry,
   isMetaNode,
@@ -151,6 +157,15 @@ type SymbolSearchSuggestion = {
   symbolId: string;
   value: string;
   priority: number;
+};
+
+type OntologyResonanceRow = {
+  relation: OntologyRelation;
+  sourceLabel: string;
+  targetLabel: string;
+  sourceHref?: string;
+  targetHref?: string;
+  relationLabel: string;
 };
 
 type SymbolNetworkInitialUrlState = {
@@ -308,6 +323,29 @@ const LETTER_RESONANCE_LABELS: Partial<Record<MeaningNodeId, string>> = {
 const LETTER_RESONANCE_PRIORITY: Partial<Record<string, MeaningNodeId[]>> = {
   mem: ["depth", "lack", "nourishment"],
 };
+const ONTOLOGY_RELATION_LABELS: Record<OntologyRelationType, string> = {
+  belongs_to: "gehoert zu",
+  resonates_with: "klingt mit",
+  emerges_from: "entsteht aus",
+  transforms_into: "wandelt sich zu",
+  opposes: "steht gegenueber",
+  fulfills: "erfuellt",
+  reveals: "offenbart",
+  nourishes: "naehrt",
+  tests: "prueft",
+  shares_letter: "teilt Buchstaben",
+  shares_number: "teilt Zahl",
+  appears_in_story: "erscheint in",
+};
+const INSPECTOR_ONTOLOGY_RELATION_TYPES = new Set<OntologyRelationType>([
+  "resonates_with",
+  "emerges_from",
+  "reveals",
+  "nourishes",
+  "tests",
+  "appears_in_story",
+]);
+const ONTOLOGY_RESONANCE_LIMIT = 5;
 const PATH_RESONANCE_FALLBACKS: Record<string, string> = {
   "wasser:licht": "Licht macht sichtbar,\nwas im Wasser verborgen ruht.",
   "feuer:licht": "Feuer verwandelt,\nLicht offenbart.",
@@ -783,6 +821,68 @@ function getMeaningNodeLabel(meaningNodeId: string) {
     ?? meaningNodeId;
 }
 
+function getOntologyDisplayLabel(id: string) {
+  return getOntologyEntity(id)?.title
+    ?? getCodexEntry(id)?.title
+    ?? getHierarchyEntry(id)?.title
+    ?? network.nodes.find((node) => node.id === id)?.label
+    ?? getMeaningNodeLabel(id);
+}
+
+function getOntologyCodexHref(id: string) {
+  return getCodexEntry(id) ? `/codex/${id}?from=symbolnetz&focus=overview` : undefined;
+}
+
+function collectOntologyContextIds(symbolId: string) {
+  return new Set([
+    symbolId,
+    ...getChildrenOf(symbolId).map((entry) => entry.id),
+  ]);
+}
+
+function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
+  const contextIds = collectOntologyContextIds(symbolId);
+  const childIds = new Set(getChildrenOf(symbolId).map((entry) => entry.id));
+  const relationById = new Map<string, { relation: OntologyRelation; tier: number }>();
+  const connectedEntityIds = new Set<string>();
+
+  contextIds.forEach((contextId) => {
+    getOntologyRelationsForEntity(contextId).forEach((relation) => {
+      if (INSPECTOR_ONTOLOGY_RELATION_TYPES.has(relation.type)) {
+        relationById.set(relation.id, { relation, tier: 0 });
+      }
+
+      if (childIds.has(contextId)) {
+        const connectedId = relation.sourceId === contextId ? relation.targetId : relation.sourceId;
+
+        if (getOntologyEntity(connectedId)) {
+          connectedEntityIds.add(connectedId);
+        }
+      }
+    });
+  });
+
+  connectedEntityIds.forEach((entityId) => {
+    getOntologyRelationsForEntity(entityId).forEach((relation) => {
+      if (INSPECTOR_ONTOLOGY_RELATION_TYPES.has(relation.type) && !relationById.has(relation.id)) {
+        relationById.set(relation.id, { relation, tier: 1 });
+      }
+    });
+  });
+
+  return Array.from(relationById.values())
+    .sort((left, right) => left.tier - right.tier || (right.relation.strength ?? 0) - (left.relation.strength ?? 0))
+    .slice(0, ONTOLOGY_RESONANCE_LIMIT)
+    .map(({ relation }) => ({
+      relation,
+      sourceLabel: getOntologyDisplayLabel(relation.sourceId),
+      targetLabel: getOntologyDisplayLabel(relation.targetId),
+      sourceHref: getOntologyCodexHref(relation.sourceId),
+      targetHref: getOntologyCodexHref(relation.targetId),
+      relationLabel: ONTOLOGY_RELATION_LABELS[relation.type],
+    }));
+}
+
 function getLetterResonanceLabel(meaningNodeId: MeaningNodeId) {
   return LETTER_RESONANCE_LABELS[meaningNodeId] ?? getMeaningNodeLabel(meaningNodeId);
 }
@@ -1247,6 +1347,38 @@ function SymbolLensOrbit({
   );
 }
 
+function OntologyResonanceToken({ label, href }: { label: string; href?: string }) {
+  if (href) {
+    return (
+      <Link href={href} className="symbol-ontology-resonance__token">
+        {label}
+      </Link>
+    );
+  }
+
+  return <span className="symbol-ontology-resonance__token">{label}</span>;
+}
+
+function OntologyResonanceRows({ rows }: { rows: OntologyResonanceRow[] }) {
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="symbol-ontology-resonances" aria-label="Ontologie-Resonanzen">
+      {rows.map((row) => (
+        <div key={row.relation.id} className="symbol-ontology-resonance">
+          <div className="symbol-ontology-resonance__line">
+            <OntologyResonanceToken label={row.sourceLabel} href={row.sourceHref} />
+            <span>{row.relationLabel}</span>
+            <span aria-hidden="true">-&gt;</span>
+            <OntologyResonanceToken label={row.targetLabel} href={row.targetHref} />
+          </div>
+          <p>{row.relation.shortResonance}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function SymbolLensFocusDetail({
   activeSymbol,
   connectedPaths,
@@ -1319,6 +1451,7 @@ function SymbolLensFocusDetail({
     : undefined;
   const subspaceEntries = detailHierarchyChildren.slice(0, 5);
   const storyAnchor = storyDeepHierarchyAnchors[0] ?? verseDeepHierarchyAnchors[0];
+  const ontologyRows = getInspectorOntologyRows(activeSymbol.id);
 
   return (
     <>
@@ -1343,6 +1476,7 @@ function SymbolLensFocusDetail({
           {activeInspectorFocus === "meaning" ? (
             <div className="symbol-inspector-accordion__content">
               <p>{meaningItems.join(" / ") || lensData.labels.meaning || activeSymbol.shortMeaning}</p>
+              <OntologyResonanceRows rows={ontologyRows} />
               {firstSearchResonance && firstSearchPath ? (
                 <button type="button" onClick={() => onPreviewPath(firstSearchPath)} className="symbol-focus-path">
                   <span>{getSymbolLabel(firstSearchResonance.sourceId)} - {getSymbolLabel(firstSearchResonance.targetId)}</span>
@@ -1422,7 +1556,7 @@ function SymbolLensFocusDetail({
               <div className="symbol-inspector-accordion__content">
                 <p>{activeCodexEntry.subtitle ?? activeCodexEntry.title}</p>
                 <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-archive-action">
-                  /codex/{activeCodexEntry.id}
+                  Codex oeffnen
                 </Link>
               </div>
             ) : null}

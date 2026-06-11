@@ -35,6 +35,33 @@ function formatList(items: string[]) {
   return items.length > 0 ? items.join(", ") : "n/a";
 }
 
+function formatSourceKind(source: string) {
+  return source
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function formatSourceList(items: string[]) {
+  return items.length > 0 ? items.map(formatSourceKind).join(", ") : "n/a";
+}
+
+function formatRelationType(type: CodexRelation["type"]) {
+  const labels: Record<CodexRelation["type"], string> = {
+    "anchors-scripture": "Bibelanker",
+    "contains-letter": "Enthaelt Buchstaben",
+    "continues-journey": "Fuehrt weiter",
+    contrasts: "Kontrastiert",
+    "has-hebrew-word": "Hebraeisches Wort",
+    related: "Verwandt",
+    "shares-meaning": "Teilt Bedeutung",
+    symbolizes: "Symbolisiert",
+    transforms: "Verwandelt",
+  };
+
+  return labels[type];
+}
+
 function relationTarget(relation: CodexRelation) {
   return relation.targetId || ("target" in relation && typeof relation.target === "string" ? relation.target : "");
 }
@@ -475,7 +502,6 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           <aside className="grid content-start gap-5">
             <DetailSection title="Einordnung">
               <dl>
-                <FieldRow label="ID" value={entry.id} />
                 <FieldRow label="Typ" value={formatType(entry.type)} />
                 {entry.symbolRoomSlug ? (
                   <FieldRow
@@ -485,13 +511,13 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                         href={`/symbole/${entry.symbolRoomSlug}`}
                         className="font-serif italic text-gold/85 transition-colors duration-500 hover:text-gold"
                       >
-                        {entry.symbolRoomSlug}
+                        {entry.title}
                       </Link>
                     }
                   />
                 ) : null}
                 {entry.journeyIds.length > 0 ? (
-                  <FieldRow label="Journeys" value={formatList(entry.journeyIds)} />
+                  <FieldRow label="Pfadbezug" value="Kuratiert" />
                 ) : null}
               </dl>
             </DetailSection>
@@ -499,8 +525,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             <DetailSection title="Quellen">
               <dl>
                 <FieldRow label="Status" value={entry.meta.status} />
-                <FieldRow label="Quellen" value={formatList(entry.meta.source)} />
-                <FieldRow label="Quell-IDs" value={formatList(entry.meta.sourceIds)} />
+                <FieldRow label="Quellen" value={formatSourceList(entry.meta.source)} />
                 {entry.meta.tags?.length ? <FieldRow label="Tags" value={formatList(entry.meta.tags)} /> : null}
                 {entry.meta.notes ? <FieldRow label="Notizen" value={entry.meta.notes} /> : null}
               </dl>
@@ -932,16 +957,16 @@ function RelationsSection({ entry, activeContext }: { entry: CodexEntry; activeC
             return (
               <article key={`${relation.type}-${target}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">{relation.type}</p>
+                  <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">{formatRelationType(relation.type)}</p>
                   {linkedEntry ? (
                     <Link
                       href={`/codex/${linkedEntry.id}`}
                       className="font-mono text-xs text-gold/75 transition-colors duration-500 hover:text-gold"
                     >
-                      {target}
+                      {linkedEntry.title}
                     </Link>
                   ) : (
-                    <p className="font-mono text-xs text-muted-soft">{target || "nicht im Codex"}</p>
+                    <p className="font-mono text-xs text-muted-soft">{relation.label || "nicht im Codex"}</p>
                   )}
                 </div>
                 {relation.label ? (
