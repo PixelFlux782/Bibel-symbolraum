@@ -2455,7 +2455,7 @@ body {
   opacity: 0.86;
 }
 
-.journey-viewport-controls {
+.symbol-viewport-controls {
   position: absolute;
   left: 0.8rem;
   bottom: 0.8rem;
@@ -2467,24 +2467,24 @@ body {
   transition: opacity 520ms ease;
 }
 
-.journey-viewport-controls:hover,
-.journey-viewport-controls:focus-within {
+.symbol-viewport-controls:hover,
+.symbol-viewport-controls:focus-within {
   opacity: 0.92;
 }
 
-.journey-viewport-controls button {
+.symbol-viewport-controls button {
   position: relative;
   display: inline-grid;
   min-width: 0;
   place-items: center;
   border: 0;
-  border-bottom: 1px solid rgba(var(--gold-rgb), 0.16);
-  background: rgba(2, 5, 12, 0.34);
-  padding: 0.34rem 0.18rem 0.42rem;
-  color: rgba(216, 209, 194, 0.52);
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.16);
+  background: rgba(2, 5, 12, 0.38);
+  padding: 0.34rem 0.28rem 0.42rem;
+  color: rgba(216, 209, 194, 0.54);
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.52rem;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   line-height: 1;
   text-transform: uppercase;
   transition:
@@ -2493,21 +2493,21 @@ body {
     background-color 520ms ease;
 }
 
-.journey-viewport-controls button::before {
+.symbol-viewport-controls button::before {
   content: "";
   width: 0.22rem;
   height: 0.22rem;
   margin-bottom: 0.3rem;
   border-radius: 999px;
-  background: rgba(var(--gold-rgb), 0.34);
-  box-shadow: 0 0 0.75rem rgba(var(--gold-rgb), 0.12);
+  background: rgba(var(--cyan-rgb), 0.34);
+  box-shadow: 0 0 0.75rem rgba(var(--cyan-rgb), 0.08);
 }
 
-.journey-viewport-controls button:hover,
-.journey-viewport-controls button:focus-visible {
-  border-color: rgba(var(--gold-rgb), 0.36);
+.symbol-viewport-controls button:hover,
+.symbol-viewport-controls button:focus-visible {
+  border-color: rgba(var(--cyan-rgb), 0.34);
   background: rgba(2, 5, 12, 0.52);
-  color: rgba(var(--gold-rgb), 0.82);
+  color: rgba(var(--foreground-rgb), 0.82);
 }
 
 .symbol-network-flow .react-flow__nodes {
@@ -4507,7 +4507,7 @@ body {
     margin-top: 0.75rem;
   }
 
-  .journey-viewport-controls {
+  .symbol-viewport-controls {
     left: 0.65rem;
     right: 0.65rem;
     bottom: 0.62rem;
@@ -4517,14 +4517,14 @@ body {
     opacity: 0.82;
   }
 
-  .journey-viewport-controls button {
+  .symbol-viewport-controls button {
     padding: 0.28rem 0.1rem 0.36rem;
     background: rgba(2, 5, 12, 0.46);
     font-size: 0.48rem;
     letter-spacing: 0.08em;
   }
 
-  .journey-viewport-controls button::before {
+  .symbol-viewport-controls button::before {
     width: 0.18rem;
     height: 0.18rem;
     margin-bottom: 0.24rem;
