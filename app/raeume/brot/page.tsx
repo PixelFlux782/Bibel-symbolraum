@@ -2,9 +2,9 @@ import { breadEngineData } from "@/components/rooms/bread/breadEngineData";
 import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
 import {
   resolveRoomInitialStateId,
-  resolveSymbolNetworkRoomContext,
   type RoomSearchParams,
 } from "@/lib/meaning/resolveRoomInitialStateId";
+import { resolveRoomContext } from "@/lib/rooms/roomContext";
 
 export const metadata = {
   title: "Brot-Raum",
@@ -18,7 +18,7 @@ export default async function BrotRaumPage({ searchParams }: { searchParams: Roo
     toSymbolSlug: "brot",
     validStateIds: breadEngineData.states.map((state) => state.id),
   });
-  const symbolNetworkContext = resolveSymbolNetworkRoomContext(resolvedSearchParams, "brot");
+  const roomContext = resolveRoomContext(resolvedSearchParams, "brot");
 
-  return <SymbolEngineRoom data={breadEngineData} initialStateId={initialStateId} symbolNetworkContext={symbolNetworkContext} />;
+  return <SymbolEngineRoom data={breadEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
 }

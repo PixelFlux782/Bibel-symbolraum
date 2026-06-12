@@ -121,6 +121,59 @@
   animation: water-journey-arrive 1100ms ease both;
 }
 
+.symbol-engine__entry-trace {
+  display: grid;
+  max-width: 34rem;
+  gap: 0.78rem;
+  margin-bottom: 1.9rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.2);
+  background: rgba(0, 0, 0, 0.14);
+  padding: 0.95rem 1.05rem;
+  backdrop-filter: blur(14px);
+}
+
+.symbol-engine__entry-mobile {
+  display: none;
+}
+
+.symbol-engine__entry-title,
+.symbol-engine__entry-return,
+.symbol-engine__onward > p,
+.symbol-engine__onward a {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.symbol-engine__entry-title,
+.symbol-engine__onward > p {
+  color: rgba(var(--cyan-rgb), 0.78);
+}
+
+.symbol-engine__entry-copy {
+  margin-top: 0.42rem;
+  max-width: 30rem;
+  color: rgba(var(--foreground-rgb), 0.68);
+  font-family: var(--font-serif), serif;
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.symbol-engine__entry-return,
+.symbol-engine__onward a {
+  color: rgba(var(--gold-rgb), 0.78);
+  transition: color 400ms ease;
+}
+
+.symbol-engine__entry-return:hover,
+.symbol-engine__entry-return:focus-visible,
+.symbol-engine__onward a:hover,
+.symbol-engine__onward a:focus-visible {
+  color: rgba(var(--gold-rgb), 0.96);
+}
+
 .symbol-engine__eyebrow { color: rgba(var(--cyan-rgb), 0.9); }
 .symbol-engine__glyph {
   margin-bottom: -1.6rem;
@@ -180,6 +233,21 @@
 .symbol-engine__action:hover span,
 .symbol-engine__action:focus-visible span { width: 3.8rem; }
 .symbol-engine__back { color: rgba(var(--foreground-rgb), 0.52); }
+
+.symbol-engine__onward {
+  display: grid;
+  max-width: 36rem;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.14);
+  padding-top: 1rem;
+}
+
+.symbol-engine__onward div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1rem;
+}
 
 .symbol-engine__layers {
   position: absolute;
@@ -513,6 +581,12 @@
   .symbol-engine__navigation ol { gap: 0.74rem; }
   .symbol-engine__navigation-step { font-size: 0; }
   .symbol-engine__content { max-width: none; padding-bottom: 18.5rem; }
+  .symbol-engine__entry-trace { gap: 0.62rem; margin-bottom: 1.2rem; padding: 0.78rem 0.9rem; }
+  .symbol-engine__entry-desktop { display: none; }
+  .symbol-engine__entry-mobile { display: block; }
+  .symbol-engine__entry-copy { font-size: 0.82rem; line-height: 1.35; }
+  .symbol-engine__entry-return { display: inline-flex; }
+  .symbol-engine__onward { display: none; }
   .symbol-engine__glyph { margin-bottom: -1.2rem; font-size: 4.8rem; }
   .symbol-engine__content h1 { font-size: clamp(2.5rem, 12vw, 3.65rem); }
   .symbol-engine__text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }

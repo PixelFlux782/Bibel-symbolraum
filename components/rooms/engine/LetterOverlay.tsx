@@ -196,7 +196,7 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
                 <Link key={symbol.id} href={symbol.roomHref}>
                   <span lang="he" dir="rtl">{symbol.hebrew}</span>
                   <strong>{symbol.label}</strong>
-                  <i>Raum oeffnen</i>
+                  <i>Raum betreten</i>
                 </Link>
               ))}
               {!symbols.length ? <p className="symbol-engine__letter-empty">Noch keine verknuepften Symbolraeume.</p> : null}

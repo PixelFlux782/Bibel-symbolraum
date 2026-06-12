@@ -60,6 +60,11 @@ export type OntologyPolarity = {
   note?: string;
 };
 
+export type OntologyVisibleHidden = {
+  visible: string;
+  hidden: string;
+};
+
 export type OntologyRelationType =
   | "belongs_to"
   | "resonates_with"
@@ -123,6 +128,9 @@ export interface OntologyEntity {
   firstMention?: OntologyFirstMention;
   domain?: OntologyEntityDomain;
   imageSymbol?: string;
+  movementSteps?: string[];
+  leadsTo?: string[];
+  visibleHidden?: OntologyVisibleHidden;
   /**
    * Inner polarity of this entity itself. Use has_polarity only when the polarity
    * is modeled as a separate concept/pattern entity.

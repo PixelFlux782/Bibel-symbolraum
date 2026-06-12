@@ -252,6 +252,7 @@ function getPatternOverviewEntries() {
       id: entity.id,
       title: entity.title,
       summary: entity.summary,
+      movementSteps: entity.movementSteps ?? [],
     }));
 }
 
@@ -1139,6 +1140,9 @@ function MobileCodexMeaningTrails({
             {patternEntries.slice(0, 5).map((entry) => (
               <Link key={entry.id} href={`/codex/${entry.id}`}>
                 {entry.title}
+                {entry.movementSteps.length > 0 ? (
+                  <span>{entry.movementSteps.join(" -> ")}</span>
+                ) : null}
               </Link>
             ))}
           </div>

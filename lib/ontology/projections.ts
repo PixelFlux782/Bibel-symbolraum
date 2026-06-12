@@ -1,4 +1,5 @@
 import type { ResonanceConnection, ResonanceType } from "../resonance";
+import { ontologyEntities, ontologyRelations, sortOntologyRelations } from "./registry";
 import { ONTOLOGY_RELATION_TYPES } from "./types";
 import type { OntologyEntity, OntologyRelation, OntologyRelationType } from "./types";
 
@@ -29,6 +30,18 @@ type EntityReferenceSet = ReadonlySet<string> | readonly (OntologyEntity | strin
 
 type ProjectionOptions = {
   entityReferences?: EntityReferenceSet;
+};
+
+export type OntologyWayProjection = {
+  id: string;
+  title: string;
+  summary: string;
+  movementSteps: string[];
+  href: string;
+  carrierIds: string[];
+  carrierRelationIds: string[];
+  targetCoreIds: string[];
+  targetRelationIds: string[];
 };
 
 function normalizeEntityReferences(entityReferences?: EntityReferenceSet): ReadonlySet<string> | undefined {
@@ -181,4 +194,85 @@ export function validateOntologyProjection(
   }
 
   return warnings;
+}
+
+function isPatternEntity(entity: OntologyEntity) {
+  return entity.domain === "pattern";
+}
+
+function toWayProjection(pattern: OntologyEntity): OntologyWayProjection {
+  const carryingRelations = sortOntologyRelations(ontologyRelations)
+    .filter((relation) => relation.type === "contains_pattern" && relation.targetId === pattern.id);
+  const targetRelations = sortOntologyRelations(ontologyRelations)
+    .filter((relation) => relation.type === "opens_into" && relation.sourceId === pattern.id);
+
+  return {
+    id: pattern.id,
+    title: pattern.title,
+    summary: pattern.summary,
+    movementSteps: pattern.movementSteps ?? [],
+    href: `/codex/${pattern.id}`,
+    carrierIds: carryingRelations.map((relation) => relation.sourceId),
+    carrierRelationIds: carryingRelations.map((relation) => relation.id),
+    targetCoreIds: targetRelations.map((relation) => relation.targetId),
+    targetRelationIds: targetRelations.map((relation) => relation.id),
+  };
+}
+
+function uniqueWayProjections(patterns: OntologyEntity[]) {
+  const seen = new Set<string>();
+
+  return patterns
+    .filter(isPatternEntity)
+    .filter((pattern) => {
+      if (seen.has(pattern.id)) return false;
+      seen.add(pattern.id);
+      return true;
+    })
+    .map(toWayProjection);
+}
+
+export function getPatternsForEntity(entityId: string): OntologyWayProjection[] {
+  const directPatternIds = sortOntologyRelations(ontologyRelations)
+    .filter((relation) => relation.type === "contains_pattern" && relation.sourceId === entityId)
+    .map((relation) => relation.targetId);
+  const entity = ontologyEntities.find((candidate) => candidate.id === entityId);
+  const tagPatternIds = entity
+    ? ontologyEntities
+        .filter(isPatternEntity)
+        .filter((pattern) => pattern.tags.some((tag) => entity.tags.includes(tag)))
+        .map((pattern) => pattern.id)
+    : [];
+
+  return uniqueWayProjections(
+    [...directPatternIds, ...tagPatternIds]
+      .map((patternId) => ontologyEntities.find((candidate) => candidate.id === patternId))
+      .filter((pattern): pattern is OntologyEntity => Boolean(pattern)),
+  );
+}
+
+export function getPatternsLeadingToCore(coreId: string): OntologyWayProjection[] {
+  const patternIds = sortOntologyRelations(ontologyRelations)
+    .filter((relation) => relation.type === "opens_into" && relation.targetId === coreId)
+    .map((relation) => relation.sourceId);
+
+  return uniqueWayProjections(
+    patternIds
+      .map((patternId) => ontologyEntities.find((candidate) => candidate.id === patternId))
+      .filter((pattern): pattern is OntologyEntity => Boolean(pattern)),
+  );
+}
+
+export function getPrimaryWayForEntity(entityId: string): OntologyWayProjection | null {
+  return getPatternsForEntity(entityId)[0] ?? null;
+}
+
+export function getTargetCoresForPattern(patternId: string) {
+  return sortOntologyRelations(ontologyRelations)
+    .filter((relation) => relation.type === "opens_into" && relation.sourceId === patternId)
+    .map((relation) => ({
+      relation,
+      entity: ontologyEntities.find((candidate) => candidate.id === relation.targetId),
+    }))
+    .filter((item): item is { relation: OntologyRelation; entity: OntologyEntity } => Boolean(item.entity));
 }

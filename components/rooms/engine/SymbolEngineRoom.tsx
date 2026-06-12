@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import type { SymbolEngineData } from "@/types/engine";
-import type { SymbolNetworkRoomContext, SymbolNetworkRoomLens } from "@/lib/meaning/resolveRoomInitialStateId";
 import { recordRoomVisitForRoute } from "@/lib/pathActivity";
-import { getResonanceJourney } from "@/lib/resonance";
+import type { RoomContext } from "@/lib/rooms/roomContext";
 import { BiblicalSceneLayer } from "./BiblicalSceneLayer";
 import { EngineNavigation } from "./EngineNavigation";
 import { EngineStage } from "./EngineStage";
@@ -17,62 +16,48 @@ import { useSymbolEngine } from "./useSymbolEngine";
 type SymbolEngineRoomProps = {
   data: SymbolEngineData;
   initialStateId?: string;
-  symbolNetworkContext?: SymbolNetworkRoomContext;
-};
-
-const SYMBOL_NETWORK_LENS_HINTS: Partial<Record<SymbolNetworkRoomLens, (symbolLabel: string) => string>> = {
-  meaning: (symbolLabel) => `Du betrittst ${symbolLabel} als Bedeutungsraum.`,
-  hebrew: (symbolLabel) => `Du betrittst ${symbolLabel} von seiner hebraeischen Spur her.`,
-  gematria: (symbolLabel) => `Du betrittst ${symbolLabel} von seiner Zahl her.`,
-  story: (symbolLabel) => `Du betrittst ${symbolLabel} aus einer Erzaehlspur.`,
+  roomContext?: RoomContext;
 };
 
 function getRoomTitle(symbolLabel: string) {
   return `${symbolLabel}-Raum`;
 }
 
-function buildSymbolNetworkReturnHref(context: SymbolNetworkRoomContext) {
-  const params = new URLSearchParams({
-    symbol: context.symbol,
-    lens: context.lens,
-  });
-
-  if (context.path) {
-    params.set("path", context.path);
-  }
-
-  return `/symbolnetz?${params.toString()}`;
-}
-
-function SymbolNetworkRoomTrace({
-  context,
-  symbolLabel,
-}: {
-  context: SymbolNetworkRoomContext;
-  symbolLabel: string;
-}) {
-  const lensHint = SYMBOL_NETWORK_LENS_HINTS[context.lens]?.(symbolLabel);
-  const resonanceJourney = context.path ? getResonanceJourney(context.path) : undefined;
-
+function RoomEntryTrace({ context }: { context: RoomContext }) {
   return (
-    <div className="mb-8 max-w-xl border-l border-gold/20 pl-4 text-[10px] uppercase tracking-[0.18em] text-gold/70">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <p>Aus dem Symbolnetz</p>
-        <Link href={buildSymbolNetworkReturnHref(context)} className="text-cyan-soft/80 transition-colors hover:text-cyan-soft focus-visible:text-cyan-soft">
-          Zur&uuml;ck zur Karte
-        </Link>
+    <div className="symbol-engine__entry-trace">
+      <div className="symbol-engine__entry-desktop">
+        <p className="symbol-engine__entry-title">{context.title}</p>
+        <p className="symbol-engine__entry-copy">{context.text}</p>
       </div>
-      {lensHint ? <p className="mt-2 normal-case tracking-normal text-foreground-strong/65">{lensHint}</p> : null}
-      {resonanceJourney ? (
-        <p className="mt-2 normal-case tracking-normal text-gold/75">
-          Resonanzpfad: {resonanceJourney.title}
-        </p>
-      ) : null}
+      <div className="symbol-engine__entry-mobile">
+        <p className="symbol-engine__entry-title">{context.mobileTitle}</p>
+        <p className="symbol-engine__entry-copy">{context.mobileText}</p>
+      </div>
+      <Link href={context.returnHref} className="symbol-engine__entry-return">
+        {context.returnLabel}
+      </Link>
     </div>
   );
 }
 
-export function SymbolEngineRoom({ data, initialStateId, symbolNetworkContext }: SymbolEngineRoomProps) {
+function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: RoomContext }) {
+  const defaultReturnHrefs = new Set([`/codex/${data.slug}`, `/symbolnetz?symbol=${data.slug}`]);
+  const contextReturnLink = context && !defaultReturnHrefs.has(context.returnHref) ? context : undefined;
+
+  return (
+    <div className="symbol-engine__onward">
+      <p>Weiter vertiefen</p>
+      <div>
+        <Link href={`/codex/${data.slug}`}>Im Codex ansehen</Link>
+        <Link href={`/symbolnetz?symbol=${data.slug}`}>Zurueck ins Symbolnetz</Link>
+        {contextReturnLink ? <Link href={contextReturnLink.returnHref}>{contextReturnLink.returnLabel}</Link> : null}
+      </div>
+    </div>
+  );
+}
+
+export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEngineRoomProps) {
   const engine = useSymbolEngine(data, { initialStateId });
   const { activeState } = engine;
   const roomTitle = getRoomTitle(data.symbolLabel);
@@ -96,9 +81,7 @@ export function SymbolEngineRoom({ data, initialStateId, symbolNetworkContext }:
           <span>{data.symbolLabel}</span>
         </nav>
         <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-gold/75">{roomTitle}</p>
-        {symbolNetworkContext ? (
-          <SymbolNetworkRoomTrace context={symbolNetworkContext} symbolLabel={data.symbolLabel} />
-        ) : null}
+        {roomContext ? <RoomEntryTrace context={roomContext} /> : null}
         <p className="symbol-engine__eyebrow">
           {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
           {activeState.eyebrow}
@@ -118,6 +101,7 @@ export function SymbolEngineRoom({ data, initialStateId, symbolNetworkContext }:
             <span aria-hidden="true" />
           </button>
         </div>
+        {engine.isLast ? <RoomOnwardLinks data={data} context={roomContext} /> : null}
       </section>
 
       <aside className="symbol-engine__layers">

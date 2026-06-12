@@ -4979,6 +4979,7 @@ body {
 .codex-mobile-trail a,
 .codex-mobile-trail button {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   min-height: 2.85rem;
   flex: 0 0 auto;
@@ -4990,6 +4991,16 @@ body {
   font-size: 1rem;
   font-style: italic;
   line-height: 1.15;
+}
+
+.codex-mobile-trail a span {
+  margin-top: 0.35rem;
+  color: rgba(var(--cyan-rgb), 0.68);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .codex-mobile-trail--views {

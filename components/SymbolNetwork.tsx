@@ -51,6 +51,7 @@ import {
   getOntologyRelationLabel,
   getOntologyRelationMarkerLabel,
   getOntologyRelationsForEntity,
+  getPrimaryWayForEntity,
   normalizeOntologyStrength,
   mergeResonanceConnections,
   ontologyEntities,
@@ -1719,12 +1720,14 @@ function SymbolLensFocusDetail({
             <div className="symbol-inspector-accordion__content">
               <p>{activeSymbol.label}-Raum</p>
               <RoomTransitionButton href={roomHref} className="symbol-cta w-full">
-                {activeSymbol.label}-Raum oeffnen
+                {activeSymbol.label}-Raum betreten
               </RoomTransitionButton>
             </div>
           ) : null}
         </section>
       </div>
+
+      <SymbolWayTrace symbolId={activeSymbol.id} />
     </>
   );
 }
@@ -1761,6 +1764,34 @@ function ResonanceJourneyDetail({
         </div>
       </div>
     </>
+  );
+}
+
+function SymbolWayTrace({
+  symbolId,
+}: {
+  symbolId: string;
+}) {
+  const way = getPrimaryWayForEntity(symbolId);
+
+  if (!way) return null;
+
+  return (
+    <div className="symbol-way-trace mt-7 border-t border-white/[0.055] pt-5">
+      <p className="symbol-kicker text-cyan-soft">Wegspur</p>
+      <Link href={`/codex/${way.id}?from=symbolnetz&symbol=${symbolId}&focus=story&path=${way.id}`} className="mt-4 block border-l border-gold/25 bg-white/[0.018] px-4 py-3 transition-colors hover:border-gold/45 hover:bg-white/[0.04]">
+        <span className="block font-serif text-xl italic text-foreground-strong/90">{way.title}</span>
+        {way.movementSteps.length > 0 ? (
+          <span className="mt-2 block text-[10px] uppercase tracking-[0.18em] text-gold/70">
+            {way.movementSteps.join(" -> ")}
+          </span>
+        ) : null}
+        <span className="symbol-copy mt-2 block text-sm">{way.summary}</span>
+        <span className="mt-3 inline-block text-[9px] uppercase tracking-[0.18em] text-cyan-soft/75">
+          Weg im Codex oeffnen
+        </span>
+      </Link>
+    </div>
   );
 }
 
@@ -1908,7 +1939,7 @@ function MobileSymbolJourney({
 
       <div className="symbol-mobile-actions">
         <RoomTransitionButton href={roomHref} className="symbol-cta">
-          {activeSymbol.label}-Raum oeffnen
+          {activeSymbol.label}-Raum betreten
         </RoomTransitionButton>
         {activeCodexEntry ? (
           <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-cta symbol-cta-secondary">
@@ -3788,7 +3819,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               ) : null}
               <div className="symbol-detail-panel__cta">
                 <RoomTransitionButton href={activeRoomHref} className="symbol-cta w-full">
-                  {activeSymbol.label}-Raum öffnen
+                  {activeSymbol.label}-Raum betreten
                 </RoomTransitionButton>
                 {showResonanceJourneyOption && discoverableResonanceJourney ? (
                   <button
@@ -3813,6 +3844,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 centerLabel={activeSymbol.label}
                 items={searchResonanceGroup}
               />
+              <SymbolWayTrace symbolId={activeSymbol.id} />
             </>
           )}
 

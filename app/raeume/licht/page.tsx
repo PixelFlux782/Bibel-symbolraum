@@ -2,9 +2,9 @@ import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
 import { lightEngineData } from "@/components/rooms/light/lightEngineData";
 import {
   resolveRoomInitialStateId,
-  resolveSymbolNetworkRoomContext,
   type RoomSearchParams,
 } from "@/lib/meaning/resolveRoomInitialStateId";
+import { resolveRoomContext } from "@/lib/rooms/roomContext";
 
 export const metadata = {
   title: "Licht-Raum",
@@ -18,7 +18,7 @@ export default async function LichtRaumPage({ searchParams }: { searchParams: Ro
     toSymbolSlug: "licht",
     validStateIds: lightEngineData.states.map((state) => state.id),
   });
-  const symbolNetworkContext = resolveSymbolNetworkRoomContext(resolvedSearchParams, "licht");
+  const roomContext = resolveRoomContext(resolvedSearchParams, "licht");
 
-  return <SymbolEngineRoom data={lightEngineData} initialStateId={initialStateId} symbolNetworkContext={symbolNetworkContext} />;
+  return <SymbolEngineRoom data={lightEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
 }

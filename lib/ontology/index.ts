@@ -45,10 +45,16 @@ export type { CoreConceptId } from "./coreConcepts";
 export {
   deriveResonanceConnectionFromOntologyRelation,
   deriveResonanceConnectionsFromOntology,
+  getPatternsForEntity,
+  getPatternsLeadingToCore,
+  getPrimaryWayForEntity,
+  getTargetCoresForPattern,
   mapOntologyRelationToResonanceType,
   mergeResonanceConnections,
   shouldProjectOntologyRelationToSymbolNetwork,
   validateOntologyProjection,
 } from "./projections";
+
+export type { OntologyWayProjection } from "./projections";
 
 export { validateOntology } from "./validateOntology";

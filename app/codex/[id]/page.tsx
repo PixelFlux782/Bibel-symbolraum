@@ -16,13 +16,17 @@ import {
   getOntologyRelationMarkerLabel,
   getOntologyRegistry,
   getOntologyRelationsForEntity,
+  getPatternsForEntity,
+  getPatternsLeadingToCore,
+  getTargetCoresForPattern,
   isCoreConceptId,
   ontologyEntities,
   shouldShowOntologyExplanation,
   sortOntologyRelations,
 } from "@/lib/ontology";
-import type { OntologyEntity, OntologyRelation } from "@/lib/ontology";
+import type { OntologyEntity, OntologyRelation, OntologyWayProjection } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
+import { buildRoomHref, getPatternRoomStation, hasSymbolRoom } from "@/lib/rooms/roomContext";
 import type { MeaningNodeId } from "@/types/meaningGraph";
 
 type CodexDetailPageProps = {
@@ -34,6 +38,19 @@ type CodexDetailPageProps = {
 
 type CodexContextFocus = "overview" | "meaning" | "hebrew" | "gematria" | "story" | "spaces";
 type SymbolNetworkReturnLens = "meaning" | "hebrew" | "gematria" | "story";
+
+type PathContextLink = {
+  from?: string;
+  path?: string;
+  symbol?: string;
+};
+
+type ResolvedPathContext = {
+  labels: string[];
+  note: string;
+  returnHref: string;
+  returnLabel: string;
+};
 
 function formatType(type: CodexEntryType) {
   if (type === "meaning") {
@@ -157,6 +174,126 @@ function codexEntryFromOntologyEntity(entity: OntologyEntity): CodexEntry {
 function getSearchParamValue(params: Record<string, string | string[] | undefined>, key: string) {
   const value = params[key];
   return Array.isArray(value) ? value[0] : value;
+}
+
+function getCodexTitleById(id: string | undefined) {
+  if (!id) return undefined;
+
+  return resolveLinkedCodexEntry(id)?.title ?? getOntologyEntity(id)?.title;
+}
+
+function isResolvableCodexContextId(id: string | undefined) {
+  return Boolean(id && getCodexTitleById(id));
+}
+
+function withPathContext(href: string, context: PathContextLink) {
+  const [pathname, query = ""] = href.split("?");
+  const params = new URLSearchParams(query);
+
+  if (context.from && isResolvableCodexContextId(context.from)) {
+    params.set("from", context.from);
+  } else if (context.from === "symbolnetz") {
+    params.set("from", "symbolnetz");
+  }
+
+  if (context.path && isResolvableCodexContextId(context.path)) {
+    params.set("path", context.path);
+  }
+
+  if (context.symbol && isResolvableCodexContextId(context.symbol)) {
+    params.set("symbol", context.symbol);
+  }
+
+  const serializedParams = params.toString();
+  return serializedParams ? `${pathname}?${serializedParams}` : pathname;
+}
+
+function getExistingRelationText(sourceId: string, targetId: string, types?: OntologyRelation["type"][]) {
+  const typeSet = types ? new Set(types) : undefined;
+  const relation = sortOntologyRelations(getOntologyRelationsForEntity(sourceId))
+    .find((candidate) => (
+      candidate.sourceId === sourceId &&
+      candidate.targetId === targetId &&
+      (!typeSet || typeSet.has(candidate.type))
+    ));
+
+  return relation ? getOntologyDisplayText(relation) || relation.shortResonance : "";
+}
+
+function compactPathLabels(items: { id: string; label: string }[]) {
+  const seen = new Set<string>();
+
+  return items
+    .filter((item) => item.id !== "symbolnetz")
+    .filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    })
+    .map((item) => item.label);
+}
+
+function resolvePathContext({
+  entry,
+  params,
+}: {
+  entry: CodexEntry;
+  params: Record<string, string | string[] | undefined>;
+}): ResolvedPathContext | null {
+  const from = getSearchParamValue(params, "from");
+  const path = getSearchParamValue(params, "path");
+  const symbol = getSearchParamValue(params, "symbol");
+  const symbolLabel = getCodexTitleById(symbol);
+  const fromLabel = getCodexTitleById(from);
+  const pathLabel = getCodexTitleById(path);
+
+  if (from === "symbolnetz") {
+    const labels = ["Symbolnetz", ...compactPathLabels([
+      ...(symbol && symbolLabel ? [{ id: symbol, label: symbolLabel }] : []),
+      { id: entry.id, label: entry.title },
+    ])];
+
+    if (labels.length < 2) return null;
+
+    return {
+      labels,
+      note: symbolLabel
+        ? `Vom ${symbolLabel} aus oeffnet sich diese Bewegung.`
+        : `Du vertiefst jetzt die Spur von ${entry.title}.`,
+      returnHref: symbol ? buildSymbolNetworkReturnHref({ symbol, lens: "story", path }) : "/symbolnetz",
+      returnLabel: "Zurueck ins Symbolnetz",
+    };
+  }
+
+  if (path && pathLabel && path !== entry.id) {
+    const note = getExistingRelationText(path, entry.id, ["opens_into", "structures_journey"])
+      || "Diese Bewegung sammelt sich in dieser Achse.";
+
+    return {
+      labels: [pathLabel, entry.title],
+      note,
+      returnHref: `/codex/${path}`,
+      returnLabel: `Zurueck zur Bewegung ${pathLabel}`,
+    };
+  }
+
+  if (from && fromLabel && from !== entry.id) {
+    const sourceEntity = getOntologyEntity(from);
+    const note = getExistingRelationText(from, entry.id, ["contains_pattern", "opens_into", "structures_journey"])
+      || (sourceEntity?.domain === "pattern"
+        ? "Von dieser Bewegung aus fuehrt der Weg hierher."
+        : "Von hier aus oeffnet sich diese Bewegung.");
+    const isPatternSource = sourceEntity?.domain === "pattern";
+
+    return {
+      labels: [fromLabel, entry.title],
+      note,
+      returnHref: `/codex/${from}`,
+      returnLabel: isPatternSource ? `Zurueck zur Bewegung ${fromLabel}` : `Zurueck zu ${fromLabel}`,
+    };
+  }
+
+  return null;
 }
 
 function normalizeCodexContextFocus(value: string | undefined): CodexContextFocus {
@@ -307,36 +444,6 @@ function buildOntologyRelationItems(entryId: string, relations: OntologyRelation
   });
 }
 
-function getCoreConceptRelations(entity: OntologyEntity) {
-  const registry = getOntologyRegistry();
-  const incomingRelations = sortOntologyRelations(registry.relationsByTarget.get(entity.id) ?? []);
-  const outgoingRelations = sortOntologyRelations(registry.relationsBySource.get(entity.id) ?? []);
-  const highlightedRelationIds = new Set([
-    ...incomingRelations.map((relation) => relation.id),
-    ...outgoingRelations.map((relation) => relation.id),
-  ]);
-  const furtherRelations = sortOntologyRelations(getOntologyRelationsForEntity(entity.id))
-    .filter((relation) => !highlightedRelationIds.has(relation.id));
-
-  return {
-    incoming: buildOntologyRelationItems(entity.id, incomingRelations),
-    outgoing: buildOntologyRelationItems(entity.id, outgoingRelations),
-    further: buildOntologyRelationItems(entity.id, furtherRelations),
-  };
-}
-
-function getPatternMovement(entityId: string): string[] {
-  const movements: Record<string, string[]> = {
-    "pattern-gabe-im-mangel": ["Mangel", "Schwelle", "Empfangen", "Gabe"],
-    "pattern-pruefung-durch-entzug": ["Entzug", "Klaerung", "Reifung"],
-    "pattern-schwelle-durch-wasser": ["Grenze", "Durchgang", "Neuwerdung"],
-    "pattern-offenbarung-im-feuer": ["Brennen", "Gegenwart", "Offenbarung"],
-    "pattern-weg-der-reifung": ["Aufbruch", "Pruefung", "Verwandlung"],
-  };
-
-  return movements[entityId] ?? [];
-}
-
 function getPatternCarriers(entity: OntologyEntity) {
   const registry = getOntologyRegistry();
 
@@ -350,13 +457,112 @@ function getPatternCarriers(entity: OntologyEntity) {
 }
 
 function getPatternFallbackMovement(entity: OntologyEntity): string[] {
-  const mappedMovement = getPatternMovement(entity.id);
-
-  if (mappedMovement.length > 0) {
-    return mappedMovement;
+  if (entity.movementSteps?.length) {
+    return entity.movementSteps;
   }
 
   return [entity.polarity?.visiblePole, entity.polarity?.hiddenPole].filter(Boolean) as string[];
+}
+
+function getPatternDestinations(entity: OntologyEntity) {
+  const registry = getOntologyRegistry();
+  const destinationRelations = sortOntologyRelations(registry.relationsBySource.get(entity.id) ?? [])
+    .filter((relation) => relation.type === "opens_into" || relation.type === "structures_journey");
+  const relationDestinations = destinationRelations.map((relation) => ({
+    relation,
+    endpoint: resolveOntologyEndpoint(relation.targetId),
+  }));
+  const relationLabels = new Set(relationDestinations.map(({ endpoint }) => normalizeText(endpoint.label)));
+  const textDestinations = (entity.leadsTo ?? [])
+    .filter((label) => !relationLabels.has(normalizeText(label)))
+    .map((label) => {
+      const normalizedLabel = normalizeText(label);
+      const linkedEntry =
+        resolveLinkedCodexEntry(label) ??
+        ontologyEntities.find((candidate) => normalizeText(candidate.title) === normalizedLabel);
+
+      return {
+        label,
+        href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
+      };
+    });
+
+  return {
+    relationDestinations,
+    textDestinations,
+  };
+}
+
+function getMovementLine(steps: string[]) {
+  return steps.join(" -> ");
+}
+
+function getJourneysForEntity(entityId: string) {
+  return codexRegistry
+    .filter((candidate) => candidate.type === "journey")
+    .filter((journey) => (
+      journey.steps?.some((step) => step.codexId === entityId) ||
+      journey.journeyIds.includes(entityId) ||
+      journey.relations.some((relation) => relationTarget(relation) === entityId) ||
+      journey.meta.sourceIds.includes(entityId)
+    ));
+}
+
+function scoreJourneyForPattern(journey: CodexEntry, pattern: OntologyEntity, carrierIds: string[]) {
+  const journeyIds = new Set([
+    ...journey.meta.sourceIds,
+    ...(journey.steps?.map((step) => step.codexId) ?? []),
+    ...journey.relations.map(relationTarget),
+  ]);
+
+  return [
+    ...carrierIds,
+    ...pattern.tags,
+    ...(pattern.leadsTo ?? []).map((label) => label.toLocaleLowerCase("de-DE")),
+  ].reduce((score, value) => score + (journeyIds.has(value) || journey.meaningFields.includes(value as MeaningNodeId) ? 1 : 0), 0);
+}
+
+function getJourneysForPattern(pattern: OntologyEntity, carriers: ReturnType<typeof getPatternCarriers>) {
+  const carrierIds = carriers.map(({ endpoint }) => endpoint.id);
+
+  return codexRegistry
+    .filter((candidate) => candidate.type === "journey")
+    .map((journey) => ({ journey, score: scoreJourneyForPattern(journey, pattern, carrierIds) }))
+    .filter(({ score }) => score > 0)
+    .sort((left, right) => right.score - left.score || left.journey.title.localeCompare(right.journey.title, "de-DE"))
+    .map(({ journey }) => journey);
+}
+
+function getJourneyExit(entry: CodexEntry) {
+  const directTarget = entry.relations
+    .map((relation) => relationTarget(relation))
+    .map((targetId) => getOntologyEntity(targetId))
+    .find((entity) => entity && isCoreConceptId(entity.id));
+
+  if (directTarget) {
+    return directTarget;
+  }
+
+  const lastStepId = entry.steps?.at(-1)?.codexId;
+  const lastStepEntity = lastStepId ? getOntologyEntity(lastStepId) : undefined;
+
+  return lastStepEntity && isCoreConceptId(lastStepEntity.id) ? lastStepEntity : undefined;
+}
+
+function getRelatedPatternsForJourney(entry: CodexEntry) {
+  const stepIds = new Set(entry.steps?.map((step) => step.codexId) ?? []);
+  const sourceIds = new Set(entry.meta.sourceIds);
+  const patternsById = new Map<string, OntologyWayProjection>();
+
+  for (const entityId of new Set([...stepIds, ...sourceIds])) {
+    getPatternsForEntity(entityId).forEach((pattern) => patternsById.set(pattern.id, pattern));
+  }
+
+  return Array.from(patternsById.values()).slice(0, 3);
+}
+
+function getSymbolWayRelationIds(entryId: string) {
+  return getPatternsForEntity(entryId).flatMap((pattern) => pattern.carrierRelationIds);
 }
 
 function getPatternResonance(entry: CodexEntry, excludedRelationIds: Set<string>) {
@@ -542,12 +748,66 @@ function DetailSection({
   );
 }
 
+function PathContextCard({ context }: { context: ResolvedPathContext | null }) {
+  if (!context) {
+    return null;
+  }
+
+  return (
+    <section className="mt-8 max-w-3xl border border-gold/[0.16] bg-gold/[0.035] px-4 py-4 backdrop-blur-md sm:px-5">
+      <p className="symbol-kicker text-cyan-soft">Pfadspur</p>
+      <p className="mt-3 flex flex-wrap items-center gap-2 font-serif text-xl italic leading-snug text-foreground-strong sm:text-2xl">
+        {context.labels.map((label, index) => (
+          <span key={`${label}-${index}`} className="inline-flex items-center gap-2">
+            {index > 0 ? <span className="text-gold/45" aria-hidden="true">-&gt;</span> : null}
+            <span>{label}</span>
+          </span>
+        ))}
+      </p>
+      <p className="symbol-copy mt-2 text-sm italic text-muted-soft sm:text-base">{context.note}</p>
+      <Link
+        href={context.returnHref}
+        className="mt-4 inline-flex border border-gold/20 bg-black/[0.12] px-3 py-2 text-[0.58rem] uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500 hover:border-gold/35 hover:text-gold"
+      >
+        {context.returnLabel}
+      </Link>
+    </section>
+  );
+}
+
 function FieldRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="border-t border-white/[0.06] py-4 first:border-t-0 first:pt-0 last:pb-0">
       <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">{label}</dt>
       <dd className="mt-2 text-sm leading-relaxed text-foreground-strong sm:text-base">{value}</dd>
     </div>
+  );
+}
+
+function VisibleHiddenSection({
+  entity,
+  activeContext,
+}: {
+  entity: OntologyEntity;
+  activeContext?: CodexContextFocus;
+}) {
+  if (!entity.visibleHidden) {
+    return null;
+  }
+
+  return (
+    <DetailSection title="Sichtbar / Verborgen" activeContext={activeContext}>
+      <dl className="grid gap-4 sm:grid-cols-2">
+        <div className="border border-white/[0.06] bg-black/[0.1] p-4">
+          <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Sichtbar</dt>
+          <dd className="mt-3 font-serif text-xl italic text-foreground-strong">{entity.visibleHidden.visible}</dd>
+        </div>
+        <div className="border border-gold/15 bg-gold/[0.035] p-4">
+          <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Verborgen</dt>
+          <dd className="mt-3 font-serif text-xl italic text-gold/85">{entity.visibleHidden.hidden}</dd>
+        </div>
+      </dl>
+    </DetailSection>
   );
 }
 
@@ -598,6 +858,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const ontologyEntity = getOntologyEntity(entry.id);
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
+  const pathContext = resolvePathContext({ entry, params: resolvedSearchParams });
+  const symbolWayRelationIds = !isPatternEntity && !isCoreConceptEntity ? new Set(getSymbolWayRelationIds(entry.id)) : new Set<string>();
   const symbolNetworkReturnLens =
     normalizeSymbolNetworkReturnLens(getSearchParamValue(resolvedSearchParams, "lens"))
     ?? normalizeSymbolNetworkReturnLens(activeFocus ?? undefined);
@@ -675,6 +937,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           ) : null}
         </header>
 
+        <PathContextCard context={pathContext} />
+
         <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="grid gap-5">
             <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
@@ -689,6 +953,20 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               <CoreConceptCodexSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
+            ) : null}
+
+            {!isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
+              <VisibleHiddenSection
+                entity={ontologyEntity}
+                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
+            ) : null}
+
+            {!isPatternEntity && !isCoreConceptEntity ? (
+              <WaysBeginningSection
+                entry={entry}
+                activeContext={activeFocus === "story" ? "story" : undefined}
               />
             ) : null}
 
@@ -732,6 +1010,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               <OntologyResonanceSection
                 entry={entry}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+                excludedRelationIds={symbolWayRelationIds}
               />
             ) : null}
             <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} />
@@ -747,15 +1026,15 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             <DetailSection title="Einordnung">
               <dl>
                 <FieldRow label="Typ" value={isPatternEntity ? "Biblisches Muster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} />
-                {entry.symbolRoomSlug ? (
+                {hasSymbolRoom(entry.symbolRoomSlug) ? (
                   <FieldRow
                     label="Symbolraum"
                     value={
                       <Link
-                        href={`/symbole/${entry.symbolRoomSlug}`}
+                        href={buildRoomHref(entry.symbolRoomSlug, { from: "codex", symbol: entry.symbolRoomSlug })}
                         className="font-serif italic text-gold/85 transition-colors duration-500 hover:text-gold"
                       >
-                        {entry.title}
+                        {getOntologyEntityTitle(entry.symbolRoomSlug)}-Raum betreten
                       </Link>
                     }
                   />
@@ -893,8 +1172,37 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
     return null;
   }
 
+  const entryStep = entry.steps[0];
+  const exitCore = getJourneyExit(entry);
+  const relatedPatterns = getRelatedPatternsForJourney(entry);
+
   return (
-    <DetailSection title="Gefuehrter Pfad" activeContext={activeContext}>
+    <DetailSection title="Weg" activeContext={activeContext}>
+      {entryStep ? (
+        <div className="mb-5 border border-gold/15 bg-gold/[0.035] px-4 py-4">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Eintritt</p>
+          <p className="mt-3 font-serif text-2xl italic text-foreground-strong">{entryStep.label}</p>
+          {entryStep.description ? <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{entryStep.description}</p> : null}
+        </div>
+      ) : null}
+
+      <div className="mb-5 border border-white/[0.065] bg-black/10 px-4 py-4">
+        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Stationen</p>
+        <ol className="mt-3 grid gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+          {entry.steps.map((step, index) => (
+            <li key={`trail-${step.id}`} className="flex items-center gap-2">
+              <span className="font-serif text-lg italic text-foreground-strong">{step.label}</span>
+              {index < entry.steps!.length - 1 ? (
+                <span className="text-gold/55" aria-hidden="true">
+                  <span className="sm:hidden">&darr;</span>
+                  <span className="hidden sm:inline">-&gt;</span>
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ol>
+      </div>
+
       <ol className="grid gap-4">
         {entry.steps.map((step, index) => {
           const linkedEntry = resolveLinkedCodexEntry(step.codexId);
@@ -905,12 +1213,27 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
                 <span className="flex h-9 w-9 items-center justify-center border border-gold/20 font-serif text-lg text-gold/85">{index + 1}</span>
                 <div>
                   {linkedEntry ? (
-                    <Link href={`/codex/${linkedEntry.id}`} className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold">{step.label}</Link>
+                    <Link
+                      href={withPathContext(`/codex/${linkedEntry.id}`, { from: entry.id })}
+                      className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold"
+                    >
+                      {step.label}
+                    </Link>
                   ) : (
                     <p className="font-serif text-xl italic text-foreground-strong">{step.label}</p>
                   )}
                   {step.description ? <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{step.description}</p> : null}
-                  <p className="mt-3 text-[0.58rem] tracking-[0.24em] text-gold/60">{linkedEntry?.title ?? "Eintrag nicht gefunden"}</p>
+                  {linkedEntry ? (
+                    <p className="mt-3 text-[0.58rem] tracking-[0.24em] text-gold/60">{linkedEntry.title}</p>
+                  ) : null}
+                  {linkedEntry && hasSymbolRoom(linkedEntry.symbolRoomSlug) ? (
+                    <Link
+                      href={buildRoomHref(linkedEntry.symbolRoomSlug, { path: entry.id, symbol: linkedEntry.symbolRoomSlug })}
+                      className="mt-3 inline-flex text-[0.58rem] uppercase tracking-[0.2em] text-cyan-soft/75 transition-colors duration-500 hover:text-cyan-soft"
+                    >
+                      {getOntologyEntityTitle(linkedEntry.symbolRoomSlug)}-Raum betreten
+                    </Link>
+                  ) : null}
                 </div>
               </div>
 
@@ -938,6 +1261,30 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
           );
         })}
       </ol>
+
+      {exitCore ? (
+        <div className="mt-6 border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Dieser Weg oeffnet sich zu</p>
+          <WayLinkCard
+            href={withPathContext(`/codex/${exitCore.id}`, { path: entry.id })}
+            title={exitCore.title}
+            note={exitCore.summary}
+            movementSteps={entry.steps.map((step) => step.label)}
+            className="mt-4"
+          />
+        </div>
+      ) : null}
+
+      {relatedPatterns.length > 0 ? (
+        <div className="mt-6 border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verwandte Muster</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {relatedPatterns.map((way) => (
+              <WayProjectionCard key={way.id} way={way} context={{ from: entry.id }} />
+            ))}
+          </div>
+        </div>
+      ) : null}
     </DetailSection>
   );
 }
@@ -1294,6 +1641,46 @@ function SymbolicTrailSection({ entry, activeContext }: { entry: CodexEntry; act
   );
 }
 
+function WaysBeginningSection({
+  entry,
+  activeContext,
+}: {
+  entry: CodexEntry;
+  activeContext?: CodexContextFocus;
+}) {
+  const patternWays = getPatternsForEntity(entry.id);
+  const journeyWays = getJourneysForEntity(entry.id);
+  const hasWays = patternWays.length > 0 || journeyWays.length > 0;
+
+  if (!hasWays) {
+    return null;
+  }
+
+  return (
+    <DetailSection title="Wege, die hier beginnen" activeContext={activeContext}>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {patternWays.slice(0, 3).map((way, index) => (
+          <WayProjectionCard
+            key={way.id}
+            way={way}
+            context={{ from: entry.id }}
+            className={index > 2 ? "hidden sm:block" : ""}
+          />
+        ))}
+        {journeyWays.slice(0, Math.max(0, 3 - patternWays.slice(0, 3).length)).map((journey) => (
+          <WayLinkCard
+            key={journey.id}
+            href={withPathContext(`/codex/${journey.id}`, { from: entry.id })}
+            title={journey.title}
+            note={journey.summary}
+            movementSteps={journey.steps?.map((step) => step.label) ?? []}
+          />
+        ))}
+      </div>
+    </DetailSection>
+  );
+}
+
 function OntologyEndpointLink({
   endpoint,
   className = "",
@@ -1315,6 +1702,65 @@ function OntologyEndpointLink({
   );
 }
 
+function WayMovement({ steps }: { steps: string[] }) {
+  if (steps.length === 0) {
+    return null;
+  }
+
+  return (
+    <p className="mt-2 text-[0.58rem] uppercase tracking-[0.2em] text-gold/65">
+      {getMovementLine(steps)}
+    </p>
+  );
+}
+
+function WayLinkCard({
+  href,
+  title,
+  note,
+  movementSteps = [],
+  className = "",
+}: {
+  href: string;
+  title: string;
+  note: string;
+  movementSteps?: string[];
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`block border border-gold/15 bg-gold/[0.035] p-4 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.06] ${className}`}
+    >
+      <p className="font-serif text-xl italic text-foreground-strong">{title}</p>
+      <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{note}</p>
+      <WayMovement steps={movementSteps} />
+    </Link>
+  );
+}
+
+function WayProjectionCard({
+  way,
+  note,
+  context,
+  className = "",
+}: {
+  way: OntologyWayProjection;
+  note?: string;
+  context?: PathContextLink;
+  className?: string;
+}) {
+  return (
+    <WayLinkCard
+      href={context ? withPathContext(way.href, context) : way.href}
+      title={way.title}
+      note={note ?? way.summary}
+      movementSteps={way.movementSteps}
+      className={className}
+    />
+  );
+}
+
 function PatternCodexSection({
   entity,
   entry,
@@ -1326,11 +1772,23 @@ function PatternCodexSection({
 }) {
   const movement = getPatternFallbackMovement(entity);
   const carriers = getPatternCarriers(entity);
-  const excludedRelationIds = new Set(carriers.map(({ relation }) => relation.id));
+  const destinations = getPatternDestinations(entity);
+  const targetCores = getTargetCoresForPattern(entity.id);
+  const relatedJourneys = getJourneysForPattern(entity, carriers);
+  const destinationRelationIds = destinations.relationDestinations.map(({ relation }) => relation.id);
+  const excludedRelationIds = new Set([
+    ...carriers.map(({ relation }) => relation.id),
+    ...destinationRelationIds,
+  ]);
   const resonance = getPatternResonance(entry, excludedRelationIds);
   const hasPolarity = Boolean(entity.polarity);
+  const nextCarriers = carriers.slice(0, 1);
+  const nextCores = targetCores.slice(0, 1);
+  const nextJourneys = relatedJourneys.slice(0, Math.max(0, 3 - nextCarriers.length - nextCores.length));
+  const roomStation = getPatternRoomStation(entity.id);
+  const hasNextWays = Boolean(roomStation) || nextCarriers.length > 0 || nextCores.length > 0 || nextJourneys.length > 0 || destinations.textDestinations.length > 0;
 
-  if (movement.length === 0 && !hasPolarity && carriers.length === 0 && resonance.length === 0) {
+  if (movement.length === 0 && !hasPolarity && !hasNextWays && resonance.length === 0) {
     return null;
   }
 
@@ -1386,22 +1844,61 @@ function PatternCodexSection({
           </div>
         ) : null}
 
-        {carriers.length > 0 ? (
+        {hasNextWays ? (
           <div className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Getragen von</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {carriers.map(({ relation, endpoint }, index) => {
-                const className = "border border-cyan-soft/15 bg-cyan-soft/[0.04] px-3 py-2 text-xs uppercase tracking-[0.18em] text-cyan-soft/85 transition-colors duration-500";
-                const visibilityClassName = index > 2 ? "hidden sm:inline-flex" : "";
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {roomStation ? (
+                <WayLinkCard
+                  href={buildRoomHref(roomStation.roomId, { from: entity.id, symbol: roomStation.roomId })}
+                  title={roomStation.title}
+                  note={roomStation.text}
+                  movementSteps={movement}
+                />
+              ) : null}
+              {nextCarriers.map(({ relation, endpoint }) => (
+                endpoint.href ? (
+                  <WayLinkCard
+                    key={relation.id}
+                    href={withPathContext(endpoint.href, { from: entity.id })}
+                    title={endpoint.label}
+                    note={relation.shortResonance}
+                    movementSteps={movement}
+                  />
+                ) : null
+              ))}
+              {nextCores.map(({ relation, entity: core }) => (
+                <WayLinkCard
+                  key={relation.id}
+                  href={withPathContext(`/codex/${core.id}`, { path: entity.id })}
+                  title={`Zur Achse ${core.title}`}
+                  note={relation.shortResonance}
+                  movementSteps={movement}
+                />
+              ))}
+              {nextJourneys.map((journey) => (
+                <WayLinkCard
+                  key={journey.id}
+                  href={withPathContext(`/codex/${journey.id}`, { from: entity.id })}
+                  title="Journey betreten"
+                  note={journey.steps?.map((step) => step.label).join(" -> ") ?? journey.summary}
+                  movementSteps={journey.steps?.map((step) => step.label) ?? []}
+                />
+              ))}
+              {destinations.textDestinations.map((destination) => {
+                if (!destination.href || nextCores.some(({ entity: core }) => normalizeText(core.title) === normalizeText(destination.label))) {
+                  return null;
+                }
 
-                return endpoint.href ? (
-                  <Link key={relation.id} href={endpoint.href} className={`${className} ${visibilityClassName} hover:border-cyan-soft/30 hover:text-cyan-soft`}>
-                    {endpoint.label}
-                  </Link>
-                ) : (
-                  <span key={relation.id} className={`${className} ${visibilityClassName}`}>
-                    {endpoint.label}
-                  </span>
+                return (
+                  <WayLinkCard
+                    key={destination.label}
+                    href={withPathContext(destination.href, { path: entity.id })}
+                    title={destination.label}
+                    note="Diese Bewegung oeffnet sich in diese Richtung."
+                    movementSteps={movement}
+                    className="hidden md:block"
+                  />
                 );
               })}
             </div>
@@ -1455,30 +1952,6 @@ function PatternCodexSection({
   );
 }
 
-function CoreConceptRelationCard({
-  item,
-  className = "",
-}: {
-  item: ReturnType<typeof buildOntologyRelationItems>[number];
-  className?: string;
-}) {
-  return (
-    <article className={`border border-white/[0.06] bg-black/[0.1] p-4 ${className}`}>
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
-          {item.label}
-        </span>
-        <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
-          {item.markerLabel}
-        </span>
-      </div>
-      <OntologyEndpointLink endpoint={item.endpoint} className="mt-3 block text-2xl" />
-      {item.note ? <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{item.note}</p> : null}
-      {item.explanation ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/78">{item.explanation}</p> : null}
-    </article>
-  );
-}
-
 function CoreConceptCodexSection({
   entity,
   activeContext,
@@ -1486,12 +1959,10 @@ function CoreConceptCodexSection({
   entity: OntologyEntity;
   activeContext?: CodexContextFocus;
 }) {
-  const relations = getCoreConceptRelations(entity);
+  const leadingPatterns = getPatternsLeadingToCore(entity.id);
   const hasContent =
     Boolean(entity.polarity) ||
-    relations.incoming.length > 0 ||
-    relations.outgoing.length > 0 ||
-    relations.further.length > 0;
+    leadingPatterns.length > 0;
 
   if (!hasContent) {
     return null;
@@ -1532,34 +2003,18 @@ function CoreConceptCodexSection({
           </div>
         ) : null}
 
-        {relations.incoming.length > 0 ? (
+        {leadingPatterns.length > 0 ? (
           <div className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zulaufende Symbole</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zulaufende Bewegungen</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {relations.incoming.map((item, index) => (
-                <CoreConceptRelationCard key={item.relation.id} item={item} className={index > 2 ? "hidden sm:block" : ""} />
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {relations.outgoing.length > 0 ? (
-          <div className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Oeffnet sich in</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {relations.outgoing.map((item, index) => (
-                <CoreConceptRelationCard key={item.relation.id} item={item} className={index > 2 ? "hidden sm:block" : ""} />
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {relations.further.length > 0 ? (
-          <div className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitere Resonanzen</p>
-            <div className="mt-4 grid gap-3">
-              {relations.further.map((item, index) => (
-                <CoreConceptRelationCard key={item.relation.id} item={item} className={index > 2 ? "hidden sm:block" : ""} />
+              {leadingPatterns.map((way, index) => (
+                <WayProjectionCard
+                  key={way.id}
+                  way={way}
+                  note={way.summary}
+                  context={{ from: entity.id }}
+                  className={index > 2 ? "hidden sm:block" : ""}
+                />
               ))}
             </div>
           </div>

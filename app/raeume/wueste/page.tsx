@@ -2,9 +2,9 @@ import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
 import { wuesteEngineData } from "@/components/rooms/wueste/wuesteEngineData";
 import {
   resolveRoomInitialStateId,
-  resolveSymbolNetworkRoomContext,
   type RoomSearchParams,
 } from "@/lib/meaning/resolveRoomInitialStateId";
+import { resolveRoomContext } from "@/lib/rooms/roomContext";
 
 export const metadata = {
   title: "Wueste-Raum",
@@ -18,7 +18,7 @@ export default async function WuesteRaumPage({ searchParams }: { searchParams: R
     toSymbolSlug: "wueste",
     validStateIds: wuesteEngineData.states.map((state) => state.id),
   });
-  const symbolNetworkContext = resolveSymbolNetworkRoomContext(resolvedSearchParams, "wueste");
+  const roomContext = resolveRoomContext(resolvedSearchParams, "wueste");
 
-  return <SymbolEngineRoom data={wuesteEngineData} initialStateId={initialStateId} symbolNetworkContext={symbolNetworkContext} />;
+  return <SymbolEngineRoom data={wuesteEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
 }
