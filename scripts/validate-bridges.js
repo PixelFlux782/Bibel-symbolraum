@@ -33,6 +33,7 @@ const {
 
 const {
   dedupeCodexChips,
+  getSymbolCodexAnchorBridge,
   getSymbolCodexChipLinks,
   getWaterCodexAnchorBridge,
   getWaterCodexChipLinks,
@@ -335,6 +336,8 @@ function validateLightPreparedBridge() {
   const lightChipLinks = getSymbolCodexChipLinks("licht");
   const lightMeaningFields = lightBridge?.codexGates?.meaningFields ?? [];
   const lightScriptureAnchors = lightBridge?.codexGates?.scriptureAnchors ?? [];
+  const lightAnchorIds = lightBridge?.codexAnchorBridge?.anchorIds ?? [];
+  const requiredLightAnchorIds = ["licht", "offenbarung", "ordnung", "erkenntnis", "glanz", "auge", "himmel", "genesis-1-3"];
   const expectedMovement = "Finsternis -> Ruf -> Licht -> Scheidung -> Ordnung -> Erkenntnis";
 
   [
@@ -344,7 +347,9 @@ function validateLightPreparedBridge() {
     failIf(lightBridge?.symbolNetworkHref === "/symbolnetz?symbol=licht", "Light bridge prepared: symbolNetworkHref must point to the light symbol network.", lightBridge?.symbolNetworkHref),
     failIf(lightBridge?.pathLabel === "Lichtpfad", "Light bridge prepared: pathLabel must remain readable.", lightBridge?.pathLabel),
     failIf(lightBridge?.reflectionSource.label === "Spur aus dem Lichtraum", "Light bridge prepared: reflection source label missing.", lightBridge?.reflectionSource),
-    failIf(lightBridge?.codexAnchorBridge === undefined, "Light missing full return loop: codexAnchorBridge should stay absent in Phase 30A.", lightBridge?.codexAnchorBridge),
+    failIf(Boolean(lightBridge?.codexAnchorBridge), "Light anchor return bridge prepared: codexAnchorBridge is missing.", lightBridge?.codexAnchorBridge),
+    failIf(lightAnchorIds.length === new Set(lightAnchorIds).size, "Light anchor return bridge prepared: duplicate anchor found.", lightAnchorIds),
+    failIf(requiredLightAnchorIds.every((anchorId) => lightAnchorIds.includes(anchorId)), "Light anchor return bridge prepared: central light anchor id is absent.", lightAnchorIds),
     failIf(lightScriptureAnchors.some((anchor) => anchor.id === "genesis-1-3"), "Light scripture gate missing: Genesis 1,3 must be present.", lightScriptureAnchors),
   ].forEach((error) => {
     if (error) errors.push(error);
@@ -357,10 +362,10 @@ function validateLightPreparedBridge() {
     });
   }
 
-  if (!lightBridge?.codexAnchorBridge) {
+  if (!lightBridge?.codexAnchorBridge?.personalPathLabel) {
     warnings.push({
-      message: "Light missing full return loop: warning only.",
-      details: "Phase 30A prepares Licht without Mein-Pfad return enforcement.",
+      message: "Full light reflection return loop missing: warning only.",
+      details: "Phase 30B prepares Licht anchor returns without Mein-Pfad return enforcement.",
     });
   }
 
@@ -397,6 +402,47 @@ function validateLightPreparedBridge() {
       errors.push({
         message: `Light bridge prepared: raw technical label is visible: "${chip.label}".`,
         details: chip,
+      });
+    }
+  });
+
+  lightAnchorIds.forEach((anchorId) => {
+    const hasTarget = Boolean(getCodexEntryByExactId(anchorId) || getOntologyEntity(anchorId));
+    const anchorBridge = getSymbolCodexAnchorBridge("licht", anchorId);
+
+    if (!hasTarget) {
+      warnings.push({
+        message: `Light anchor targets exist or fallback safely: "${anchorId}" uses no known Codex or ontology target.`,
+        details: lightAnchorIds,
+      });
+    }
+
+    if (!anchorBridge) {
+      warnings.push({
+        message: `Light anchor return bridge prepared: "${anchorId}" has no return bridge.`,
+        details: lightAnchorIds,
+      });
+      return;
+    }
+
+    if (anchorId !== "licht" && (anchorBridge.returnHref !== "/codex/licht" || !routeExists(anchorBridge.returnHref))) {
+      warnings.push({
+        message: `Light anchor return bridge prepared: "${anchorId}" has no valid return link to the light Codex.`,
+        details: anchorBridge,
+      });
+    }
+
+    if (anchorId !== "licht" && (!anchorBridge.roomHref || !routeExists(anchorBridge.roomHref))) {
+      warnings.push({
+        message: `Light anchor return bridge prepared: "${anchorId}" has no valid light room link.`,
+        details: anchorBridge,
+      });
+    }
+
+    if (anchorId !== "licht" && !anchorBridge.roomHref.includes(`path=${encodeURIComponent(anchorId)}`)) {
+      warnings.push({
+        message: `Light anchor return bridge prepared: "${anchorId}" room link does not keep path context.`,
+        details: anchorBridge,
       });
     }
   });

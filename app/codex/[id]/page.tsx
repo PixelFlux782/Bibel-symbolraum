@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexReflectionCard } from "@/components/CodexReflectionCard";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
-import { getSymbolCodexChipLinks, getWaterCodexAnchorBridge, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
+import { getSymbolCodexAnchorBridge, getSymbolCodexChipLinks, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
@@ -813,10 +813,10 @@ function PathContextCard({ context }: { context: ResolvedPathContext | null }) {
   );
 }
 
-function WaterAnchorReturnCard({ entryId }: { entryId: string }) {
-  const bridge = getWaterCodexAnchorBridge(entryId);
+function SymbolAnchorReturnCard({ entryId }: { entryId: string }) {
+  const bridge = getSymbolCodexAnchorBridge("wasser", entryId) ?? getSymbolCodexAnchorBridge("licht", entryId);
 
-  if (!bridge || entryId === "wasser") {
+  if (!bridge || entryId === bridge.symbolId) {
     return null;
   }
 
@@ -842,6 +842,14 @@ function WaterAnchorReturnCard({ entryId }: { entryId: string }) {
             className="border border-white/[0.08] bg-black/[0.1] px-3 py-2 text-[0.58rem] uppercase tracking-[0.18em] text-muted-soft transition-colors duration-500 hover:border-gold/20 hover:text-gold/85"
           >
             {bridge.personalPathLabel}
+          </Link>
+        ) : null}
+        {bridge.symbolNetworkHref && bridge.symbolNetworkLabel ? (
+          <Link
+            href={bridge.symbolNetworkHref}
+            className="border border-white/[0.08] bg-black/[0.1] px-3 py-2 text-[0.58rem] uppercase tracking-[0.18em] text-muted-soft transition-colors duration-500 hover:border-cyan-soft/25 hover:text-cyan-soft/85"
+          >
+            {bridge.symbolNetworkLabel}
           </Link>
         ) : null}
       </div>
@@ -1280,7 +1288,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         </header>
 
         <PathContextCard context={pathContext} />
-        <WaterAnchorReturnCard entryId={entry.id} />
+        <SymbolAnchorReturnCard entryId={entry.id} />
 
         <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="grid gap-5">

@@ -25,6 +25,12 @@ export type WaterCodexAnchorBridge = {
   personalPathLabel?: string;
 };
 
+export type SymbolCodexAnchorBridge = WaterCodexAnchorBridge & {
+  symbolId: string;
+  symbolNetworkHref?: string;
+  symbolNetworkLabel?: string;
+};
+
 function normalizeCodexTerm(value: string) {
   return value
     .trim()
@@ -203,31 +209,39 @@ export function getWaterCodexChipLinks() {
   return getSymbolCodexChipLinks("wasser");
 }
 
-export function getWaterCodexAnchorBridge(anchorId: string): WaterCodexAnchorBridge | undefined {
-  const waterBridge = getSymbolPathConfig("wasser");
-  const anchorBridge = waterBridge?.codexAnchorBridge;
+export function getSymbolCodexAnchorBridge(symbolId: string, anchorId: string): SymbolCodexAnchorBridge | undefined {
+  const symbolBridge = getSymbolPathConfig(symbolId);
+  const anchorBridge = symbolBridge?.codexAnchorBridge;
 
-  if (!waterBridge || !anchorBridge) {
+  if (!symbolBridge || !anchorBridge) {
     return undefined;
   }
 
   const anchorIds = new Set<string>(anchorBridge.anchorIds);
   const contextLabels: Record<string, string> = anchorBridge.contextLabels ?? {};
   const specificContextLabel = contextLabels[anchorId];
+  const personalPathLabel = "personalPathLabel" in anchorBridge ? anchorBridge.personalPathLabel : undefined;
 
   if (!anchorIds.has(anchorId)) {
     return undefined;
   }
 
   return {
+    symbolId: symbolBridge.symbolId,
     anchorId,
     contextLabel: specificContextLabel ?? anchorBridge.defaultContextLabel,
-    returnHref: waterBridge.codexHref,
+    returnHref: symbolBridge.codexHref,
     returnLabel: anchorBridge.returnLabel,
-    roomHref: `${waterBridge.roomHref}?from=codex&path=${encodeURIComponent(anchorId)}&symbol=${waterBridge.symbolId}`,
+    roomHref: `${symbolBridge.roomHref}?from=codex&path=${encodeURIComponent(anchorId)}&symbol=${symbolBridge.symbolId}`,
     roomLabel: anchorBridge.roomLabel,
     roomTraceLabel: specificContextLabel ? anchorBridge.roomTraceLabel : anchorBridge.roomLabel,
-    personalPathHref: "/mein-pfad",
-    personalPathLabel: anchorBridge.personalPathLabel,
+    symbolNetworkHref: symbolBridge.symbolNetworkHref,
+    symbolNetworkLabel: symbolId === "licht" ? "Licht im Symbolnetz ansehen" : undefined,
+    personalPathHref: personalPathLabel ? "/mein-pfad" : undefined,
+    personalPathLabel,
   };
+}
+
+export function getWaterCodexAnchorBridge(anchorId: string): WaterCodexAnchorBridge | undefined {
+  return getSymbolCodexAnchorBridge("wasser", anchorId);
 }

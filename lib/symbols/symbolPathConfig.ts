@@ -139,7 +139,25 @@ export const symbolPathConfigs = {
         { id: "genesis-1-3", reference: "Genesis 1,3", label: "Genesis 1,3", href: "/codex/genesis-1-3" },
       ],
     },
-    codexAnchorBridge: undefined,
+    codexAnchorBridge: {
+      anchorIds: [
+        "licht",
+        "offenbarung",
+        "ordnung",
+        "erkenntnis",
+        "glanz",
+        "auge",
+        "himmel",
+        "genesis-1-3",
+      ],
+      defaultContextLabel: "Teil des Lichtpfades",
+      contextLabels: {
+        "genesis-1-3": "Licht als erstes Sichtbarwerden",
+      },
+      returnLabel: "Zurueck zum Licht-Codex",
+      roomLabel: "Den Lichtraum betreten",
+      roomTraceLabel: "Diese Spur im Lichtraum bewegen",
+    },
     movement: ["Finsternis", "Ruf", "Licht", "Scheidung", "Ordnung", "Erkenntnis"],
   },
 } as const satisfies Record<string, SymbolPathConfig>;
