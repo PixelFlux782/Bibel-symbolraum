@@ -157,6 +157,7 @@ export const symbolPathConfigs = {
       returnLabel: "Zurueck zum Licht-Codex",
       roomLabel: "Den Lichtraum betreten",
       roomTraceLabel: "Diese Spur im Lichtraum bewegen",
+      personalPathLabel: "Meinen Lichtpfad ansehen",
     },
     movement: ["Finsternis", "Ruf", "Licht", "Scheidung", "Ordnung", "Erkenntnis"],
   },

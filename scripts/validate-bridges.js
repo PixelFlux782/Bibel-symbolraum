@@ -339,6 +339,29 @@ function validateLightPreparedBridge() {
   const lightAnchorIds = lightBridge?.codexAnchorBridge?.anchorIds ?? [];
   const requiredLightAnchorIds = ["licht", "offenbarung", "ordnung", "erkenntnis", "glanz", "auge", "himmel", "genesis-1-3"];
   const expectedMovement = "Finsternis -> Ruf -> Licht -> Scheidung -> Ordnung -> Erkenntnis";
+  const sparseLightReflections = parseStoredReflections(JSON.stringify([{
+    id: "old-light",
+    symbol: "licht",
+    text: "Eine alte Lichtspur.",
+    createdAt: "2024-06-01T00:00:00.000Z",
+  }]));
+  const pathLightReflections = parseStoredReflections(JSON.stringify([{
+    id: "light-genesis",
+    symbol: "Licht",
+    symbolSlug: "licht",
+    room: "licht",
+    answer: "Eine Spur am ersten Sichtbarwerden.",
+    pathLabel: "Genesis 1,3",
+    pathContext: { from: "codex", path: "genesis-1-3", symbol: "licht" },
+    createdAt: "2024-06-02T00:00:00.000Z",
+  }]));
+  const sparseLightLinks = resolveReflectionReturnLinks(sparseLightReflections[0]);
+  const pathLightLinks = resolveReflectionReturnLinks(pathLightReflections[0]);
+  const lightReflectionLinks = [...sparseLightLinks, ...pathLightLinks];
+  const lightMeinPfadRoomHref = pathLightLinks.find((link) => link.key === "room")?.href;
+  const lightMeinPfadRoomContext = resolveRoomContext({ from: "mein-pfad", symbol: "licht" }, "licht");
+  const lightMeinPfadPathRoomContext = resolveRoomContext({ from: "mein-pfad", path: "genesis-1-3", symbol: "licht" }, "licht");
+  const reflectionSource = fs.readFileSync(path.join(projectRoot, "components", "rooms", "engine", "ReflectionOverlay.tsx"), "utf8");
 
   [
     failIf(Boolean(lightBridge), "Light bridge prepared: symbol bridge config for licht was not found."),
@@ -348,9 +371,23 @@ function validateLightPreparedBridge() {
     failIf(lightBridge?.pathLabel === "Lichtpfad", "Light bridge prepared: pathLabel must remain readable.", lightBridge?.pathLabel),
     failIf(lightBridge?.reflectionSource.label === "Spur aus dem Lichtraum", "Light bridge prepared: reflection source label missing.", lightBridge?.reflectionSource),
     failIf(Boolean(lightBridge?.codexAnchorBridge), "Light anchor return bridge prepared: codexAnchorBridge is missing.", lightBridge?.codexAnchorBridge),
+    failIf(lightBridge?.codexAnchorBridge?.personalPathLabel === "Meinen Lichtpfad ansehen", "Light reflection loop missing: personal path label is absent.", lightBridge?.codexAnchorBridge),
     failIf(lightAnchorIds.length === new Set(lightAnchorIds).size, "Light anchor return bridge prepared: duplicate anchor found.", lightAnchorIds),
     failIf(requiredLightAnchorIds.every((anchorId) => lightAnchorIds.includes(anchorId)), "Light anchor return bridge prepared: central light anchor id is absent.", lightAnchorIds),
     failIf(lightScriptureAnchors.some((anchor) => anchor.id === "genesis-1-3"), "Light scripture gate missing: Genesis 1,3 must be present.", lightScriptureAnchors),
+    failIf(sparseLightLinks.some((link) => link.label === "Zum Licht-Codex"), "Light reflection return link missing: sparse light reflection gets Codex fallback.", sparseLightLinks),
+    failIf(sparseLightLinks.some((link) => link.label === "Den Lichtraum erneut betreten"), "Light reflection return link missing: sparse light reflection gets room fallback.", sparseLightLinks),
+    failIf(sparseLightLinks.some((link) => link.label === "Licht im Symbolnetz ansehen"), "Light reflection return link missing: sparse light reflection gets symbol network fallback.", sparseLightLinks),
+    failIf(!sparseLightLinks.some((link) => link.key === "trace"), "Light reflection return link invalid: sparse light reflection without path renders no trace link.", sparseLightLinks),
+    failIf(pathLightLinks.some((link) => link.key === "trace" && link.href === "/codex/genesis-1-3" && link.label === "Zur Lichtspur zurueckkehren"), "Light reflection return link missing: path reflection should return to its Codex anchor.", pathLightLinks),
+    failIf(Boolean(lightMeinPfadRoomHref?.includes("from=mein-pfad")), "Light reflection return link invalid: Mein Pfad room link should keep personal origin.", lightMeinPfadRoomHref),
+    failIf(Boolean(lightMeinPfadRoomHref?.includes("path=genesis-1-3")), "Light reflection return link invalid: Mein Pfad room link should keep path context.", lightMeinPfadRoomHref),
+    failIf(Boolean(lightMeinPfadRoomHref?.includes("symbol=licht")), "Light reflection return link invalid: Mein Pfad room link should keep symbol context.", lightMeinPfadRoomHref),
+    failIf(lightMeinPfadRoomContext?.source === "mein-pfad" && lightMeinPfadRoomContext.text.includes("bewahrten Lichtspur"), "Light room context missing: room cannot read personal path origin context.", lightMeinPfadRoomContext),
+    failIf(lightMeinPfadPathRoomContext?.mobileText === "Deine Spur aus: Genesis 1,3", "Light room context missing: path title is not shown readably.", lightMeinPfadPathRoomContext),
+    failIf(reflectionSource.includes("room: data.slug"), "Light reflection persistence missing: room field is not stored."),
+    failIf(reflectionSource.includes("sourceLabel:"), "Light reflection persistence missing: sourceLabel field is not stored."),
+    failIf(reflectionSource.includes("text: trimmedAnswer"), "Light reflection persistence missing: text compatibility field is not stored."),
   ].forEach((error) => {
     if (error) errors.push(error);
   });
@@ -359,13 +396,6 @@ function validateLightPreparedBridge() {
     warnings.push({
       message: "Light bridge prepared: movement differs from the Phase 30A sequence.",
       details: lightBridge.movement,
-    });
-  }
-
-  if (!lightBridge?.codexAnchorBridge?.personalPathLabel) {
-    warnings.push({
-      message: "Full light reflection return loop missing: warning only.",
-      details: "Phase 30B prepares Licht anchor returns without Mein-Pfad return enforcement.",
     });
   }
 
@@ -402,6 +432,22 @@ function validateLightPreparedBridge() {
       errors.push({
         message: `Light bridge prepared: raw technical label is visible: "${chip.label}".`,
         details: chip,
+      });
+    }
+  });
+
+  lightReflectionLinks.forEach((link) => {
+    if (!routeExists(link.href)) {
+      errors.push({
+        message: `Light reflection return link invalid: "${link.label}" points to a missing route.`,
+        details: link,
+      });
+    }
+
+    if (/^(licht|genesis-1-3|offenbarung|ordnung|erkenntnis|glanz|auge|himmel)$/.test(link.label)) {
+      errors.push({
+        message: `Light reflection return link invalid: raw technical label is visible: "${link.label}".`,
+        details: link,
       });
     }
   });

@@ -1,3 +1,4 @@
+import { getCodexEntry } from "@/lib/codex/getCodexEntry";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { getOntologyEntity } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
@@ -66,11 +67,21 @@ function getSingleSearchParam(value: string | string[] | undefined): string | un
 
 function getTitle(id: string | undefined) {
   if (!id) return undefined;
-  return resolveCodexEntry(id)?.title ?? getOntologyEntity(id)?.title;
+  return getCodexEntry(id)?.title ?? resolveCodexEntry(id)?.title ?? getOntologyEntity(id)?.title;
 }
 
 function getRoomLabel(symbolId: string) {
   return getSymbolPathConfig(symbolId)?.label ?? roomLabels[symbolId] ?? getTitle(symbolId) ?? symbolId;
+}
+
+function getPathContextLabel(symbolId: string, pathId: string | undefined) {
+  if (!pathId) return undefined;
+
+  const bridge = getSymbolPathConfig(symbolId);
+  const scriptureAnchor = bridge?.codexGates?.scriptureAnchors?.find((anchor) => anchor.id === pathId);
+  const meaningField = bridge?.codexGates?.meaningFields?.find((field) => field.id === pathId);
+
+  return scriptureAnchor?.label ?? meaningField?.label ?? getTitle(pathId);
 }
 
 export function hasSymbolRoom(symbolId: string | null | undefined): symbolId is string {
@@ -123,6 +134,7 @@ export function resolveRoomContext(
   const symbolId = hasSymbolRoom(symbol) ? symbol : fallbackSymbolId;
   const symbolLabel = getRoomLabel(symbolId);
   const roomTitle = `${symbolLabel}-Raum`;
+  const pathTitle = getPathContextLabel(symbolId, path);
 
   if (from === "symbolnetz") {
     const returnParams = new URLSearchParams({ symbol: symbolId });
@@ -162,7 +174,14 @@ export function resolveRoomContext(
   if (from === "mein-pfad") {
     const personalPathMobileText = symbolId === "wasser"
       ? "Der Wasserraum oeffnet sich erneut von deinem Pfad her."
-      : "Der Raum oeffnet sich erneut von deinem Pfad her.";
+      : symbolId === "licht" && pathTitle
+        ? `Deine Spur aus: ${pathTitle}`
+        : symbolId === "licht"
+          ? "Der Lichtraum oeffnet sich erneut von deinem Pfad her."
+          : "Der Raum oeffnet sich erneut von deinem Pfad her.";
+    const personalPathText = symbolId === "licht"
+      ? "Du kommst aus deiner bewahrten Lichtspur. Der Lichtraum oeffnet sich erneut von deinem Pfad her."
+      : "Du kommst aus deiner bewahrten Spur. Der Raum oeffnet sich erneut von deinem Pfad her.";
 
     return {
       source: "mein-pfad",
@@ -170,7 +189,7 @@ export function resolveRoomContext(
       symbolLabel,
       pathId: path,
       title: "Rueckkehr",
-      text: "Du kommst aus deiner bewahrten Spur. Der Raum oeffnet sich erneut von deinem Pfad her.",
+      text: personalPathText,
       mobileTitle: `Mein Pfad -> ${roomTitle}`,
       mobileText: personalPathMobileText,
       returnHref: "/mein-pfad",
@@ -178,7 +197,6 @@ export function resolveRoomContext(
     };
   }
 
-  const pathTitle = getTitle(path);
   const fromEntity = from ? getOntologyEntity(from) : undefined;
   const fromTitle = getTitle(from);
 

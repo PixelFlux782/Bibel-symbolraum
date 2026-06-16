@@ -9,17 +9,23 @@ export type StoredReflection = {
   id: string;
   symbol: string;
   symbolSlug?: string;
+  room?: string;
   hebrew: string;
   title?: string;
   sourceType?: "symbol" | "room" | "pattern" | "journey" | "core" | "letter";
   sourceId?: string;
+  source?: string;
+  sourceLabel?: string;
   codexHref?: string;
   question: string;
   answer: string;
+  text?: string;
   stateId?: string;
   stateTitle?: string;
   roomHref?: string;
   pathLabel?: string;
+  from?: string;
+  path?: string;
   pathContext?: {
     from?: string;
     path?: string;
@@ -116,17 +122,23 @@ function normalizeStoredReflection(value: unknown): StoredReflection | null {
       : `legacy-${symbol.toLocaleLowerCase("de-DE").replace(/\s+/g, "-")}-${createdAt}`,
     symbol,
     symbolSlug: getFirstString(reflection.symbolSlug, reflection.symbolId),
+    room: typeof reflection.room === "string" ? reflection.room : undefined,
     hebrew: typeof reflection.hebrew === "string" ? reflection.hebrew : "",
     title: typeof reflection.title === "string" ? reflection.title : symbol,
     sourceType,
     sourceId: typeof reflection.sourceId === "string" ? reflection.sourceId : undefined,
+    source: typeof reflection.source === "string" ? reflection.source : undefined,
+    sourceLabel: typeof reflection.sourceLabel === "string" ? reflection.sourceLabel : undefined,
     codexHref: getHrefString(reflection.codexHref),
     question,
     answer,
+    text: answer,
     stateId: typeof reflection.stateId === "string" ? reflection.stateId : undefined,
     stateTitle: typeof reflection.stateTitle === "string" ? reflection.stateTitle : undefined,
     roomHref: getHrefString(reflection.roomHref),
     pathLabel: typeof reflection.pathLabel === "string" ? reflection.pathLabel : undefined,
+    from: typeof reflection.from === "string" ? reflection.from : undefined,
+    path: typeof reflection.path === "string" ? reflection.path : undefined,
     pathContext: normalizeReflectionPathContext(reflection),
     createdAt,
   };
@@ -184,7 +196,7 @@ function normalizeReflectionPathContext(reflection: Record<string, unknown>): St
 }
 
 function getReflectionPathId(reflection: StoredReflection) {
-  return reflection.pathContext?.path?.split(/[?#]/, 1)[0];
+  return (reflection.pathContext?.path ?? reflection.path)?.split(/[?#]/, 1)[0];
 }
 
 function getReflectionTraceHref(reflection: StoredReflection) {
@@ -210,7 +222,7 @@ function pushUniqueLink(links: ReflectionReturnLink[], link: ReflectionReturnLin
 export function resolveReflectionReturnLinks(reflection: StoredReflection): ReflectionReturnLink[] {
   const bridge = getSymbolPathConfigFromReflectionLike(reflection);
 
-  if (bridge?.symbolId !== "wasser") {
+  if (!bridge) {
     const links: ReflectionReturnLink[] = [];
 
     if (reflection.codexHref) {
@@ -233,12 +245,21 @@ export function resolveReflectionReturnLinks(reflection: StoredReflection): Refl
     path: pathId,
     symbol: bridge.symbolId,
   });
+  const isWater = bridge.symbolId === "wasser";
   const links: ReflectionReturnLink[] = [];
 
-  pushUniqueLink(links, traceHref ? { key: "trace", label: "Zur Spur zurueckkehren", href: traceHref } : undefined);
-  pushUniqueLink(links, { key: "codex", label: "Zum Wasser-Codex", href: bridge.codexHref });
-  pushUniqueLink(links, { key: "room", label: "Den Wasserraum erneut betreten", href: roomHref });
-  pushUniqueLink(links, { key: "symbol-network", label: "Wasser im Symbolnetz ansehen", href: bridge.symbolNetworkHref });
+  pushUniqueLink(links, traceHref ? {
+    key: "trace",
+    label: isWater ? "Zur Spur zurueckkehren" : `Zur ${bridge.label}spur zurueckkehren`,
+    href: traceHref,
+  } : undefined);
+  pushUniqueLink(links, { key: "codex", label: `Zum ${bridge.label}-Codex`, href: bridge.codexHref });
+  pushUniqueLink(links, {
+    key: "room",
+    label: `Den ${bridge.label}raum erneut betreten`,
+    href: roomHref,
+  });
+  pushUniqueLink(links, { key: "symbol-network", label: `${bridge.label} im Symbolnetz ansehen`, href: bridge.symbolNetworkHref });
 
   return links;
 }
