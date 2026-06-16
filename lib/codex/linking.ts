@@ -13,6 +13,18 @@ export type CodexChipInput = {
 
 export type CodexChipLink = Required<CodexChipInput>;
 
+export type WaterCodexAnchorBridge = {
+  anchorId: string;
+  contextLabel: string;
+  returnHref: string;
+  returnLabel: string;
+  roomHref: string;
+  roomLabel: string;
+  roomTraceLabel: string;
+  personalPathHref?: string;
+  personalPathLabel?: string;
+};
+
 function normalizeCodexTerm(value: string) {
   return value
     .trim()
@@ -73,7 +85,7 @@ export function resolveMeaningFieldHref(value: string, symbolId = "wasser") {
   const linkedEntry = resolveCodexEntry(curated?.id ?? value) ?? resolveCodexEntry(curated?.label ?? value);
   const curatedHref = curated && "href" in curated ? curated.href : undefined;
 
-  return curatedHref ?? (linkedEntry ? `/codex/${linkedEntry.id}` : queryHref("meaning", curated?.id ?? normalizeCodexTerm(value)));
+  return linkedEntry ? `/codex/${linkedEntry.id}` : curatedHref ?? queryHref("meaning", curated?.id ?? normalizeCodexTerm(value));
 }
 
 export function resolveScriptureAnchorHref(value: string, symbolId = "wasser") {
@@ -185,4 +197,33 @@ export function getWaterCodexChipLinks() {
   ) as CodexChipLink[];
 
   return { meaningFields, scriptureAnchors };
+}
+
+export function getWaterCodexAnchorBridge(anchorId: string): WaterCodexAnchorBridge | undefined {
+  const waterBridge = getSymbolPathConfig("wasser");
+  const anchorBridge = waterBridge?.codexAnchorBridge;
+
+  if (!waterBridge || !anchorBridge) {
+    return undefined;
+  }
+
+  const anchorIds = new Set<string>(anchorBridge.anchorIds);
+  const contextLabels: Record<string, string> = anchorBridge.contextLabels ?? {};
+  const specificContextLabel = contextLabels[anchorId];
+
+  if (!anchorIds.has(anchorId)) {
+    return undefined;
+  }
+
+  return {
+    anchorId,
+    contextLabel: specificContextLabel ?? anchorBridge.defaultContextLabel,
+    returnHref: waterBridge.codexHref,
+    returnLabel: anchorBridge.returnLabel,
+    roomHref: `${waterBridge.roomHref}?from=codex&path=${encodeURIComponent(anchorId)}&symbol=${waterBridge.symbolId}`,
+    roomLabel: anchorBridge.roomLabel,
+    roomTraceLabel: specificContextLabel ? anchorBridge.roomTraceLabel : anchorBridge.roomLabel,
+    personalPathHref: "/mein-pfad",
+    personalPathLabel: anchorBridge.personalPathLabel,
+  };
 }

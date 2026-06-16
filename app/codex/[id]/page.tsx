@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexReflectionCard } from "@/components/CodexReflectionCard";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
-import { getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
+import { getWaterCodexAnchorBridge, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
@@ -58,18 +58,18 @@ type ResolvedPathContext = {
 type ReflectionSourceType = "symbol" | "pattern" | "journey" | "core" | "letter";
 
 function formatType(type: CodexEntryType) {
-  if (type === "meaning") {
-    return "Bedeutung";
-  }
+  const labels: Record<CodexEntryType, string> = {
+    "hebrew-letter": "Hebraeischer Buchstabe",
+    "hebrew-word": "Hebraeisches Wort",
+    journey: "Bedeutungspfad",
+    meaning: "Bedeutungsfeld",
+    "meaning-field": "Bedeutungsfeld",
+    number: "Zahl",
+    scripture: "Bibelstelle",
+    symbol: "Symbol",
+  };
 
-  if (type === "scripture") {
-    return "Bibelstelle";
-  }
-
-  return type
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+  return labels[type];
 }
 
 function formatRelationType(type: CodexRelation["type"]) {
@@ -813,6 +813,42 @@ function PathContextCard({ context }: { context: ResolvedPathContext | null }) {
   );
 }
 
+function WaterAnchorReturnCard({ entryId }: { entryId: string }) {
+  const bridge = getWaterCodexAnchorBridge(entryId);
+
+  if (!bridge || entryId === "wasser") {
+    return null;
+  }
+
+  return (
+    <section className="mt-8 max-w-3xl border border-cyan-soft/[0.14] bg-cyan-soft/[0.025] px-4 py-4 backdrop-blur-md sm:px-5">
+      <p className="symbol-kicker text-cyan-soft">{bridge.contextLabel}</p>
+      <div className="mt-4 flex flex-wrap gap-3">
+        <Link
+          href={bridge.returnHref}
+          className="border border-gold/20 bg-black/[0.12] px-3 py-2 text-[0.58rem] uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500 hover:border-gold/35 hover:text-gold"
+        >
+          {bridge.returnLabel}
+        </Link>
+        <Link
+          href={bridge.roomHref}
+          className="border border-cyan-soft/20 bg-black/[0.12] px-3 py-2 text-[0.58rem] uppercase tracking-[0.18em] text-cyan-soft/80 transition-colors duration-500 hover:border-cyan-soft/35 hover:text-cyan-soft"
+        >
+          {bridge.roomTraceLabel}
+        </Link>
+        {bridge.personalPathHref && bridge.personalPathLabel ? (
+          <Link
+            href={bridge.personalPathHref}
+            className="border border-white/[0.08] bg-black/[0.1] px-3 py-2 text-[0.58rem] uppercase tracking-[0.18em] text-muted-soft transition-colors duration-500 hover:border-gold/20 hover:text-gold/85"
+          >
+            {bridge.personalPathLabel}
+          </Link>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 const WATER_CODEX_ESSENCE =
   "Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird.";
 
@@ -1096,7 +1132,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         <header className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
           <div>
             <p className="symbol-kicker text-cyan-soft">
-              {isPatternEntity ? "Biblisches Muster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)}
+              {isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)}
             </p>
             <h1 className="mt-6 font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
               {entry.title}
@@ -1131,6 +1167,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         </header>
 
         <PathContextCard context={pathContext} />
+        <WaterAnchorReturnCard entryId={entry.id} />
 
         <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="grid gap-5">
@@ -1234,7 +1271,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           <aside className="grid content-start gap-5">
             <DetailSection title="Einordnung">
               <dl>
-                <FieldRow label="Typ" value={isPatternEntity ? "Biblisches Muster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} />
+                <FieldRow label="Typ" value={isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} />
                 {hasSymbolRoom(entry.symbolRoomSlug) ? (
                   <FieldRow
                     label="Symbolraum"

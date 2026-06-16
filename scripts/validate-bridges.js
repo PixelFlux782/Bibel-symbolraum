@@ -33,6 +33,7 @@ const {
 
 const {
   dedupeCodexChips,
+  getWaterCodexAnchorBridge,
   getWaterCodexChipLinks,
 } = jiti("../lib/codex/linking.ts");
 
@@ -61,6 +62,31 @@ function getCodexEntryByExactId(id) {
   return codexRegistry.find((entry) => entry.id === id);
 }
 
+function countChipsByNormalizedKey(chips) {
+  return chips.reduce((counts, chip) => {
+    const key = chip.id || chip.label;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+    return counts;
+  }, new Map());
+}
+
+function routeExists(href) {
+  const pathname = href.split("?")[0];
+
+  if (pathname === "/codex") return true;
+  if (pathname.startsWith("/codex/")) {
+    return Boolean(getCodexEntryByExactId(pathname.replace("/codex/", "")));
+  }
+  if (pathname.startsWith("/raeume/")) {
+    return fs.existsSync(path.join(projectRoot, "app", "raeume", pathname.replace("/raeume/", ""), "page.tsx"));
+  }
+  if (pathname === "/mein-pfad") {
+    return fs.existsSync(path.join(projectRoot, "app", "mein-pfad", "page.tsx"));
+  }
+
+  return false;
+}
+
 function validateWaterReferenceBridge() {
   const errors = [];
   const warnings = [];
@@ -68,6 +94,10 @@ function validateWaterReferenceBridge() {
   const waterChipLinks = getWaterCodexChipLinks();
   const waterMeaningFields = waterBridge?.codexGates?.meaningFields ?? [];
   const waterScriptureAnchors = waterBridge?.codexGates?.scriptureAnchors ?? [];
+  const waterAnchorIds = waterBridge?.codexAnchorBridge?.anchorIds ?? [];
+  const curatedWaterMeaningIds = ["tiefe", "reinigung", "uebergang", "geburt", "verborgenheit"];
+  const requiredWaterAnchorIds = ["wasser", ...curatedWaterMeaningIds, "genesis-1-2", "exodus-14"];
+  const waterMeaningFieldCounts = countChipsByNormalizedKey(waterMeaningFields);
   const waterScriptureAnchorCounts = waterScriptureAnchors.reduce((counts, anchor) => {
     counts.set(anchor.id, (counts.get(anchor.id) ?? 0) + 1);
     return counts;
@@ -118,6 +148,9 @@ function validateWaterReferenceBridge() {
     failIf(dedupeCodexChips(waterScriptureAnchors.map((anchor) => ({ id: anchor.id, label: anchor.label }))).length === waterScriptureAnchors.length, "Water scripture anchors are deduplicated.", waterScriptureAnchors),
     failIf(waterChipLinks.meaningFields.length === waterMeaningFields.length, "Every visible water meaning-field chip has an href.", waterChipLinks.meaningFields),
     failIf(waterChipLinks.scriptureAnchors.length === waterScriptureAnchors.length, "Every visible water scripture chip has an href.", waterChipLinks.scriptureAnchors),
+    failIf(waterChipLinks.meaningFields.every((chip) => Boolean(chip.href)), "All curated water meaning fields resolve to an href.", waterChipLinks.meaningFields),
+    failIf(waterAnchorIds.length === new Set(waterAnchorIds).size, "Water bridge anchor ids are unique.", waterAnchorIds),
+    failIf(requiredWaterAnchorIds.every((anchorId) => waterAnchorIds.includes(anchorId)), "Water bridge includes all required anchor ids.", waterAnchorIds),
     failIf(waterScriptureAnchorCounts.get("genesis-1-2") === 1, "Water scripture gates include Genesis 1,2 exactly once.", waterScriptureAnchors),
     failIf(waterScriptureAnchorCounts.get("exodus-14") === 1, "Water scripture gates include Exodus 14 exactly once.", waterScriptureAnchors),
     failIf(Boolean(getCodexEntryByExactId("genesis-1-2")), "Genesis 1,2 is a valid Codex target."),
@@ -133,6 +166,66 @@ function validateWaterReferenceBridge() {
       errors.push({
         message: `Water scripture chip "${chip.label}" should prefer its Codex entry route.`,
         details: chip,
+      });
+    }
+  });
+
+  curatedWaterMeaningIds.forEach((meaningId) => {
+    if ((waterMeaningFieldCounts.get(meaningId) ?? 0) > 1) {
+      errors.push({
+        message: `Water meaning field "${meaningId}" is configured more than once.`,
+        details: waterMeaningFields,
+      });
+    }
+
+    const linkedEntry = getCodexEntryByExactId(meaningId);
+    const chip = waterChipLinks.meaningFields.find((candidate) => candidate.id === meaningId);
+
+    if (linkedEntry && chip?.href !== `/codex/${linkedEntry.id}`) {
+      errors.push({
+        message: `Water meaning chip "${meaningId}" should prefer its Codex entry route.`,
+        details: chip,
+      });
+    }
+  });
+
+  waterAnchorIds.forEach((anchorId) => {
+    const linkedEntry = getCodexEntryByExactId(anchorId);
+    const anchorBridge = getWaterCodexAnchorBridge(anchorId);
+
+    if (!linkedEntry) {
+      errors.push({
+        message: `Water anchor "${anchorId}" is not a valid Codex target.`,
+        details: waterAnchorIds,
+      });
+    }
+
+    if (!anchorBridge) {
+      errors.push({
+        message: `Water anchor "${anchorId}" has no return bridge.`,
+        details: waterAnchorIds,
+      });
+      return;
+    }
+
+    if (anchorBridge.returnHref !== "/codex/wasser" || !routeExists(anchorBridge.returnHref)) {
+      errors.push({
+        message: `Water anchor "${anchorId}" has no valid return link to the water Codex.`,
+        details: anchorBridge,
+      });
+    }
+
+    if (!anchorBridge.roomHref || !routeExists(anchorBridge.roomHref)) {
+      errors.push({
+        message: `Water anchor "${anchorId}" has no valid water room link.`,
+        details: anchorBridge,
+      });
+    }
+
+    if (anchorBridge.personalPathHref && !routeExists(anchorBridge.personalPathHref)) {
+      errors.push({
+        message: `Water anchor "${anchorId}" points to a missing personal path route.`,
+        details: anchorBridge,
       });
     }
   });

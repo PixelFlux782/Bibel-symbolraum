@@ -35,6 +35,15 @@ export type SymbolPathConfig = {
       href?: string;
     }[];
   };
+  codexAnchorBridge?: {
+    anchorIds: string[];
+    defaultContextLabel: string;
+    contextLabels?: Record<string, string>;
+    returnLabel: string;
+    roomLabel: string;
+    roomTraceLabel: string;
+    personalPathLabel?: string;
+  };
   movement: string[];
 };
 
@@ -72,6 +81,27 @@ export const symbolPathConfigs = {
         { id: "genesis-1-2", reference: "Genesis 1,2", label: "Genesis 1,2", href: "/codex/genesis-1-2" },
         { id: "exodus-14", reference: "Exodus 14", label: "Exodus 14", href: "/codex/exodus-14" },
       ],
+    },
+    codexAnchorBridge: {
+      anchorIds: [
+        "wasser",
+        "tiefe",
+        "reinigung",
+        "uebergang",
+        "geburt",
+        "verborgenheit",
+        "genesis-1-2",
+        "exodus-14",
+      ],
+      defaultContextLabel: "Teil des Wasserpfades",
+      contextLabels: {
+        "genesis-1-2": "Wasser vor der Ordnung",
+        "exodus-14": "Wasser als Schwelle",
+      },
+      returnLabel: "Zurueck zum Wasser-Codex",
+      roomLabel: "Den Wasserraum betreten",
+      roomTraceLabel: "Diese Spur im Wasserraum bewegen",
+      personalPathLabel: "Meinen Pfad ansehen",
     },
     movement: ["Symbolnetz", "Codex", "Raum", "persoenliche Spur", "Mein Pfad"],
   },
