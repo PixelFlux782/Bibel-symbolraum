@@ -49,8 +49,9 @@ function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: 
     <div className="symbol-engine__onward">
       <p>Weiter vertiefen</p>
       <div>
-        <Link href={`/codex/${data.slug}`}>Im Codex ansehen</Link>
-        <Link href={`/symbolnetz?symbol=${data.slug}`}>Zurueck ins Symbolnetz</Link>
+        <Link href="/mein-pfad">Meinen Pfad ansehen</Link>
+        <Link href={`/codex/${data.slug}`}>Zurueck zu {data.symbolLabel} im Codex</Link>
+        <Link href={`/symbolnetz?symbol=${data.slug}`}>Zum Symbolnetz zurueckkehren</Link>
         {contextReturnLink ? <Link href={contextReturnLink.returnHref}>{contextReturnLink.returnLabel}</Link> : null}
       </div>
     </div>

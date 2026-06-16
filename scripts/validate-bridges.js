@@ -4,6 +4,15 @@
  */
 
 const path = require("path");
+const createJiti = require("jiti");
+
+const projectRoot = path.resolve(__dirname, "..");
+const jiti = createJiti(__filename, {
+  alias: {
+    "@": projectRoot,
+    "@/": `${projectRoot}/`,
+  },
+});
 
 // Require the modules
 const {
@@ -11,11 +20,11 @@ const {
   countBridges,
   getBridgesFromSource,
   getBridgesFromTarget,
-} = require("../lib/meaning-bridges/bridgeRegistry");
+} = jiti("../lib/meaning-bridges/bridgeRegistry.ts");
 
 const {
   validateMeaningBridges,
-} = require("../lib/meaning-bridges/validateMeaningBridges");
+} = jiti("../lib/meaning-bridges/validateMeaningBridges.ts");
 
 function main() {
   console.log("\n╔════════════════════════════════════════════════╗");

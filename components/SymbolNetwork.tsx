@@ -110,6 +110,7 @@ type HierarchyNodeData = {
   summary: string;
   level: SymbolHierarchyLevel;
   isDeepAnchor: boolean;
+  isHighlighted?: boolean;
 };
 
 type LivingConnectionData = {
@@ -177,6 +178,18 @@ type OntologyResonanceRow = {
   relationLabel: string;
   deepeningText: string;
   markerLabel: string;
+};
+
+type SymbolInspectorStation = {
+  title: string;
+  text: string;
+  cta?: string;
+};
+
+type SymbolInspectorCta = {
+  label: string;
+  href?: string;
+  onClick?: () => void;
 };
 
 type SymbolNetworkInitialUrlState = {
@@ -403,6 +416,48 @@ const PORT_STYLES: Record<SymbolPort, CSSProperties> = {
   "top-left": { left: "30%" },
   "bottom-right": { left: "70%" },
   "bottom-left": { left: "30%" },
+};
+
+const WATER_MEANING_STATIONS: SymbolInspectorStation[] = [
+  { title: "Tiefe", text: "Das Verborgene unter dem Sichtbaren." },
+  { title: "Ursprung", text: "Wo Leben aus dem Unsichtbaren hervortritt." },
+  { title: "Reinigung", text: "Was trennt, löst und neu beginnen lässt." },
+  { title: "Übergang", text: "Wasser als Schwelle zwischen zwei Zuständen." },
+  { title: "Leben", text: "Was aus der Tiefe fruchtbar wird." },
+];
+
+const WATER_HEBREW_STATIONS: SymbolInspectorStation[] = [
+  { title: "Mem", text: "Wasser, Tiefe, Mutterschoß, Verborgenes." },
+  { title: "Jod", text: "Punkt, Anfang, Same, göttlicher Impuls." },
+  { title: "Mem final", text: "Geschlossene Tiefe, Sammlung, Vollendung." },
+];
+
+const WATER_GEMATRIA_STATIONS: SymbolInspectorStation[] = [
+  { title: "40 / Mem", text: "Zeit der Tiefe, Prüfung, Reifung, Wasser." },
+  { title: "10 / Jod", text: "Punkt, Same, Anfangsimpuls." },
+  { title: "90 / Majim", text: "Gesammelte Wasserbewegung." },
+];
+
+const WATER_STORY_STATIONS: SymbolInspectorStation[] = [
+  { title: "Wasser", text: "Ursprung und Tiefe." },
+  { title: "Wüste", text: "Entzug, Prüfung, Leere." },
+  { title: "Brot", text: "Gabe, Versorgung, Erfüllung." },
+];
+
+const WATER_SUBSPACE_DETAILS: Record<string, string> = {
+  quelle: "Ursprung des Wassers: der erste sichtbare Austritt aus der verborgenen Tiefe.",
+  brunnen: "Verborgene Tiefe: Wasser wird zugänglich, bleibt aber im Inneren gesammelt.",
+  meer: "Unbegrenzte Weite: Grenze, Gefahr und Durchgang liegen nah beieinander.",
+  fluss: "Bewegung des Lebens: Wasser bekommt Richtung und trägt Fruchtbarkeit weiter.",
+  tau: "Wasser des Himmels: eine leise Gabe zwischen Nacht, Morgen und Versorgung.",
+};
+
+const INSPECTOR_GUIDING_LINES: Record<Exclude<SymbolInspectorFocus, "codex" | "room">, string> = {
+  meaning: "Wasser öffnet Übergänge zwischen Tiefe, Reinigung und Leben.",
+  hebrew: "Das Wort selbst trägt die Bewegung von Tiefe - Ursprung - Tiefe.",
+  gematria: "Die Zahl zeigt die verborgene Struktur des Wortes.",
+  story: "Die Spur zeigt eine Bewegung vom Ursprung zur Gabe.",
+  subspaces: "Die Gestalten des Wassers machen seine Bedeutungen erfahrbar.",
 };
 
 function getNodePosition(nodeId: string) {
@@ -1277,6 +1332,53 @@ function JourneySequence({ items }: { items: string[] }) {
   );
 }
 
+function InspectorLeitsatz({ children }: { children: string }) {
+  return <p className="symbol-inspector-leitsatz">{children}</p>;
+}
+
+function InspectorStationList({
+  stations,
+  numbered = false,
+}: {
+  stations: SymbolInspectorStation[];
+  numbered?: boolean;
+}) {
+  return (
+    <div className={`symbol-inspector-stations ${numbered ? "symbol-inspector-stations--numbered" : ""}`}>
+      {stations.map((station, index) => (
+        <div key={`${station.title}-${index}`} className="symbol-inspector-station">
+          {numbered ? <span className="symbol-inspector-station__index">{index + 1}</span> : null}
+          <div>
+            <strong>{station.title}</strong>
+            <p>{station.text}</p>
+            {station.cta ? <i>{station.cta}</i> : null}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function InspectorCtaList({ ctas }: { ctas: SymbolInspectorCta[] }) {
+  const visibleCtas = ctas.filter((cta) => cta.href || cta.onClick);
+
+  if (visibleCtas.length === 0) return null;
+
+  return (
+    <div className="symbol-inspector-ctas">
+      {visibleCtas.map((cta) => cta.href ? (
+        <Link key={cta.label} href={cta.href} className="symbol-archive-action">
+          {cta.label}
+        </Link>
+      ) : (
+        <button key={cta.label} type="button" onClick={cta.onClick} className="symbol-archive-action">
+          {cta.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
   return (
     <div
@@ -1343,7 +1445,7 @@ function LetterGraphNode({ data }: NodeProps<LetterNodeData>) {
       <Handle id="bottom" type="source" position={Position.Bottom} className="opacity-0" />
       <span className="letter-focus-node__glyph" lang="he" dir="rtl">{data.glyph}</span>
       <span className="letter-focus-node__name">{data.name}</span>
-      <span className="letter-focus-node__hint">{data.isExpanded ? "Resonanz" : "Oeffnen"}</span>
+      <span className="letter-focus-node__hint">{data.isExpanded ? "Resonanz" : data.transcription}</span>
     </button>
   );
 }
@@ -1366,7 +1468,7 @@ function NumberGraphNode({ data }: NodeProps<NumberNodeData>) {
 function HierarchySatelliteNode({ data }: NodeProps<HierarchyNodeData>) {
   return (
     <div
-      className={`hierarchy-satellite-node ${data.isDeepAnchor ? "hierarchy-satellite-node--deep" : ""}`}
+      className={`hierarchy-satellite-node ${data.isDeepAnchor ? "hierarchy-satellite-node--deep" : ""} ${data.isHighlighted ? "is-highlighted" : ""}`}
       tabIndex={0}
       aria-label={`${data.title}: ${data.summary}`}
     >
@@ -1534,6 +1636,7 @@ function SymbolLensFocusDetail({
   onSelectFocus,
   onPreviewPath,
   onActivateResonanceJourney,
+  onFocusSubspace,
 }: {
   activeSymbol: SymbolMeaningNetworkNode;
   connectedPaths: SymbolMeaningPath[];
@@ -1552,6 +1655,7 @@ function SymbolLensFocusDetail({
   onSelectFocus: (focus: SymbolInspectorFocus) => void;
   onPreviewPath: (path: SymbolMeaningPath) => void;
   onActivateResonanceJourney: (journeyId: string) => void;
+  onFocusSubspace: (entryId: string) => void;
 }) {
   const profile = getSymbolHebrewProfile(activeSymbol.id);
   const hebrewWord = profile.hebrewWord;
@@ -1589,6 +1693,11 @@ function SymbolLensFocusDetail({
   const subspaceEntries = detailHierarchyChildren.slice(0, 5);
   const storyAnchor = storyDeepHierarchyAnchors[0] ?? verseDeepHierarchyAnchors[0];
   const ontologyRows = useMemo(() => getInspectorOntologyRows(activeSymbol.id), [activeSymbol.id]);
+  const isWater = activeSymbol.id === "wasser";
+  const memCodexHref = "/codex/mem?from=symbolnetz&symbol=wasser&focus=hebrew&lens=hebrew";
+  const waterCodexHref = codexHref ?? "/codex/wasser?from=symbolnetz&symbol=wasser&focus=overview";
+  const number40CodexHref = "/codex/zahl-40?from=symbolnetz&symbol=wasser&focus=gematria&lens=gematria";
+  const number90CodexHref = "/codex/zahl-90?from=symbolnetz&symbol=wasser&focus=gematria&lens=gematria";
   const [activeOntologyRelationId, setActiveOntologyRelationId] = useState<string | null>(null);
   const visibleActiveOntologyRelationId = ontologyRows.some((row) => row.relation.id === activeOntologyRelationId)
     ? activeOntologyRelationId
@@ -1620,12 +1729,27 @@ function SymbolLensFocusDetail({
           </button>
           {activeInspectorFocus === "meaning" ? (
             <div className="symbol-inspector-accordion__content">
-              <p>{meaningItems.join(" / ") || lensData.labels.meaning || activeSymbol.shortMeaning}</p>
-              <OntologyResonanceRows
-                rows={ontologyRows}
-                activeOntologyRelationId={visibleActiveOntologyRelationId}
-                onToggleRelation={toggleOntologyRelation}
-              />
+              {isWater ? (
+                <>
+                  <InspectorLeitsatz>{INSPECTOR_GUIDING_LINES.meaning}</InspectorLeitsatz>
+                  <h3>Was Wasser öffnet</h3>
+                  <p>Wasser führt im Symbolraum nicht nur nach unten, sondern an Übergänge: vom Ursprung zur Reinigung, von der Tiefe zum Leben.</p>
+                  <InspectorStationList stations={WATER_MEANING_STATIONS} />
+                  <InspectorCtaList ctas={[
+                    { label: "Wasser im Codex lesen", href: waterCodexHref },
+                  ]} />
+                </>
+              ) : (
+                <>
+                  <InspectorLeitsatz>{meaningItems.join(" - ") || lensData.labels.meaning || activeSymbol.shortMeaning}</InspectorLeitsatz>
+                  <p>{activeSymbol.shortMeaning}</p>
+                  <OntologyResonanceRows
+                    rows={ontologyRows}
+                    activeOntologyRelationId={visibleActiveOntologyRelationId}
+                    onToggleRelation={toggleOntologyRelation}
+                  />
+                </>
+              )}
               {firstSearchResonance && firstSearchPath ? (
                 <button type="button" onClick={() => onPreviewPath(firstSearchPath)} className="symbol-focus-path">
                   <span>{getSymbolLabel(firstSearchResonance.sourceId)} - {getSymbolLabel(firstSearchResonance.targetId)}</span>
@@ -1642,9 +1766,28 @@ function SymbolLensFocusDetail({
           </button>
           {activeInspectorFocus === "hebrew" ? (
             <div className="symbol-inspector-accordion__content">
-              <p lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</p>
-              <p>{hebrewWord?.transliteration ?? activeSymbol.transliteration}</p>
-              <p>{hebrewLettersText || uniqueLetters.map((letter) => letter.name).join(" - ") || "Buchstaben noch nicht hinterlegt"}</p>
+              {isWater ? (
+                <>
+                  <InspectorLeitsatz>{INSPECTOR_GUIDING_LINES.hebrew}</InspectorLeitsatz>
+                  <h3>Das hebräische Wort</h3>
+                  <p lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</p>
+                  <p>{hebrewWord?.transliteration ?? activeSymbol.transliteration}</p>
+                  <p>Mem - Jod - Mem</p>
+                  <p>Wasser beginnt und endet mit Mem. In der Mitte steht Jod - ein kleiner Punkt von Richtung, Same oder Ursprung.</p>
+                  <InspectorStationList stations={WATER_HEBREW_STATIONS} />
+                  <InspectorCtaList ctas={[
+                    { label: "Mem im Codex lesen", href: memCodexHref },
+                    { label: "Wasser im Codex lesen", href: waterCodexHref },
+                  ]} />
+                </>
+              ) : (
+                <>
+                  <InspectorLeitsatz>{hebrewLettersText || "Das Wort öffnet seine Buchstaben als innere Bewegung."}</InspectorLeitsatz>
+                  <p lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</p>
+                  <p>{hebrewWord?.transliteration ?? activeSymbol.transliteration}</p>
+                  <p>{hebrewLettersText || uniqueLetters.map((letter) => letter.name).join(" - ") || "Buchstaben noch nicht hinterlegt"}</p>
+                </>
+              )}
             </div>
           ) : null}
         </section>
@@ -1655,8 +1798,25 @@ function SymbolLensFocusDetail({
           </button>
           {activeInspectorFocus === "gematria" ? (
             <div className="symbol-inspector-accordion__content">
-              <p>{gematria > 0 ? `${gematria}` : "Noch kein Zahlenwert hinterlegt"}</p>
-              <p>{profile.letters.slice(0, 3).map((letter) => `${letter.numericValue} als ${letter.name}-Resonanz`).join(" / ")}</p>
+              {isWater ? (
+                <>
+                  <InspectorLeitsatz>{INSPECTOR_GUIDING_LINES.gematria}</InspectorLeitsatz>
+                  <h3>Zahlbewegung von Majim</h3>
+                  <p><span lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</span> = Mem 40 + Jod 10 + Mem 40 = 90</p>
+                  <p>Die Zahl 90 sammelt die Bewegung von Tiefe - Punkt - Tiefe. Wasser erscheint hier als Raum, in dem Ursprung verborgen liegt und Leben vorbereitet wird.</p>
+                  <InspectorStationList stations={WATER_GEMATRIA_STATIONS} />
+                  <InspectorCtaList ctas={[
+                    { label: "Zahl 40 im Codex lesen", href: number40CodexHref },
+                    { label: "Zahl 90 im Codex lesen", href: number90CodexHref },
+                  ]} />
+                </>
+              ) : (
+                <>
+                  <InspectorLeitsatz>Die Zahl zeigt die verborgene Struktur des Wortes.</InspectorLeitsatz>
+                  <p>{gematria > 0 ? `${gematria}` : "Noch kein Zahlenwert hinterlegt"}</p>
+                  <p>{profile.letters.slice(0, 3).map((letter) => `${letter.numericValue} als ${letter.name}-Resonanz`).join(" / ")}</p>
+                </>
+              )}
             </div>
           ) : null}
         </section>
@@ -1667,9 +1827,22 @@ function SymbolLensFocusDetail({
           </button>
           {activeInspectorFocus === "story" ? (
             <div className="symbol-inspector-accordion__content">
-              {narrativePath ? <p className="font-serif text-base italic text-gold/80">{narrativePath}</p> : null}
-              {storyJourney ? <p>{storyJourney.title}</p> : storyConnections[0] ? <p>{storyConnections[0].title}</p> : null}
-              {storyAnchor ? <p>{storyAnchor.title}</p> : null}
+              {isWater ? (
+                <>
+                  <InspectorLeitsatz>{INSPECTOR_GUIDING_LINES.story}</InspectorLeitsatz>
+                  <h3>Vom Ursprung zur Erfüllung</h3>
+                  <p className="font-serif text-base italic text-gold/80">Wasser <span className="text-gold/55">→</span> Wüste <span className="text-gold/55">→</span> Brot</p>
+                  <InspectorStationList stations={WATER_STORY_STATIONS} numbered />
+                  <p>Die Erzählspur zeigt keine bloße Verbindung, sondern eine Bewegung: Was in der Tiefe beginnt, wird durch Entzug geprüft und als Gabe empfangen.</p>
+                </>
+              ) : (
+                <>
+                  <InspectorLeitsatz>Die Spur zeigt eine Bewegung, nicht nur eine Verbindung.</InspectorLeitsatz>
+                  {narrativePath ? <p className="font-serif text-base italic text-gold/80">{narrativePath}</p> : null}
+                  {storyJourney ? <p>{storyJourney.title}</p> : storyConnections[0] ? <p>{storyConnections[0].title}</p> : null}
+                  {storyAnchor ? <p>{storyAnchor.title}</p> : null}
+                </>
+              )}
               {showResonanceJourneyOption && discoverableResonanceJourney ? (
                 <button type="button" onClick={() => onActivateResonanceJourney(discoverableResonanceJourney.id)} className="symbol-archive-action">
                   Resonanzpfad entdecken
@@ -1686,9 +1859,24 @@ function SymbolLensFocusDetail({
           {activeInspectorFocus === "subspaces" ? (
             <div className="symbol-inspector-accordion__content">
               {subspaceEntries.length > 0 ? (
-                <div className="symbol-inspector-chip-list">
-                  {subspaceEntries.map((entry) => <span key={entry.id}>{entry.title}</span>)}
-                </div>
+                <>
+                  <InspectorLeitsatz>{isWater ? INSPECTOR_GUIDING_LINES.subspaces : "Die Unterräume machen einzelne Gestalten des Symbols sichtbar."}</InspectorLeitsatz>
+                  {isWater ? (
+                    <>
+                      <h3>Unterräume von Wasser</h3>
+                      <p>Die Unterräume zeigen, wie Wasser in verschiedenen Gestalten erscheint: als Ursprung, Tiefe, Weite, Bewegung und himmlische Gabe.</p>
+                    </>
+                  ) : null}
+                  <div className="symbol-inspector-subspace-list">
+                    {subspaceEntries.map((entry) => (
+                      <button key={entry.id} type="button" onClick={() => onFocusSubspace(entry.id)}>
+                        <span>{entry.title}</span>
+                        <i>{isWater ? WATER_SUBSPACE_DETAILS[entry.id] ?? entry.summary : entry.summary}</i>
+                        <strong>anschauen</strong>
+                      </button>
+                    ))}
+                  </div>
+                </>
               ) : (
                 <p>Keine Unterraeume fuer diesen Fokus sichtbar.</p>
               )}
@@ -1705,7 +1893,7 @@ function SymbolLensFocusDetail({
               <div className="symbol-inspector-accordion__content">
                 <p>{activeCodexEntry.subtitle ?? activeCodexEntry.title}</p>
                 <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-archive-action">
-                  Codex oeffnen
+                  {isWater ? "Wasser im Codex lesen" : `${activeCodexEntry.title} im Codex lesen`}
                 </Link>
               </div>
             ) : null}
@@ -1720,7 +1908,7 @@ function SymbolLensFocusDetail({
             <div className="symbol-inspector-accordion__content">
               <p>{activeSymbol.label}-Raum</p>
               <RoomTransitionButton href={roomHref} className="symbol-cta w-full">
-                {activeSymbol.label}-Raum betreten
+                {isWater ? "Den Wasserraum betreten" : `${activeSymbol.label}-Raum betreten`}
               </RoomTransitionButton>
             </div>
           ) : null}
@@ -1739,18 +1927,26 @@ function ResonanceJourneyDetail({
   journey: ResonanceJourney;
   connections: ResonanceConnection[];
 }) {
+  const isWaterJourney = journey.id === CURATED_RESONANCE_JOURNEY_ID;
+
   return (
     <>
       <h2 className="mt-6 font-serif text-4xl italic text-foreground-strong">{journey.title}</h2>
-      <p className="symbol-copy mt-5 text-lg">{journey.summary.replace(/\s*\n\s*/g, " ")}</p>
+      <InspectorLeitsatz>{isWaterJourney ? INSPECTOR_GUIDING_LINES.story : "Die Spur zeigt eine Bewegung, nicht nur eine Verbindung."}</InspectorLeitsatz>
+      <p className="symbol-copy mt-5 text-lg">
+        {isWaterJourney
+          ? "Die Erzählspur zeigt keine bloße Verbindung, sondern eine Bewegung: Was in der Tiefe beginnt, wird durch Entzug geprüft und als Gabe empfangen."
+          : journey.summary.replace(/\s*\n\s*/g, " ")}
+      </p>
       <div className="mt-7 border-t border-white/[0.055] pt-5">
         <p className="symbol-kicker text-cyan-soft">Schritte</p>
         <p className="mt-4 font-serif text-xl italic leading-relaxed text-gold/80">
           <JourneySequence items={journey.nodePath.map(getSymbolLabel)} />
         </p>
+        {isWaterJourney ? <InspectorStationList stations={WATER_STORY_STATIONS} numbered /> : null}
       </div>
       <div className="mt-7 border-t border-white/[0.055] pt-5 max-md:hidden">
-        <p className="symbol-kicker text-cyan-soft">Connection-Resonanzen</p>
+        <p className="symbol-kicker text-cyan-soft">Begleitende Resonanzen</p>
         <div className="mt-4 grid gap-3">
           {connections.map((connection) => (
             <div key={connection.id} className="border-l border-gold/20 bg-white/[0.018] px-4 py-3">
@@ -1788,7 +1984,7 @@ function SymbolWayTrace({
         ) : null}
         <span className="symbol-copy mt-2 block text-sm">{way.summary}</span>
         <span className="mt-3 inline-block text-[9px] uppercase tracking-[0.18em] text-cyan-soft/75">
-          Weg im Codex oeffnen
+          Weg im Codex lesen
         </span>
       </Link>
     </div>
@@ -1939,7 +2135,7 @@ function MobileSymbolJourney({
 
       <div className="symbol-mobile-actions">
         <RoomTransitionButton href={roomHref} className="symbol-cta">
-          {activeSymbol.label}-Raum betreten
+          {activeSymbol.id === "wasser" ? "Den Wasserraum betreten" : `${activeSymbol.label}-Raum betreten`}
         </RoomTransitionButton>
         {activeCodexEntry ? (
           <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-cta symbol-cta-secondary">
@@ -1970,6 +2166,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const [activeInspectorFocus, setActiveInspectorFocus] = useState<SymbolInspectorFocus | null>(null);
   const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(initialSymbolNetworkState.activeJourneyStepId);
   const [activeResonanceJourneyId, setActiveResonanceJourneyId] = useState<string | null>(initialSymbolNetworkState.activeResonanceJourneyId);
+  const [activeSubspaceId, setActiveSubspaceId] = useState<string | null>(null);
   const [symbolViewportMode, setSymbolViewportMode] = useState<SymbolViewportMode>("overview");
   const [flowViewport, setFlowViewport] = useState({ x: 0, y: 0, zoom: 1 });
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
@@ -2745,6 +2942,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             summary: entry.summary,
             level: entry.level,
             isDeepAnchor,
+            isHighlighted: activeSubspaceId === entry.id,
           },
         })),
         ...(showMeaningNodes ? network.meaningNodes.map((node) => ({
@@ -2793,7 +2991,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         })) : []),
       ];
     },
-    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceLens, activeLetterId, activeLetterNodeId, activePathId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode]
+    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceLens, activeLetterId, activeLetterNodeId, activePathId, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode]
   );
 
   useEffect(() => {
@@ -2869,6 +3067,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     ] : []),
     ...(hasEdgeDisclosure && !activeLetterId ? network.paths.flatMap((path, index) => {
         if (!renderedNodeIds.has(path.from) || !renderedNodeIds.has(path.to)) return [];
+        if (activeResonanceJourney) return [];
 
         const isFocused = focusedSymbolId ? path.from === focusedSymbolId || path.to === focusedSymbolId : false;
         const isSelected = path.id === activePathId || path.id === pendingPathId;
@@ -3175,6 +3374,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     setActiveSymbolId(symbolId);
     setSearchFocusSymbolId(null);
     setActiveJourneyStepId(null);
+    setActiveSubspaceId(null);
     setHasSymbolFocus(true);
     setActivePathId(null);
     setActiveJourneyId(null);
@@ -3223,6 +3423,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
   function activateSymbolLens(nodeId: SymbolLensMode) {
     const nextLens = nodeId === "journey" ? "story" : nodeId;
+    setActiveSubspaceId(null);
     setActiveResonanceLens(nextLens);
     setActiveInspectorFocus(nextLens);
     setActiveJourneyStepId(nextLens === "story" ? activeSymbolId : null);
@@ -3240,6 +3441,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
   function selectInspectorFocus(focus: SymbolInspectorFocus) {
     const nextFocus = activeInspectorFocus === focus ? null : focus;
+    if (nextFocus !== "subspaces") {
+      setActiveSubspaceId(null);
+    }
     setActiveInspectorFocus(nextFocus);
     setHasSymbolFocus(true);
     setActivePathId(null);
@@ -3269,6 +3473,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   function openLetterBridge(path: SymbolMeaningPath) {
     if (!path.joint) return;
 
+    setActiveSubspaceId(null);
     recordActivatedLetter({
       letterId: path.joint.letterId,
       pathId: path.id,
@@ -3289,6 +3494,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   }
 
   function previewPath(path: SymbolMeaningPath) {
+    setActiveSubspaceId(null);
     setActiveResonanceLens(null);
     setActiveInspectorFocus(null);
     setActiveJourneyStepId(null);
@@ -3308,6 +3514,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
     if (!journey) return;
 
+    setActiveSubspaceId(null);
     setActiveResonanceJourneyId(journey.id);
     setActiveJourneyStepId(journey.nodePath[0] ?? null);
     setHasSymbolFocus(true);
@@ -3321,6 +3528,34 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     setActiveLetterSourcePathId(null);
     setActiveResonanceLens(null);
     setActiveInspectorFocus(null);
+  }
+
+  function focusSubspace(entryId: string) {
+    const entry = getHierarchyEntry(entryId);
+    if (!entry) return;
+
+    setActiveSubspaceId(entry.id);
+    setHasSymbolFocus(true);
+    setActiveInspectorFocus("subspaces");
+    setActiveResonanceLens(null);
+    setActiveJourneyStepId(null);
+    setActivePathId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
+    setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
+    setActiveLetterId(null);
+    setIsLetterResonanceOpen(false);
+    setActiveLetterResonanceId(null);
+    setActiveLetterSourcePathId(null);
+    setSymbolViewport("detail");
+
+    const center = getNodeCenter(entry.id);
+    reactFlowRef.current?.setCenter(center.x, center.y, { zoom: 1.04, duration: 560 });
+    window.setTimeout(() => {
+      const instance = reactFlowRef.current;
+      if (instance) setFlowViewport(instance.getViewport());
+    }, 32);
   }
 
   function navigateSymbolBack() {
@@ -3538,6 +3773,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               edges={edges}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
+              proOptions={{ hideAttribution: true }}
               fitView
               fitViewOptions={{ padding: 0.2 }}
               onInit={(instance) => {
@@ -3793,6 +4029,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               onSelectFocus={selectInspectorFocus}
               onPreviewPath={previewPath}
               onActivateResonanceJourney={activateResonanceJourney}
+              onFocusSubspace={focusSubspace}
             />
           ) : (
             <>
@@ -3819,7 +4056,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               ) : null}
               <div className="symbol-detail-panel__cta">
                 <RoomTransitionButton href={activeRoomHref} className="symbol-cta w-full">
-                  {activeSymbol.label}-Raum betreten
+                  {activeSymbol.id === "wasser" ? "Den Wasserraum betreten" : `${activeSymbol.label}-Raum betreten`}
                 </RoomTransitionButton>
                 {showResonanceJourneyOption && discoverableResonanceJourney ? (
                   <button
@@ -3835,7 +4072,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                     href={activeCodexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`}
                     className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
                   >
-                    Codex öffnen
+                    {activeSymbol.id === "wasser" ? "Wasser im Codex lesen" : `${activeCodexEntry.title} im Codex lesen`}
                   </Link>
                 ) : null}
               </div>
@@ -3865,7 +4102,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                       onClick={() => openLetterBridge(activePath)}
                       className="font-serif text-4xl text-gold/85"
                       lang="he"
-                      aria-label={`${activePath.joint.letterName} als Ursprung im Hebrew Codex oeffnen`}
+                      aria-label={`${activePath.joint.letterName} als Ursprung im Hebrew Codex lesen`}
                     >
                       {activePath.joint.letter}
                     </button>

@@ -8,6 +8,7 @@ export type RoomContext = {
   source: RoomContextSource;
   symbolId: string;
   symbolLabel: string;
+  pathId?: string;
   title: string;
   text: string;
   mobileTitle: string;
@@ -130,12 +131,13 @@ export function resolveRoomContext(
       source: "symbolnetz",
       symbolId,
       symbolLabel,
+      pathId: path,
       title: "Eintritt",
-      text: `Vom Symbolnetz aus oeffnet sich der ${roomTitle}. Die Landkarte wird zum Erfahrungsraum.`,
+      text: `Aus dem Symbolnetz kommend: Die Karte wird zum Raum.`,
       mobileTitle: `Symbolnetz -> ${roomTitle}`,
-      mobileText: "Die Landkarte wird hier zum Erfahrungsraum.",
+      mobileText: "Die Karte wird zum Raum.",
       returnHref: `/symbolnetz?${returnParams.toString()}`,
-      returnLabel: "Zurueck ins Symbolnetz",
+      returnLabel: "Zum Symbolnetz zurueckkehren",
     };
   }
 
@@ -144,12 +146,13 @@ export function resolveRoomContext(
       source: "codex",
       symbolId,
       symbolLabel,
+      pathId: path,
       title: "Eintritt",
-      text: `Aus dem Codex kommst du in den ${roomTitle}. Hier wird ${symbolLabel} nicht erklaert, sondern erfahren.`,
+      text: `Aus dem Codex kommend: ${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
       mobileTitle: `Codex -> ${roomTitle}`,
-      mobileText: "Hier wird Bedeutung nicht erklaert, sondern erfahren.",
+      mobileText: `${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
       returnHref: `/codex/${symbolId}`,
-      returnLabel: `Zurueck zum Codex ${symbolLabel}`,
+      returnLabel: `Zurueck zu ${symbolLabel} im Codex`,
     };
   }
 
@@ -165,6 +168,7 @@ export function resolveRoomContext(
       source: "journey",
       symbolId,
       symbolLabel,
+      pathId: path,
       title: "Eintritt",
       text: `${movement}. Du betrittst eine Station dieses Weges.`,
       mobileTitle: `${movement} -> ${roomTitle}`,

@@ -40,6 +40,10 @@ function getTouchedLabel(reflection: StoredReflection) {
 function getRoomContextLabel(reflection: StoredReflection) {
   const title = getTraceBaseTitle(reflection);
 
+  if (isWaterRoomReflection(reflection)) {
+    return "Spur aus dem Wasserraum";
+  }
+
   if (reflection.sourceType === "room") {
     return `Aus dem ${title}-Raum`;
   }
@@ -52,6 +56,10 @@ function getRoomContextLabel(reflection: StoredReflection) {
 }
 
 function getTraceContext(reflection: StoredReflection) {
+  if (isWaterRoomReflection(reflection)) {
+    return "Wasser · Tiefe / Ursprung / Uebergang";
+  }
+
   const roomContext = getRoomContextLabel(reflection);
 
   if (roomContext) {
@@ -76,6 +84,10 @@ function getTraceContext(reflection: StoredReflection) {
 }
 
 function getTraceTitle(reflection: StoredReflection) {
+  if (isWaterRoomReflection(reflection)) {
+    return "Spur aus dem Wasserraum";
+  }
+
   const title = getTraceBaseTitle(reflection);
   const pathLabel = cleanTraceLabel(reflection.pathLabel);
 
@@ -98,6 +110,25 @@ function getCodexLabel() {
 
 function getCodexHref(reflection: StoredReflection) {
   return reflection.codexHref ?? (reflection.symbolSlug ? `/codex/${reflection.symbolSlug}` : undefined);
+}
+
+function isWaterRoomReflection(reflection: StoredReflection) {
+  return (
+    reflection.sourceType === "room" &&
+    (reflection.symbolSlug === "wasser" || reflection.sourceId === "wasser" || reflection.roomHref === "/raeume/wasser")
+  );
+}
+
+function getReflectionCodexLabel(reflection: StoredReflection) {
+  return reflection.symbolSlug === "wasser" || reflection.sourceId === "wasser"
+    ? "Wasser im Codex lesen"
+    : getCodexLabel();
+}
+
+function getReflectionRoomLabel(reflection: StoredReflection) {
+  return reflection.symbolSlug === "wasser" || reflection.sourceId === "wasser"
+    ? "Wasserraum erneut betreten"
+    : "Raum erneut betreten";
 }
 
 type ReflectionGroupKey = "rooms" | "codex" | "network" | "older";
@@ -355,14 +386,17 @@ function ReflectionArticle({
       <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] pt-4">
         {codexHref ? (
           <Link href={codexHref} className="symbol-archive-action">
-            {getCodexLabel()}
+            {getReflectionCodexLabel(reflection)}
           </Link>
         ) : null}
         {reflection.roomHref ? (
           <Link href={reflection.roomHref} className="symbol-archive-action">
-            Raum erneut betreten
+            {getReflectionRoomLabel(reflection)}
           </Link>
         ) : null}
+        <Link href="/symbolnetz" className="symbol-archive-action">
+          Symbolnetz oeffnen
+        </Link>
         <button
           type="button"
           onClick={() => onRemove(reflection.id)}

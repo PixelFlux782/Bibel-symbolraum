@@ -76,7 +76,7 @@ export function CodexReflectionCard({
       />
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <button type="button" onClick={saveReflection} disabled={!answer.trim()} className="symbol-cta">
-          In Mein Pfad bewahren
+          Diese Spur bewahren
         </button>
         <p className={`symbol-copy text-sm italic text-cyan-soft transition-opacity duration-500 ${saved ? "opacity-100" : "opacity-0"}`}>
           Diese Spur wurde in Mein Pfad bewahrt.

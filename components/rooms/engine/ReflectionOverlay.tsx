@@ -40,7 +40,7 @@ export function ReflectionOverlay({ data, reflection, roomContext, state }: Refl
       stateTitle: state.title,
       roomHref: `/raeume/${data.slug}`,
       pathLabel: roomContext?.mobileTitle,
-      pathContext: roomContext ? { symbol: roomContext.symbolId } : undefined,
+      pathContext: roomContext ? { from: roomContext.source, path: roomContext.pathId, symbol: roomContext.symbolId } : undefined,
       createdAt: new Date().toISOString(),
     });
     setAnswer("");
@@ -60,7 +60,7 @@ export function ReflectionOverlay({ data, reflection, roomContext, state }: Refl
       />
       <div className="symbol-engine__reflection-actions">
         <button type="button" onClick={saveReflection} disabled={!answer.trim()}>
-          Spur bewahren
+          Diese Spur bewahren
         </button>
         <span className={saved ? "is-visible" : ""}>Diese Spur wurde bewahrt.</span>
       </div>

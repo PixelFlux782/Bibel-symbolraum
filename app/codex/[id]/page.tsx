@@ -271,7 +271,7 @@ function resolvePathContext({
         ? `Vom ${symbolLabel} aus oeffnet sich diese Bewegung.`
         : `Du vertiefst jetzt die Spur von ${entry.title}.`,
       returnHref: symbol ? buildSymbolNetworkReturnHref({ symbol, lens: "story", path }) : "/symbolnetz",
-      returnLabel: "Zurueck ins Symbolnetz",
+      returnLabel: "Zum Symbolnetz zurueckkehren",
     };
   }
 
@@ -807,6 +807,121 @@ function PathContextCard({ context }: { context: ResolvedPathContext | null }) {
   );
 }
 
+const WATER_CODEX_ESSENCE =
+  "Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird.";
+
+const WATER_CODEX_MOVEMENT = [
+  { label: "Tiefe", text: "Wasser bewahrt das Verborgene unter dem Sichtbaren." },
+  { label: "Ursprung", text: "Aus der Tiefe tritt Leben hervor, bevor es eine feste Gestalt hat." },
+  { label: "Reinigung", text: "Wasser loest, klaert und laesst einen neuen Anfang moeglich werden." },
+  { label: "Uebergang", text: "Es markiert die Schwelle zwischen altem Zustand und neuem Weg." },
+  { label: "Leben", text: "Was in der Tiefe beginnt, wird zur Quelle und traegt Frucht." },
+];
+
+const WATER_SCRIPTURE_TRACE = [
+  {
+    id: "genesis-1-2",
+    reference: "Genesis 1,2",
+    title: "Wasser vor der Ordnung",
+    note: "Die Wasser stehen am Anfang als Tiefe, ueber der Geist und Moeglichkeit schweben.",
+  },
+  {
+    id: "exodus-14",
+    reference: "Exodus 14",
+    title: "Wasser als Uebergang",
+    note: "Das Meer wird nicht ausgelassen, sondern zur Schwelle der Befreiung.",
+  },
+  {
+    id: "john-4-14",
+    reference: "Johannes 4",
+    title: "Lebendiges Wasser",
+    note: "Wasser wird zur inneren Quelle, die Durst in Leben verwandelt.",
+  },
+];
+
+function WaterCodexReferenceSection() {
+  const waterRoomHref = buildRoomHref("wasser", { from: "codex", symbol: "wasser" });
+  const journeyHref = "/symbolnetz?symbol=wasser&lens=story&path=journey-wasser-wueste-brot";
+
+  return (
+    <DetailSection title="Kuratierte Mitte">
+      <div className="grid gap-8">
+        <section>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Essenz</p>
+          <p className="symbol-copy mt-3 max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
+            {WATER_CODEX_ESSENCE}
+          </p>
+        </section>
+
+        <section className="border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Symbolische Bewegung</p>
+          <ol className="mt-4 grid gap-3">
+            {WATER_CODEX_MOVEMENT.map((station, index) => (
+              <li key={station.label} className="grid gap-2 border border-white/[0.06] bg-black/[0.1] p-4 sm:grid-cols-[auto_1fr] sm:items-start">
+                <span className="font-serif text-xl italic text-gold/80">{String(index + 1).padStart(2, "0")}</span>
+                <span>
+                  <strong className="block font-serif text-2xl italic text-foreground-strong">{station.label}</strong>
+                  <span className="symbol-copy mt-2 block text-sm italic text-muted-soft">{station.text}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="grid gap-5 border-t border-white/[0.06] pt-6 md:grid-cols-2">
+          <div>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeischer Koerper</p>
+            <p className="mt-4 font-serif text-5xl leading-none text-gold/85" lang="he" dir="rtl">{"\u05de\u05d9\u05dd"}</p>
+            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">majim / Mem - Jod - Mem</p>
+            <p className="symbol-copy mt-4 text-base italic text-muted-soft">
+              Das Wort beginnt und endet mit Mem. In der Mitte steht Jod: ein Ursprungspunkt in der Tiefe.
+            </p>
+          </div>
+          <div>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahl</p>
+            <p className="mt-4 font-serif text-3xl italic text-foreground-strong">{"\u05de\u05d9\u05dd"} = 40 + 10 + 40 = 90</p>
+            <p className="symbol-copy mt-4 text-base italic text-muted-soft">
+              Die Zahl 90 sammelt die Bewegung von Tiefe - Punkt - Tiefe.
+            </p>
+          </div>
+        </section>
+
+        <section className="border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Biblische Spur</p>
+          <div className="mt-4 grid gap-3">
+            {WATER_SCRIPTURE_TRACE.map((anchor) => {
+              const linkedEntry = resolveLinkedCodexEntry(anchor.id);
+              const title = `${anchor.reference} - ${anchor.title}`;
+
+              return (
+                <article key={anchor.id} className="border border-white/[0.06] bg-black/[0.1] p-4">
+                  {linkedEntry ? (
+                    <Link href={`/codex/${linkedEntry.id}`} className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold">
+                      {title}
+                    </Link>
+                  ) : (
+                    <p className="font-serif text-xl italic text-foreground-strong">{title}</p>
+                  )}
+                  <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{anchor.note}</p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link href={waterRoomHref} className="symbol-cta">Den Wasserraum betreten</Link>
+            <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Erzaehlspur Wasser - Wueste - Brot ansehen</Link>
+            <a href="#spur-aufnehmen" className="symbol-cta symbol-cta-secondary">Diese Spur bewahren</a>
+          </div>
+        </section>
+      </div>
+    </DetailSection>
+  );
+}
+
 function FieldRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="border-t border-white/[0.06] py-4 first:border-t-0 first:pt-0 last:pb-0">
@@ -888,6 +1003,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   }
 
   const ontologyEntity = getOntologyEntity(entry.id);
+  const isWaterEntry = entry.id === "wasser";
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
   const pathContext = resolvePathContext({ entry, params: resolvedSearchParams });
@@ -952,7 +1068,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 {entry.subtitle}
               </p>
             ) : null}
-            <p className="symbol-copy mt-7 max-w-3xl text-lg md:text-xl">{entry.summary}</p>
+            <p className="symbol-copy mt-7 max-w-3xl text-lg md:text-xl">{isWaterEntry ? WATER_CODEX_ESSENCE : entry.summary}</p>
           </div>
 
           {entry.hebrew ? (
@@ -980,7 +1096,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
         <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="grid gap-5">
-            <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
+            {isWaterEntry ? <WaterCodexReferenceSection /> : null}
+            {!isWaterEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {isPatternEntity ? (
               <PatternCodexSection
                 entity={ontologyEntity}
@@ -995,21 +1112,21 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               />
             ) : null}
 
-            {!isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
+            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
               <VisibleHiddenSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
 
-            {!isPatternEntity && !isCoreConceptEntity ? (
+            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <WaysBeginningSection
                 entry={entry}
                 activeContext={activeFocus === "story" ? "story" : undefined}
               />
             ) : null}
 
-            {!isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
+            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
               <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
                 <div className="flex flex-wrap gap-2">
                   {entry.meaningFields.map((field) => {
@@ -1036,30 +1153,31 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </DetailSection>
             ) : null}
 
-            {!isPatternEntity && !isCoreConceptEntity ? (
+            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <OntologyMetadataSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
-            {!isPatternEntity && !isCoreConceptEntity ? (
+            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             ) : null}
-            {!isPatternEntity && !isCoreConceptEntity ? (
+            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <OntologyResonanceSection
                 entry={entry}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
                 excludedRelationIds={symbolWayRelationIds}
               />
             ) : null}
-            <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} />
-            <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} />
-            <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
-            {!isCoreConceptEntity ? (
+            {!isWaterEntry ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
+            {!isWaterEntry ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
+            {!isWaterEntry ? <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isWaterEntry && !isCoreConceptEntity ? (
               <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
             ) : null}
-            <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
+            {!isWaterEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {reflectionSourceType ? (
+              <div id="spur-aufnehmen">
               <CodexReflectionCard
                 title={entry.title}
                 hebrew={entry.hebrew}
@@ -1071,6 +1189,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 pathLabel={pathContext?.labels.join(" -> ")}
                 pathContext={reflectionPathContextHasValue ? reflectionPathContext : undefined}
               />
+              </div>
             ) : null}
           </div>
 
@@ -1097,7 +1216,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </dl>
             </DetailSection>
 
-            {!isCoreConceptEntity ? <NearbyEntriesSection entry={entry} /> : null}
+            {!isWaterEntry && !isCoreConceptEntity ? <NearbyEntriesSection entry={entry} /> : null}
           </aside>
         </div>
       </div>

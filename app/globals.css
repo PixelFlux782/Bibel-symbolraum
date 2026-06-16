@@ -2774,6 +2774,10 @@ body {
   pointer-events: none !important;
 }
 
+.symbol-network-flow .react-flow__attribution {
+  display: none;
+}
+
 .hierarchy-satellite-node {
   display: grid;
   width: 5.75rem;
@@ -2831,6 +2835,20 @@ body {
 .hierarchy-satellite-node--deep i {
   color: rgba(216, 209, 194, 0.42);
   font-size: 0.5rem;
+}
+
+.hierarchy-satellite-node.is-highlighted {
+  border-color: rgba(var(--gold-rgb), 0.36);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(var(--gold-rgb), 0.12), transparent 44%),
+    rgba(4, 6, 10, 0.34);
+  box-shadow:
+    0 0 34px rgba(var(--gold-rgb), 0.12),
+    inset 0 0 24px rgba(var(--gold-rgb), 0.045);
+}
+
+.hierarchy-satellite-node.is-highlighted span {
+  color: rgba(var(--gold-rgb), 0.9);
 }
 
 .symbol-constellation-node__lens {
@@ -4048,6 +4066,15 @@ body {
   animation: symbol-fade-in 420ms ease both;
 }
 
+.symbol-inspector-accordion__content h3 {
+  margin-top: 0.25rem;
+  color: rgba(var(--foreground-rgb), 0.92);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.45rem;
+  font-style: italic;
+  line-height: 1.25;
+}
+
 .symbol-inspector-accordion__content p {
   color: rgba(216, 209, 194, 0.66);
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
@@ -4061,6 +4088,127 @@ body {
   font-size: 2rem;
   font-style: normal;
   line-height: 1;
+}
+
+.symbol-inspector-accordion__content .symbol-inspector-leitsatz {
+  border-left: 1px solid rgba(var(--gold-rgb), 0.26);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.035), transparent);
+  padding: 0.62rem 0.82rem;
+  color: rgba(var(--gold-rgb), 0.78);
+  font-size: 0.92rem;
+}
+
+.symbol-inspector-stations {
+  display: grid;
+  gap: 0.52rem;
+  margin-top: 0.18rem;
+}
+
+.symbol-inspector-station {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.68rem;
+  border-left: 1px solid rgba(var(--cyan-rgb), 0.14);
+  background: rgba(255, 255, 255, 0.014);
+  padding: 0.74rem 0.82rem;
+}
+
+.symbol-inspector-stations:not(.symbol-inspector-stations--numbered) .symbol-inspector-station {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.symbol-inspector-station__index {
+  display: inline-grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.2);
+  color: rgba(var(--gold-rgb), 0.72);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  line-height: 1;
+}
+
+.symbol-inspector-station strong {
+  display: block;
+  color: rgba(var(--foreground-rgb), 0.88);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.25;
+}
+
+.symbol-inspector-accordion__content .symbol-inspector-station p {
+  margin-top: 0.16rem;
+  color: rgba(216, 209, 194, 0.58);
+  font-size: 0.84rem;
+  line-height: 1.42;
+}
+
+.symbol-inspector-station i {
+  display: block;
+  margin-top: 0.28rem;
+  color: rgba(var(--cyan-rgb), 0.62);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  font-style: normal;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.symbol-inspector-ctas {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.24rem;
+}
+
+.symbol-inspector-subspace-list {
+  display: grid;
+  gap: 0.58rem;
+}
+
+.symbol-inspector-subspace-list button {
+  display: grid;
+  gap: 0.28rem;
+  width: 100%;
+  border-left: 1px solid rgba(var(--cyan-rgb), 0.16);
+  background: rgba(255, 255, 255, 0.014);
+  padding: 0.78rem 0.86rem;
+  text-align: left;
+  transition: border-color 420ms ease, background-color 420ms ease;
+}
+
+.symbol-inspector-subspace-list button:hover,
+.symbol-inspector-subspace-list button:focus-visible {
+  border-color: rgba(var(--gold-rgb), 0.34);
+  background: rgba(var(--gold-rgb), 0.028);
+  outline: none;
+}
+
+.symbol-inspector-subspace-list span {
+  color: rgba(var(--foreground-rgb), 0.88);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.04rem;
+  font-style: italic;
+  line-height: 1.25;
+}
+
+.symbol-inspector-subspace-list i {
+  color: rgba(216, 209, 194, 0.58);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.82rem;
+  font-style: italic;
+  line-height: 1.42;
+}
+
+.symbol-inspector-subspace-list strong {
+  color: rgba(var(--gold-rgb), 0.64);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.55rem;
+  font-weight: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .symbol-ontology-resonances {
