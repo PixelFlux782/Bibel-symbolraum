@@ -3,6 +3,8 @@
  * Run with: node scripts/validate-bridges.js
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 const fs = require("fs");
 const path = require("path");
 const createJiti = require("jiti");
@@ -30,6 +32,19 @@ const {
 } = jiti("../lib/symbols/symbolPathConfig.ts");
 
 const {
+  dedupeCodexChips,
+  getWaterCodexChipLinks,
+} = jiti("../lib/codex/linking.ts");
+
+const {
+  resolveCodexEntry,
+} = jiti("../lib/codex/resolveCodexEntry.ts");
+
+const {
+  codexRegistry,
+} = jiti("../lib/codex/codexRegistry.ts");
+
+const {
   buildRoomHref,
   resolveRoomContext,
 } = jiti("../lib/rooms/roomContext.ts");
@@ -42,10 +57,21 @@ function failIf(condition, message, details) {
   return condition ? null : { message, details };
 }
 
+function getCodexEntryByExactId(id) {
+  return codexRegistry.find((entry) => entry.id === id);
+}
+
 function validateWaterReferenceBridge() {
   const errors = [];
   const warnings = [];
   const waterBridge = getSymbolPathConfig("wasser");
+  const waterChipLinks = getWaterCodexChipLinks();
+  const waterMeaningFields = waterBridge?.codexGates?.meaningFields ?? [];
+  const waterScriptureAnchors = waterBridge?.codexGates?.scriptureAnchors ?? [];
+  const waterScriptureAnchorCounts = waterScriptureAnchors.reduce((counts, anchor) => {
+    counts.set(anchor.id, (counts.get(anchor.id) ?? 0) + 1);
+    return counts;
+  }, new Map());
   const configuredReflection = getSymbolPathConfigFromReflectionLike({
     symbol: "wasser",
     roomHref: "/raeume/wasser",
@@ -88,8 +114,52 @@ function validateWaterReferenceBridge() {
     failIf(meinPfadSource.includes("getSymbolPathConfigFromReflectionLike"), "Mein Pfad uses bridge fallback labels."),
     failIf(meinPfadSource.includes("bridge?.codexHref"), "Mein Pfad has Codex href fallback."),
     failIf(meinPfadSource.includes("ctaLabels.roomReturn"), "Mein Pfad has room CTA fallback."),
+    failIf(dedupeCodexChips(waterMeaningFields.map((field) => ({ id: field.id, label: field.label }))).length === waterMeaningFields.length, "Water meaning fields are deduplicated.", waterMeaningFields),
+    failIf(dedupeCodexChips(waterScriptureAnchors.map((anchor) => ({ id: anchor.id, label: anchor.label }))).length === waterScriptureAnchors.length, "Water scripture anchors are deduplicated.", waterScriptureAnchors),
+    failIf(waterChipLinks.meaningFields.length === waterMeaningFields.length, "Every visible water meaning-field chip has an href.", waterChipLinks.meaningFields),
+    failIf(waterChipLinks.scriptureAnchors.length === waterScriptureAnchors.length, "Every visible water scripture chip has an href.", waterChipLinks.scriptureAnchors),
+    failIf(waterScriptureAnchorCounts.get("genesis-1-2") === 1, "Water scripture gates include Genesis 1,2 exactly once.", waterScriptureAnchors),
+    failIf(waterScriptureAnchorCounts.get("exodus-14") === 1, "Water scripture gates include Exodus 14 exactly once.", waterScriptureAnchors),
+    failIf(Boolean(getCodexEntryByExactId("genesis-1-2")), "Genesis 1,2 is a valid Codex target."),
+    failIf(Boolean(getCodexEntryByExactId("exodus-14")), "Exodus 14 is a valid Codex target when curated for water."),
   ].forEach((error) => {
     if (error) errors.push(error);
+  });
+
+  waterChipLinks.scriptureAnchors.forEach((chip) => {
+    const linkedEntry = getCodexEntryByExactId(chip.id) ?? resolveCodexEntry(chip.label);
+
+    if (linkedEntry && chip.href !== `/codex/${linkedEntry.id}`) {
+      errors.push({
+        message: `Water scripture chip "${chip.label}" should prefer its Codex entry route.`,
+        details: chip,
+      });
+    }
+  });
+
+  [...waterChipLinks.meaningFields, ...waterChipLinks.scriptureAnchors].forEach((chip) => {
+    if (!chip.href) {
+      errors.push({ message: `Water chip "${chip.label}" has no href.`, details: chip });
+      return;
+    }
+
+    if (chip.href.startsWith("/codex/")) {
+      const routeId = chip.href.replace("/codex/", "").split("?")[0];
+
+      if (!getCodexEntryByExactId(routeId)) {
+        errors.push({ message: `Water chip "${chip.label}" points to a known missing Codex route.`, details: chip });
+      }
+    } else if (chip.href.startsWith("/codex?")) {
+      const params = new URLSearchParams(chip.href.slice("/codex?".length));
+      const hasMeaningFallback = params.has("meaning") && params.get("meaning")?.trim();
+      const hasScriptureFallback = params.has("scripture") && params.get("scripture")?.trim();
+
+      if (!hasMeaningFallback && !hasScriptureFallback) {
+        errors.push({ message: `Water chip "${chip.label}" uses an invalid Codex fallback query.`, details: chip });
+      }
+    } else {
+      errors.push({ message: `Water chip "${chip.label}" does not point into the Codex.`, details: chip });
+    }
   });
 
   if (waterBridge && waterBridge.movement.join(" -> ") !== "Symbolnetz -> Codex -> Raum -> persoenliche Spur -> Mein Pfad") {

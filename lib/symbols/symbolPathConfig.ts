@@ -21,6 +21,20 @@ export type SymbolPathConfig = {
     roomReturn: string;
     symbolNetworkReturn: string;
   };
+  codexGates?: {
+    meaningFields?: {
+      id: string;
+      meaningNodeId?: string;
+      label: string;
+      href?: string;
+    }[];
+    scriptureAnchors?: {
+      id: string;
+      reference: string;
+      label: string;
+      href?: string;
+    }[];
+  };
   movement: string[];
 };
 
@@ -45,6 +59,19 @@ export const symbolPathConfigs = {
       room: "Den Wasserraum betreten",
       roomReturn: "Wasserraum erneut betreten",
       symbolNetworkReturn: "Zum Symbolnetz zurueckkehren",
+    },
+    codexGates: {
+      meaningFields: [
+        { id: "tiefe", meaningNodeId: "depth", label: "Tiefe", href: "/codex/tiefe" },
+        { id: "uebergang", meaningNodeId: "transition", label: "Uebergang" },
+        { id: "reinigung", meaningNodeId: "purification", label: "Reinigung", href: "/codex/reinigung" },
+        { id: "geburt", meaningNodeId: "birth", label: "Geburt" },
+        { id: "verborgenheit", meaningNodeId: "hiddenness", label: "Verborgenheit" },
+      ],
+      scriptureAnchors: [
+        { id: "genesis-1-2", reference: "Genesis 1,2", label: "Genesis 1,2", href: "/codex/genesis-1-2" },
+        { id: "exodus-14", reference: "Exodus 14", label: "Exodus 14", href: "/codex/exodus-14" },
+      ],
     },
     movement: ["Symbolnetz", "Codex", "Raum", "persoenliche Spur", "Mein Pfad"],
   },

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexReflectionCard } from "@/components/CodexReflectionCard";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
+import { getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
@@ -59,6 +60,10 @@ type ReflectionSourceType = "symbol" | "pattern" | "journey" | "core" | "letter"
 function formatType(type: CodexEntryType) {
   if (type === "meaning") {
     return "Bedeutung";
+  }
+
+  if (type === "scripture") {
+    return "Bibelstelle";
   }
 
   return type
@@ -842,6 +847,7 @@ const WATER_SCRIPTURE_TRACE = [
 
 function WaterCodexReferenceSection() {
   const waterBridge = getSymbolPathConfig("wasser");
+  const waterChipLinks = getWaterCodexChipLinks();
   const waterRoomHref = buildRoomHref(waterBridge?.symbolId ?? "wasser", { from: "codex", symbol: waterBridge?.symbolId ?? "wasser" });
   const journeyHref = "/symbolnetz?symbol=wasser&lens=story&path=journey-wasser-wueste-brot";
 
@@ -870,6 +876,40 @@ function WaterCodexReferenceSection() {
           </ol>
         </section>
 
+        {waterChipLinks.meaningFields.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bedeutungsfelder</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {waterChipLinks.meaningFields.map((field) => (
+                <Link
+                  key={field.id}
+                  href={field.href}
+                  className="border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.075] hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/20"
+                >
+                  {field.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {waterChipLinks.scriptureAnchors.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bibelstellen</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {waterChipLinks.scriptureAnchors.map((anchor) => (
+                <Link
+                  key={anchor.id}
+                  href={anchor.href}
+                  className="border border-cyan-soft/15 bg-cyan-soft/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-cyan-soft/85 transition-colors duration-500 hover:border-cyan-soft/30 hover:text-cyan-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-soft/20"
+                >
+                  {anchor.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="grid gap-5 border-t border-white/[0.06] pt-6 md:grid-cols-2">
           <div>
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeischer Koerper</p>
@@ -892,18 +932,14 @@ function WaterCodexReferenceSection() {
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Biblische Spur</p>
           <div className="mt-4 grid gap-3">
             {WATER_SCRIPTURE_TRACE.map((anchor) => {
-              const linkedEntry = resolveLinkedCodexEntry(anchor.id);
+              const href = resolveScriptureAnchorHref(anchor.id, "wasser");
               const title = `${anchor.reference} - ${anchor.title}`;
 
               return (
                 <article key={anchor.id} className="border border-white/[0.06] bg-black/[0.1] p-4">
-                  {linkedEntry ? (
-                    <Link href={`/codex/${linkedEntry.id}`} className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold">
-                      {title}
-                    </Link>
-                  ) : (
-                    <p className="font-serif text-xl italic text-foreground-strong">{title}</p>
-                  )}
+                  <Link href={href} className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/20">
+                    {title}
+                  </Link>
                   <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{anchor.note}</p>
                 </article>
               );

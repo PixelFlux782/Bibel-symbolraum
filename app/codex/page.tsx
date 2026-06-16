@@ -1,8 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { codexRegistry } from "@/lib/codex/codexRegistry";
+import {
+  filterCodexEntriesByMeaning,
+  filterCodexEntriesByScripture,
+  getMeaningFieldFilter,
+  getScriptureFilter,
+} from "@/lib/codex/linking";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { getCodexEntriesByType, resolveCodexEntry, searchCodexEntries } from "@/lib/codex/getCodexEntry";
@@ -1251,25 +1258,43 @@ function TorahSequence({ entries, activeCodexId, onActivateCodexEntry }: { entri
   );
 }
 
-export default function CodexPage() {
+function CodexPageContent() {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [activeViewId, setActiveViewId] = useState<CodexViewId>("all");
   const [activeCodexId, setActiveCodexId] = useState<string | null>(null);
   const trimmedQuery = query.trim();
+  const meaningFocusValue = searchParams.get("meaning")?.trim() || "";
+  const scriptureFocusValue = searchParams.get("scripture")?.trim() || "";
+  const meaningFocus = meaningFocusValue ? getMeaningFieldFilter(meaningFocusValue) : null;
+  const scriptureFocus = !meaningFocus && scriptureFocusValue ? getScriptureFilter(scriptureFocusValue) : null;
+  const hasCodexFocus = Boolean(meaningFocus || scriptureFocus);
 
   const activeViewEntries = useMemo(
     () => filterEntriesByView(codexRegistry, activeViewId),
     [activeViewId],
   );
 
-  const visibleEntries = useMemo(() => {
-    if (!trimmedQuery) {
-      return activeViewEntries;
+  const focusedViewEntries = useMemo(() => {
+    if (meaningFocus) {
+      return filterCodexEntriesByMeaning(activeViewEntries, meaningFocus.slug);
     }
 
-    const activeIds = new Set(activeViewEntries.map((entry) => entry.id));
+    if (scriptureFocus) {
+      return filterCodexEntriesByScripture(activeViewEntries, scriptureFocus.slug);
+    }
+
+    return activeViewEntries;
+  }, [activeViewEntries, meaningFocus, scriptureFocus]);
+
+  const visibleEntries = useMemo(() => {
+    if (!trimmedQuery) {
+      return focusedViewEntries;
+    }
+
+    const activeIds = new Set(focusedViewEntries.map((entry) => entry.id));
     return searchCodexEntries(trimmedQuery).filter((entry) => activeIds.has(entry.id));
-  }, [activeViewEntries, trimmedQuery]);
+  }, [focusedViewEntries, trimmedQuery]);
 
   const visibleCoreConceptEntries = useMemo(
     () => filterCoreConceptOverviewEntries(trimmedQuery),
@@ -1284,8 +1309,16 @@ export default function CodexPage() {
 
   const activeView = CODEX_VIEWS.find((view) => view.id === activeViewId) ?? CODEX_VIEWS[0];
   const activeCodexEntry = activeCodexId ? resolveCodexEntry(activeCodexId) : undefined;
-  const hasPreparedEmptyView = activeViewEntries.length === 0;
+  const hasPreparedEmptyView = !hasCodexFocus && activeViewEntries.length === 0;
   const hasSearchWithoutResults = !hasPreparedEmptyView && trimmedQuery && visibleEntries.length === 0;
+  const focusTitle = meaningFocus
+    ? `Bedeutungsfeld: ${meaningFocus.label}`
+    : scriptureFocus
+      ? `Bibelstelle: ${scriptureFocus.label}`
+      : "";
+  const focusNote = scriptureFocus && !scriptureFocus.hasDetailEntry
+    ? "Diese Stelle ist bereits als Spur markiert, aber noch nicht vollstaendig erschlossen."
+    : "";
 
   return (
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-28 md:py-36">
@@ -1375,7 +1408,21 @@ export default function CodexPage() {
         </section>
 
         <div className="mt-16 grid gap-16 md:mt-20">
-          {(activeViewId === "all" || activeViewId === "meaning") ? (
+          {hasCodexFocus ? (
+            <section className="border border-gold/[0.12] bg-black/[0.12] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-6">
+              <p className="symbol-kicker text-cyan-soft">Fokussierte Codex-Spur</p>
+              <h2 className="mt-3 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
+                {focusTitle}
+              </h2>
+              {focusNote ? (
+                <p className="symbol-copy mt-4 max-w-2xl text-base italic text-muted-soft">
+                  {focusNote}
+                </p>
+              ) : null}
+            </section>
+          ) : null}
+
+          {!hasCodexFocus && (activeViewId === "all" || activeViewId === "meaning") ? (
             <CoreConceptOverviewStrip
               entries={visibleCoreConceptEntries}
               onActivateCodexEntry={setActiveCodexId}
@@ -1497,5 +1544,13 @@ export default function CodexPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function CodexPage() {
+  return (
+    <Suspense fallback={null}>
+      <CodexPageContent />
+    </Suspense>
   );
 }

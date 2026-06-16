@@ -30,6 +30,7 @@ const CODEX_ENTRY_IDS = [
   "genesis-1-1",
   "genesis-1-2",
   "genesis-1-3",
+  "exodus-14",
   "schoepfung-wasser",
   "schilfmeer",
   "felswasser",
@@ -66,6 +67,7 @@ const CODEX_ALIASES = {
   "genesis-1-1": ["Genesis 1,1", "1 Mose 1,1", "Bereschit 1:1", "Im Anfang"],
   "genesis-1-2": ["Genesis 1,2", "1 Mose 1,2", "Bereschit 1:2", "Tohu wabohu", "Ruach"],
   "genesis-1-3": ["Genesis 1,3", "1 Mose 1,3", "Bereschit 1:3", "Es werde Licht", "Jehi or"],
+  "exodus-14": ["Exodus 14", "2 Mose 14", "Schilfmeer", "Meer als Durchgang", "Rettung am Meer"],
   "schoepfung-wasser": ["Wasser der Schöpfung", "Anfangswasser", "Geist ueber den Wassern"],
   schilfmeer: ["Schilfmeer", "Meer als Durchgang", "Exodus Wasser"],
   felswasser: ["Wasser aus dem Felsen", "Felswasser", "Wasser in der Wueste"],
@@ -529,7 +531,7 @@ function letterEntry(letterId: "mem" | "aleph"): CodexEntry {
   };
 }
 
-function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2" | "genesis-1-3"): CodexEntry {
+function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2" | "genesis-1-3" | "exodus-14"): CodexEntry {
   const reference = biblicalReferences.find((entry) => entry.id === referenceId);
   const base = {
     "genesis-1": {
@@ -573,7 +575,7 @@ function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2"
       label: reference?.label ?? "Genesis 1,2",
       searchTerms: ["Bereshit 1:2", "Tehom", "Wasser", "Urtiefe", "Mem"],
       summary:
-        "Genesis 1:2 fuehrt in den noch ungeordneten Zwischenraum: Erde ist wuest und leer, Finsternis liegt ueber der Tiefe, und Gottes Geist schwebt ueber den Wassern. Wasser, Tiefe, Chaos, Geist und Mem bilden hier das erste dichte Symbolfeld. Der Vers ist wichtig, weil er zeigt: Ordnung beginnt im Symbolraum nicht oberhalb der Tiefe, sondern an ihrer Schwelle.",
+        "Genesis 1,2 bewahrt den Anfang vor der Ordnung: Tiefe, Wasser und Finsternis sind noch ungeformte Moeglichkeit. Ueber den Wassern schwebt der Geist. Der Vers steht im Codex als stille Schwelle, an der Ursprung noch nicht Gestalt ist und doch schon getragen wird.",
       meaningFields: biblicalMeaningFields(referenceId),
       relations: [
         { targetId: "wasser", type: "anchors-scripture", label: "Wasser als Urtiefe und Anfangsraum.", source: "meaning-graph" },
@@ -600,6 +602,24 @@ function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2"
         { targetId: "aleph", type: "contains-letter", label: "Aleph steht im Lichtwort or als stiller Ursprung.", source: "hebrew-letter" },
       ] satisfies CodexRelation[],
       symbolRoomSlug: "licht",
+    },
+    "exodus-14": {
+      title: reference?.label ?? "Exodus 14",
+      subtitle: "Wasser als Schwelle zwischen Knechtschaft und Weg",
+      reference: reference?.reference ?? "Exodus 14",
+      label: reference?.label ?? "Exodus 14",
+      searchTerms: ["Schilfmeer", "Meer", "Durchzug", "Schwelle", "Rettung", "Befreiung", "Geburt eines Weges"],
+      summary:
+        "Exodus 14 liest das Meer als Schwelle. Wasser steht zwischen Knechtschaft und offenem Weg, zwischen Tiefe und Rettung. Der Durchzug erklaert die Tiefe nicht weg; er macht sie zum Ort, an dem ein Volk den ersten Schritt in eine neue Freiheit findet.",
+      meaningFields: ["depth", "transition", "birth", "life", "desert", "guidance"] satisfies CodexEntry["meaningFields"],
+      relations: [
+        { targetId: "wasser", type: "anchors-scripture", label: "Wasser wird zur Schwelle zwischen altem Zustand und neuem Weg.", source: "scripture-reference" },
+        { targetId: "wueste", type: "continues-journey", label: "Hinter dem Meer beginnt der offene Weg durch die Wueste.", source: "scripture-reference" },
+        { targetId: "offenbarung", type: "shares-meaning", label: "Im Durchzug wird Rettung als sichtbarer Weg lesbar.", source: "meaning-graph" },
+        { targetId: "tiefe", type: "shares-meaning", label: "Die Tiefe bleibt gegenwaertig und wird doch begehbare Schwelle.", source: "meaning-graph" },
+        { targetId: "schilfmeer", type: "related", label: "Der Schilfmeer-Anker sammelt die Wasserpassage als Durchgang.", source: "scripture-reference" },
+      ] satisfies CodexRelation[],
+      symbolRoomSlug: "wasser",
     },
   }[referenceId];
 
@@ -962,6 +982,7 @@ export const codexRegistry = [
   scriptureEntry("genesis-1-1"),
   scriptureEntry("genesis-1-2"),
   scriptureEntry("genesis-1-3"),
+  scriptureEntry("exodus-14"),
   storyAnchorEntry({
     id: "schoepfung-wasser",
     title: "Wasser der Schöpfung",
