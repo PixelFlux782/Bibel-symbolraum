@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexReflectionCard } from "@/components/CodexReflectionCard";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
-import { getWaterCodexAnchorBridge, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
+import { getSymbolCodexChipLinks, getWaterCodexAnchorBridge, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
@@ -996,6 +996,118 @@ function WaterCodexReferenceSection() {
   );
 }
 
+const LIGHT_CODEX_ESSENCE =
+  "Licht ist nicht nur Helligkeit. Es ist das erste Sichtbarwerden von Ordnung: ein Ruf, durch den Kontur, Richtung und Erkenntnis hervortreten.";
+
+const LIGHT_CODEX_MOVEMENT = [
+  { label: "Finsternis", text: "Noch ist Wirklichkeit da, aber sie ist nicht lesbar." },
+  { label: "Ruf", text: "Das Wort oeffnet einen ersten Spalt von Richtung." },
+  { label: "Licht", text: "Was verborgen war, tritt in Sichtbarkeit." },
+  { label: "Scheidung", text: "Licht macht Unterscheidung moeglich, ohne die Tiefe zu verwerfen." },
+  { label: "Ordnung", text: "Konturen werden zu einer tragenden Gestalt." },
+  { label: "Erkenntnis", text: "Sichtbarkeit wird innerlich wahrgenommen und deutbar." },
+];
+
+function LightCodexReferenceSection() {
+  const lightBridge = getSymbolPathConfig("licht");
+  const lightChipLinks = getSymbolCodexChipLinks("licht");
+  const lightRoomHref = buildRoomHref(lightBridge?.symbolId ?? "licht", { from: "codex", symbol: lightBridge?.symbolId ?? "licht" });
+
+  return (
+    <DetailSection title="Kuratierte Mitte">
+      <div className="grid gap-8">
+        <section>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Essenz</p>
+          <p className="symbol-copy mt-3 max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
+            {LIGHT_CODEX_ESSENCE}
+          </p>
+        </section>
+
+        <section className="border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bewegungsfolge</p>
+          <ol className="mt-4 grid gap-3">
+            {LIGHT_CODEX_MOVEMENT.map((station, index) => (
+              <li key={station.label} className="grid gap-2 border border-white/[0.06] bg-black/[0.1] p-4 sm:grid-cols-[auto_1fr] sm:items-start">
+                <span className="font-serif text-xl italic text-gold/80">{String(index + 1).padStart(2, "0")}</span>
+                <span>
+                  <strong className="block font-serif text-2xl italic text-foreground-strong">{station.label}</strong>
+                  <span className="symbol-copy mt-2 block text-sm italic text-muted-soft">{station.text}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="grid gap-5 border-t border-white/[0.06] pt-6 md:grid-cols-2">
+          <div>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeischer Koerper</p>
+            <p className="mt-4 font-serif text-5xl leading-none text-gold/85" lang="he" dir="rtl">{"\u05d0\u05d5\u05e8"}</p>
+            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">Or / Aleph - Waw - Resch</p>
+            <p className="symbol-copy mt-4 text-base italic text-muted-soft">
+              Or traegt den stillen Anfang des Aleph, eine verbindende Mitte und das Hervortreten in Sichtbarkeit.
+            </p>
+          </div>
+          <div>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahl / Symbolik</p>
+            <p className="mt-4 font-serif text-3xl italic text-foreground-strong">{"\u05d0\u05d5\u05e8"} = 1 + 6 + 200 = 207</p>
+            <p className="symbol-copy mt-4 text-base italic text-muted-soft">
+              Die Zahl bleibt hier eine Resonanzspur: Anfang, Verbindung und sichtbarer Durchbruch.
+            </p>
+          </div>
+        </section>
+
+        {lightChipLinks.meaningFields.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bedeutungsfelder</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {lightChipLinks.meaningFields.map((field) => (
+                <Link
+                  key={field.id}
+                  href={field.href}
+                  className="border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.075] hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/20"
+                >
+                  {field.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {lightChipLinks.scriptureAnchors.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bibelanker</p>
+            <div className="mt-4 grid gap-3">
+              {lightChipLinks.scriptureAnchors.map((anchor) => (
+                <article key={anchor.id} className="border border-white/[0.06] bg-black/[0.1] p-4">
+                  <Link
+                    href={anchor.href}
+                    className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/20"
+                  >
+                    {anchor.label} - Es werde Licht
+                  </Link>
+                  <p className="symbol-copy mt-3 text-sm italic text-muted-soft">
+                    In Genesis 1,3 wird Licht gerufen: nicht als Dekoration der Welt, sondern als erstes Sichtbarwerden von Ordnung.
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link href={lightRoomHref} className="symbol-cta">{lightBridge?.ctaLabels.room ?? "Den Lichtraum betreten"}</Link>
+            <Link href={lightBridge?.symbolNetworkHref ?? "/symbolnetz?symbol=licht"} className="symbol-cta symbol-cta-secondary">
+              Licht im Symbolnetz ansehen
+            </Link>
+          </div>
+        </section>
+      </div>
+    </DetailSection>
+  );
+}
+
 function FieldRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="border-t border-white/[0.06] py-4 first:border-t-0 first:pt-0 last:pb-0">
@@ -1078,6 +1190,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
   const ontologyEntity = getOntologyEntity(entry.id);
   const isWaterEntry = entry.id === "wasser";
+  const isLightEntry = entry.id === "licht";
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
   const pathContext = resolvePathContext({ entry, params: resolvedSearchParams });
@@ -1172,6 +1285,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="grid gap-5">
             {isWaterEntry ? <WaterCodexReferenceSection /> : null}
+            {isLightEntry ? <LightCodexReferenceSection /> : null}
             {!isWaterEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {isPatternEntity ? (
               <PatternCodexSection
@@ -1201,7 +1315,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               />
             ) : null}
 
-            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
+            {!isWaterEntry && !isLightEntry && !isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
               <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
                 <div className="flex flex-wrap gap-2">
                   {entry.meaningFields.map((field) => {
@@ -1250,7 +1364,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {!isWaterEntry && !isCoreConceptEntity ? (
               <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
             ) : null}
-            {!isWaterEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isWaterEntry && !isLightEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {reflectionSourceType ? (
               <div id="spur-aufnehmen">
               <CodexReflectionCard

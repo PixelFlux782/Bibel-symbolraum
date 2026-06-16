@@ -105,6 +105,43 @@ export const symbolPathConfigs = {
     },
     movement: ["Symbolnetz", "Codex", "Raum", "persoenliche Spur", "Mein Pfad"],
   },
+  licht: {
+    symbolId: "licht",
+    label: "Licht",
+    hebrew: "\u05d0\u05d5\u05e8",
+    codexHref: "/codex/licht",
+    roomHref: "/raeume/licht",
+    symbolNetworkHref: "/symbolnetz?symbol=licht",
+    returnToSymbolNetworkHref: "/symbolnetz?symbol=licht",
+    pathLabel: "Lichtpfad",
+    reflectionSource: {
+      sourceType: "room",
+      sourceId: "licht",
+      label: "Spur aus dem Lichtraum",
+      contextLabel: "Spur aus dem Lichtraum",
+    },
+    ctaLabels: {
+      codex: "Licht im Codex lesen",
+      room: "Den Lichtraum betreten",
+      roomReturn: "Lichtraum erneut betreten",
+      symbolNetworkReturn: "Zum Symbolnetz zurueckkehren",
+    },
+    codexGates: {
+      meaningFields: [
+        { id: "offenbarung", meaningNodeId: "revelation", label: "Offenbarung", href: "/codex/offenbarung" },
+        { id: "ordnung", meaningNodeId: "guidance", label: "Ordnung", href: "/codex/ordnung" },
+        { id: "erkenntnis", meaningNodeId: "awareness", label: "Erkenntnis", href: "/codex/erkenntnis" },
+        { id: "glanz", meaningNodeId: "light", label: "Glanz", href: "/codex/glanz" },
+        { id: "auge", meaningNodeId: "awareness", label: "Auge", href: "/codex/auge" },
+        { id: "himmel", meaningNodeId: "guidance", label: "Himmel", href: "/codex/himmel" },
+      ],
+      scriptureAnchors: [
+        { id: "genesis-1-3", reference: "Genesis 1,3", label: "Genesis 1,3", href: "/codex/genesis-1-3" },
+      ],
+    },
+    codexAnchorBridge: undefined,
+    movement: ["Finsternis", "Ruf", "Licht", "Scheidung", "Ordnung", "Erkenntnis"],
+  },
 } as const satisfies Record<string, SymbolPathConfig>;
 
 export type ConfiguredSymbolId = keyof typeof symbolPathConfigs;

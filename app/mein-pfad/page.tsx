@@ -71,7 +71,9 @@ function getTraceContext(reflection: StoredReflection) {
   const bridge = getSymbolPathConfigFromReflectionLike(reflection);
 
   if (isConfiguredRoomReflection(reflection)) {
-    return bridge?.pathLabel ?? bridge?.reflectionSource.contextLabel ?? "Spur aus dem Raum";
+    const configuredBridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+    return configuredBridge ? configuredBridge.pathLabel : "Spur aus dem Raum";
   }
 
   const roomContext = getRoomContextLabel(reflection);
@@ -102,10 +104,10 @@ function getTraceContext(reflection: StoredReflection) {
 }
 
 function getTraceTitle(reflection: StoredReflection) {
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-
   if (isConfiguredRoomReflection(reflection)) {
-    return bridge?.reflectionSource.label ?? "Spur aus dem Raum";
+    const configuredBridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+    return configuredBridge?.reflectionSource.label ?? "Spur aus dem Raum";
   }
 
   const title = getTraceBaseTitle(reflection);

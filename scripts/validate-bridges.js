@@ -33,6 +33,7 @@ const {
 
 const {
   dedupeCodexChips,
+  getSymbolCodexChipLinks,
   getWaterCodexAnchorBridge,
   getWaterCodexChipLinks,
 } = jiti("../lib/codex/linking.ts");
@@ -44,6 +45,10 @@ const {
 const {
   codexRegistry,
 } = jiti("../lib/codex/codexRegistry.ts");
+
+const {
+  getOntologyEntity,
+} = jiti("../lib/ontology/index.ts");
 
 const {
   buildRoomHref,
@@ -77,7 +82,9 @@ function routeExists(href) {
   if (pathname === "/codex") return true;
   if (pathname === "/symbolnetz") return fs.existsSync(path.join(projectRoot, "app", "symbolnetz", "page.tsx"));
   if (pathname.startsWith("/codex/")) {
-    return Boolean(getCodexEntryByExactId(pathname.replace("/codex/", "")));
+    const codexId = pathname.replace("/codex/", "");
+
+    return Boolean(getCodexEntryByExactId(codexId) || getOntologyEntity(codexId));
   }
   if (pathname.startsWith("/raeume/")) {
     return fs.existsSync(path.join(projectRoot, "app", "raeume", pathname.replace("/raeume/", ""), "page.tsx"));
@@ -155,17 +162,17 @@ function validateWaterReferenceBridge() {
   const reflectionSource = fs.readFileSync(path.join(projectRoot, "components", "rooms", "engine", "ReflectionOverlay.tsx"), "utf8");
 
   [
-    failIf(Boolean(waterBridge), "Wasser has a symbol bridge config."),
-    failIf(waterBridge?.codexHref === "/codex/wasser", "Wasser has Codex link.", waterBridge?.codexHref),
-    failIf(waterBridge?.roomHref === "/raeume/wasser", "Wasser has room link.", waterBridge?.roomHref),
-    failIf(waterBridge?.ctaLabels.codex === "Wasser im Codex lesen", "Wasser has Codex CTA label.", waterBridge?.ctaLabels.codex),
-    failIf(waterBridge?.ctaLabels.room === "Den Wasserraum betreten", "Wasser has room CTA label.", waterBridge?.ctaLabels.room),
-    failIf(waterBridge?.ctaLabels.roomReturn === "Wasserraum erneut betreten", "Wasser has room return CTA label.", waterBridge?.ctaLabels.roomReturn),
-    failIf(codexRoomHref.startsWith("/raeume/wasser?"), "Wasser room href keeps codex context.", codexRoomHref),
-    failIf(codexRoomHref.includes("from=codex"), "Wasser room href includes from=codex.", codexRoomHref),
-    failIf(symbolNetworkRoomHref.includes("from=symbolnetz"), "Wasser room href includes from=symbolnetz.", symbolNetworkRoomHref),
-    failIf(codexRoomContext?.source === "codex" && codexRoomContext.symbolId === "wasser", "Wasser room can read codex origin context.", codexRoomContext),
-    failIf(symbolNetworkRoomContext?.source === "symbolnetz" && symbolNetworkRoomContext.symbolId === "wasser", "Wasser room can read symbol network origin context.", symbolNetworkRoomContext),
+    failIf(Boolean(waterBridge), "Water codex gate missing: symbol bridge config for wasser was not found."),
+    failIf(waterBridge?.codexHref === "/codex/wasser", "Water codex gate missing: codexHref must point to /codex/wasser.", waterBridge?.codexHref),
+    failIf(waterBridge?.roomHref === "/raeume/wasser", "Water room gate missing: roomHref must point to /raeume/wasser.", waterBridge?.roomHref),
+    failIf(waterBridge?.ctaLabels.codex === "Wasser im Codex lesen", "Water codex CTA label missing or changed.", waterBridge?.ctaLabels.codex),
+    failIf(waterBridge?.ctaLabels.room === "Den Wasserraum betreten", "Water room CTA label missing or changed.", waterBridge?.ctaLabels.room),
+    failIf(waterBridge?.ctaLabels.roomReturn === "Wasserraum erneut betreten", "Water room return CTA label missing or changed.", waterBridge?.ctaLabels.roomReturn),
+    failIf(codexRoomHref.startsWith("/raeume/wasser?"), "Water room context missing: codex room href should keep query context.", codexRoomHref),
+    failIf(codexRoomHref.includes("from=codex"), "Water room context missing: codex room href must include from=codex.", codexRoomHref),
+    failIf(symbolNetworkRoomHref.includes("from=symbolnetz"), "Water room context missing: symbol network room href must include from=symbolnetz.", symbolNetworkRoomHref),
+    failIf(codexRoomContext?.source === "codex" && codexRoomContext.symbolId === "wasser", "Water room context missing: room cannot read codex origin context.", codexRoomContext),
+    failIf(symbolNetworkRoomContext?.source === "symbolnetz" && symbolNetworkRoomContext.symbolId === "wasser", "Water room context missing: room cannot read symbol network origin context.", symbolNetworkRoomContext),
     failIf(legacyObjectReflections[0]?.codexHref === "/codex/wasser", "Legacy water reflection gets Codex href.", legacyObjectReflections[0]),
     failIf(legacyObjectReflections[0]?.roomHref === "/raeume/wasser", "Legacy water reflection gets room href.", legacyObjectReflections[0]),
     failIf(configuredReflection?.label === "Wasser", "Sparse water reflection resolves display label.", configuredReflection),
@@ -174,10 +181,10 @@ function validateWaterReferenceBridge() {
     failIf(sparseWaterLinks.some((link) => link.label === "Zum Wasser-Codex"), "Sparse water reflection gets Codex fallback.", sparseWaterLinks),
     failIf(sparseWaterLinks.some((link) => link.label === "Den Wasserraum erneut betreten"), "Sparse water reflection gets room fallback.", sparseWaterLinks),
     failIf(!sparseWaterLinks.some((link) => link.key === "trace"), "Sparse water reflection without path renders no trace link.", sparseWaterLinks),
-    failIf(pathWaterLinks.some((link) => link.key === "trace" && link.href === "/codex/exodus-14"), "Water reflection with path returns to the Codex anchor.", pathWaterLinks),
-    failIf(Boolean(meinPfadRoomHref?.includes("from=mein-pfad")), "Mein Pfad water room link keeps personal origin.", meinPfadRoomHref),
-    failIf(Boolean(meinPfadRoomHref?.includes("path=exodus-14")), "Mein Pfad water room link keeps path context.", meinPfadRoomHref),
-    failIf(Boolean(meinPfadRoomHref?.includes("symbol=wasser")), "Mein Pfad water room link keeps symbol context.", meinPfadRoomHref),
+    failIf(pathWaterLinks.some((link) => link.key === "trace" && link.href === "/codex/exodus-14"), "Water reflection return link invalid: path reflection should return to its Codex anchor.", pathWaterLinks),
+    failIf(Boolean(meinPfadRoomHref?.includes("from=mein-pfad")), "Water reflection return link invalid: Mein Pfad room link should keep personal origin.", meinPfadRoomHref),
+    failIf(Boolean(meinPfadRoomHref?.includes("path=exodus-14")), "Water reflection return link invalid: Mein Pfad room link should keep path context.", meinPfadRoomHref),
+    failIf(Boolean(meinPfadRoomHref?.includes("symbol=wasser")), "Water reflection return link invalid: Mein Pfad room link should keep symbol context.", meinPfadRoomHref),
     failIf(legacyThinWaterLinks.some((link) => link.label === "Zum Wasser-Codex"), "Thin legacy water data gets readable water fallbacks.", legacyThinWaterLinks),
     failIf(getSymbolPathConfigFromReflectionLike(legacyThinWaterReflections[0])?.label === "Wasser", "Thin legacy water data resolves to a readable water label.", legacyThinWaterReflections[0]),
     failIf(meinPfadRoomContext?.source === "mein-pfad" && meinPfadRoomContext.text.includes("bewahrten Spur"), "Water room can read personal path origin context.", meinPfadRoomContext),
@@ -186,15 +193,15 @@ function validateWaterReferenceBridge() {
     failIf(meinPfadSource.includes("resolveReflectionReturnLinks"), "Mein Pfad uses reflection return-link resolver."),
     failIf(dedupeCodexChips(waterMeaningFields.map((field) => ({ id: field.id, label: field.label }))).length === waterMeaningFields.length, "Water meaning fields are deduplicated.", waterMeaningFields),
     failIf(dedupeCodexChips(waterScriptureAnchors.map((anchor) => ({ id: anchor.id, label: anchor.label }))).length === waterScriptureAnchors.length, "Water scripture anchors are deduplicated.", waterScriptureAnchors),
-    failIf(waterChipLinks.meaningFields.length === waterMeaningFields.length, "Every visible water meaning-field chip has an href.", waterChipLinks.meaningFields),
-    failIf(waterChipLinks.scriptureAnchors.length === waterScriptureAnchors.length, "Every visible water scripture chip has an href.", waterChipLinks.scriptureAnchors),
-    failIf(waterChipLinks.meaningFields.every((chip) => Boolean(chip.href)), "All curated water meaning fields resolve to an href.", waterChipLinks.meaningFields),
-    failIf(waterAnchorIds.length === new Set(waterAnchorIds).size, "Water bridge anchor ids are unique.", waterAnchorIds),
-    failIf(requiredWaterAnchorIds.every((anchorId) => waterAnchorIds.includes(anchorId)), "Water bridge includes all required anchor ids.", waterAnchorIds),
-    failIf(waterScriptureAnchorCounts.get("genesis-1-2") === 1, "Water scripture gates include Genesis 1,2 exactly once.", waterScriptureAnchors),
-    failIf(waterScriptureAnchorCounts.get("exodus-14") === 1, "Water scripture gates include Exodus 14 exactly once.", waterScriptureAnchors),
-    failIf(Boolean(getCodexEntryByExactId("genesis-1-2")), "Genesis 1,2 is a valid Codex target."),
-    failIf(Boolean(getCodexEntryByExactId("exodus-14")), "Exodus 14 is a valid Codex target when curated for water."),
+    failIf(waterChipLinks.meaningFields.length === waterMeaningFields.length, "Water meaning chip link invalid: not every visible meaning-field chip has an href.", waterChipLinks.meaningFields),
+    failIf(waterChipLinks.scriptureAnchors.length === waterScriptureAnchors.length, "Water scripture chip link invalid: not every visible scripture chip has an href.", waterChipLinks.scriptureAnchors),
+    failIf(waterChipLinks.meaningFields.every((chip) => Boolean(chip.href)), "Water meaning chip link invalid: a curated meaning field does not resolve to an href.", waterChipLinks.meaningFields),
+    failIf(waterAnchorIds.length === new Set(waterAnchorIds).size, "Duplicate water bridge anchor found.", waterAnchorIds),
+    failIf(requiredWaterAnchorIds.every((anchorId) => waterAnchorIds.includes(anchorId)), "Water anchor return bridge missing: required water anchor id is absent.", waterAnchorIds),
+    failIf(waterScriptureAnchorCounts.get("genesis-1-2") === 1, "Water scripture anchor missing or duplicated: Genesis 1,2 must appear exactly once.", waterScriptureAnchors),
+    failIf(waterScriptureAnchorCounts.get("exodus-14") === 1, "Water scripture anchor missing or duplicated: Exodus 14 must appear exactly once.", waterScriptureAnchors),
+    failIf(Boolean(getCodexEntryByExactId("genesis-1-2")), "Water scripture anchor missing: Genesis 1,2 is not a valid Codex target."),
+    failIf(Boolean(getCodexEntryByExactId("exodus-14")), "Water scripture anchor missing: Exodus 14 is not a valid Codex target."),
   ].forEach((error) => {
     if (error) errors.push(error);
   });
@@ -204,7 +211,7 @@ function validateWaterReferenceBridge() {
 
     if (linkedEntry && chip.href !== `/codex/${linkedEntry.id}`) {
       errors.push({
-        message: `Water scripture chip "${chip.label}" should prefer its Codex entry route.`,
+        message: `Water scripture chip link invalid: "${chip.label}" should prefer its Codex entry route.`,
         details: chip,
       });
     }
@@ -213,14 +220,14 @@ function validateWaterReferenceBridge() {
   waterReflectionLinks.forEach((link) => {
     if (!routeExists(link.href)) {
       errors.push({
-        message: `Water reflection return link "${link.label}" points to a missing route.`,
+        message: `Water reflection return link invalid: "${link.label}" points to a missing route.`,
         details: link,
       });
     }
 
     if (/^(wasser|exodus-14|genesis-1-2)$/.test(link.label)) {
       errors.push({
-        message: `Water reflection return link exposes a raw technical label: "${link.label}".`,
+        message: `Water reflection return link invalid: raw technical label is visible: "${link.label}".`,
         details: link,
       });
     }
@@ -229,7 +236,7 @@ function validateWaterReferenceBridge() {
   curatedWaterMeaningIds.forEach((meaningId) => {
     if ((waterMeaningFieldCounts.get(meaningId) ?? 0) > 1) {
       errors.push({
-        message: `Water meaning field "${meaningId}" is configured more than once.`,
+        message: `Duplicate water meaning chip found: "${meaningId}" is configured more than once.`,
         details: waterMeaningFields,
       });
     }
@@ -239,7 +246,7 @@ function validateWaterReferenceBridge() {
 
     if (linkedEntry && chip?.href !== `/codex/${linkedEntry.id}`) {
       errors.push({
-        message: `Water meaning chip "${meaningId}" should prefer its Codex entry route.`,
+        message: `Water meaning chip link invalid: "${meaningId}" should prefer its Codex entry route.`,
         details: chip,
       });
     }
@@ -251,14 +258,14 @@ function validateWaterReferenceBridge() {
 
     if (!linkedEntry) {
       errors.push({
-        message: `Water anchor "${anchorId}" is not a valid Codex target.`,
+        message: `Water anchor return bridge missing: "${anchorId}" is not a valid Codex target.`,
         details: waterAnchorIds,
       });
     }
 
     if (!anchorBridge) {
       errors.push({
-        message: `Water anchor "${anchorId}" has no return bridge.`,
+        message: `Water anchor return bridge missing: "${anchorId}" has no return bridge.`,
         details: waterAnchorIds,
       });
       return;
@@ -266,21 +273,21 @@ function validateWaterReferenceBridge() {
 
     if (anchorBridge.returnHref !== "/codex/wasser" || !routeExists(anchorBridge.returnHref)) {
       errors.push({
-        message: `Water anchor "${anchorId}" has no valid return link to the water Codex.`,
+        message: `Water anchor return bridge missing: "${anchorId}" has no valid return link to the water Codex.`,
         details: anchorBridge,
       });
     }
 
     if (!anchorBridge.roomHref || !routeExists(anchorBridge.roomHref)) {
       errors.push({
-        message: `Water anchor "${anchorId}" has no valid water room link.`,
+        message: `Water room context missing: anchor "${anchorId}" has no valid water room link.`,
         details: anchorBridge,
       });
     }
 
     if (anchorBridge.personalPathHref && !routeExists(anchorBridge.personalPathHref)) {
       errors.push({
-        message: `Water anchor "${anchorId}" points to a missing personal path route.`,
+        message: `Water anchor return bridge missing: "${anchorId}" points to a missing personal path route.`,
         details: anchorBridge,
       });
     }
@@ -288,7 +295,7 @@ function validateWaterReferenceBridge() {
 
   [...waterChipLinks.meaningFields, ...waterChipLinks.scriptureAnchors].forEach((chip) => {
     if (!chip.href) {
-      errors.push({ message: `Water chip "${chip.label}" has no href.`, details: chip });
+      errors.push({ message: `Water meaning chip link invalid: "${chip.label}" has no href.`, details: chip });
       return;
     }
 
@@ -296,7 +303,7 @@ function validateWaterReferenceBridge() {
       const routeId = chip.href.replace("/codex/", "").split("?")[0];
 
       if (!getCodexEntryByExactId(routeId)) {
-        errors.push({ message: `Water chip "${chip.label}" points to a known missing Codex route.`, details: chip });
+        errors.push({ message: `Water meaning chip link invalid: "${chip.label}" points to a known missing Codex route.`, details: chip });
       }
     } else if (chip.href.startsWith("/codex?")) {
       const params = new URLSearchParams(chip.href.slice("/codex?".length));
@@ -304,10 +311,10 @@ function validateWaterReferenceBridge() {
       const hasScriptureFallback = params.has("scripture") && params.get("scripture")?.trim();
 
       if (!hasMeaningFallback && !hasScriptureFallback) {
-        errors.push({ message: `Water chip "${chip.label}" uses an invalid Codex fallback query.`, details: chip });
+        errors.push({ message: `Water meaning chip link invalid: "${chip.label}" uses an invalid Codex fallback query.`, details: chip });
       }
     } else {
-      errors.push({ message: `Water chip "${chip.label}" does not point into the Codex.`, details: chip });
+      errors.push({ message: `Water meaning chip link invalid: "${chip.label}" does not point into the Codex.`, details: chip });
     }
   });
 
@@ -317,6 +324,82 @@ function validateWaterReferenceBridge() {
       details: waterBridge.movement,
     });
   }
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
+function validateLightPreparedBridge() {
+  const errors = [];
+  const warnings = [];
+  const lightBridge = getSymbolPathConfig("licht");
+  const lightChipLinks = getSymbolCodexChipLinks("licht");
+  const lightMeaningFields = lightBridge?.codexGates?.meaningFields ?? [];
+  const lightScriptureAnchors = lightBridge?.codexGates?.scriptureAnchors ?? [];
+  const expectedMovement = "Finsternis -> Ruf -> Licht -> Scheidung -> Ordnung -> Erkenntnis";
+
+  [
+    failIf(Boolean(lightBridge), "Light bridge prepared: symbol bridge config for licht was not found."),
+    failIf(lightBridge?.codexHref === "/codex/licht", "Light bridge prepared: codexHref must point to /codex/licht.", lightBridge?.codexHref),
+    failIf(lightBridge?.roomHref === "/raeume/licht", "Light bridge prepared: roomHref must point to /raeume/licht.", lightBridge?.roomHref),
+    failIf(lightBridge?.symbolNetworkHref === "/symbolnetz?symbol=licht", "Light bridge prepared: symbolNetworkHref must point to the light symbol network.", lightBridge?.symbolNetworkHref),
+    failIf(lightBridge?.pathLabel === "Lichtpfad", "Light bridge prepared: pathLabel must remain readable.", lightBridge?.pathLabel),
+    failIf(lightBridge?.reflectionSource.label === "Spur aus dem Lichtraum", "Light bridge prepared: reflection source label missing.", lightBridge?.reflectionSource),
+    failIf(lightBridge?.codexAnchorBridge === undefined, "Light missing full return loop: codexAnchorBridge should stay absent in Phase 30A.", lightBridge?.codexAnchorBridge),
+    failIf(lightScriptureAnchors.some((anchor) => anchor.id === "genesis-1-3"), "Light scripture gate missing: Genesis 1,3 must be present.", lightScriptureAnchors),
+  ].forEach((error) => {
+    if (error) errors.push(error);
+  });
+
+  if (lightBridge && lightBridge.movement.join(" -> ") !== expectedMovement) {
+    warnings.push({
+      message: "Light bridge prepared: movement differs from the Phase 30A sequence.",
+      details: lightBridge.movement,
+    });
+  }
+
+  if (!lightBridge?.codexAnchorBridge) {
+    warnings.push({
+      message: "Light missing full return loop: warning only.",
+      details: "Phase 30A prepares Licht without Mein-Pfad return enforcement.",
+    });
+  }
+
+  if (dedupeCodexChips(lightMeaningFields.map((field) => ({ id: field.id, label: field.label }))).length !== lightMeaningFields.length) {
+    errors.push({
+      message: "Light bridge prepared: duplicate meaning chip found.",
+      details: lightMeaningFields,
+    });
+  }
+
+  [...lightChipLinks.meaningFields, ...lightChipLinks.scriptureAnchors].forEach((chip) => {
+    if (!chip.href) {
+      errors.push({ message: `Light bridge prepared: "${chip.label}" has no href.`, details: chip });
+      return;
+    }
+
+    if (chip.href.startsWith("/codex/")) {
+      if (!routeExists(chip.href)) {
+        errors.push({ message: `Light bridge prepared: "${chip.label}" points to a missing Codex route.`, details: chip });
+      }
+    } else if (chip.href.startsWith("/codex?")) {
+      const params = new URLSearchParams(chip.href.slice("/codex?".length));
+      const hasMeaningFallback = params.has("meaning") && params.get("meaning")?.trim();
+      const hasScriptureFallback = params.has("scripture") && params.get("scripture")?.trim();
+
+      if (!hasMeaningFallback && !hasScriptureFallback) {
+        errors.push({ message: `Light bridge prepared: "${chip.label}" uses an invalid Codex fallback query.`, details: chip });
+      }
+    } else {
+      errors.push({ message: `Light bridge prepared: "${chip.label}" does not point into the Codex.`, details: chip });
+    }
+
+    if (/^(licht|genesis-1-3|offenbarung|ordnung|erkenntnis|glanz|auge|himmel)$/.test(chip.label)) {
+      errors.push({
+        message: `Light bridge prepared: raw technical label is visible: "${chip.label}".`,
+        details: chip,
+      });
+    }
+  });
 
   return { valid: errors.length === 0, errors, warnings };
 }
@@ -331,12 +414,12 @@ function printErrors(errors) {
 }
 
 function main() {
-  console.log("\nMEANING BRIDGE SYSTEM VALIDATION\n");
+  console.log("\nMEANING BRIDGE AND WATER REFERENCE PATH VALIDATION\n");
 
   const bridges = getAllBridges();
   console.log(`Total Bridges: ${countBridges()}\n`);
 
-  console.log("REGISTERED BRIDGES:\n");
+  console.log("REGISTERED MEANING BRIDGES:\n");
   bridges.forEach((bridge, index) => {
     console.log(`${index + 1}. [${bridge.id}]`);
     console.log(`   Title: ${bridge.title}`);
@@ -353,8 +436,9 @@ function main() {
 
   const result = validateMeaningBridges();
   const waterResult = validateWaterReferenceBridge();
+  const lightResult = validateLightPreparedBridge();
 
-  console.log("VALIDATION RESULTS:\n");
+  console.log("VALIDATION CHECKPOINTS:\n");
   if (result.valid) {
     console.log("Meaning bridges: OK");
   } else {
@@ -379,13 +463,27 @@ function main() {
     printErrors(waterResult.warnings);
   }
 
+  if (lightResult.valid) {
+    console.log("Light bridge prepared: OK");
+  } else {
+    console.log("Light bridge prepared: FAILED");
+    printErrors(lightResult.errors);
+  }
+
+  if (lightResult.warnings.length > 0) {
+    console.log("\nLight prepared warnings:");
+    printErrors(lightResult.warnings);
+  }
+
   console.log("\nSUMMARY:\n");
   console.log(`Bridges Registered: ${bridges.length}`);
   console.log(`Meaning Errors: ${result.errors.length}`);
   console.log(`Meaning Warnings: ${result.warnings.length}`);
   console.log(`Water Reference Errors: ${waterResult.errors.length}`);
   console.log(`Water Reference Warnings: ${waterResult.warnings.length}`);
-  console.log(`Status: ${result.valid && waterResult.valid ? "VALID" : "INVALID"}\n`);
+  console.log(`Light Prepared Errors: ${lightResult.errors.length}`);
+  console.log(`Light Prepared Warnings: ${lightResult.warnings.length}`);
+  console.log(`Status: ${result.valid && waterResult.valid && lightResult.valid ? "VALID" : "INVALID"}\n`);
 
   const sourceMap = new Map();
   const targetMap = new Map();
@@ -409,7 +507,7 @@ function main() {
 
   console.log("\nVALIDATION COMPLETE\n");
 
-  process.exit(result.valid && waterResult.valid ? 0 : 1);
+  process.exit(result.valid && waterResult.valid && lightResult.valid ? 0 : 1);
 }
 
 main();

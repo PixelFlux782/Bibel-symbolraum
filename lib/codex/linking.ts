@@ -179,24 +179,28 @@ export function filterCodexEntriesByScripture(entries: CodexEntry[], value: stri
   return entries.filter((entry) => entry.id === filter.slug || entryMatchesScripture(entry, filter.slug));
 }
 
-export function getWaterCodexChipLinks() {
-  const waterBridge = getSymbolPathConfig("wasser");
+export function getSymbolCodexChipLinks(symbolId: string) {
+  const bridge = getSymbolPathConfig(symbolId);
   const meaningFields = dedupeCodexChips(
-    (waterBridge?.codexGates?.meaningFields ?? []).map((field) => ({
+    (bridge?.codexGates?.meaningFields ?? []).map((field) => ({
       id: field.id,
       label: field.label,
-      href: resolveMeaningFieldHref(field.id, "wasser"),
+      href: resolveMeaningFieldHref(field.id, symbolId),
     })),
   ) as CodexChipLink[];
   const scriptureAnchors = dedupeCodexChips(
-    (waterBridge?.codexGates?.scriptureAnchors ?? []).map((anchor) => ({
+    (bridge?.codexGates?.scriptureAnchors ?? []).map((anchor) => ({
       id: anchor.id,
       label: anchor.label,
-      href: resolveScriptureAnchorHref(anchor.id, "wasser"),
+      href: resolveScriptureAnchorHref(anchor.id, symbolId),
     })),
   ) as CodexChipLink[];
 
   return { meaningFields, scriptureAnchors };
+}
+
+export function getWaterCodexChipLinks() {
+  return getSymbolCodexChipLinks("wasser");
 }
 
 export function getWaterCodexAnchorBridge(anchorId: string): WaterCodexAnchorBridge | undefined {
