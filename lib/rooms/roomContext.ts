@@ -1,6 +1,7 @@
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { getOntologyEntity } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
+import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 
 export type RoomSearchParams = Promise<Record<string, string | string[] | undefined>>;
 export type RoomContextSource = "codex" | "symbolnetz" | "pattern" | "journey";
@@ -69,7 +70,7 @@ function getTitle(id: string | undefined) {
 }
 
 function getRoomLabel(symbolId: string) {
-  return roomLabels[symbolId] ?? getTitle(symbolId) ?? symbolId;
+  return getSymbolPathConfig(symbolId)?.label ?? roomLabels[symbolId] ?? getTitle(symbolId) ?? symbolId;
 }
 
 export function hasSymbolRoom(symbolId: string | null | undefined): symbolId is string {
@@ -100,7 +101,9 @@ export function buildRoomHref(symbolId: string, context?: { from?: string; path?
   }
 
   const query = params.toString();
-  return query ? `/raeume/${safeSymbolId}?${query}` : `/raeume/${safeSymbolId}`;
+  const roomHref = getSymbolPathConfig(safeSymbolId)?.roomHref ?? `/raeume/${safeSymbolId}`;
+
+  return query ? `${roomHref}?${query}` : roomHref;
 }
 
 export function getPatternRoomStation(patternId: string) {
@@ -137,7 +140,7 @@ export function resolveRoomContext(
       mobileTitle: `Symbolnetz -> ${roomTitle}`,
       mobileText: "Die Karte wird zum Raum.",
       returnHref: `/symbolnetz?${returnParams.toString()}`,
-      returnLabel: "Zum Symbolnetz zurueckkehren",
+      returnLabel: getSymbolPathConfig(symbolId)?.ctaLabels.symbolNetworkReturn ?? "Zum Symbolnetz zurueckkehren",
     };
   }
 
@@ -151,7 +154,7 @@ export function resolveRoomContext(
       text: `Aus dem Codex kommend: ${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
       mobileTitle: `Codex -> ${roomTitle}`,
       mobileText: `${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
-      returnHref: `/codex/${symbolId}`,
+      returnHref: getSymbolPathConfig(symbolId)?.codexHref ?? `/codex/${symbolId}`,
       returnLabel: `Zurueck zu ${symbolLabel} im Codex`,
     };
   }

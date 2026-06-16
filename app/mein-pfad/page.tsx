@@ -8,6 +8,7 @@ import {
   REFLECTION_STORAGE_KEY,
   type StoredReflection,
 } from "@/lib/reflections";
+import { getSymbolPathConfigFromReflectionLike } from "@/lib/symbols/symbolPathConfig";
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -30,18 +31,27 @@ function cleanTraceLabel(value: string | undefined) {
 }
 
 function getTraceBaseTitle(reflection: StoredReflection) {
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  if (bridge) {
+    return bridge.label;
+  }
+
   return reflection.title?.trim() || reflection.symbol.trim();
 }
 
 function getTouchedLabel(reflection: StoredReflection) {
-  return cleanTraceLabel(reflection.title) || cleanTraceLabel(reflection.symbol);
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  return bridge?.label || cleanTraceLabel(reflection.title) || cleanTraceLabel(reflection.symbol);
 }
 
 function getRoomContextLabel(reflection: StoredReflection) {
   const title = getTraceBaseTitle(reflection);
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
 
-  if (isWaterRoomReflection(reflection)) {
-    return "Spur aus dem Wasserraum";
+  if (bridge && (reflection.sourceType === "room" || reflection.roomHref === bridge.roomHref)) {
+    return bridge.reflectionSource.contextLabel;
   }
 
   if (reflection.sourceType === "room") {
@@ -56,8 +66,10 @@ function getRoomContextLabel(reflection: StoredReflection) {
 }
 
 function getTraceContext(reflection: StoredReflection) {
-  if (isWaterRoomReflection(reflection)) {
-    return "Wasser · Tiefe / Ursprung / Uebergang";
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  if (isConfiguredRoomReflection(reflection)) {
+    return bridge?.pathLabel ?? bridge?.reflectionSource.contextLabel ?? "Spur aus dem Raum";
   }
 
   const roomContext = getRoomContextLabel(reflection);
@@ -84,8 +96,10 @@ function getTraceContext(reflection: StoredReflection) {
 }
 
 function getTraceTitle(reflection: StoredReflection) {
-  if (isWaterRoomReflection(reflection)) {
-    return "Spur aus dem Wasserraum";
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  if (isConfiguredRoomReflection(reflection)) {
+    return bridge?.reflectionSource.label ?? "Spur aus dem Raum";
   }
 
   const title = getTraceBaseTitle(reflection);
@@ -109,26 +123,23 @@ function getCodexLabel() {
 }
 
 function getCodexHref(reflection: StoredReflection) {
-  return reflection.codexHref ?? (reflection.symbolSlug ? `/codex/${reflection.symbolSlug}` : undefined);
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  return reflection.codexHref ?? bridge?.codexHref ?? (reflection.symbolSlug ? `/codex/${reflection.symbolSlug}` : undefined);
 }
 
-function isWaterRoomReflection(reflection: StoredReflection) {
-  return (
-    reflection.sourceType === "room" &&
-    (reflection.symbolSlug === "wasser" || reflection.sourceId === "wasser" || reflection.roomHref === "/raeume/wasser")
-  );
+function isConfiguredRoomReflection(reflection: StoredReflection) {
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  return Boolean(bridge && (reflection.sourceType === "room" || reflection.roomHref === bridge.roomHref));
 }
 
 function getReflectionCodexLabel(reflection: StoredReflection) {
-  return reflection.symbolSlug === "wasser" || reflection.sourceId === "wasser"
-    ? "Wasser im Codex lesen"
-    : getCodexLabel();
+  return getSymbolPathConfigFromReflectionLike(reflection)?.ctaLabels.codex ?? getCodexLabel();
 }
 
 function getReflectionRoomLabel(reflection: StoredReflection) {
-  return reflection.symbolSlug === "wasser" || reflection.sourceId === "wasser"
-    ? "Wasserraum erneut betreten"
-    : "Raum erneut betreten";
+  return getSymbolPathConfigFromReflectionLike(reflection)?.ctaLabels.roomReturn ?? "Raum erneut betreten";
 }
 
 type ReflectionGroupKey = "rooms" | "codex" | "network" | "older";

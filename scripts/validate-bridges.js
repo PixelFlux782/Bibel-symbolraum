@@ -1,8 +1,9 @@
 /**
- * Validation script for MeaningBridge system
+ * Validation script for MeaningBridge system and the water reference path.
  * Run with: node scripts/validate-bridges.js
  */
 
+const fs = require("fs");
 const path = require("path");
 const createJiti = require("jiti");
 
@@ -14,36 +15,113 @@ const jiti = createJiti(__filename, {
   },
 });
 
-// Require the modules
 const {
   getAllBridges,
   countBridges,
-  getBridgesFromSource,
-  getBridgesFromTarget,
 } = jiti("../lib/meaning-bridges/bridgeRegistry.ts");
 
 const {
   validateMeaningBridges,
 } = jiti("../lib/meaning-bridges/validateMeaningBridges.ts");
 
+const {
+  getSymbolPathConfig,
+  getSymbolPathConfigFromReflectionLike,
+} = jiti("../lib/symbols/symbolPathConfig.ts");
+
+const {
+  buildRoomHref,
+  resolveRoomContext,
+} = jiti("../lib/rooms/roomContext.ts");
+
+const {
+  parseStoredReflections,
+} = jiti("../lib/reflections.ts");
+
+function failIf(condition, message, details) {
+  return condition ? null : { message, details };
+}
+
+function validateWaterReferenceBridge() {
+  const errors = [];
+  const warnings = [];
+  const waterBridge = getSymbolPathConfig("wasser");
+  const configuredReflection = getSymbolPathConfigFromReflectionLike({
+    symbol: "wasser",
+    roomHref: "/raeume/wasser",
+  });
+  const codexRoomHref = buildRoomHref("wasser", { from: "codex", symbol: "wasser" });
+  const symbolNetworkRoomHref = buildRoomHref("wasser", {
+    from: "symbolnetz",
+    symbol: "wasser",
+    path: "journey-wasser-wueste-brot",
+  });
+  const codexRoomContext = resolveRoomContext({ from: "codex", symbol: "wasser" }, "wasser");
+  const symbolNetworkRoomContext = resolveRoomContext({ from: "symbolnetz", symbol: "wasser", lens: "story" }, "wasser");
+  const legacyObjectReflections = parseStoredReflections(JSON.stringify({ wasser: "Eine alte Wasserspur." }));
+  const sparseWaterReflections = parseStoredReflections(JSON.stringify([{
+    id: "old-water",
+    symbol: "wasser",
+    answer: "Eine knappe alte Spur.",
+    createdAt: "2024-05-12T00:00:00.000Z",
+  }]));
+  const meinPfadSource = fs.readFileSync(path.join(projectRoot, "app", "mein-pfad", "page.tsx"), "utf8");
+  const reflectionSource = fs.readFileSync(path.join(projectRoot, "components", "rooms", "engine", "ReflectionOverlay.tsx"), "utf8");
+
+  [
+    failIf(Boolean(waterBridge), "Wasser has a symbol bridge config."),
+    failIf(waterBridge?.codexHref === "/codex/wasser", "Wasser has Codex link.", waterBridge?.codexHref),
+    failIf(waterBridge?.roomHref === "/raeume/wasser", "Wasser has room link.", waterBridge?.roomHref),
+    failIf(waterBridge?.ctaLabels.codex === "Wasser im Codex lesen", "Wasser has Codex CTA label.", waterBridge?.ctaLabels.codex),
+    failIf(waterBridge?.ctaLabels.room === "Den Wasserraum betreten", "Wasser has room CTA label.", waterBridge?.ctaLabels.room),
+    failIf(waterBridge?.ctaLabels.roomReturn === "Wasserraum erneut betreten", "Wasser has room return CTA label.", waterBridge?.ctaLabels.roomReturn),
+    failIf(codexRoomHref.startsWith("/raeume/wasser?"), "Wasser room href keeps codex context.", codexRoomHref),
+    failIf(codexRoomHref.includes("from=codex"), "Wasser room href includes from=codex.", codexRoomHref),
+    failIf(symbolNetworkRoomHref.includes("from=symbolnetz"), "Wasser room href includes from=symbolnetz.", symbolNetworkRoomHref),
+    failIf(codexRoomContext?.source === "codex" && codexRoomContext.symbolId === "wasser", "Wasser room can read codex origin context.", codexRoomContext),
+    failIf(symbolNetworkRoomContext?.source === "symbolnetz" && symbolNetworkRoomContext.symbolId === "wasser", "Wasser room can read symbol network origin context.", symbolNetworkRoomContext),
+    failIf(legacyObjectReflections[0]?.codexHref === "/codex/wasser", "Legacy water reflection gets Codex href.", legacyObjectReflections[0]),
+    failIf(legacyObjectReflections[0]?.roomHref === "/raeume/wasser", "Legacy water reflection gets room href.", legacyObjectReflections[0]),
+    failIf(configuredReflection?.label === "Wasser", "Sparse water reflection resolves display label.", configuredReflection),
+    failIf(sparseWaterReflections[0]?.symbol === "wasser", "Sparse reflection entries remain compatible.", sparseWaterReflections[0]),
+    failIf(reflectionSource.includes("pathContext: roomContext ? { from: roomContext.source, path: roomContext.pathId, symbol: roomContext.symbolId } : undefined"), "Room reflections persist compatible pathContext fields."),
+    failIf(meinPfadSource.includes("getSymbolPathConfigFromReflectionLike"), "Mein Pfad uses bridge fallback labels."),
+    failIf(meinPfadSource.includes("bridge?.codexHref"), "Mein Pfad has Codex href fallback."),
+    failIf(meinPfadSource.includes("ctaLabels.roomReturn"), "Mein Pfad has room CTA fallback."),
+  ].forEach((error) => {
+    if (error) errors.push(error);
+  });
+
+  if (waterBridge && waterBridge.movement.join(" -> ") !== "Symbolnetz -> Codex -> Raum -> persoenliche Spur -> Mein Pfad") {
+    warnings.push({
+      message: "Wasser movement differs from the expected reference sequence.",
+      details: waterBridge.movement,
+    });
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
+function printErrors(errors) {
+  errors.forEach((error) => {
+    console.log(`  - ${error.message}`);
+    if (error.details) {
+      console.log(`    Details: ${JSON.stringify(error.details)}`);
+    }
+  });
+}
+
 function main() {
-  console.log("\n╔════════════════════════════════════════════════╗");
-  console.log("║     MEANING BRIDGE SYSTEM VALIDATION            ║");
-  console.log("╚════════════════════════════════════════════════╝\n");
+  console.log("\nMEANING BRIDGE SYSTEM VALIDATION\n");
 
-  // Get all bridges
   const bridges = getAllBridges();
-  console.log(`📚 Total Bridges: ${countBridges()}\n`);
+  console.log(`Total Bridges: ${countBridges()}\n`);
 
-  // Display all bridges
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("REGISTERED BRIDGES:");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-
+  console.log("REGISTERED BRIDGES:\n");
   bridges.forEach((bridge, index) => {
     console.log(`${index + 1}. [${bridge.id}]`);
     console.log(`   Title: ${bridge.title}`);
-    console.log(`   Source → Target: ${bridge.sourceId} → ${bridge.targetId}`);
+    console.log(`   Source -> Target: ${bridge.sourceId} -> ${bridge.targetId}`);
     console.log(`   Meaning Fields: ${bridge.meaningFields.join(", ")}`);
     if (bridge.scriptureAnchors && bridge.scriptureAnchors.length > 0) {
       console.log(`   Scripture: ${bridge.scriptureAnchors.join(", ")}`);
@@ -54,57 +132,49 @@ function main() {
     console.log("");
   });
 
-  // Validate
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("VALIDATION RESULTS:");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-
   const result = validateMeaningBridges();
+  const waterResult = validateWaterReferenceBridge();
 
+  console.log("VALIDATION RESULTS:\n");
   if (result.valid) {
-    console.log("✅ VALIDATION PASSED - All bridges are valid!\n");
+    console.log("Meaning bridges: OK");
   } else {
-    console.log("❌ VALIDATION FAILED - Errors found:\n");
-    result.errors.forEach((error) => {
-      console.log(`   [${error.bridgeId}] ${error.field}`);
-      console.log(`   → ${error.message}\n`);
-    });
+    console.log("Meaning bridges: FAILED");
+    printErrors(result.errors);
   }
 
   if (result.warnings.length > 0) {
-    console.log("⚠️  WARNINGS:\n");
-    result.warnings.forEach((warning) => {
-      console.log(`   [${warning.bridgeId}] ${warning.field}`);
-      console.log(`   → ${warning.message}\n`);
-    });
+    console.log("\nMeaning bridge warnings:");
+    printErrors(result.warnings);
   }
 
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("SUMMARY:");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  if (waterResult.valid) {
+    console.log("Water reference bridge: OK");
+  } else {
+    console.log("Water reference bridge: FAILED");
+    printErrors(waterResult.errors);
+  }
 
+  if (waterResult.warnings.length > 0) {
+    console.log("\nWater reference warnings:");
+    printErrors(waterResult.warnings);
+  }
+
+  console.log("\nSUMMARY:\n");
   console.log(`Bridges Registered: ${bridges.length}`);
-  console.log(`Errors: ${result.errors.length}`);
-  console.log(`Warnings: ${result.warnings.length}`);
-  console.log(`Status: ${result.valid ? "✅ VALID" : "❌ INVALID"}\n`);
-
-  // Display registry capabilities
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("REGISTRY CAPABILITIES:");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  console.log(`Meaning Errors: ${result.errors.length}`);
+  console.log(`Meaning Warnings: ${result.warnings.length}`);
+  console.log(`Water Reference Errors: ${waterResult.errors.length}`);
+  console.log(`Water Reference Warnings: ${waterResult.warnings.length}`);
+  console.log(`Status: ${result.valid && waterResult.valid ? "VALID" : "INVALID"}\n`);
 
   const sourceMap = new Map();
   const targetMap = new Map();
 
   bridges.forEach((bridge) => {
-    if (!sourceMap.has(bridge.sourceId)) {
-      sourceMap.set(bridge.sourceId, []);
-    }
+    if (!sourceMap.has(bridge.sourceId)) sourceMap.set(bridge.sourceId, []);
+    if (!targetMap.has(bridge.targetId)) targetMap.set(bridge.targetId, []);
     sourceMap.get(bridge.sourceId).push(bridge.id);
-
-    if (!targetMap.has(bridge.targetId)) {
-      targetMap.set(bridge.targetId, []);
-    }
     targetMap.get(bridge.targetId).push(bridge.id);
   });
 
@@ -118,11 +188,9 @@ function main() {
     console.log(`  ${targetId}: ${bridgeIds.join(", ")}`);
   });
 
-  console.log("\n╔════════════════════════════════════════════════╗");
-  console.log("║              VALIDATION COMPLETE               ║");
-  console.log("╚════════════════════════════════════════════════╝\n");
+  console.log("\nVALIDATION COMPLETE\n");
 
-  process.exit(result.valid ? 0 : 1);
+  process.exit(result.valid && waterResult.valid ? 0 : 1);
 }
 
 main();

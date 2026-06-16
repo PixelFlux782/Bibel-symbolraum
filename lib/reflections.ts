@@ -1,3 +1,5 @@
+import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+
 export const REFLECTION_STORAGE_KEY = "bibel-symbolraum-reflections";
 
 export type StoredReflection = {
@@ -42,21 +44,22 @@ export function parseStoredReflections(raw: string | null): StoredReflection[] {
 
     if (parsed && typeof parsed === "object") {
       const legacyWaterText = (parsed as Record<string, unknown>).wasser;
+      const waterBridge = getSymbolPathConfig("wasser");
 
       if (typeof legacyWaterText === "string" && legacyWaterText.trim()) {
         return [
           {
             id: "legacy-wasser",
-            symbol: "Wasser",
-            symbolSlug: "wasser",
-            hebrew: "\u05de\u05d9\u05dd",
-            title: "Wasser",
-            sourceType: "room",
-            sourceId: "wasser",
-            codexHref: "/codex/wasser",
+            symbol: waterBridge?.label ?? "Wasser",
+            symbolSlug: waterBridge?.symbolId ?? "wasser",
+            hebrew: waterBridge?.hebrew ?? "\u05de\u05d9\u05dd",
+            title: waterBridge?.label ?? "Wasser",
+            sourceType: waterBridge?.reflectionSource.sourceType ?? "room",
+            sourceId: waterBridge?.reflectionSource.sourceId ?? "wasser",
+            codexHref: waterBridge?.codexHref ?? "/codex/wasser",
             question: WATER_REFLECTION_QUESTION,
             answer: legacyWaterText,
-            roomHref: "/raeume/wasser",
+            roomHref: waterBridge?.roomHref ?? "/raeume/wasser",
             createdAt: new Date().toISOString(),
           },
         ];

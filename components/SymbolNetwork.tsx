@@ -68,6 +68,7 @@ import {
   type SymbolHierarchyLevel,
   type SymbolZoomLevel,
 } from "@/lib/symbols/hierarchy";
+import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import type { MeaningNodeId } from "@/types/meaningGraph";
 
 type SymbolNodeData = SymbolMeaningNetworkNode & {
@@ -1694,8 +1695,9 @@ function SymbolLensFocusDetail({
   const storyAnchor = storyDeepHierarchyAnchors[0] ?? verseDeepHierarchyAnchors[0];
   const ontologyRows = useMemo(() => getInspectorOntologyRows(activeSymbol.id), [activeSymbol.id]);
   const isWater = activeSymbol.id === "wasser";
+  const waterBridge = getSymbolPathConfig("wasser");
   const memCodexHref = "/codex/mem?from=symbolnetz&symbol=wasser&focus=hebrew&lens=hebrew";
-  const waterCodexHref = codexHref ?? "/codex/wasser?from=symbolnetz&symbol=wasser&focus=overview";
+  const waterCodexHref = codexHref ?? `${waterBridge?.codexHref ?? "/codex/wasser"}?from=symbolnetz&symbol=wasser&focus=overview`;
   const number40CodexHref = "/codex/zahl-40?from=symbolnetz&symbol=wasser&focus=gematria&lens=gematria";
   const number90CodexHref = "/codex/zahl-90?from=symbolnetz&symbol=wasser&focus=gematria&lens=gematria";
   const [activeOntologyRelationId, setActiveOntologyRelationId] = useState<string | null>(null);
@@ -1736,7 +1738,7 @@ function SymbolLensFocusDetail({
                   <p>Wasser führt im Symbolraum nicht nur nach unten, sondern an Übergänge: vom Ursprung zur Reinigung, von der Tiefe zum Leben.</p>
                   <InspectorStationList stations={WATER_MEANING_STATIONS} />
                   <InspectorCtaList ctas={[
-                    { label: "Wasser im Codex lesen", href: waterCodexHref },
+                    { label: waterBridge?.ctaLabels.codex ?? "Wasser im Codex lesen", href: waterCodexHref },
                   ]} />
                 </>
               ) : (
@@ -1777,7 +1779,7 @@ function SymbolLensFocusDetail({
                   <InspectorStationList stations={WATER_HEBREW_STATIONS} />
                   <InspectorCtaList ctas={[
                     { label: "Mem im Codex lesen", href: memCodexHref },
-                    { label: "Wasser im Codex lesen", href: waterCodexHref },
+                    { label: waterBridge?.ctaLabels.codex ?? "Wasser im Codex lesen", href: waterCodexHref },
                   ]} />
                 </>
               ) : (
@@ -1893,7 +1895,7 @@ function SymbolLensFocusDetail({
               <div className="symbol-inspector-accordion__content">
                 <p>{activeCodexEntry.subtitle ?? activeCodexEntry.title}</p>
                 <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-archive-action">
-                  {isWater ? "Wasser im Codex lesen" : `${activeCodexEntry.title} im Codex lesen`}
+                  {isWater ? waterBridge?.ctaLabels.codex ?? "Wasser im Codex lesen" : `${activeCodexEntry.title} im Codex lesen`}
                 </Link>
               </div>
             ) : null}
@@ -1908,7 +1910,7 @@ function SymbolLensFocusDetail({
             <div className="symbol-inspector-accordion__content">
               <p>{activeSymbol.label}-Raum</p>
               <RoomTransitionButton href={roomHref} className="symbol-cta w-full">
-                {isWater ? "Den Wasserraum betreten" : `${activeSymbol.label}-Raum betreten`}
+                {isWater ? waterBridge?.ctaLabels.room ?? "Den Wasserraum betreten" : `${activeSymbol.label}-Raum betreten`}
               </RoomTransitionButton>
             </div>
           ) : null}
@@ -2075,6 +2077,7 @@ function MobileSymbolJourney({
   const transliteration = profile.hebrewWord?.transliteration ?? activeSymbol.transliteration;
   const gematria = hebrew ? calculateGematria(hebrew) : 0;
   const closeRelations = connectedPaths.slice(0, MOBILE_SYMBOL_RELATION_LIMIT);
+  const symbolBridge = getSymbolPathConfig(activeSymbol.id);
   const gateSymbols = MOBILE_GATE_SYMBOL_IDS.flatMap((symbolId) => {
     const node = network.nodes.find((candidate) => candidate.id === symbolId);
     return node ? [node] : [];
@@ -2135,7 +2138,7 @@ function MobileSymbolJourney({
 
       <div className="symbol-mobile-actions">
         <RoomTransitionButton href={roomHref} className="symbol-cta">
-          {activeSymbol.id === "wasser" ? "Den Wasserraum betreten" : `${activeSymbol.label}-Raum betreten`}
+          {symbolBridge?.ctaLabels.room ?? `${activeSymbol.label}-Raum betreten`}
         </RoomTransitionButton>
         {activeCodexEntry ? (
           <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-cta symbol-cta-secondary">
@@ -2175,6 +2178,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const hasSearchInput = normalizeSymbolSearchTerm(searchQuery).length > 0;
   const showSearchSuggestions = isSearchSuggestionsOpen && hasSearchInput;
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
+  const activeSymbolBridge = getSymbolPathConfig(activeSymbol.id);
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activeCodexHref = activeCodexEntry
     ? buildSymbolNetworkCodexHref({
@@ -4056,7 +4060,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               ) : null}
               <div className="symbol-detail-panel__cta">
                 <RoomTransitionButton href={activeRoomHref} className="symbol-cta w-full">
-                  {activeSymbol.id === "wasser" ? "Den Wasserraum betreten" : `${activeSymbol.label}-Raum betreten`}
+                  {activeSymbolBridge?.ctaLabels.room ?? `${activeSymbol.label}-Raum betreten`}
                 </RoomTransitionButton>
                 {showResonanceJourneyOption && discoverableResonanceJourney ? (
                   <button
@@ -4072,7 +4076,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                     href={activeCodexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`}
                     className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
                   >
-                    {activeSymbol.id === "wasser" ? "Wasser im Codex lesen" : `${activeCodexEntry.title} im Codex lesen`}
+                    {activeSymbolBridge?.ctaLabels.codex ?? `${activeCodexEntry.title} im Codex lesen`}
                   </Link>
                 ) : null}
               </div>

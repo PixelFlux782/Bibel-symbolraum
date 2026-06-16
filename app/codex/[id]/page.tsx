@@ -28,6 +28,7 @@ import {
 import type { OntologyEntity, OntologyRelation, OntologyWayProjection } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
 import { buildRoomHref, getPatternRoomStation, hasSymbolRoom } from "@/lib/rooms/roomContext";
+import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import type { MeaningNodeId } from "@/types/meaningGraph";
 
 type CodexDetailPageProps = {
@@ -840,7 +841,8 @@ const WATER_SCRIPTURE_TRACE = [
 ];
 
 function WaterCodexReferenceSection() {
-  const waterRoomHref = buildRoomHref("wasser", { from: "codex", symbol: "wasser" });
+  const waterBridge = getSymbolPathConfig("wasser");
+  const waterRoomHref = buildRoomHref(waterBridge?.symbolId ?? "wasser", { from: "codex", symbol: waterBridge?.symbolId ?? "wasser" });
   const journeyHref = "/symbolnetz?symbol=wasser&lens=story&path=journey-wasser-wueste-brot";
 
   return (
@@ -912,7 +914,7 @@ function WaterCodexReferenceSection() {
         <section className="border-t border-white/[0.06] pt-6">
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link href={waterRoomHref} className="symbol-cta">Den Wasserraum betreten</Link>
+            <Link href={waterRoomHref} className="symbol-cta">{waterBridge?.ctaLabels.room ?? "Den Wasserraum betreten"}</Link>
             <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Erzaehlspur Wasser - Wueste - Brot ansehen</Link>
             <a href="#spur-aufnehmen" className="symbol-cta symbol-cta-secondary">Diese Spur bewahren</a>
           </div>

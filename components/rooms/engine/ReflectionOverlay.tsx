@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ReflectionPrompt, SymbolEngineData, SymbolJourneyState } from "@/types/engine";
 import { saveStoredReflection } from "@/lib/reflections";
 import type { RoomContext } from "@/lib/rooms/roomContext";
+import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 
 type ReflectionOverlayProps = {
   data: SymbolEngineData;
@@ -19,6 +20,7 @@ function createReflectionId(symbolId: string, stateId: string) {
 export function ReflectionOverlay({ data, reflection, roomContext, state }: ReflectionOverlayProps) {
   const [answer, setAnswer] = useState("");
   const [saved, setSaved] = useState(false);
+  const symbolBridge = getSymbolPathConfig(data.slug);
 
   function saveReflection() {
     const trimmedAnswer = answer.trim();
@@ -32,13 +34,13 @@ export function ReflectionOverlay({ data, reflection, roomContext, state }: Refl
       hebrew: data.hebrew.word,
       title: data.symbolLabel,
       sourceType: "room",
-      sourceId: data.slug,
-      codexHref: `/codex/${data.slug}`,
+      sourceId: symbolBridge?.reflectionSource.sourceId ?? data.slug,
+      codexHref: symbolBridge?.codexHref ?? `/codex/${data.slug}`,
       question: reflection.question,
       answer: trimmedAnswer,
       stateId: state.id,
       stateTitle: state.title,
-      roomHref: `/raeume/${data.slug}`,
+      roomHref: symbolBridge?.roomHref ?? `/raeume/${data.slug}`,
       pathLabel: roomContext?.mobileTitle,
       pathContext: roomContext ? { from: roomContext.source, path: roomContext.pathId, symbol: roomContext.symbolId } : undefined,
       createdAt: new Date().toISOString(),
