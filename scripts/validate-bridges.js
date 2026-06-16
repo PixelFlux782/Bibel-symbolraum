@@ -52,6 +52,7 @@ const {
 
 const {
   parseStoredReflections,
+  resolveReflectionReturnLinks,
 } = jiti("../lib/reflections.ts");
 
 function failIf(condition, message, details) {
@@ -74,6 +75,7 @@ function routeExists(href) {
   const pathname = href.split("?")[0];
 
   if (pathname === "/codex") return true;
+  if (pathname === "/symbolnetz") return fs.existsSync(path.join(projectRoot, "app", "symbolnetz", "page.tsx"));
   if (pathname.startsWith("/codex/")) {
     return Boolean(getCodexEntryByExactId(pathname.replace("/codex/", "")));
   }
@@ -121,6 +123,34 @@ function validateWaterReferenceBridge() {
     answer: "Eine knappe alte Spur.",
     createdAt: "2024-05-12T00:00:00.000Z",
   }]));
+  const pathWaterReflections = parseStoredReflections(JSON.stringify([{
+    id: "water-exodus",
+    symbol: "Wasser",
+    symbolSlug: "wasser",
+    answer: "Eine Spur an der Schwelle.",
+    pathLabel: "Exodus 14",
+    pathContext: { from: "codex", path: "exodus-14", symbol: "wasser" },
+    createdAt: "2024-05-13T00:00:00.000Z",
+  }]));
+  const legacyThinWaterReflections = parseStoredReflections(JSON.stringify([{
+    room: "wasser",
+    text: "Eine sehr alte Wasserspur.",
+    source: "mein-pfad",
+    createdAt: "kein-datum",
+  }]));
+  const invalidStorageReflections = parseStoredReflections("{not valid json");
+  const sparseWaterLinks = resolveReflectionReturnLinks(sparseWaterReflections[0]);
+  const pathWaterLinks = resolveReflectionReturnLinks(pathWaterReflections[0]);
+  const legacyThinWaterLinks = resolveReflectionReturnLinks(legacyThinWaterReflections[0]);
+  const legacyObjectWaterLinks = resolveReflectionReturnLinks(legacyObjectReflections[0]);
+  const meinPfadRoomHref = pathWaterLinks.find((link) => link.key === "room")?.href;
+  const meinPfadRoomContext = resolveRoomContext({ from: "mein-pfad", path: "exodus-14", symbol: "wasser" }, "wasser");
+  const waterReflectionLinks = [
+    ...sparseWaterLinks,
+    ...pathWaterLinks,
+    ...legacyThinWaterLinks,
+    ...legacyObjectWaterLinks,
+  ];
   const meinPfadSource = fs.readFileSync(path.join(projectRoot, "app", "mein-pfad", "page.tsx"), "utf8");
   const reflectionSource = fs.readFileSync(path.join(projectRoot, "components", "rooms", "engine", "ReflectionOverlay.tsx"), "utf8");
 
@@ -140,10 +170,20 @@ function validateWaterReferenceBridge() {
     failIf(legacyObjectReflections[0]?.roomHref === "/raeume/wasser", "Legacy water reflection gets room href.", legacyObjectReflections[0]),
     failIf(configuredReflection?.label === "Wasser", "Sparse water reflection resolves display label.", configuredReflection),
     failIf(sparseWaterReflections[0]?.symbol === "wasser", "Sparse reflection entries remain compatible.", sparseWaterReflections[0]),
+    failIf(invalidStorageReflections.length === 0, "Invalid localStorage data is ignored safely.", invalidStorageReflections),
+    failIf(sparseWaterLinks.some((link) => link.label === "Zum Wasser-Codex"), "Sparse water reflection gets Codex fallback.", sparseWaterLinks),
+    failIf(sparseWaterLinks.some((link) => link.label === "Den Wasserraum erneut betreten"), "Sparse water reflection gets room fallback.", sparseWaterLinks),
+    failIf(!sparseWaterLinks.some((link) => link.key === "trace"), "Sparse water reflection without path renders no trace link.", sparseWaterLinks),
+    failIf(pathWaterLinks.some((link) => link.key === "trace" && link.href === "/codex/exodus-14"), "Water reflection with path returns to the Codex anchor.", pathWaterLinks),
+    failIf(Boolean(meinPfadRoomHref?.includes("from=mein-pfad")), "Mein Pfad water room link keeps personal origin.", meinPfadRoomHref),
+    failIf(Boolean(meinPfadRoomHref?.includes("path=exodus-14")), "Mein Pfad water room link keeps path context.", meinPfadRoomHref),
+    failIf(Boolean(meinPfadRoomHref?.includes("symbol=wasser")), "Mein Pfad water room link keeps symbol context.", meinPfadRoomHref),
+    failIf(legacyThinWaterLinks.some((link) => link.label === "Zum Wasser-Codex"), "Thin legacy water data gets readable water fallbacks.", legacyThinWaterLinks),
+    failIf(getSymbolPathConfigFromReflectionLike(legacyThinWaterReflections[0])?.label === "Wasser", "Thin legacy water data resolves to a readable water label.", legacyThinWaterReflections[0]),
+    failIf(meinPfadRoomContext?.source === "mein-pfad" && meinPfadRoomContext.text.includes("bewahrten Spur"), "Water room can read personal path origin context.", meinPfadRoomContext),
     failIf(reflectionSource.includes("pathContext: roomContext ? { from: roomContext.source, path: roomContext.pathId, symbol: roomContext.symbolId } : undefined"), "Room reflections persist compatible pathContext fields."),
     failIf(meinPfadSource.includes("getSymbolPathConfigFromReflectionLike"), "Mein Pfad uses bridge fallback labels."),
-    failIf(meinPfadSource.includes("bridge?.codexHref"), "Mein Pfad has Codex href fallback."),
-    failIf(meinPfadSource.includes("ctaLabels.roomReturn"), "Mein Pfad has room CTA fallback."),
+    failIf(meinPfadSource.includes("resolveReflectionReturnLinks"), "Mein Pfad uses reflection return-link resolver."),
     failIf(dedupeCodexChips(waterMeaningFields.map((field) => ({ id: field.id, label: field.label }))).length === waterMeaningFields.length, "Water meaning fields are deduplicated.", waterMeaningFields),
     failIf(dedupeCodexChips(waterScriptureAnchors.map((anchor) => ({ id: anchor.id, label: anchor.label }))).length === waterScriptureAnchors.length, "Water scripture anchors are deduplicated.", waterScriptureAnchors),
     failIf(waterChipLinks.meaningFields.length === waterMeaningFields.length, "Every visible water meaning-field chip has an href.", waterChipLinks.meaningFields),
@@ -166,6 +206,22 @@ function validateWaterReferenceBridge() {
       errors.push({
         message: `Water scripture chip "${chip.label}" should prefer its Codex entry route.`,
         details: chip,
+      });
+    }
+  });
+
+  waterReflectionLinks.forEach((link) => {
+    if (!routeExists(link.href)) {
+      errors.push({
+        message: `Water reflection return link "${link.label}" points to a missing route.`,
+        details: link,
+      });
+    }
+
+    if (/^(wasser|exodus-14|genesis-1-2)$/.test(link.label)) {
+      errors.push({
+        message: `Water reflection return link exposes a raw technical label: "${link.label}".`,
+        details: link,
       });
     }
   });

@@ -4,7 +4,7 @@ import { getResonanceJourney } from "@/lib/resonance";
 import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 
 export type RoomSearchParams = Promise<Record<string, string | string[] | undefined>>;
-export type RoomContextSource = "codex" | "symbolnetz" | "pattern" | "journey";
+export type RoomContextSource = "codex" | "symbolnetz" | "pattern" | "journey" | "mein-pfad";
 export type RoomContext = {
   source: RoomContextSource;
   symbolId: string;
@@ -88,7 +88,7 @@ export function buildRoomHref(symbolId: string, context?: { from?: string; path?
     return "/symbolnetz";
   }
 
-  if (from && (from === "symbolnetz" || from === "codex" || getTitle(from))) {
+  if (from && (from === "symbolnetz" || from === "codex" || from === "mein-pfad" || getTitle(from))) {
     params.set("from", from);
   }
 
@@ -156,6 +156,25 @@ export function resolveRoomContext(
       mobileText: `${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
       returnHref: getSymbolPathConfig(symbolId)?.codexHref ?? `/codex/${symbolId}`,
       returnLabel: `Zurueck zu ${symbolLabel} im Codex`,
+    };
+  }
+
+  if (from === "mein-pfad") {
+    const personalPathMobileText = symbolId === "wasser"
+      ? "Der Wasserraum oeffnet sich erneut von deinem Pfad her."
+      : "Der Raum oeffnet sich erneut von deinem Pfad her.";
+
+    return {
+      source: "mein-pfad",
+      symbolId,
+      symbolLabel,
+      pathId: path,
+      title: "Rueckkehr",
+      text: "Du kommst aus deiner bewahrten Spur. Der Raum oeffnet sich erneut von deinem Pfad her.",
+      mobileTitle: `Mein Pfad -> ${roomTitle}`,
+      mobileText: personalPathMobileText,
+      returnHref: "/mein-pfad",
+      returnLabel: "Zurueck zu Mein Pfad",
     };
   }
 

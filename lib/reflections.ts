@@ -1,4 +1,7 @@
-import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import { getCodexEntry } from "@/lib/codex/getCodexEntry";
+import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
+import { buildRoomHref } from "@/lib/rooms/roomContext";
+import { getSymbolPathConfig, getSymbolPathConfigFromReflectionLike } from "@/lib/symbols/symbolPathConfig";
 
 export const REFLECTION_STORAGE_KEY = "bibel-symbolraum-reflections";
 
@@ -23,6 +26,12 @@ export type StoredReflection = {
     symbol?: string;
   };
   createdAt: string;
+};
+
+export type ReflectionReturnLink = {
+  key: "trace" | "codex" | "room" | "symbol-network";
+  label: string;
+  href: string;
 };
 
 export const WATER_REFLECTION_QUESTION =
@@ -78,14 +87,16 @@ function normalizeStoredReflection(value: unknown): StoredReflection | null {
   }
 
   const reflection = value as Record<string, unknown>;
-  const answer = typeof reflection.answer === "string" ? reflection.answer.trim() : "";
+  const answer = getFirstString(reflection.answer, reflection.text, reflection.reflection)?.trim() ?? "";
   const symbol = typeof reflection.symbol === "string" && reflection.symbol.trim()
     ? reflection.symbol.trim()
     : typeof reflection.title === "string" && reflection.title.trim()
       ? reflection.title.trim()
       : typeof reflection.symbolSlug === "string" && reflection.symbolSlug.trim()
         ? reflection.symbolSlug.trim()
-        : "";
+        : typeof reflection.room === "string" && reflection.room.trim()
+          ? reflection.room.trim()
+          : "";
 
   if (!answer || !symbol) {
     return null;
@@ -104,21 +115,31 @@ function normalizeStoredReflection(value: unknown): StoredReflection | null {
       ? reflection.id
       : `legacy-${symbol.toLocaleLowerCase("de-DE").replace(/\s+/g, "-")}-${createdAt}`,
     symbol,
-    symbolSlug: typeof reflection.symbolSlug === "string" ? reflection.symbolSlug : undefined,
+    symbolSlug: getFirstString(reflection.symbolSlug, reflection.symbolId),
     hebrew: typeof reflection.hebrew === "string" ? reflection.hebrew : "",
     title: typeof reflection.title === "string" ? reflection.title : symbol,
     sourceType,
     sourceId: typeof reflection.sourceId === "string" ? reflection.sourceId : undefined,
-    codexHref: typeof reflection.codexHref === "string" ? reflection.codexHref : undefined,
+    codexHref: getHrefString(reflection.codexHref),
     question,
     answer,
     stateId: typeof reflection.stateId === "string" ? reflection.stateId : undefined,
     stateTitle: typeof reflection.stateTitle === "string" ? reflection.stateTitle : undefined,
-    roomHref: typeof reflection.roomHref === "string" ? reflection.roomHref : undefined,
+    roomHref: getHrefString(reflection.roomHref),
     pathLabel: typeof reflection.pathLabel === "string" ? reflection.pathLabel : undefined,
-    pathContext: normalizePathContext(reflection.pathContext),
+    pathContext: normalizeReflectionPathContext(reflection),
     createdAt,
   };
+}
+
+function getFirstString(...values: unknown[]) {
+  return values.find((value): value is string => typeof value === "string" && Boolean(value.trim()))?.trim();
+}
+
+function getHrefString(value: unknown) {
+  const href = getFirstString(value);
+
+  return href?.startsWith("/") ? href : undefined;
 }
 
 function normalizeSourceType(value: unknown): StoredReflection["sourceType"] {
@@ -149,6 +170,77 @@ function normalizePathContext(value: unknown): StoredReflection["pathContext"] {
   };
 
   return Object.values(pathContext).some(Boolean) ? pathContext : undefined;
+}
+
+function normalizeReflectionPathContext(reflection: Record<string, unknown>): StoredReflection["pathContext"] {
+  const pathContext = normalizePathContext(reflection.pathContext);
+  const legacyContext = normalizePathContext({
+    from: reflection.from ?? reflection.source,
+    path: reflection.path ?? reflection.anchor,
+    symbol: reflection.symbolSlug ?? reflection.symbol,
+  });
+
+  return pathContext ?? legacyContext;
+}
+
+function getReflectionPathId(reflection: StoredReflection) {
+  return reflection.pathContext?.path?.split(/[?#]/, 1)[0];
+}
+
+function getReflectionTraceHref(reflection: StoredReflection) {
+  const pathId = getReflectionPathId(reflection);
+
+  if (!pathId) {
+    return undefined;
+  }
+
+  const entry = getCodexEntry(pathId) ?? resolveCodexEntry(pathId);
+
+  return entry ? `/codex/${entry.id}` : undefined;
+}
+
+function pushUniqueLink(links: ReflectionReturnLink[], link: ReflectionReturnLink | undefined) {
+  if (!link || links.some((existingLink) => existingLink.href === link.href && existingLink.label === link.label)) {
+    return;
+  }
+
+  links.push(link);
+}
+
+export function resolveReflectionReturnLinks(reflection: StoredReflection): ReflectionReturnLink[] {
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  if (bridge?.symbolId !== "wasser") {
+    const links: ReflectionReturnLink[] = [];
+
+    if (reflection.codexHref) {
+      pushUniqueLink(links, { key: "codex", label: "Codex oeffnen", href: reflection.codexHref });
+    }
+
+    if (reflection.roomHref) {
+      pushUniqueLink(links, { key: "room", label: "Raum erneut betreten", href: reflection.roomHref });
+    }
+
+    pushUniqueLink(links, { key: "symbol-network", label: "Symbolnetz oeffnen", href: "/symbolnetz" });
+
+    return links;
+  }
+
+  const pathId = getReflectionPathId(reflection);
+  const traceHref = getReflectionTraceHref(reflection);
+  const roomHref = buildRoomHref(bridge.symbolId, {
+    from: "mein-pfad",
+    path: pathId,
+    symbol: bridge.symbolId,
+  });
+  const links: ReflectionReturnLink[] = [];
+
+  pushUniqueLink(links, traceHref ? { key: "trace", label: "Zur Spur zurueckkehren", href: traceHref } : undefined);
+  pushUniqueLink(links, { key: "codex", label: "Zum Wasser-Codex", href: bridge.codexHref });
+  pushUniqueLink(links, { key: "room", label: "Den Wasserraum erneut betreten", href: roomHref });
+  pushUniqueLink(links, { key: "symbol-network", label: "Wasser im Symbolnetz ansehen", href: bridge.symbolNetworkHref });
+
+  return links;
 }
 
 export function saveStoredReflection(reflection: StoredReflection) {

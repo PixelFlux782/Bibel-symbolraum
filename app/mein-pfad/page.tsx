@@ -6,6 +6,8 @@ import {
   persistStoredReflections,
   parseStoredReflections,
   REFLECTION_STORAGE_KEY,
+  resolveReflectionReturnLinks,
+  type ReflectionReturnLink,
   type StoredReflection,
 } from "@/lib/reflections";
 import { getSymbolPathConfigFromReflectionLike } from "@/lib/symbols/symbolPathConfig";
@@ -92,6 +94,10 @@ function getTraceContext(reflection: StoredReflection) {
     return "Aus dem Codex";
   }
 
+  if (bridge?.symbolId === "wasser") {
+    return "Wasser-Spur";
+  }
+
   return "Aeltere Spur";
 }
 
@@ -118,28 +124,10 @@ function getTraceTitle(reflection: StoredReflection) {
   return title;
 }
 
-function getCodexLabel() {
-  return "Codex oeffnen";
-}
-
-function getCodexHref(reflection: StoredReflection) {
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-
-  return reflection.codexHref ?? bridge?.codexHref ?? (reflection.symbolSlug ? `/codex/${reflection.symbolSlug}` : undefined);
-}
-
 function isConfiguredRoomReflection(reflection: StoredReflection) {
   const bridge = getSymbolPathConfigFromReflectionLike(reflection);
 
   return Boolean(bridge && (reflection.sourceType === "room" || reflection.roomHref === bridge.roomHref));
-}
-
-function getReflectionCodexLabel(reflection: StoredReflection) {
-  return getSymbolPathConfigFromReflectionLike(reflection)?.ctaLabels.codex ?? getCodexLabel();
-}
-
-function getReflectionRoomLabel(reflection: StoredReflection) {
-  return getSymbolPathConfigFromReflectionLike(reflection)?.ctaLabels.roomReturn ?? "Raum erneut betreten";
 }
 
 type ReflectionGroupKey = "rooms" | "codex" | "network" | "older";
@@ -326,36 +314,28 @@ export default function MeinPfadPage() {
                   <section key={group.key} className="symbol-path-group">
                     <h2 className="symbol-path-group__title">{group.label}</h2>
                     <div className="symbol-path-list grid gap-5">
-                      {group.reflections.map((reflection) => {
-                        const codexHref = getCodexHref(reflection);
-
-                        return (
-                          <ReflectionArticle
-                            key={reflection.id}
-                            reflection={reflection}
-                            codexHref={codexHref}
-                            onRemove={handleRemoveReflection}
-                          />
-                        );
-                      })}
+                      {group.reflections.map((reflection) => (
+                        <ReflectionArticle
+                          key={reflection.id}
+                          reflection={reflection}
+                          returnLinks={resolveReflectionReturnLinks(reflection)}
+                          onRemove={handleRemoveReflection}
+                        />
+                      ))}
                     </div>
                   </section>
                 ))}
               </div>
             ) : (
               <section className="symbol-path-list grid gap-5" aria-label="Bewahrte Spuren">
-                {sortedReflections.map((reflection) => {
-                  const codexHref = getCodexHref(reflection);
-
-                  return (
-                    <ReflectionArticle
-                      key={reflection.id}
-                      reflection={reflection}
-                      codexHref={codexHref}
-                      onRemove={handleRemoveReflection}
-                    />
-                  );
-                })}
+                {sortedReflections.map((reflection) => (
+                  <ReflectionArticle
+                    key={reflection.id}
+                    reflection={reflection}
+                    returnLinks={resolveReflectionReturnLinks(reflection)}
+                    onRemove={handleRemoveReflection}
+                  />
+                ))}
               </section>
             )}
           </>
@@ -367,11 +347,11 @@ export default function MeinPfadPage() {
 
 function ReflectionArticle({
   reflection,
-  codexHref,
+  returnLinks,
   onRemove,
 }: {
   reflection: StoredReflection;
-  codexHref: string | undefined;
+  returnLinks: ReflectionReturnLink[];
   onRemove: (id: string) => void;
 }) {
   return (
@@ -395,19 +375,11 @@ function ReflectionArticle({
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] pt-4">
-        {codexHref ? (
-          <Link href={codexHref} className="symbol-archive-action">
-            {getReflectionCodexLabel(reflection)}
+        {returnLinks.map((link) => (
+          <Link key={`${link.key}-${link.href}`} href={link.href} className="symbol-archive-action">
+            {link.label}
           </Link>
-        ) : null}
-        {reflection.roomHref ? (
-          <Link href={reflection.roomHref} className="symbol-archive-action">
-            {getReflectionRoomLabel(reflection)}
-          </Link>
-        ) : null}
-        <Link href="/symbolnetz" className="symbol-archive-action">
-          Symbolnetz oeffnen
-        </Link>
+        ))}
         <button
           type="button"
           onClick={() => onRemove(reflection.id)}
