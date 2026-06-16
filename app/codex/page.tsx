@@ -29,7 +29,7 @@ const CODEX_GROUPS: { type: CodexEntryType; label: string; optional?: boolean }[
   { type: "meaning", label: "Bedeutung" },
   { type: "meaning-field", label: "Bedeutungsfelder", optional: true },
   { type: "number", label: "Zahlen", optional: true },
-  { type: "journey", label: "Journeys", optional: true },
+  { type: "journey", label: "Wege", optional: true },
 ];
 
 const CODEX_VIEWS: { id: CodexViewId; label: string; description: string }[] = [
@@ -40,7 +40,7 @@ const CODEX_VIEWS: { id: CodexViewId; label: string; description: string }[] = [
   { id: "torah", label: "Thora", description: "Schrift- und Versanker" },
   { id: "gematria", label: "Gematria", description: "Zahlen und Werte" },
   { id: "meaning", label: "Bedeutung", description: "Bedeutungsfelder" },
-  { id: "journeys", label: "Journeys", description: "Gef&uuml;hrte Wege" },
+  { id: "journeys", label: "Wege", description: "Gef&uuml;hrte Wege" },
 ];
 
 const TORAH_SEQUENCE = [
@@ -334,6 +334,13 @@ function getStationEntryLabel(entry: CodexEntry) {
   return entry.title;
 }
 
+function getStationKindLabel(kind: ResonancePathStationKind) {
+  if (kind === "Journey") return "Weg";
+  if (kind === "Hebraeisch") return "Hebr\u00e4isch";
+
+  return kind;
+}
+
 function buildResonancePath(entry: CodexEntry): ResonancePathStation[] {
   const graphEntries = getResonanceGraphEntries(entry);
   const symbolEntry = entry.type === "symbol"
@@ -386,7 +393,7 @@ function buildResonancePath(entry: CodexEntry): ResonancePathStation[] {
     numberEntry ? { kind: "Zahl", label: getStationEntryLabel(numberEntry), entry: numberEntry } : null,
     meaningEntry ? { kind: "Bedeutung", label: meaningEntry.title, entry: meaningEntry } : null,
     scriptureEntry ? { kind: "Thora", label: scriptureEntry.title, entry: scriptureEntry } : null,
-    journeyEntry ? { kind: "Journey", label: `Journey ${journeyEntry.title}`, entry: journeyEntry } : null,
+    journeyEntry ? { kind: "Journey", label: `Weg ${journeyEntry.title}`, entry: journeyEntry } : null,
   ];
 
   return stations.filter((station): station is ResonancePathStation => Boolean(station?.label.trim()));
@@ -432,7 +439,7 @@ function CodexResonancePath({
           const content = (
             <>
               <span className="text-[0.56rem] uppercase tracking-[0.22em] text-cyan-soft/80">
-                {station.kind === "Hebraeisch" ? "Hebr\u00e4isch" : station.kind}
+                {getStationKindLabel(station.kind)}
               </span>
               <span
                 className={`mt-2 block leading-tight ${
@@ -629,7 +636,7 @@ function HebrewWordCard({
 
         <div className="mt-auto grid grid-cols-2 gap-3 pt-8 max-sm:hidden">
           <div className="border-t border-white/[0.06] pt-4">
-            <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">Relationen</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">Nahe Resonanz</p>
             <p className="mt-2 font-serif text-2xl text-gold/85">{entry.relations.length}</p>
           </div>
           <div className="border-t border-white/[0.06] pt-4 text-right">
@@ -686,7 +693,7 @@ function HebrewLetterCard({ entry, activeCodexId, onActivateCodexEntry }: { entr
 
         <div className="mt-auto grid grid-cols-2 gap-3 pt-8">
           <div className="border-t border-white/[0.06] pt-4">
-            <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">Relationen</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">Nahe Resonanz</p>
             <p className="mt-2 font-serif text-2xl text-gold/80">{entry.relations.length}</p>
           </div>
           <div className="border-t border-white/[0.06] pt-4 text-right">
@@ -878,7 +885,7 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
 
         <div className="mt-auto grid grid-cols-2 gap-3 pt-8">
           <div className="border-t border-white/[0.06] pt-4">
-            <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">Relationen</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">Nahe Resonanz</p>
             <p className="mt-2 font-serif text-2xl text-gold/80">{entry.relations.length}</p>
           </div>
           <div className="border-t border-white/[0.06] pt-4">
@@ -1155,7 +1162,7 @@ function MobileCodexMeaningTrails({
         <button type="button" onClick={() => onSelectView("letters")}>Buchstaben</button>
         <button type="button" onClick={() => onSelectView("gematria")}>Zahlen</button>
         <button type="button" onClick={() => onSelectView("torah")}>Thora</button>
-        <button type="button" onClick={() => onSelectView("journeys")}>Journeys</button>
+        <button type="button" onClick={() => onSelectView("journeys")}>Wege</button>
       </div>
     </section>
   );

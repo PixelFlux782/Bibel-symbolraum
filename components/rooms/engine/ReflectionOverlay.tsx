@@ -3,10 +3,12 @@
 import { useState } from "react";
 import type { ReflectionPrompt, SymbolEngineData, SymbolJourneyState } from "@/types/engine";
 import { saveStoredReflection } from "@/lib/reflections";
+import type { RoomContext } from "@/lib/rooms/roomContext";
 
 type ReflectionOverlayProps = {
   data: SymbolEngineData;
   reflection: ReflectionPrompt;
+  roomContext?: RoomContext;
   state: SymbolJourneyState;
 };
 
@@ -14,7 +16,7 @@ function createReflectionId(symbolId: string, stateId: string) {
   return `reflection-${symbolId}-${stateId}-${Date.now()}`;
 }
 
-export function ReflectionOverlay({ data, reflection, state }: ReflectionOverlayProps) {
+export function ReflectionOverlay({ data, reflection, roomContext, state }: ReflectionOverlayProps) {
   const [answer, setAnswer] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -28,11 +30,17 @@ export function ReflectionOverlay({ data, reflection, state }: ReflectionOverlay
       symbol: data.symbolLabel,
       symbolSlug: data.slug,
       hebrew: data.hebrew.word,
+      title: data.symbolLabel,
+      sourceType: "room",
+      sourceId: data.slug,
+      codexHref: `/codex/${data.slug}`,
       question: reflection.question,
       answer: trimmedAnswer,
       stateId: state.id,
       stateTitle: state.title,
       roomHref: `/raeume/${data.slug}`,
+      pathLabel: roomContext?.mobileTitle,
+      pathContext: roomContext ? { symbol: roomContext.symbolId } : undefined,
       createdAt: new Date().toISOString(),
     });
     setAnswer("");
@@ -42,7 +50,7 @@ export function ReflectionOverlay({ data, reflection, state }: ReflectionOverlay
 
   return (
     <section className="symbol-engine__reflection" aria-label="Reflexionsfrage">
-      <p>{reflection.kicker}</p>
+      <p>Spur aus diesem Raum</p>
       <blockquote>{reflection.question}</blockquote>
       <textarea
         value={answer}
@@ -52,9 +60,9 @@ export function ReflectionOverlay({ data, reflection, state }: ReflectionOverlay
       />
       <div className="symbol-engine__reflection-actions">
         <button type="button" onClick={saveReflection} disabled={!answer.trim()}>
-          Reflexion speichern
+          Spur bewahren
         </button>
-        <span className={saved ? "is-visible" : ""}>Gespeichert.</span>
+        <span className={saved ? "is-visible" : ""}>Diese Spur wurde bewahrt.</span>
       </div>
     </section>
   );

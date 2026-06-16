@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CodexReflectionCard } from "@/components/CodexReflectionCard";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
@@ -51,6 +52,8 @@ type ResolvedPathContext = {
   returnHref: string;
   returnLabel: string;
 };
+
+type ReflectionSourceType = "symbol" | "pattern" | "journey" | "core" | "letter";
 
 function formatType(type: CodexEntryType) {
   if (type === "meaning") {
@@ -176,6 +179,13 @@ function getSearchParamValue(params: Record<string, string | string[] | undefine
   return Array.isArray(value) ? value[0] : value;
 }
 
+function sanitizePathContextValue(value: string | undefined) {
+  if (!value) return undefined;
+  if (value === "symbolnetz" || isResolvableCodexContextId(value)) return value;
+
+  return undefined;
+}
+
 function getCodexTitleById(id: string | undefined) {
   if (!id) return undefined;
 
@@ -294,6 +304,28 @@ function resolvePathContext({
   }
 
   return null;
+}
+
+function resolveReflectionSourceType(entry: CodexEntry, entity?: OntologyEntity): ReflectionSourceType | null {
+  if (entity?.domain === "pattern") return "pattern";
+  if (entity && isCoreConceptId(entity.id)) return "core";
+  if (entry.type === "journey") return "journey";
+  if (entry.type === "hebrew-letter" && (entry.id === "aleph" || entry.id === "mem")) return "letter";
+  if (entry.type === "symbol" && ["wasser", "licht", "feuer", "wueste"].includes(entry.id)) return "symbol";
+
+  return null;
+}
+
+function getReflectionQuestionForEntry(sourceType: ReflectionSourceType) {
+  if (sourceType === "pattern" || sourceType === "journey") {
+    return "Was bewegt sich in dir auf diesem Weg?";
+  }
+
+  if (sourceType === "core") {
+    return "Welche Spur fuehrt dich zu dieser Achse?";
+  }
+
+  return "Welche Frage oeffnet sich dir hier?";
 }
 
 function normalizeCodexContextFocus(value: string | undefined): CodexContextFocus {
@@ -859,6 +891,13 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
   const pathContext = resolvePathContext({ entry, params: resolvedSearchParams });
+  const reflectionSourceType = resolveReflectionSourceType(entry, ontologyEntity);
+  const reflectionPathContext = {
+    from: sanitizePathContextValue(getSearchParamValue(resolvedSearchParams, "from")),
+    path: sanitizePathContextValue(getSearchParamValue(resolvedSearchParams, "path")),
+    symbol: sanitizePathContextValue(getSearchParamValue(resolvedSearchParams, "symbol")),
+  };
+  const reflectionPathContextHasValue = Object.values(reflectionPathContext).some(Boolean);
   const symbolWayRelationIds = !isPatternEntity && !isCoreConceptEntity ? new Set(getSymbolWayRelationIds(entry.id)) : new Set<string>();
   const symbolNetworkReturnLens =
     normalizeSymbolNetworkReturnLens(getSearchParamValue(resolvedSearchParams, "lens"))
@@ -1020,6 +1059,19 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
             ) : null}
             <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} />
+            {reflectionSourceType ? (
+              <CodexReflectionCard
+                title={entry.title}
+                hebrew={entry.hebrew}
+                question={getReflectionQuestionForEntry(reflectionSourceType)}
+                sourceType={reflectionSourceType}
+                sourceId={entry.id}
+                codexHref={`/codex/${entry.id}`}
+                roomHref={hasSymbolRoom(entry.symbolRoomSlug) ? buildRoomHref(entry.symbolRoomSlug, { from: "codex", symbol: entry.symbolRoomSlug }) : undefined}
+                pathLabel={pathContext?.labels.join(" -> ")}
+                pathContext={reflectionPathContextHasValue ? reflectionPathContext : undefined}
+              />
+            ) : null}
           </div>
 
           <aside className="grid content-start gap-5">
@@ -1880,7 +1932,7 @@ function PatternCodexSection({
                 <WayLinkCard
                   key={journey.id}
                   href={withPathContext(`/codex/${journey.id}`, { from: entity.id })}
-                  title="Journey betreten"
+                  title="Weg betreten"
                   note={journey.steps?.map((step) => step.label).join(" -> ") ?? journey.summary}
                   movementSteps={journey.steps?.map((step) => step.label) ?? []}
                 />
@@ -2130,7 +2182,7 @@ function RelationsSection({ entry, activeContext }: { entry: CodexEntry; activeC
   }
 
   return (
-    <DetailSection title="Relationen" activeContext={activeContext}>
+    <DetailSection title="Nahe Resonanz" activeContext={activeContext}>
       <div className="grid gap-3">
         {visibleRelations.map((relation, index) => {
           const target = relationTarget(relation);
@@ -2220,7 +2272,7 @@ function NearbyEntriesSection({ entry }: { entry: CodexEntry }) {
   }
 
   return (
-    <DetailSection title="Nahe Eintr&auml;ge">
+    <DetailSection title="Nahe Resonanz">
       <div className="grid gap-3">
         {nearbyEntries.map((nearbyEntry) => (
           <Link

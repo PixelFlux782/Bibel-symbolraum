@@ -76,8 +76,8 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
 
       <section className="symbol-engine__content" key={`${activeState.id}-content`}>
         <nav className="mb-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-foreground-strong/45" aria-label="Raumpfad">
-          <span>/Raeume</span>
-          <span aria-hidden="true">/</span>
+          <span>Raeume</span>
+          <span aria-hidden="true">-&gt;</span>
           <span>{data.symbolLabel}</span>
         </nav>
         <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-gold/75">{roomTitle}</p>
@@ -129,6 +129,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         <ReflectionOverlay
           data={data}
           reflection={engine.reflectionQuestion}
+          roomContext={roomContext}
           state={activeState}
         />
       </aside>

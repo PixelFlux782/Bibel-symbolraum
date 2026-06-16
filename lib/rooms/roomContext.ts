@@ -77,13 +77,29 @@ export function hasSymbolRoom(symbolId: string | null | undefined): symbolId is 
 
 export function buildRoomHref(symbolId: string, context?: { from?: string; path?: string; symbol?: string }) {
   const params = new URLSearchParams();
+  const safeSymbolId = hasSymbolRoom(symbolId) ? symbolId : undefined;
+  const from = context?.from;
+  const path = context?.path;
+  const symbol = context?.symbol;
 
-  if (context?.from) params.set("from", context.from);
-  if (context?.path) params.set("path", context.path);
-  if (context?.symbol) params.set("symbol", context.symbol);
+  if (!safeSymbolId) {
+    return "/symbolnetz";
+  }
+
+  if (from && (from === "symbolnetz" || from === "codex" || getTitle(from))) {
+    params.set("from", from);
+  }
+
+  if (path && getTitle(path)) {
+    params.set("path", path);
+  }
+
+  if (symbol && hasSymbolRoom(symbol)) {
+    params.set("symbol", symbol);
+  }
 
   const query = params.toString();
-  return query ? `/raeume/${symbolId}?${query}` : `/raeume/${symbolId}`;
+  return query ? `/raeume/${safeSymbolId}?${query}` : `/raeume/${safeSymbolId}`;
 }
 
 export function getPatternRoomStation(patternId: string) {
@@ -154,7 +170,7 @@ export function resolveRoomContext(
       mobileTitle: `${movement} -> ${roomTitle}`,
       mobileText: "Du betrittst eine Station dieses Weges.",
       returnHref: `/codex/${path}`,
-      returnLabel: `Zurueck zur Journey ${pathTitle}`,
+      returnLabel: `Zurueck zum Weg ${pathTitle}`,
     };
   }
 
