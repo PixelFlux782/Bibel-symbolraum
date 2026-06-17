@@ -94,14 +94,19 @@ function normalizeStoredReflection(value: unknown): StoredReflection | null {
 
   const reflection = value as Record<string, unknown>;
   const answer = getFirstString(reflection.answer, reflection.text, reflection.reflection)?.trim() ?? "";
+  const room = getFirstString(reflection.room);
+  const symbolSlug = getFirstString(reflection.symbolSlug, reflection.symbolId);
+  const sourceId = getFirstString(reflection.sourceId);
+  const codexHref = getHrefString(reflection.codexHref);
+  const roomHref = getHrefString(reflection.roomHref);
   const symbol = typeof reflection.symbol === "string" && reflection.symbol.trim()
     ? reflection.symbol.trim()
     : typeof reflection.title === "string" && reflection.title.trim()
       ? reflection.title.trim()
-      : typeof reflection.symbolSlug === "string" && reflection.symbolSlug.trim()
-        ? reflection.symbolSlug.trim()
-        : typeof reflection.room === "string" && reflection.room.trim()
-          ? reflection.room.trim()
+      : symbolSlug
+        ? symbolSlug
+        : room
+          ? room
           : "";
 
   if (!answer || !symbol) {
@@ -115,31 +120,47 @@ function normalizeStoredReflection(value: unknown): StoredReflection | null {
     ? reflection.createdAt
     : new Date().toISOString();
   const sourceType = normalizeSourceType(reflection.sourceType);
+  const bridge = getSymbolPathConfigFromReflectionLike({
+    symbol,
+    title: typeof reflection.title === "string" ? reflection.title : undefined,
+    symbolSlug,
+    sourceId,
+    room,
+    codexHref,
+    roomHref,
+  });
+  const pathContext = normalizeReflectionPathContext(reflection);
+  const path = getFirstString(reflection.path, pathContext?.path);
+  const pathLabel = getReflectionPathLabel({
+    explicitLabel: getFirstString(reflection.pathLabel),
+    pathId: path,
+    symbolId: bridge?.symbolId ?? symbolSlug ?? room,
+  });
 
   return {
     id: typeof reflection.id === "string" && reflection.id.trim()
       ? reflection.id
       : `legacy-${symbol.toLocaleLowerCase("de-DE").replace(/\s+/g, "-")}-${createdAt}`,
     symbol,
-    symbolSlug: getFirstString(reflection.symbolSlug, reflection.symbolId),
-    room: typeof reflection.room === "string" ? reflection.room : undefined,
-    hebrew: typeof reflection.hebrew === "string" ? reflection.hebrew : "",
-    title: typeof reflection.title === "string" ? reflection.title : symbol,
+    symbolSlug: bridge?.symbolId ?? symbolSlug,
+    room,
+    hebrew: typeof reflection.hebrew === "string" ? reflection.hebrew : bridge?.hebrew ?? "",
+    title: bridge?.label ?? (typeof reflection.title === "string" ? reflection.title : symbol),
     sourceType,
-    sourceId: typeof reflection.sourceId === "string" ? reflection.sourceId : undefined,
+    sourceId,
     source: typeof reflection.source === "string" ? reflection.source : undefined,
     sourceLabel: typeof reflection.sourceLabel === "string" ? reflection.sourceLabel : undefined,
-    codexHref: getHrefString(reflection.codexHref),
+    codexHref: codexHref ?? bridge?.codexHref,
     question,
     answer,
     text: answer,
     stateId: typeof reflection.stateId === "string" ? reflection.stateId : undefined,
     stateTitle: typeof reflection.stateTitle === "string" ? reflection.stateTitle : undefined,
-    roomHref: getHrefString(reflection.roomHref),
-    pathLabel: typeof reflection.pathLabel === "string" ? reflection.pathLabel : undefined,
+    roomHref: roomHref ?? bridge?.roomHref,
+    pathLabel,
     from: typeof reflection.from === "string" ? reflection.from : undefined,
-    path: typeof reflection.path === "string" ? reflection.path : undefined,
-    pathContext: normalizeReflectionPathContext(reflection),
+    path,
+    pathContext,
     createdAt,
   };
 }
@@ -193,6 +214,49 @@ function normalizeReflectionPathContext(reflection: Record<string, unknown>): St
   });
 
   return pathContext ?? legacyContext;
+}
+
+function looksTechnicalLabel(value: string) {
+  return /_|->/.test(value) || /^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(value);
+}
+
+function getCuratedPathLabel(symbolId: string | undefined, pathId: string | undefined) {
+  if (!symbolId || !pathId) return undefined;
+
+  const bridge = getSymbolPathConfig(symbolId);
+  const scriptureAnchor = bridge?.codexGates?.scriptureAnchors?.find((anchor) => anchor.id === pathId);
+  const meaningField = bridge?.codexGates?.meaningFields?.find((field) => field.id === pathId);
+
+  return scriptureAnchor?.label ?? meaningField?.label;
+}
+
+function getReflectionPathLabel({
+  explicitLabel,
+  pathId,
+  symbolId,
+}: {
+  explicitLabel?: string;
+  pathId?: string;
+  symbolId?: string;
+}) {
+  if (explicitLabel && !looksTechnicalLabel(explicitLabel)) {
+    return explicitLabel;
+  }
+
+  const normalizedPathId = pathId?.split(/[?#]/, 1)[0];
+  const curatedLabel = getCuratedPathLabel(symbolId, normalizedPathId);
+  const linkedEntry = normalizedPathId ? getCodexEntry(normalizedPathId) ?? resolveCodexEntry(normalizedPathId) : undefined;
+
+  if (curatedLabel) return curatedLabel;
+  if (linkedEntry?.title) return linkedEntry.title;
+
+  const bridge = getSymbolPathConfig(symbolId);
+
+  if (normalizedPathId && bridge) {
+    return `${bridge.label}-Spur`;
+  }
+
+  return undefined;
 }
 
 function getReflectionPathId(reflection: StoredReflection) {

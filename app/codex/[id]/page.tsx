@@ -134,6 +134,18 @@ function resolveLinkedCodexEntry(value: string | null | undefined) {
   return value ? resolveCodexEntry(value) : undefined;
 }
 
+function buildCodexRoomHref(entry: CodexEntry) {
+  if (!hasSymbolRoom(entry.symbolRoomSlug)) {
+    return undefined;
+  }
+
+  return buildRoomHref(entry.symbolRoomSlug, {
+    from: "codex",
+    path: entry.type === "scripture" ? entry.id : undefined,
+    symbol: entry.symbolRoomSlug,
+  });
+}
+
 function isMeaningNodeId(value: string): value is MeaningNodeId {
   return meaningNodes.some((node) => node.id === value);
 }
@@ -834,7 +846,7 @@ function SymbolAnchorReturnCard({ entryId }: { entryId: string }) {
           href={bridge.roomHref}
           className="border border-cyan-soft/20 bg-black/[0.12] px-3 py-2 text-[0.58rem] uppercase tracking-[0.18em] text-cyan-soft/80 transition-colors duration-500 hover:border-cyan-soft/35 hover:text-cyan-soft"
         >
-          {bridge.roomTraceLabel}
+          {bridge.symbolId === "licht" ? bridge.roomLabel : bridge.roomTraceLabel}
         </Link>
         {bridge.personalPathHref && bridge.personalPathLabel ? (
           <Link
@@ -1201,6 +1213,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const isLightEntry = entry.id === "licht";
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
+  const codexRoomHref = buildCodexRoomHref(entry);
+  const codexRoomLabel = hasSymbolRoom(entry.symbolRoomSlug) ? getOntologyEntityTitle(entry.symbolRoomSlug) : undefined;
   const pathContext = resolvePathContext({ entry, params: resolvedSearchParams });
   const reflectionSourceType = resolveReflectionSourceType(entry, ontologyEntity);
   const reflectionPathContext = {
@@ -1382,7 +1396,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 sourceType={reflectionSourceType}
                 sourceId={entry.id}
                 codexHref={`/codex/${entry.id}`}
-                roomHref={hasSymbolRoom(entry.symbolRoomSlug) ? buildRoomHref(entry.symbolRoomSlug, { from: "codex", symbol: entry.symbolRoomSlug }) : undefined}
+                roomHref={codexRoomHref}
                 pathLabel={pathContext?.labels.join(" -> ")}
                 pathContext={reflectionPathContextHasValue ? reflectionPathContext : undefined}
               />
@@ -1394,15 +1408,15 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             <DetailSection title="Einordnung">
               <dl>
                 <FieldRow label="Typ" value={isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} />
-                {hasSymbolRoom(entry.symbolRoomSlug) ? (
+                {codexRoomHref && codexRoomLabel ? (
                   <FieldRow
                     label="Symbolraum"
                     value={
                       <Link
-                        href={buildRoomHref(entry.symbolRoomSlug, { from: "codex", symbol: entry.symbolRoomSlug })}
+                        href={codexRoomHref}
                         className="font-serif italic text-gold/85 transition-colors duration-500 hover:text-gold"
                       >
-                        {getOntologyEntityTitle(entry.symbolRoomSlug)}-Raum betreten
+                        {codexRoomLabel}-Raum betreten
                       </Link>
                     }
                   />

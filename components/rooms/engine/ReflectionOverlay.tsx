@@ -18,7 +18,7 @@ function createReflectionId(symbolId: string, stateId: string) {
 }
 
 function getReflectionSourceLabel(roomContext: RoomContext | undefined, fallback: string) {
-  return roomContext?.pathId ? `Deine Spur aus: ${roomContext.mobileTitle}` : fallback;
+  return roomContext?.pathLabel ? `Deine Spur aus: ${roomContext.pathLabel}` : fallback;
 }
 
 export function ReflectionOverlay({ data, reflection, roomContext, state }: ReflectionOverlayProps) {
@@ -49,7 +49,7 @@ export function ReflectionOverlay({ data, reflection, roomContext, state }: Refl
       stateId: state.id,
       stateTitle: state.title,
       roomHref: symbolBridge?.roomHref ?? `/raeume/${data.slug}`,
-      pathLabel: roomContext?.mobileTitle,
+      pathLabel: roomContext?.pathLabel,
       from: roomContext?.source,
       path: roomContext?.pathId,
       pathContext: roomContext ? { from: roomContext.source, path: roomContext.pathId, symbol: roomContext.symbolId } : undefined,

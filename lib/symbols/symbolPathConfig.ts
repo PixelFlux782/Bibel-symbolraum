@@ -174,6 +174,7 @@ export function getSymbolPathConfig(symbolId: string | null | undefined) {
 export function getSymbolPathConfigFromReflectionLike(reflection: {
   symbolSlug?: string;
   sourceId?: string;
+  room?: string;
   roomHref?: string;
   codexHref?: string;
   symbol?: string;
@@ -185,6 +186,7 @@ export function getSymbolPathConfigFromReflectionLike(reflection: {
   return (
     getSymbolPathConfig(reflection.symbolSlug) ??
     getSymbolPathConfig(reflection.sourceId) ??
+    getSymbolPathConfig(reflection.room) ??
     Object.values(symbolPathConfigs).find((config) => (
       reflection.roomHref === config.roomHref ||
       reflection.codexHref === config.codexHref ||

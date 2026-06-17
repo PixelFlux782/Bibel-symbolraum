@@ -11,6 +11,7 @@ export type RoomContext = {
   symbolId: string;
   symbolLabel: string;
   pathId?: string;
+  pathLabel?: string;
   title: string;
   text: string;
   mobileTitle: string;
@@ -84,6 +85,10 @@ function getPathContextLabel(symbolId: string, pathId: string | undefined) {
   return scriptureAnchor?.label ?? meaningField?.label ?? getTitle(pathId);
 }
 
+function getPathTraceText(pathLabel: string | undefined) {
+  return pathLabel ? `Deine Spur aus: ${pathLabel}` : undefined;
+}
+
 export function hasSymbolRoom(symbolId: string | null | undefined): symbolId is string {
   return Boolean(symbolId && existingRoomIds.has(symbolId));
 }
@@ -135,6 +140,8 @@ export function resolveRoomContext(
   const symbolLabel = getRoomLabel(symbolId);
   const roomTitle = `${symbolLabel}-Raum`;
   const pathTitle = getPathContextLabel(symbolId, path);
+  const pathDisplayLabel = pathTitle ?? (path ? "einer bewahrten Spur" : undefined);
+  const pathTraceText = getPathTraceText(pathDisplayLabel);
 
   if (from === "symbolnetz") {
     const returnParams = new URLSearchParams({ symbol: symbolId });
@@ -147,10 +154,13 @@ export function resolveRoomContext(
       symbolId,
       symbolLabel,
       pathId: path,
+      pathLabel: pathDisplayLabel,
       title: "Eintritt",
-      text: `Aus dem Symbolnetz kommend: Die Karte wird zum Raum.`,
+      text: pathTraceText
+        ? `Aus dem Symbolnetz kommend. ${pathTraceText}. Die Karte wird zum Raum.`
+        : `Aus dem Symbolnetz kommend: Die Karte wird zum Raum.`,
       mobileTitle: `Symbolnetz -> ${roomTitle}`,
-      mobileText: "Die Karte wird zum Raum.",
+      mobileText: pathTraceText ?? "Die Karte wird zum Raum.",
       returnHref: `/symbolnetz?${returnParams.toString()}`,
       returnLabel: getSymbolPathConfig(symbolId)?.ctaLabels.symbolNetworkReturn ?? "Zum Symbolnetz zurueckkehren",
     };
@@ -162,10 +172,13 @@ export function resolveRoomContext(
       symbolId,
       symbolLabel,
       pathId: path,
+      pathLabel: pathDisplayLabel,
       title: "Eintritt",
-      text: `Aus dem Codex kommend: ${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
+      text: pathTraceText
+        ? `Aus dem Codex kommend. ${pathTraceText}. ${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`
+        : `Aus dem Codex kommend: ${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
       mobileTitle: `Codex -> ${roomTitle}`,
-      mobileText: `${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
+      mobileText: pathTraceText ?? `${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
       returnHref: getSymbolPathConfig(symbolId)?.codexHref ?? `/codex/${symbolId}`,
       returnLabel: `Zurueck zu ${symbolLabel} im Codex`,
     };
@@ -174,13 +187,15 @@ export function resolveRoomContext(
   if (from === "mein-pfad") {
     const personalPathMobileText = symbolId === "wasser"
       ? "Der Wasserraum oeffnet sich erneut von deinem Pfad her."
-      : symbolId === "licht" && pathTitle
-        ? `Deine Spur aus: ${pathTitle}`
+      : symbolId === "licht" && pathTraceText
+        ? pathTraceText
         : symbolId === "licht"
           ? "Der Lichtraum oeffnet sich erneut von deinem Pfad her."
           : "Der Raum oeffnet sich erneut von deinem Pfad her.";
-    const personalPathText = symbolId === "licht"
-      ? "Du kommst aus deiner bewahrten Lichtspur. Der Lichtraum oeffnet sich erneut von deinem Pfad her."
+    const personalPathText = symbolId === "licht" && pathTraceText
+      ? `Du kommst aus deiner bewahrten Lichtspur. ${pathTraceText}. Der Lichtraum oeffnet sich erneut von deinem Pfad her.`
+      : symbolId === "licht"
+        ? "Du kommst aus deiner bewahrten Lichtspur. Der Lichtraum oeffnet sich erneut von deinem Pfad her."
       : "Du kommst aus deiner bewahrten Spur. Der Raum oeffnet sich erneut von deinem Pfad her.";
 
     return {
@@ -188,6 +203,7 @@ export function resolveRoomContext(
       symbolId,
       symbolLabel,
       pathId: path,
+      pathLabel: pathDisplayLabel,
       title: "Rueckkehr",
       text: personalPathText,
       mobileTitle: `Mein Pfad -> ${roomTitle}`,
@@ -209,10 +225,11 @@ export function resolveRoomContext(
       symbolId,
       symbolLabel,
       pathId: path,
+      pathLabel: pathDisplayLabel,
       title: "Eintritt",
-      text: `${movement}. Du betrittst eine Station dieses Weges.`,
+      text: pathTraceText ? `${pathTraceText}. Du betrittst eine Station dieses Weges.` : `${movement}. Du betrittst eine Station dieses Weges.`,
       mobileTitle: `${movement} -> ${roomTitle}`,
-      mobileText: "Du betrittst eine Station dieses Weges.",
+      mobileText: pathTraceText ?? "Du betrittst eine Station dieses Weges.",
       returnHref: `/codex/${path}`,
       returnLabel: `Zurueck zum Weg ${pathTitle}`,
     };

@@ -593,11 +593,11 @@ function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2"
       symbolRoomSlug: "wasser",
     },
     "genesis-1-3": {
-      title: reference?.label ?? "Genesis 1:3",
-      subtitle: "Das Wort ruft Licht",
+      title: "Genesis 1,3",
+      subtitle: "Es werde Licht",
       reference: reference?.reference ?? "Genesis 1,3",
-      label: reference?.label ?? "Genesis 1 Licht",
-      searchTerms: ["Bereshit 1:3", "Or", "Wort", "Offenbarung", "Aleph"],
+      label: "Es werde Licht",
+      searchTerms: ["Bereshit 1:3", "Es werde Licht", "Or", "Wort", "Offenbarung", "Aleph"],
       summary:
         "Genesis 1:3 laesst aus der Tiefe eine erste lesbare Gestalt hervortreten: Gott spricht, und Licht wird. Wort, Licht, Offenbarung und Aleph verbinden sich zu einem Motiv von Sichtbarkeit, Erkenntnis und Orientierung. Im Symbolnetz ist dieser Vers die Schwelle, an der das Verborgene nicht erklaert, sondern sichtbar gerufen wird.",
       meaningFields: biblicalMeaningFields(referenceId),

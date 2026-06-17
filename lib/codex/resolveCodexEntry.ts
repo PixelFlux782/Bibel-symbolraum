@@ -50,6 +50,12 @@ export function resolveCodexEntry(input: string): CodexEntry | undefined {
     return undefined;
   }
 
+  const exactIdMatch = codexRegistry.find((entry) => normalizeCodexTerm(entry.id) === normalizedInput);
+
+  if (exactIdMatch) {
+    return exactIdMatch;
+  }
+
   return codexRegistry.find((entry) =>
     entryTerms(entry).some((term) => normalizeCodexTerm(term) === normalizedInput),
   );
