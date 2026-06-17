@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import type { SymbolEngineData } from "@/types/engine";
 import { recordRoomVisitForRoute } from "@/lib/pathActivity";
 import type { RoomContext } from "@/lib/rooms/roomContext";
+import { getCodexHref, getSymbolNetworkHref, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import { BiblicalSceneLayer } from "./BiblicalSceneLayer";
 import { EngineNavigation } from "./EngineNavigation";
 import { EngineStage } from "./EngineStage";
@@ -42,7 +43,9 @@ function RoomEntryTrace({ context }: { context: RoomContext }) {
 }
 
 function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: RoomContext }) {
-  const defaultReturnHrefs = new Set([`/codex/${data.slug}`, `/symbolnetz?symbol=${data.slug}`]);
+  const codexHref = getCodexHref(data.slug);
+  const symbolNetworkHref = getSymbolNetworkHref(data.slug);
+  const defaultReturnHrefs = new Set<string>([codexHref, symbolNetworkHref]);
   const contextReturnLink = context && !defaultReturnHrefs.has(context.returnHref) ? context : undefined;
 
   return (
@@ -50,8 +53,8 @@ function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: 
       <p>Weiter vertiefen</p>
       <div>
         <Link href="/mein-pfad">Meinen Pfad ansehen</Link>
-        <Link href={`/codex/${data.slug}`}>Zurueck zu {data.symbolLabel} im Codex</Link>
-        <Link href={`/symbolnetz?symbol=${data.slug}`}>Zum Symbolnetz zurueckkehren</Link>
+        <Link href={codexHref}>Zurueck zu {data.symbolLabel} im Codex</Link>
+        <Link href={symbolNetworkHref}>Zum Symbolnetz zurueckkehren</Link>
         {contextReturnLink ? <Link href={contextReturnLink.returnHref}>{contextReturnLink.returnLabel}</Link> : null}
       </div>
     </div>
@@ -64,9 +67,11 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
   const roomTitle = getRoomTitle(data.symbolLabel);
 
   useEffect(() => {
+    const symbolPath = getSymbolPathConfig(data.slug);
+
     recordRoomVisitForRoute({
       symbolId: data.slug,
-      roomHref: `/raeume/${data.slug}`,
+      roomHref: symbolPath?.roomHref ?? `/raeume/${data.slug}`,
       routeKey: `room:${data.slug}`,
     });
   }, [data.slug]);

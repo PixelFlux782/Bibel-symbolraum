@@ -8,6 +8,8 @@ import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
+import type { HebrewWord } from "@/types/hebrew";
+import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import {
@@ -29,7 +31,8 @@ import {
 import type { OntologyEntity, OntologyRelation, OntologyWayProjection } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
 import { buildRoomHref, getPatternRoomStation, hasSymbolRoom } from "@/lib/rooms/roomContext";
-import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import { getKnownSymbolPathLabel, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import type { BiblicalReference } from "@/types/meaningGraph";
 import type { MeaningNodeId } from "@/types/meaningGraph";
 
 type CodexDetailPageProps = {
@@ -134,6 +137,35 @@ function resolveLinkedCodexEntry(value: string | null | undefined) {
   return value ? resolveCodexEntry(value) : undefined;
 }
 
+function normalizeRouteTerm(value: string) {
+  return value
+    .trim()
+    .toLocaleLowerCase("de-DE")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f\u0591-\u05c7]/g, "")
+    .replace(/[\s:_,.;/\\]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function getDefaultSymbolRoomPath(entry: CodexEntry) {
+  if (entry.type === "scripture") {
+    return entry.id;
+  }
+
+  if (!entry.symbolRoomSlug) {
+    return undefined;
+  }
+
+  const scriptureAnchors = getSymbolPathConfig(entry.symbolRoomSlug)?.codexGates?.scriptureAnchors ?? [];
+
+  return scriptureAnchors.length === 1 ? scriptureAnchors[0].id : undefined;
+}
+
 function buildCodexRoomHref(entry: CodexEntry) {
   if (!hasSymbolRoom(entry.symbolRoomSlug)) {
     return undefined;
@@ -141,7 +173,7 @@ function buildCodexRoomHref(entry: CodexEntry) {
 
   return buildRoomHref(entry.symbolRoomSlug, {
     from: "codex",
-    path: entry.type === "scripture" ? entry.id : undefined,
+    path: getDefaultSymbolRoomPath(entry),
     symbol: entry.symbolRoomSlug,
   });
 }
@@ -190,6 +222,135 @@ function codexEntryFromOntologyEntity(entity: OntologyEntity): CodexEntry {
       tags: entity.tags,
     },
   };
+}
+
+function codexEntryFromHebrewWord(word: HebrewWord): CodexEntry {
+  return {
+    id: word.id,
+    type: "hebrew-word",
+    title: word.germanMeaning,
+    subtitle: `${word.hebrew} / ${word.transliteration}`,
+    hebrew: word.hebrew,
+    transliteration: word.transliteration,
+    aliases: [word.germanMeaning, word.transliteration, word.hebrew, word.slug],
+    searchTerms: [
+      ...word.meaningFields.flatMap((field) => [field.label, ...field.experienceFields]),
+      ...word.relatedSymbolSlugs,
+    ],
+    summary: word.meaningFields.map((field) => field.description).join(" "),
+    meaningFields: [],
+    relations: [
+      ...word.relatedSymbolSlugs.map((targetId) => ({
+        targetId,
+        type: "has-hebrew-word" as const,
+        label: `${word.transliteration} klingt in ${targetId} mit.`,
+        source: "hebrew-word" as const,
+      })),
+      ...word.letterIds.map((targetId) => ({
+        targetId,
+        type: "contains-letter" as const,
+        label: `Buchstabe ${targetId}`,
+        source: "hebrew-word" as const,
+      })),
+    ],
+    scriptureAnchors: word.biblicalReferences.map((reference) => ({
+      id: reference.id,
+      reference: reference.reference,
+      label: reference.relation,
+      note: reference.context,
+      source: "hebrew-word",
+    })),
+    symbolRoomSlug: word.relatedSymbolSlugs[0] ?? null,
+    journeyIds: [],
+    meta: {
+      status: "seed",
+      source: ["hebrew-word"],
+      sourceIds: [word.id],
+      tags: [word.slug, ...word.relatedSymbolSlugs],
+    },
+  };
+}
+
+function codexEntryFromBiblicalReference(reference: BiblicalReference, requestedId: string): CodexEntry {
+  const label = getKnownSymbolPathLabel(requestedId) ?? reference.reference;
+
+  return {
+    id: requestedId,
+    type: "scripture",
+    title: label,
+    subtitle: reference.label,
+    hebrew: null,
+    transliteration: null,
+    aliases: [reference.reference, reference.label, ...(reference.aliases ?? [])],
+    searchTerms: [reference.id, requestedId],
+    summary: `${reference.reference} bleibt hier als biblischer Anker im Codex lesbar.`,
+    meaningFields: [],
+    relations: [],
+    scriptureAnchors: [{
+      id: reference.id,
+      reference: reference.reference,
+      label: reference.label,
+      source: "scripture-reference",
+    }],
+    symbolRoomSlug: null,
+    journeyIds: [],
+    meta: {
+      status: "seed",
+      source: ["scripture-reference"],
+      sourceIds: [reference.id],
+      tags: [requestedId],
+    },
+  };
+}
+
+function codexEntryFromKnownPathLabel(id: string, label: string): CodexEntry {
+  const isScriptureLike = /^(Genesis|Exodus|Deuteronomium)\b/.test(label);
+
+  return {
+    id,
+    type: isScriptureLike ? "scripture" : "meaning",
+    title: label,
+    subtitle: isScriptureLike ? "Bibelanker" : "Wüsten-Spur",
+    hebrew: null,
+    transliteration: null,
+    aliases: [label],
+    searchTerms: [id, label],
+    summary: `${label} wird hier als kuratierter Anker des Symbolpfades lesbar.`,
+    meaningFields: [],
+    relations: [],
+    scriptureAnchors: isScriptureLike
+      ? [{ reference: label, label, source: "scripture-reference" }]
+      : [],
+    symbolRoomSlug: null,
+    journeyIds: [],
+    meta: {
+      status: "seed",
+      source: ["meaning-graph"],
+      sourceIds: [id],
+      tags: [id],
+    },
+  };
+}
+
+function resolveCodexRouteEntry(id: string) {
+  const codexEntry = codexRegistry.find((entry) => entry.id === id);
+  const ontologyEntity = codexEntry ? undefined : getOntologyEntity(id);
+  const hebrewWord = codexEntry || ontologyEntity ? undefined : hebrewWords.find((word) => word.id === id || word.slug === id);
+  const normalizedId = normalizeRouteTerm(id);
+  const biblicalReference = codexEntry || ontologyEntity || hebrewWord
+    ? undefined
+    : biblicalReferences.find((reference) =>
+      [reference.id, reference.reference, reference.label, ...(reference.aliases ?? [])].some((term) => normalizeRouteTerm(term) === normalizedId),
+    );
+  const knownPathLabel = codexEntry || ontologyEntity || hebrewWord || biblicalReference ? undefined : getKnownSymbolPathLabel(id);
+  const looseCodexEntry = codexEntry || ontologyEntity || hebrewWord || biblicalReference || knownPathLabel ? undefined : resolveCodexEntry(id);
+
+  return codexEntry
+    ?? (ontologyEntity ? codexEntryFromOntologyEntity(ontologyEntity) : undefined)
+    ?? (hebrewWord ? codexEntryFromHebrewWord(hebrewWord) : undefined)
+    ?? (biblicalReference ? codexEntryFromBiblicalReference(biblicalReference, id) : undefined)
+    ?? (knownPathLabel ? codexEntryFromKnownPathLabel(id, knownPathLabel) : undefined)
+    ?? looseCodexEntry;
 }
 
 function getSearchParamValue(params: Record<string, string | string[] | undefined>, key: string) {
@@ -826,7 +987,12 @@ function PathContextCard({ context }: { context: ResolvedPathContext | null }) {
 }
 
 function SymbolAnchorReturnCard({ entryId }: { entryId: string }) {
-  const bridge = getSymbolCodexAnchorBridge("wasser", entryId) ?? getSymbolCodexAnchorBridge("licht", entryId);
+  const bridge =
+    getSymbolCodexAnchorBridge("wasser", entryId) ??
+    getSymbolCodexAnchorBridge("licht", entryId) ??
+    getSymbolCodexAnchorBridge("feuer", entryId) ??
+    getSymbolCodexAnchorBridge("wueste", entryId) ??
+    getSymbolCodexAnchorBridge("brot", entryId);
 
   if (!bridge || entryId === bridge.symbolId) {
     return null;
@@ -1031,7 +1197,9 @@ const LIGHT_CODEX_MOVEMENT = [
 function LightCodexReferenceSection() {
   const lightBridge = getSymbolPathConfig("licht");
   const lightChipLinks = getSymbolCodexChipLinks("licht");
-  const lightRoomHref = buildRoomHref(lightBridge?.symbolId ?? "licht", { from: "codex", symbol: lightBridge?.symbolId ?? "licht" });
+  const lightSymbolId = lightBridge?.symbolId ?? "licht";
+  const lightAnchorId = lightBridge?.codexGates?.scriptureAnchors?.[0]?.id;
+  const lightRoomHref = buildRoomHref(lightSymbolId, { from: "codex", path: lightAnchorId, symbol: lightSymbolId });
 
   return (
     <DetailSection title="Kuratierte Mitte">
@@ -1128,6 +1296,120 @@ function LightCodexReferenceSection() {
   );
 }
 
+const FIRE_CODEX_ESSENCE =
+  "Feuer ist im SYMBOLRAUM die brennende Grenze zwischen Sichtbarem und Unsichtbarem: Offenbarung, Ruf, Gegenwart und klaerende Wandlung.";
+
+const FIRE_CODEX_MOVEMENT = [
+  { label: "Ruf", text: "Feuer zieht nicht in Aktion, sondern in Aufmerksamkeit." },
+  { label: "Flamme", text: "Was sichtbar brennt, weist auf eine tiefere Gegenwart." },
+  { label: "Grenze", text: "Das Feuer markiert den Ort, an dem Naehe und Abstand zugleich wahr werden." },
+  { label: "Gegenwart", text: "Im Brennen wird etwas anwesend, ohne sich verfuegbar zu machen." },
+  { label: "Laeuterung", text: "Feuer klaert, ohne das Wesentliche auszuloeschen." },
+  { label: "Wandlung", text: "Was durch das Feuer geht, kehrt verwandelt in die Welt zurueck." },
+];
+
+function FireCodexReferenceSection() {
+  const fireBridge = getSymbolPathConfig("feuer");
+  const fireChipLinks = getSymbolCodexChipLinks("feuer");
+  const fireSymbolId = fireBridge?.symbolId ?? "feuer";
+  const fireAnchorId = "dornbusch";
+  const fireRoomHref = buildRoomHref(fireSymbolId, { from: "codex", path: fireAnchorId, symbol: fireSymbolId });
+
+  return (
+    <DetailSection title="Kuratierte Mitte">
+      <div className="grid gap-8">
+        <section>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Essenz</p>
+          <p className="symbol-copy mt-3 max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
+            {FIRE_CODEX_ESSENCE}
+          </p>
+        </section>
+
+        <section className="border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bewegungsfolge</p>
+          <ol className="mt-4 grid gap-3">
+            {FIRE_CODEX_MOVEMENT.map((station, index) => (
+              <li key={station.label} className="grid gap-2 border border-white/[0.06] bg-black/[0.1] p-4 sm:grid-cols-[auto_1fr] sm:items-start">
+                <span className="font-serif text-xl italic text-gold/80">{String(index + 1).padStart(2, "0")}</span>
+                <span>
+                  <strong className="block font-serif text-2xl italic text-foreground-strong">{station.label}</strong>
+                  <span className="symbol-copy mt-2 block text-sm italic text-muted-soft">{station.text}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="grid gap-5 border-t border-white/[0.06] pt-6 md:grid-cols-2">
+          <div>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeischer Koerper</p>
+            <p className="mt-4 font-serif text-5xl leading-none text-gold/85" lang="he" dir="rtl">{"\u05d0\u05e9"}</p>
+            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">Esch / Aleph - Schin</p>
+            <p className="symbol-copy mt-4 text-base italic text-muted-soft">
+              Esch verbindet den stillen Anfang des Aleph mit dem brennenden Zeichen des Schin.
+            </p>
+          </div>
+          <div>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahl / Symbolik</p>
+            <p className="mt-4 font-serif text-3xl italic text-foreground-strong">{"\u05d0\u05e9"} = 1 + 300 = 301</p>
+            <p className="symbol-copy mt-4 text-base italic text-muted-soft">
+              Die Zahl bleibt hier eine Resonanzspur: Anfang und brennende Wandlung.
+            </p>
+          </div>
+        </section>
+
+        {fireChipLinks.meaningFields.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bedeutungsfelder</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {fireChipLinks.meaningFields.map((field) => (
+                <Link
+                  key={field.id}
+                  href={field.href}
+                  className="border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.075] hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/20"
+                >
+                  {field.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {fireChipLinks.scriptureAnchors.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bibelanker</p>
+            <div className="mt-4 grid gap-3">
+              {fireChipLinks.scriptureAnchors.map((anchor) => (
+                <article key={anchor.id} className="border border-white/[0.06] bg-black/[0.1] p-4">
+                  <Link
+                    href={anchor.href}
+                    className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/20"
+                  >
+                    {anchor.label}
+                  </Link>
+                  <p className="symbol-copy mt-3 text-sm italic text-muted-soft">
+                    Feuer erscheint hier als Ort der Offenbarung: nicht Spektakel, sondern Gegenwart an einer Grenze.
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="border-t border-white/[0.06] pt-6">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link href={fireRoomHref} className="symbol-cta">{fireBridge?.ctaLabels.room ?? "Den Feuerraum betreten"}</Link>
+            <Link href={fireBridge?.symbolNetworkHref ?? "/symbolnetz?symbol=feuer"} className="symbol-cta symbol-cta-secondary">
+              Feuer im Symbolnetz ansehen
+            </Link>
+          </div>
+        </section>
+      </div>
+    </DetailSection>
+  );
+}
+
 function FieldRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="border-t border-white/[0.06] py-4 first:border-t-0 first:pt-0 last:pb-0">
@@ -1173,9 +1455,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: CodexDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const codexEntry = resolveCodexEntry(id);
-  const ontologyEntity = codexEntry ? undefined : getOntologyEntity(id);
-  const entry = codexEntry ?? (ontologyEntity ? codexEntryFromOntologyEntity(ontologyEntity) : undefined);
+  const entry = resolveCodexRouteEntry(id);
 
   if (!entry) {
     return {
@@ -1200,9 +1480,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const activePathId = isFromSymbolNetwork ? getSearchParamValue(resolvedSearchParams, "path") : undefined;
   const activeResonanceJourney = activePathId ? getResonanceJourney(activePathId) : undefined;
   const activePathLabel = activeResonanceJourney?.title;
-  const codexEntry = resolveCodexEntry(id);
-  const ontologyRouteEntity = codexEntry ? undefined : getOntologyEntity(id);
-  const entry = codexEntry ?? (ontologyRouteEntity ? codexEntryFromOntologyEntity(ontologyRouteEntity) : undefined);
+  const entry = resolveCodexRouteEntry(id);
 
   if (!entry) {
     notFound();
@@ -1211,6 +1489,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const ontologyEntity = getOntologyEntity(entry.id);
   const isWaterEntry = entry.id === "wasser";
   const isLightEntry = entry.id === "licht";
+  const isFireEntry = entry.id === "feuer";
+  const isCuratedSymbolEntry = isWaterEntry || isLightEntry || isFireEntry;
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
   const codexRoomHref = buildCodexRoomHref(entry);
@@ -1277,7 +1557,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 {entry.subtitle}
               </p>
             ) : null}
-            <p className="symbol-copy mt-7 max-w-3xl text-lg md:text-xl">{isWaterEntry ? WATER_CODEX_ESSENCE : entry.summary}</p>
+            <p className="symbol-copy mt-7 max-w-3xl text-lg md:text-xl">{isWaterEntry ? WATER_CODEX_ESSENCE : isFireEntry ? FIRE_CODEX_ESSENCE : entry.summary}</p>
           </div>
 
           {entry.hebrew ? (
@@ -1308,7 +1588,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           <div className="grid gap-5">
             {isWaterEntry ? <WaterCodexReferenceSection /> : null}
             {isLightEntry ? <LightCodexReferenceSection /> : null}
-            {!isWaterEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {isFireEntry ? <FireCodexReferenceSection /> : null}
+            {!isCuratedSymbolEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {isPatternEntity ? (
               <PatternCodexSection
                 entity={ontologyEntity}
@@ -1323,21 +1604,21 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               />
             ) : null}
 
-            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
+            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
               <VisibleHiddenSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
 
-            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <WaysBeginningSection
                 entry={entry}
                 activeContext={activeFocus === "story" ? "story" : undefined}
               />
             ) : null}
 
-            {!isWaterEntry && !isLightEntry && !isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
+            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
               <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
                 <div className="flex flex-wrap gap-2">
                   {entry.meaningFields.map((field) => {
@@ -1364,29 +1645,29 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </DetailSection>
             ) : null}
 
-            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <OntologyMetadataSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
-            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             ) : null}
-            {!isWaterEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <OntologyResonanceSection
                 entry={entry}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
                 excludedRelationIds={symbolWayRelationIds}
               />
             ) : null}
-            {!isWaterEntry ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
-            {!isWaterEntry ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
-            {!isWaterEntry ? <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
-            {!isWaterEntry && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
+            {!isCuratedSymbolEntry ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
+            {!isCuratedSymbolEntry ? <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isCoreConceptEntity ? (
               <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
             ) : null}
-            {!isWaterEntry && !isLightEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isCuratedSymbolEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {reflectionSourceType ? (
               <div id="spur-aufnehmen">
               <CodexReflectionCard
@@ -1427,7 +1708,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </dl>
             </DetailSection>
 
-            {!isWaterEntry && !isCoreConceptEntity ? <NearbyEntriesSection entry={entry} /> : null}
+            {!isCuratedSymbolEntry && !isCoreConceptEntity ? <NearbyEntriesSection entry={entry} /> : null}
           </aside>
         </div>
       </div>

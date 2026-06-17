@@ -3,15 +3,15 @@ import type { SymbolEngineData } from "@/types/engine";
 export const wuesteEngineData: SymbolEngineData = {
   id: "desert-engine",
   slug: "wueste",
-  title: "Wuestenraum",
-  symbolLabel: "Wueste",
+  title: "Wüstenraum",
+  symbolLabel: "Wüste",
   hebrew: {
     hebrewWordId: "midbar",
     hebrewLetterIds: ["mem", "dalet", "bet", "resh"],
     hebrewMeaningFieldIds: ["midbar-desert", "midbar-reduction", "midbar-listening", "midbar-testing", "midbar-guidance", "midbar-word"],
     word: "\u05de\u05d3\u05d1\u05e8",
     transliteration: "midbar",
-    translation: "Wueste",
+    translation: "Wüste",
     summary:
       "Midbar bezeichnet die Wueste als Raum von Leere, Weg und Hoeren. Die Naehe zum Bedeutungsfeld von davar / Wort bleibt eine behutsame Spur, keine Gleichsetzung.",
     letters: [

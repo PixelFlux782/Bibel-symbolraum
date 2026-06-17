@@ -1,6 +1,6 @@
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
-import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import { buildSymbolRoomHref, getSymbolNetworkHref, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 
 import { resolveCodexEntry } from "./resolveCodexEntry";
 import type { CodexEntry, CodexScriptureAnchor } from "./types";
@@ -232,11 +232,11 @@ export function getSymbolCodexAnchorBridge(symbolId: string, anchorId: string): 
     contextLabel: specificContextLabel ?? anchorBridge.defaultContextLabel,
     returnHref: symbolBridge.codexHref,
     returnLabel: anchorBridge.returnLabel,
-    roomHref: `${symbolBridge.roomHref}?from=codex&path=${encodeURIComponent(anchorId)}&symbol=${symbolBridge.symbolId}`,
+    roomHref: buildSymbolRoomHref(symbolBridge.symbolId, { from: "codex", path: anchorId, symbol: symbolBridge.symbolId }),
     roomLabel: anchorBridge.roomLabel,
     roomTraceLabel: specificContextLabel ? anchorBridge.roomTraceLabel : anchorBridge.roomLabel,
-    symbolNetworkHref: symbolBridge.symbolNetworkHref,
-    symbolNetworkLabel: symbolId === "licht" ? "Licht im Symbolnetz ansehen" : undefined,
+    symbolNetworkHref: getSymbolNetworkHref(symbolBridge.symbolId),
+    symbolNetworkLabel: `${symbolBridge.label} im Symbolnetz ansehen`,
     personalPathHref: personalPathLabel ? "/mein-pfad" : undefined,
     personalPathLabel,
   };

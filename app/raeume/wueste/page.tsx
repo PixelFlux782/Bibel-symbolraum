@@ -7,8 +7,8 @@ import {
 import { resolveRoomContext } from "@/lib/rooms/roomContext";
 
 export const metadata = {
-  title: "Wueste-Raum",
-  description: "Ein Symbolraum zu \u05de\u05d3\u05d1\u05e8 / Midbar / Wueste.",
+  title: "Wüstenraum",
+  description: "Ein Symbolraum zu \u05de\u05d3\u05d1\u05e8 / Midbar / Wüste.",
 };
 
 export default async function WuesteRaumPage({ searchParams }: { searchParams: RoomSearchParams }) {

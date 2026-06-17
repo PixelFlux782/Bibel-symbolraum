@@ -1,7 +1,14 @@
 import { getCodexEntry } from "@/lib/codex/getCodexEntry";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { buildRoomHref } from "@/lib/rooms/roomContext";
-import { getSymbolPathConfig, getSymbolPathConfigFromReflectionLike } from "@/lib/symbols/symbolPathConfig";
+import {
+  getCodexHref,
+  getKnownSymbolPathLabel,
+  getSymbolNetworkHref,
+  getSymbolPathConfig,
+  getSymbolPathConfigFromReflectionLike,
+  getSymbolTraceFallbackLabel,
+} from "@/lib/symbols/symbolPathConfig";
 
 export const REFLECTION_STORAGE_KEY = "bibel-symbolraum-reflections";
 
@@ -227,7 +234,7 @@ function getCuratedPathLabel(symbolId: string | undefined, pathId: string | unde
   const scriptureAnchor = bridge?.codexGates?.scriptureAnchors?.find((anchor) => anchor.id === pathId);
   const meaningField = bridge?.codexGates?.meaningFields?.find((field) => field.id === pathId);
 
-  return scriptureAnchor?.label ?? meaningField?.label;
+  return getKnownSymbolPathLabel(pathId) ?? scriptureAnchor?.label ?? meaningField?.label;
 }
 
 function getReflectionPathLabel({
@@ -253,10 +260,10 @@ function getReflectionPathLabel({
   const bridge = getSymbolPathConfig(symbolId);
 
   if (normalizedPathId && bridge) {
-    return `${bridge.label}-Spur`;
+    return getSymbolTraceFallbackLabel(bridge.symbolId);
   }
 
-  return undefined;
+  return normalizedPathId ? getSymbolTraceFallbackLabel(symbolId) : undefined;
 }
 
 function getReflectionPathId(reflection: StoredReflection) {
@@ -270,9 +277,17 @@ function getReflectionTraceHref(reflection: StoredReflection) {
     return undefined;
   }
 
+  if (getKnownSymbolPathLabel(pathId)) {
+    return `/codex/${pathId}`;
+  }
+
   const entry = getCodexEntry(pathId) ?? resolveCodexEntry(pathId);
 
-  return entry ? `/codex/${entry.id}` : undefined;
+  if (entry) {
+    return `/codex/${entry.id}`;
+  }
+
+  return undefined;
 }
 
 function pushUniqueLink(links: ReflectionReturnLink[], link: ReflectionReturnLink | undefined) {
@@ -281,6 +296,10 @@ function pushUniqueLink(links: ReflectionReturnLink[], link: ReflectionReturnLin
   }
 
   links.push(link);
+}
+
+function getReflectionCodexReturnLabel(symbolId: string, label: string) {
+  return symbolId === "wueste" ? "Zum Wüsten-Codex" : `Zum ${label}-Codex`;
 }
 
 export function resolveReflectionReturnLinks(reflection: StoredReflection): ReflectionReturnLink[] {
@@ -309,21 +328,20 @@ export function resolveReflectionReturnLinks(reflection: StoredReflection): Refl
     path: pathId,
     symbol: bridge.symbolId,
   });
-  const isWater = bridge.symbolId === "wasser";
   const links: ReflectionReturnLink[] = [];
 
   pushUniqueLink(links, traceHref ? {
     key: "trace",
-    label: isWater ? "Zur Spur zurueckkehren" : `Zur ${bridge.label}spur zurueckkehren`,
+    label: bridge.returnLabel,
     href: traceHref,
   } : undefined);
-  pushUniqueLink(links, { key: "codex", label: `Zum ${bridge.label}-Codex`, href: bridge.codexHref });
+  pushUniqueLink(links, { key: "codex", label: getReflectionCodexReturnLabel(bridge.symbolId, bridge.label), href: getCodexHref(bridge.symbolId) });
   pushUniqueLink(links, {
     key: "room",
-    label: `Den ${bridge.label}raum erneut betreten`,
+    label: `Den ${bridge.roomLabel} erneut betreten`,
     href: roomHref,
   });
-  pushUniqueLink(links, { key: "symbol-network", label: `${bridge.label} im Symbolnetz ansehen`, href: bridge.symbolNetworkHref });
+  pushUniqueLink(links, { key: "symbol-network", label: `${bridge.label} im Symbolnetz ansehen`, href: getSymbolNetworkHref(bridge.symbolId) });
 
   return links;
 }

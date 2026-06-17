@@ -2,7 +2,14 @@ import { getCodexEntry } from "@/lib/codex/getCodexEntry";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { getOntologyEntity } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
-import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import {
+  buildSymbolRoomHref,
+  getKnownSymbolPathLabel,
+  getSymbolPathConfig,
+  getSymbolNetworkHref,
+  getSymbolTraceFallbackLabel,
+} from "@/lib/symbols/symbolPathConfig";
+import { getSymbolJourney, getSymbolJourneyForSymbol } from "@/lib/symbols/symbolJourneys";
 
 export type RoomSearchParams = Promise<Record<string, string | string[] | undefined>>;
 export type RoomContextSource = "codex" | "symbolnetz" | "pattern" | "journey" | "mein-pfad";
@@ -24,7 +31,7 @@ const roomLabels: Record<string, string> = {
   wasser: "Wasser",
   licht: "Licht",
   feuer: "Feuer",
-  wueste: "Wueste",
+  wueste: "Wüste",
   brot: "Brot",
 };
 
@@ -33,12 +40,12 @@ const existingRoomIds = new Set(Object.keys(roomLabels));
 const patternRoomStations: Record<string, { roomId: string; title: string; text: string }> = {
   "pattern-gabe-im-mangel": {
     roomId: "wueste",
-    title: "In die Wueste eintreten",
+    title: "In die Wüste eintreten",
     text: "Der Mangel wird hier nicht erklaert, sondern als Raum spuerbar.",
   },
   "pattern-pruefung-durch-entzug": {
     roomId: "wueste",
-    title: "Wuesten-Raum betreten",
+    title: "Wüstenraum betreten",
     text: "Der Entzug wird hier als Stille, Mangel und Pruefung erfahrbar.",
   },
   "pattern-schwelle-durch-wasser": {
@@ -53,7 +60,7 @@ const patternRoomStations: Record<string, { roomId: string; title: string; text:
   },
   "pattern-weg-der-reifung": {
     roomId: "wueste",
-    title: "Wuesten-Raum betreten",
+    title: "Wüstenraum betreten",
     text: "Der Weg wird hier als Pruefung und Reifung spuerbar.",
   },
 };
@@ -82,11 +89,20 @@ function getPathContextLabel(symbolId: string, pathId: string | undefined) {
   const scriptureAnchor = bridge?.codexGates?.scriptureAnchors?.find((anchor) => anchor.id === pathId);
   const meaningField = bridge?.codexGates?.meaningFields?.find((field) => field.id === pathId);
 
-  return scriptureAnchor?.label ?? meaningField?.label ?? getTitle(pathId);
+  return getKnownSymbolPathLabel(pathId) ?? scriptureAnchor?.label ?? meaningField?.label ?? getTitle(pathId) ?? getSymbolTraceFallbackLabel(symbolId);
 }
 
 function getPathTraceText(pathLabel: string | undefined) {
   return pathLabel ? `Deine Spur aus: ${pathLabel}` : undefined;
+}
+
+function getPersonalTracePhrase(symbolId: string) {
+  if (symbolId === "wasser") return "bewahrten Spur";
+  if (symbolId === "licht") return "bewahrten Lichtspur";
+
+  const traceLabel = getSymbolPathConfig(symbolId)?.traceLabel;
+
+  return traceLabel ? `bewahrten ${traceLabel}` : "bewahrten Spur";
 }
 
 export function hasSymbolRoom(symbolId: string | null | undefined): symbolId is string {
@@ -104,11 +120,11 @@ export function buildRoomHref(symbolId: string, context?: { from?: string; path?
     return "/symbolnetz";
   }
 
-  if (from && (from === "symbolnetz" || from === "codex" || from === "mein-pfad" || getTitle(from))) {
+  if (from && (from === "symbolnetz" || from === "codex" || from === "mein-pfad" || from === "journey" || getTitle(from))) {
     params.set("from", from);
   }
 
-  if (path && getTitle(path)) {
+  if (path && (getKnownSymbolPathLabel(path) || getSymbolJourney(path) || getTitle(path))) {
     params.set("path", path);
   }
 
@@ -116,10 +132,11 @@ export function buildRoomHref(symbolId: string, context?: { from?: string; path?
     params.set("symbol", symbol);
   }
 
-  const query = params.toString();
-  const roomHref = getSymbolPathConfig(safeSymbolId)?.roomHref ?? `/raeume/${safeSymbolId}`;
-
-  return query ? `${roomHref}?${query}` : roomHref;
+  return buildSymbolRoomHref(safeSymbolId, {
+    from: params.get("from") ?? undefined,
+    path: params.get("path") ?? undefined,
+    symbol: params.get("symbol") ?? undefined,
+  });
 }
 
 export function getPatternRoomStation(patternId: string) {
@@ -161,7 +178,7 @@ export function resolveRoomContext(
         : `Aus dem Symbolnetz kommend: Die Karte wird zum Raum.`,
       mobileTitle: `Symbolnetz -> ${roomTitle}`,
       mobileText: pathTraceText ?? "Die Karte wird zum Raum.",
-      returnHref: `/symbolnetz?${returnParams.toString()}`,
+      returnHref: returnParams.toString() ? `/symbolnetz?${returnParams.toString()}` : getSymbolNetworkHref(symbolId),
       returnLabel: getSymbolPathConfig(symbolId)?.ctaLabels.symbolNetworkReturn ?? "Zum Symbolnetz zurueckkehren",
     };
   }
@@ -185,6 +202,9 @@ export function resolveRoomContext(
   }
 
   if (from === "mein-pfad") {
+    const bridge = getSymbolPathConfig(symbolId);
+    const roomLabel = bridge?.roomLabel ?? roomTitle;
+    const tracePhrase = getPersonalTracePhrase(symbolId);
     const personalPathMobileText = symbolId === "wasser"
       ? "Der Wasserraum oeffnet sich erneut von deinem Pfad her."
       : symbolId === "licht" && pathTraceText
@@ -192,11 +212,9 @@ export function resolveRoomContext(
         : symbolId === "licht"
           ? "Der Lichtraum oeffnet sich erneut von deinem Pfad her."
           : "Der Raum oeffnet sich erneut von deinem Pfad her.";
-    const personalPathText = symbolId === "licht" && pathTraceText
-      ? `Du kommst aus deiner bewahrten Lichtspur. ${pathTraceText}. Der Lichtraum oeffnet sich erneut von deinem Pfad her.`
-      : symbolId === "licht"
-        ? "Du kommst aus deiner bewahrten Lichtspur. Der Lichtraum oeffnet sich erneut von deinem Pfad her."
-      : "Du kommst aus deiner bewahrten Spur. Der Raum oeffnet sich erneut von deinem Pfad her.";
+    const personalPathText = pathTraceText
+      ? `Du kommst aus deiner ${tracePhrase}. ${pathTraceText}. Der ${roomLabel} oeffnet sich erneut von deinem Pfad her.`
+      : `Du kommst aus deiner ${tracePhrase}. Der ${roomLabel} oeffnet sich erneut von deinem Pfad her.`;
 
     return {
       source: "mein-pfad",
@@ -208,6 +226,27 @@ export function resolveRoomContext(
       text: personalPathText,
       mobileTitle: `Mein Pfad -> ${roomTitle}`,
       mobileText: personalPathMobileText,
+      returnHref: "/mein-pfad",
+      returnLabel: "Zurueck zu Mein Pfad",
+    };
+  }
+
+  if (from === "journey") {
+    const journey = getSymbolJourney(path) ?? getSymbolJourneyForSymbol(symbolId);
+    const journeyTitle = journey?.title ?? "Vom Wasser zum Brot";
+    const journeyTraceText = `Aus der Journey: ${journeyTitle}`;
+    const pathText = pathTraceText && path !== journey?.id ? `${pathTraceText}. ` : "";
+
+    return {
+      source: "journey",
+      symbolId,
+      symbolLabel,
+      pathId: path,
+      pathLabel: pathDisplayLabel,
+      title: "Eintritt",
+      text: `${pathText}${journeyTraceText}.`,
+      mobileTitle: `Journey -> ${roomTitle}`,
+      mobileText: pathTraceText && path !== journey?.id ? `${pathTraceText}. ${journeyTraceText}.` : journeyTraceText,
       returnHref: "/mein-pfad",
       returnLabel: "Zurueck zu Mein Pfad",
     };
