@@ -1,11 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { SymbolEngineData } from "@/types/engine";
 import { recordRoomVisitForRoute } from "@/lib/pathActivity";
+import {
+  getReflectionPreview,
+  getRoomReflectionForSymbol,
+  readStoredReflections,
+  STORED_REFLECTIONS_UPDATED_EVENT,
+  type StoredReflection,
+} from "@/lib/reflections";
 import type { RoomContext } from "@/lib/rooms/roomContext";
 import { getCodexHref, getSymbolNetworkHref, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import { getNextJourneyStep, getSymbolJourneyForSymbol } from "@/lib/symbols/symbolJourneys";
 import { BiblicalSceneLayer } from "./BiblicalSceneLayer";
 import { EngineNavigation } from "./EngineNavigation";
 import { EngineStage } from "./EngineStage";
@@ -40,6 +48,105 @@ function RoomEntryTrace({ context }: { context: RoomContext }) {
         {context.returnLabel}
       </Link>
     </div>
+  );
+}
+
+function WaterFirstEntryNotice({ symbolSlug }: { symbolSlug: string }) {
+  const [reflections, setReflections] = useState<StoredReflection[] | null>(null);
+
+  useEffect(() => {
+    function refreshReflections() {
+      setReflections(readStoredReflections());
+    }
+
+    refreshReflections();
+
+    window.addEventListener("storage", refreshReflections);
+    window.addEventListener(STORED_REFLECTIONS_UPDATED_EVENT, refreshReflections);
+
+    return () => {
+      window.removeEventListener("storage", refreshReflections);
+      window.removeEventListener(STORED_REFLECTIONS_UPDATED_EVENT, refreshReflections);
+    };
+  }, []);
+
+  const hasPersonalWaterTrace = useMemo(() => {
+    if (!reflections) return false;
+
+    const reflection = getRoomReflectionForSymbol(reflections, symbolSlug);
+
+    return Boolean(reflection && getReflectionPreview(reflection));
+  }, [reflections, symbolSlug]);
+
+  if (symbolSlug !== "wasser" || hasPersonalWaterTrace) {
+    return null;
+  }
+
+  return (
+    <aside className="symbol-engine__first-entry" aria-label="Erster Eintritt">
+      <p className="symbol-engine__first-entry-title">Erster Eintritt</p>
+      <p className="symbol-engine__first-entry-copy">
+        Der Weg beginnt im Wasser. Verweile einen Moment in der Tiefe. Wenn du antwortest, entsteht daraus deine erste Spur.
+      </p>
+    </aside>
+  );
+}
+
+function WaterNextRoomNotice({ symbolSlug }: { symbolSlug: string }) {
+  const [reflections, setReflections] = useState<StoredReflection[] | null>(null);
+
+  useEffect(() => {
+    function refreshReflections() {
+      setReflections(readStoredReflections());
+    }
+
+    refreshReflections();
+
+    window.addEventListener("storage", refreshReflections);
+    window.addEventListener(STORED_REFLECTIONS_UPDATED_EVENT, refreshReflections);
+
+    return () => {
+      window.removeEventListener("storage", refreshReflections);
+      window.removeEventListener(STORED_REFLECTIONS_UPDATED_EVENT, refreshReflections);
+    };
+  }, []);
+
+  const nextStep = useMemo(() => {
+    const journey = getSymbolJourneyForSymbol(symbolSlug);
+
+    return getNextJourneyStep(journey?.id, symbolSlug);
+  }, [symbolSlug]);
+
+  const hasPersonalWaterTrace = useMemo(() => {
+    if (!reflections) return false;
+
+    const reflection = getRoomReflectionForSymbol(reflections, symbolSlug);
+
+    return Boolean(reflection && getReflectionPreview(reflection));
+  }, [reflections, symbolSlug]);
+
+  const hasPersonalLightTrace = useMemo(() => {
+    if (!reflections) return false;
+
+    const reflection = getRoomReflectionForSymbol(reflections, "licht");
+
+    return Boolean(reflection && getReflectionPreview(reflection));
+  }, [reflections]);
+
+  if (symbolSlug !== "wasser" || nextStep?.symbol !== "licht" || !hasPersonalWaterTrace || hasPersonalLightTrace) {
+    return null;
+  }
+
+  return (
+    <aside className="symbol-engine__next-room" aria-label="Der nächste Raum">
+      <p className="symbol-engine__next-room-title">Der nächste Raum</p>
+      <p className="symbol-engine__next-room-copy">
+        Aus der Tiefe hebt sich Licht. Wenn du weitergehen möchtest, öffnet sich der nächste Raum.
+      </p>
+      <Link href={nextStep.roomHref} className="symbol-engine__next-room-link">
+        Weiter zum Licht-Raum
+      </Link>
+    </aside>
   );
 }
 
@@ -89,7 +196,9 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         </nav>
         <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-gold/75">{roomTitle}</p>
         {roomContext ? <RoomEntryTrace context={roomContext} /> : null}
+        {!roomContext ? <WaterFirstEntryNotice symbolSlug={data.slug} /> : null}
         <RoomPersonalTraceCard symbolSlug={data.slug} roomContext={roomContext} />
+        {!roomContext ? <WaterNextRoomNotice symbolSlug={data.slug} /> : null}
         <p className="symbol-engine__eyebrow">
           {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
           {activeState.eyebrow}

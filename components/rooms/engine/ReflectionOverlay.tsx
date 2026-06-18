@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ReflectionPrompt, SymbolEngineData, SymbolJourneyState } from "@/types/engine";
 import { saveStoredReflection } from "@/lib/reflections";
 import type { RoomContext } from "@/lib/rooms/roomContext";
@@ -22,12 +22,13 @@ function getReflectionSourceLabel(roomContext: RoomContext | undefined, fallback
 }
 
 export function ReflectionOverlay({ data, reflection, roomContext, state }: ReflectionOverlayProps) {
-  const [answer, setAnswer] = useState("");
   const [saved, setSaved] = useState(false);
+  const answerRef = useRef<HTMLTextAreaElement>(null);
   const symbolBridge = getSymbolPathConfig(data.slug);
+  const isWaterRoom = data.slug === "wasser";
 
   function saveReflection() {
-    const trimmedAnswer = answer.trim();
+    const trimmedAnswer = answerRef.current?.value.trim() ?? "";
 
     if (!trimmedAnswer) return;
 
@@ -55,23 +56,27 @@ export function ReflectionOverlay({ data, reflection, roomContext, state }: Refl
       pathContext: roomContext ? { from: roomContext.source, path: roomContext.pathId, symbol: roomContext.symbolId } : undefined,
       createdAt: new Date().toISOString(),
     });
-    setAnswer("");
+    if (answerRef.current) {
+      answerRef.current.value = "";
+    }
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1600);
   }
 
   return (
     <section className="symbol-engine__reflection" aria-label="Reflexionsfrage">
-      <p>Spur aus diesem Raum</p>
+      <p>{isWaterRoom ? "Eine Spur aufnehmen" : "Spur aus diesem Raum"}</p>
       <blockquote>{reflection.question}</blockquote>
+      {isWaterRoom ? (
+        <span className="symbol-engine__reflection-hint">Antworte leise. Die Spur bleibt in deinem Pfad.</span>
+      ) : null}
       <textarea
-        value={answer}
-        onChange={(event) => setAnswer(event.target.value)}
+        ref={answerRef}
         aria-label={reflection.question}
         className="symbol-engine__reflection-input"
       />
       <div className="symbol-engine__reflection-actions">
-        <button type="button" onClick={saveReflection} disabled={!answer.trim()}>
+        <button type="button" onClick={saveReflection}>
           Diese Spur bewahren
         </button>
         <span className={saved ? "is-visible" : ""}>Diese Spur wurde bewahrt.</span>
