@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "validate:ontology": "jiti scripts/validate-ontology.ts"
+    "validate:ontology": "jiti scripts/validate-ontology.ts",
+    "validate:traces": "node scripts/validate-traces.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

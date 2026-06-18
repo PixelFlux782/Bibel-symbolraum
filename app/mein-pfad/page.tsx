@@ -5,8 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import {
   persistStoredReflections,
   getJourneyReflectionForStep,
-  parseStoredReflections,
-  REFLECTION_STORAGE_KEY,
+  getReflectionContextLabel,
+  getReflectionPreview,
+  readStoredReflections,
   resolveReflectionReturnLinks,
   type ReflectionReturnLink,
   type StoredReflection,
@@ -310,15 +311,7 @@ export default function MeinPfadPage() {
   const [activeSymbolFilter, setActiveSymbolFilter] = useState<SymbolFilterKey>("all");
 
   useEffect(() => {
-    let storedReflections: StoredReflection[] = [];
-
-    try {
-      storedReflections = parseStoredReflections(
-        window.localStorage.getItem(REFLECTION_STORAGE_KEY)
-      );
-    } catch {
-      storedReflections = [];
-    }
+    const storedReflections = readStoredReflections();
 
     persistStoredReflections(storedReflections);
     window.queueMicrotask(() => setReflections(storedReflections));
@@ -469,30 +462,6 @@ function getJourneyStepCtaLabel(hasTrace: boolean) {
   return hasTrace ? "Raum erneut betreten" : "Raum betreten";
 }
 
-function getJourneyReflectionPreview(reflection: StoredReflection) {
-  return (reflection.answer || reflection.text || "").replace(/\s+/g, " ").trim() || "Eine Spur ist vorhanden.";
-}
-
-function getJourneyReflectionContext(step: SymbolJourney["steps"][number], reflection: StoredReflection) {
-  const sourceLabel = getSafeTraceLabel(reflection.sourceLabel, "");
-
-  if (sourceLabel) {
-    return sourceLabel;
-  }
-
-  const pathLabel = getSafeTraceLabel(reflection.pathLabel, "");
-
-  if (pathLabel) {
-    return `Deine Spur aus: ${pathLabel}`;
-  }
-
-  if (reflection.sourceType === "room" || reflection.roomHref || reflection.room) {
-    return `Aus dem ${step.label}-Raum`;
-  }
-
-  return undefined;
-}
-
 function PersonalJourneyCard({
   journey,
   reflections,
@@ -538,7 +507,7 @@ function PersonalJourneyCard({
         {journey.steps.map((step, index) => {
           const reflection = reflectionByStep.get(step.symbol);
           const hasTrace = Boolean(reflection);
-          const reflectionContext = reflection ? getJourneyReflectionContext(step, reflection) : undefined;
+          const reflectionContext = reflection ? getReflectionContextLabel(reflection) : undefined;
 
           return (
             <li key={step.symbol} className="symbol-journey-step">
@@ -556,7 +525,7 @@ function PersonalJourneyCard({
                       <p className="symbol-journey-step__reflection-context">{reflectionContext}</p>
                     ) : null}
                     <p className="symbol-journey-step__reflection-preview">
-                      {getJourneyReflectionPreview(reflection)}
+                      {getReflectionPreview(reflection) || "Eine Spur ist bereits hier."}
                     </p>
                   </div>
                 ) : (

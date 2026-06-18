@@ -11,6 +11,7 @@ import { EngineNavigation } from "./EngineNavigation";
 import { EngineStage } from "./EngineStage";
 import { HebrewLayer } from "./HebrewLayer";
 import { ReflectionOverlay } from "./ReflectionOverlay";
+import { RoomPersonalTraceCard } from "./RoomPersonalTraceCard";
 import { SymbolConnectionPanel } from "./SymbolConnectionPanel";
 import { useSymbolEngine } from "./useSymbolEngine";
 
@@ -52,7 +53,7 @@ function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: 
     <div className="symbol-engine__onward">
       <p>Weiter vertiefen</p>
       <div>
-        <Link href="/mein-pfad">Meinen Pfad ansehen</Link>
+        <Link href="/mein-pfad">In Mein Pfad ansehen</Link>
         <Link href={codexHref}>Zurueck zu {data.symbolLabel} im Codex</Link>
         <Link href={symbolNetworkHref}>Zum Symbolnetz zurueckkehren</Link>
         {contextReturnLink ? <Link href={contextReturnLink.returnHref}>{contextReturnLink.returnLabel}</Link> : null}
@@ -88,6 +89,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         </nav>
         <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-gold/75">{roomTitle}</p>
         {roomContext ? <RoomEntryTrace context={roomContext} /> : null}
+        <RoomPersonalTraceCard symbolSlug={data.slug} roomContext={roomContext} />
         <p className="symbol-engine__eyebrow">
           {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
           {activeState.eyebrow}

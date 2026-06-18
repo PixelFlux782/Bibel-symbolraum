@@ -1,6 +1,7 @@
 import { getCodexEntry } from "@/lib/codex/getCodexEntry";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { buildRoomHref } from "@/lib/rooms/roomContext";
+import { getSymbolJourney } from "@/lib/symbols/symbolJourneys";
 import {
   getCodexHref,
   getKnownSymbolPathLabel,
@@ -11,6 +12,8 @@ import {
 } from "@/lib/symbols/symbolPathConfig";
 
 export const REFLECTION_STORAGE_KEY = "bibel-symbolraum-reflections";
+// Shared browser event for trace cards that need to refresh after a local save.
+export const STORED_REFLECTIONS_UPDATED_EVENT = "bibel-symbolraum-reflections:updated";
 
 export type StoredReflection = {
   id: string;
@@ -98,12 +101,23 @@ export function parseStoredReflections(raw: string | null): StoredReflection[] {
   return [];
 }
 
+export function readStoredReflections(storage?: Storage | null): StoredReflection[] {
+  try {
+    const source = storage ?? (typeof window !== "undefined" ? window.localStorage : undefined);
+
+    return source ? parseStoredReflections(source.getItem(REFLECTION_STORAGE_KEY)) : [];
+  } catch {
+    return [];
+  }
+}
+
 function normalizeStoredReflection(value: unknown): StoredReflection | null {
   if (!value || typeof value !== "object") {
     return null;
   }
 
   const reflection = value as Record<string, unknown>;
+  // Keep old `text`/`reflection` payloads visible while normalizing new traces to `answer`.
   const answer = getFirstString(reflection.answer, reflection.text, reflection.reflection)?.trim() ?? "";
   const room = getFirstString(reflection.room);
   const symbolSlug = getFirstString(reflection.symbolSlug, reflection.symbolId);
@@ -356,6 +370,49 @@ function getReflectionTime(reflection: StoredReflection) {
   return Number.isNaN(time) ? 0 : time;
 }
 
+export function getReflectionPreview(reflection: StoredReflection) {
+  // `text` is the legacy fallback; do not remove it without a storage migration phase.
+  return (reflection.answer || reflection.text || "").replace(/\s+/g, " ").trim();
+}
+
+export function isReflectionUsable(reflection: StoredReflection) {
+  return Boolean(getReflectionPreview(reflection));
+}
+
+export function getReflectionContextLabel(reflection: StoredReflection) {
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+  const sourceLabel = reflection.sourceLabel?.trim();
+  const pathLabel = reflection.pathLabel?.trim();
+  const pathId = getReflectionPathId(reflection);
+  const journey = getSymbolJourney(pathId) ?? getSymbolJourney(reflection.sourceId);
+
+  if (sourceLabel && !looksTechnicalLabel(sourceLabel)) {
+    return normalizeReflectionSourceLabel(reflection, sourceLabel);
+  }
+
+  if (isJourneyReflection(reflection)) {
+    return journey ? `Aus der Journey: ${journey.title}` : "Aus der Journey";
+  }
+
+  if (pathLabel && !looksTechnicalLabel(pathLabel)) {
+    return `Deine Spur aus: ${pathLabel}`;
+  }
+
+  if (bridge && (reflection.sourceType === "room" || reflection.room || reflection.roomHref)) {
+    return `Aus dem ${bridge.label}-Raum`;
+  }
+
+  if (reflection.sourceType === "room") {
+    return `Aus dem ${reflection.title ?? reflection.symbol}-Raum`;
+  }
+
+  if (journey) {
+    return `Aus der Journey: ${journey.title}`;
+  }
+
+  return undefined;
+}
+
 function reflectionMatchesSymbol(reflection: StoredReflection, symbolSlug: string) {
   const bridge = getSymbolPathConfigFromReflectionLike(reflection);
 
@@ -366,15 +423,25 @@ function isJourneyReflection(reflection: StoredReflection) {
   return reflection.source === "journey" || reflection.sourceType === "journey" || reflection.from === "journey";
 }
 
+function normalizeReflectionSourceLabel(reflection: StoredReflection, sourceLabel: string) {
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  if (bridge && /^Spur aus dem .+raum$/i.test(sourceLabel)) {
+    return `Aus dem ${bridge.label}-Raum`;
+  }
+
+  return sourceLabel;
+}
+
 export function getLatestReflectionForSymbol(reflections: StoredReflection[], symbolSlug: string) {
   return reflections
-    .filter((reflection) => reflectionMatchesSymbol(reflection, symbolSlug))
+    .filter((reflection) => reflectionMatchesSymbol(reflection, symbolSlug) && isReflectionUsable(reflection))
     .sort((a, b) => getReflectionTime(b) - getReflectionTime(a))[0];
 }
 
 export function getJourneyReflectionForStep(reflections: StoredReflection[], step: JourneyReflectionStep) {
   const symbolReflections = reflections
-    .filter((reflection) => reflectionMatchesSymbol(reflection, step.symbol))
+    .filter((reflection) => reflectionMatchesSymbol(reflection, step.symbol) && isReflectionUsable(reflection))
     .sort((a, b) => {
       const journeyWeight = Number(isJourneyReflection(b)) - Number(isJourneyReflection(a));
 
@@ -384,11 +451,56 @@ export function getJourneyReflectionForStep(reflections: StoredReflection[], ste
   return symbolReflections[0];
 }
 
+export function getRoomReflectionForSymbol(
+  reflections: StoredReflection[],
+  symbolSlug: string,
+  options?: { preferJourney?: boolean },
+) {
+  // Rooms may prefer Journey context, but ordinary symbol traces remain valid fallbacks.
+  const symbolReflections = reflections
+    .filter((reflection) => reflectionMatchesSymbol(reflection, symbolSlug) && isReflectionUsable(reflection))
+    .sort((a, b) => getReflectionTime(b) - getReflectionTime(a));
+
+  if (options?.preferJourney) {
+    const journeyReflection = symbolReflections.find(isJourneyReflection);
+
+    if (journeyReflection) {
+      return journeyReflection;
+    }
+  }
+
+  return symbolReflections.find((reflection) => reflection.symbolSlug === symbolSlug)
+    ?? symbolReflections.find((reflection) => reflection.room === symbolSlug)
+    ?? symbolReflections[0];
+}
+
+export function getPersonalTraceForSymbol(
+  reflections: StoredReflection[],
+  symbolSlug: string,
+  options?: { preferJourney?: boolean },
+) {
+  // Codex symbol pages use the same preference rule without changing stored data.
+  if (options?.preferJourney) {
+    return getJourneyReflectionForStep(reflections, { symbol: symbolSlug }) ?? getLatestReflectionForSymbol(reflections, symbolSlug);
+  }
+
+  return getLatestReflectionForSymbol(reflections, symbolSlug);
+}
+
+function dispatchStoredReflectionsUpdated() {
+  try {
+    window.dispatchEvent(new Event(STORED_REFLECTIONS_UPDATED_EVENT));
+  } catch {
+    // Older browsers can ignore the live refresh; persistence already happened.
+  }
+}
+
 export function saveStoredReflection(reflection: StoredReflection) {
-  const reflections = parseStoredReflections(window.localStorage.getItem(REFLECTION_STORAGE_KEY));
+  const reflections = readStoredReflections();
   const next = [reflection, ...reflections.filter((item) => item.id !== reflection.id)];
 
   persistStoredReflections(next);
+  dispatchStoredReflectionsUpdated();
 }
 
 export function persistStoredReflections(reflections: StoredReflection[]) {

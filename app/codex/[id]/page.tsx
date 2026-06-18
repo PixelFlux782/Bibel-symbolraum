@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CodexPersonalTraceCard } from "@/components/CodexPersonalTraceCard";
 import { CodexReflectionCard } from "@/components/CodexReflectionCard";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
 import { getSymbolCodexAnchorBridge, getSymbolCodexChipLinks, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
@@ -182,6 +183,14 @@ function buildCodexRoomHref(entry: CodexEntry) {
     path: getDefaultSymbolRoomPath(entry),
     symbol: entry.symbolRoomSlug,
   });
+}
+
+function resolveSymbolSlugForCodexEntry(entry: CodexEntry) {
+  if (entry.type !== "symbol") {
+    return undefined;
+  }
+
+  return getSymbolPathConfig(entry.id)?.symbolId;
 }
 
 function isMeaningNodeId(value: string): value is MeaningNodeId {
@@ -1056,7 +1065,7 @@ function SymbolJourneyNoticeSection({
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF} className="symbol-archive-action">
-            Journey ansehen
+            In Mein Pfad ansehen
           </Link>
           <Link href={step.roomHref} className="symbol-archive-action symbol-archive-action--quiet">
             Raum aus der Journey betreten
@@ -1529,6 +1538,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const symbolJourneyStep = symbolJourney?.steps.find((step) => step.symbol === entry.id);
   const codexRoomHref = buildCodexRoomHref(entry);
   const codexRoomLabel = hasSymbolRoom(entry.symbolRoomSlug) ? getOntologyEntityTitle(entry.symbolRoomSlug) : undefined;
+  const personalTraceSymbolSlug = resolveSymbolSlugForCodexEntry(entry);
+  const personalTraceSymbolConfig = getSymbolPathConfig(personalTraceSymbolSlug);
   const pathContext = resolvePathContext({ entry, params: resolvedSearchParams });
   const reflectionSourceType = resolveReflectionSourceType(entry, ontologyEntity);
   const reflectionPathContext = {
@@ -1626,6 +1637,13 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {!isCuratedSymbolEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {symbolJourney && symbolJourneyStep ? (
               <SymbolJourneyNoticeSection journey={symbolJourney} step={symbolJourneyStep} />
+            ) : null}
+            {personalTraceSymbolSlug ? (
+              <CodexPersonalTraceCard
+                symbolSlug={personalTraceSymbolSlug}
+                roomHref={personalTraceSymbolConfig?.roomHref}
+                journeyTitle={symbolJourney?.title}
+              />
             ) : null}
             {isPatternEntity ? (
               <PatternCodexSection
