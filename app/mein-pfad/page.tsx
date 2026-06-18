@@ -376,14 +376,15 @@ export default function MeinPfadPage() {
               <div className="symbol-path-empty mx-auto mt-12 max-w-3xl text-center">
                 <p className="symbol-kicker">Dein Pfad ist noch still</p>
                 <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
-                  Betritt einen Raum, bewege ein Symbol und nimm eine erste Spur auf.
+                  Beginne im Wasser-Raum. Dort entsteht deine erste Spur.
                 </p>
                 <div className="symbol-path-empty__entries mt-9">
-                  {symbolTracks.map((track) => (
-                    <Link key={track.symbolId} href={track.config.roomHref} className="symbol-archive-action">
-                      {track.config.roomLabel} betreten
-                    </Link>
-                  ))}
+                  <Link href="/raeume/wasser" className="symbol-archive-action">
+                    Mit Wasser beginnen
+                  </Link>
+                  <Link href="/symbolnetz" className="symbol-archive-action symbol-archive-action--quiet">
+                    Symbolnetz oeffnen
+                  </Link>
                 </div>
               </div>
             ) : null}
@@ -475,9 +476,9 @@ function PersonalJourneyCard({
   const hasAnyTrace = [...reflectionByStep.values()].some(Boolean);
 
   return (
-    <section className="symbol-journey-card" aria-label="Journey Vom Wasser zum Brot">
+    <section className="symbol-journey-card" aria-label="Weg Vom Wasser zum Brot">
       <div className="symbol-journey-card__head">
-        <p className="symbol-kicker">Gefuehrte Journey</p>
+        <p className="symbol-kicker">Gefuehrter Weg</p>
         <h2>{journey.title}</h2>
         <p className="symbol-journey-card__subtitle">Deine fuenf Grundspuren als ein Weg</p>
         <p className="symbol-copy">

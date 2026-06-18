@@ -546,6 +546,18 @@ body {
   outline-offset: 0.35rem;
 }
 
+.symbol-first-entry-note {
+  width: fit-content;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.24);
+  padding-left: 0.8rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: rgba(var(--gold-rgb), 0.72);
+}
+
 .symbol-path-empty {
   position: relative;
   overflow: hidden;

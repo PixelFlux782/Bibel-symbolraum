@@ -1751,6 +1751,9 @@ function SymbolLensFocusDetail({
         <h2 className="font-serif text-3xl italic text-foreground-strong">{activeSymbol.label}</h2>
         <p className="text-[11px] uppercase tracking-[0.28em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
         <p className="symbol-copy text-base">{activeSymbol.shortMeaning}</p>
+        {isWater ? (
+          <p className="symbol-first-entry-note">Erster Eintritt: Wasser</p>
+        ) : null}
         {activeLabel ? (
           <p className="symbol-inspector-current">
             <span>Aktiver Fokus</span>
@@ -4077,6 +4080,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeSymbol.label}</h2>
               <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
               <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
+              {activeSymbol.id === "wasser" ? (
+                <p className="symbol-first-entry-note mt-5">Erster Eintritt: Wasser</p>
+              ) : null}
               <SymbolJourneyInspectorNotice symbolId={activeSymbol.id} />
               {symbolViewportMode === "detail" || symbolViewportMode === "deep" ? (
                 <HierarchyChildrenDetail entries={activeDetailHierarchyChildren} title={getSubspacesTitle(activeSymbol.label)} />

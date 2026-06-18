@@ -119,13 +119,13 @@ export function PathPreview() {
         ) : (
           <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-7 text-center md:flex-row md:text-left">
             <p className="symbol-copy max-w-2xl text-xl italic">
-              Noch keine gespeicherte Reflexion. Beginne im Symbolnetz und folge den Verbindungen.
+              Dein Pfad ist noch still. Beginne im Wasser-Raum; dort entsteht deine erste Spur.
             </p>
             <Link
-              href="/symbolnetz"
+              href="/raeume/wasser"
               className="symbol-cta mx-auto shrink-0 md:mx-0"
             >
-              Symbolnetz betreten
+              Mit Wasser beginnen
             </Link>
           </div>
         )}

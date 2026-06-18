@@ -1,29 +1,43 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const SOUND_PREFERENCE_KEY = "symbolraum-sound-enabled";
 
 export function useSoundPreference() {
   const [enabled, setEnabled] = useState(false);
+  const hasLoadedPreferenceRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === "undefined") {
       return;
     }
 
-    try {
-      const stored = window.localStorage.getItem(SOUND_PREFERENCE_KEY);
+    const frameId = window.requestAnimationFrame(() => {
+      try {
+        const stored = window.localStorage.getItem(SOUND_PREFERENCE_KEY);
 
-      if (stored === "true") {
-        setEnabled(true);
+        hasLoadedPreferenceRef.current = true;
+
+        if (stored === "true") {
+          setEnabled(true);
+        }
+      } catch {
+        hasLoadedPreferenceRef.current = true;
+        // Lokaler Speicher ist optional. Der Fall bleibt still.
       }
-    } catch {
-      // Lokaler Speicher ist optional. Der Fall bleibt still.
-    }
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   useEffect(() => {
+    if (!hasLoadedPreferenceRef.current) {
+      return;
+    }
+
     if (typeof window === "undefined") {
       return;
     }

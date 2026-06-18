@@ -39,7 +39,13 @@ export default function ImpulsPage() {
   const [today, setToday] = useState<number | null>(null);
 
   useEffect(() => {
-    setToday(new Date().getDay());
+    const frameId = window.requestAnimationFrame(() => {
+      setToday(new Date().getDay());
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   if (today === null) {

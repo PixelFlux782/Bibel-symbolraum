@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Sparkles } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 type SymbolPoint = {
@@ -27,10 +27,6 @@ const SYMBOL_POINTS: SymbolPoint[] = [
 function DriftScene() {
   const groupRef = useRef<THREE.Group>(null);
   const glowRef = useRef<THREE.Mesh>(null);
-
-  const points = useMemo(() => {
-    return SYMBOL_POINTS.map((point) => point.position);
-  }, []);
 
   useFrame(({ clock, camera }) => {
     const t = clock.getElapsedTime();
@@ -136,24 +132,29 @@ export default function Symbolraum3DPrototype() {
   const [isWebGLSupported, setIsWebGLSupported] = useState(true);
 
   useEffect(() => {
-    setMounted(true);
-
     if (typeof window === "undefined") {
       return;
     }
 
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    const width = window.innerWidth < 860;
+    const frameId = window.requestAnimationFrame(() => {
+      const isTouch = window.matchMedia("(pointer: coarse)").matches;
+      const width = window.innerWidth < 860;
 
-    setIsMobile(isTouch || width);
+      setMounted(true);
+      setIsMobile(isTouch || width);
 
-    try {
-      const canvas = document.createElement("canvas");
-      const webgl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-      setIsWebGLSupported(Boolean(webgl));
-    } catch {
-      setIsWebGLSupported(false);
-    }
+      try {
+        const canvas = document.createElement("canvas");
+        const webgl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+        setIsWebGLSupported(Boolean(webgl));
+      } catch {
+        setIsWebGLSupported(false);
+      }
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   if (!mounted) {

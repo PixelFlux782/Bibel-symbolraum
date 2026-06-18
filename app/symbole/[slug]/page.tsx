@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import AmbientBackground from '@/components/AmbientBackground';
 import { getAllSymbols, getSymbolBySlug } from '@/lib/symbols';
 import SymbolDetailClient from './SymbolDetailClient';
 

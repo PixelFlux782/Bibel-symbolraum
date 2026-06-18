@@ -1213,7 +1213,7 @@ function WaterCodexReferenceSection() {
         <section className="border-t border-white/[0.06] pt-6">
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link href={waterRoomHref} className="symbol-cta">{waterBridge?.ctaLabels.room ?? "Den Wasserraum betreten"}</Link>
+            <Link href={waterRoomHref} className="symbol-cta">Wasser-Raum betreten</Link>
             <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Erzaehlspur Wasser - Wueste - Brot ansehen</Link>
             <a href="#spur-aufnehmen" className="symbol-cta symbol-cta-secondary">Diese Spur bewahren</a>
           </div>

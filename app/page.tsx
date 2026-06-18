@@ -3,10 +3,10 @@ import Link from "next/link";
 import { PathPreview } from "@/components/home/PathPreview";
 
 const MEANING_FLOW = [
-  "Hebräischer Buchstabe",
+  "Hebraeischer Buchstabe",
   "Symbol",
-  "Bedeutungsraum",
-  "Journey",
+  "Raum",
+  "Spur",
   "Mein Pfad",
 ];
 
@@ -14,7 +14,7 @@ const CURRENT_ROOMS = [
   "Wasser",
   "Licht",
   "Feuer",
-  "Wüste",
+  "Wueste",
   "Brot",
 ];
 
@@ -30,10 +30,10 @@ export default function StartPage() {
           <div className="absolute left-1/2 top-1/2 h-[min(56vw,31rem)] w-[min(56vw,31rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.035]" />
           <div className="absolute inset-x-[12%] top-[50%] h-px bg-gradient-to-r from-transparent via-gold/[0.16] to-transparent" />
           <div className="absolute inset-x-[24%] top-[50%] h-px -translate-y-8 bg-gradient-to-r from-transparent via-cyan/[0.08] to-transparent" />
-          <span className="symbol-portal-glyph left-[8%] top-[26%] hidden sm:block">מ</span>
-          <span className="symbol-portal-glyph right-[10%] top-[32%] hidden sm:block">י</span>
-          <span className="symbol-portal-glyph bottom-[22%] left-[18%]">ם</span>
-          <span className="symbol-portal-glyph bottom-[18%] right-[16%] hidden md:block">א</span>
+          <span className="symbol-portal-glyph left-[8%] top-[26%] hidden sm:block">{"\u05de"}</span>
+          <span className="symbol-portal-glyph right-[10%] top-[32%] hidden sm:block">{"\u05d9"}</span>
+          <span className="symbol-portal-glyph bottom-[22%] left-[18%]">{"\u05dd"}</span>
+          <span className="symbol-portal-glyph bottom-[18%] right-[16%] hidden md:block">{"\u05d0"}</span>
         </div>
 
         <div className="symbol-fade-in relative z-10 mx-auto grid w-full max-w-full justify-items-center text-center sm:max-w-6xl">
@@ -44,22 +44,26 @@ export default function StartPage() {
             SYMBOLRAUM
           </h1>
           <p className="symbol-copy mx-auto mt-9 max-w-[16rem] text-base italic text-muted-soft sm:max-w-xl sm:text-xl">
-            Betritt ein Bedeutungsuniversum aus hebräischen Buchstaben, Symbolen und Wegen.
+            Beginne mit Wasser.
           </p>
 
-          <p className="symbol-copy mx-auto mt-7 max-w-[18rem] text-sm text-muted-soft sm:max-w-2xl sm:text-lg">
-            Hebräische Buchstaben führen zu Symbolen. Symbole öffnen Räume.
-            Räume verbinden sich zu Wegen. Aus diesen Wegen entsteht dein persönlicher Pfad.
+          <p className="symbol-copy mx-auto mt-7 max-w-[20rem] text-sm text-muted-soft sm:max-w-2xl sm:text-lg">
+            Der erste Raum oeffnet die Tiefe. Aus deiner Antwort entsteht eine Spur, die dich weiterfuehrt.
           </p>
 
-          <div className="mt-16 flex flex-col items-center gap-7">
-            <Link href="/symbolnetz" className="symbol-portal-entry group">
+          <div className="mt-16 flex flex-col items-center gap-6">
+            <Link href="/raeume/wasser" className="symbol-portal-entry group">
               <span className="symbol-portal-entry-mark" aria-hidden="true" />
-              <span>Symbolnetz betreten</span>
+              <span>Wasser-Raum betreten</span>
             </Link>
-            <Link href="/mein-pfad" className="symbol-cta">
-              Mein Pfad
-            </Link>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+              <Link href="/symbolnetz" className="symbol-cta">
+                Symbolnetz oeffnen
+              </Link>
+              <Link href="/mein-pfad" className="symbol-cta symbol-cta-secondary">
+                Mein Pfad ansehen
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -82,17 +86,17 @@ export default function StartPage() {
                 Lebendige Karte
               </p>
               <h2 className="mt-3 font-serif text-5xl italic leading-none text-foreground-strong sm:text-7xl">
-                אות
+                {"\u05d0\u05d5\u05ea"}
               </h2>
             </div>
           </div>
 
           <div className="scroll-reveal pb-2">
             <p className="symbol-kicker">
-              Projektlogik
+              Bedeutungsbewegung
             </p>
             <h3 className="mt-5 font-serif text-4xl italic leading-tight text-foreground-strong sm:text-5xl">
-              Aus Zeichen werden Räume. Aus Räumen werden Wege.
+              Aus Zeichen werden Raeume. Aus Raeumen werden Wege.
             </h3>
 
             <div className="mt-12 grid gap-4">
@@ -112,12 +116,12 @@ export default function StartPage() {
             </div>
 
             <div className="mt-12 border-t border-gold/[0.08] pt-7">
-              <p className="symbol-kicker">Aktuelle Räume im Netz</p>
+              <p className="symbol-kicker">Aktuelle Raeume im Netz</p>
               <p className="symbol-copy mt-4 text-lg">
-                {CURRENT_ROOMS.join(" · ")}
+                {CURRENT_ROOMS.join(" / ")}
               </p>
               <Link href="/symbolnetz" className="symbol-cta mt-6">
-                Bedeutungsnetz öffnen
+                Symbolnetz oeffnen
               </Link>
             </div>
           </div>

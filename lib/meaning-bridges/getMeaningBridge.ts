@@ -1,5 +1,6 @@
 import { getRegistry } from "./bridgeRegistry";
 import type { MeaningBridge, MeaningBridgeId } from "./types";
+import type { MeaningNodeId } from "@/types/meaningGraph";
 
 /**
  * Get a specific meaning bridge by ID
@@ -39,9 +40,9 @@ export function hasBridge(sourceId: string, targetId: string): boolean {
 /**
  * Get all bridges that include a specific meaning field
  */
-export function getBridgesByMeaningField(meaningFieldId: string): MeaningBridge[] {
+export function getBridgesByMeaningField(meaningFieldId: MeaningNodeId): MeaningBridge[] {
   return getRegistry().bridges.filter((bridge) =>
-    bridge.meaningFields.includes(meaningFieldId as any)
+    bridge.meaningFields.includes(meaningFieldId)
   );
 }
 

@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import AmbientBackground from '../../components/AmbientBackground';
 import { getAllSymbols, type SymbolItem } from '@/lib/symbols';
 
 export const metadata: Metadata = {
