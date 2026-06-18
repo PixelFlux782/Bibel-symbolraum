@@ -68,6 +68,13 @@ import {
   type SymbolHierarchyLevel,
   type SymbolZoomLevel,
 } from "@/lib/symbols/hierarchy";
+import {
+  getJourneyStepForSymbol,
+  getJourneysForSymbol,
+  getNextJourneyStep,
+  getPreviousJourneyStep,
+  SYMBOL_JOURNEY_OVERVIEW_HREF,
+} from "@/lib/symbols/symbolJourneys";
 import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import type { MeaningNodeId } from "@/types/meaningGraph";
 
@@ -1619,6 +1626,34 @@ function OntologyResonanceRows({
   );
 }
 
+function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
+  const journey = getJourneysForSymbol(symbolId)[0];
+  const step = journey ? getJourneyStepForSymbol(journey.id, symbolId) : undefined;
+
+  if (!journey || !step) {
+    return null;
+  }
+
+  const previousStep = getPreviousJourneyStep(journey.id, symbolId);
+  const nextStep = getNextJourneyStep(journey.id, symbolId);
+
+  return (
+    <div className="symbol-inspector-journey-note">
+      <p>Auf dem Weg: {journey.title}</p>
+      {previousStep || nextStep ? (
+        <div>
+          {previousStep ? <span>Vorher: {previousStep.label}</span> : null}
+          {nextStep ? <span>Weiter: {nextStep.label}</span> : null}
+        </div>
+      ) : null}
+      <div>
+        <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF}>Weg in Mein Pfad oeffnen</Link>
+        <Link href={step.roomHref}>Raum aus dieser Journey betreten</Link>
+      </div>
+    </div>
+  );
+}
+
 function SymbolLensFocusDetail({
   activeSymbol,
   connectedPaths,
@@ -1723,6 +1758,7 @@ function SymbolLensFocusDetail({
           </p>
         ) : null}
       </div>
+      <SymbolJourneyInspectorNotice symbolId={activeSymbol.id} />
 
       <div className="symbol-inspector-accordion" aria-label={`${activeSymbol.label} vertiefen`}>
         <section className={activeInspectorFocus === "meaning" ? "is-open" : ""}>
@@ -4041,6 +4077,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeSymbol.label}</h2>
               <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
               <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
+              <SymbolJourneyInspectorNotice symbolId={activeSymbol.id} />
               {symbolViewportMode === "detail" || symbolViewportMode === "deep" ? (
                 <HierarchyChildrenDetail entries={activeDetailHierarchyChildren} title={getSubspacesTitle(activeSymbol.label)} />
               ) : null}

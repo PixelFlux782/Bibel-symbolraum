@@ -47,6 +47,10 @@ export type ReflectionReturnLink = {
   href: string;
 };
 
+type JourneyReflectionStep = {
+  symbol: string;
+};
+
 export const WATER_REFLECTION_QUESTION =
   "Wo begegnet dir Wasser gerade in deinem Leben?";
 
@@ -344,6 +348,40 @@ export function resolveReflectionReturnLinks(reflection: StoredReflection): Refl
   pushUniqueLink(links, { key: "symbol-network", label: `${bridge.label} im Symbolnetz ansehen`, href: getSymbolNetworkHref(bridge.symbolId) });
 
   return links;
+}
+
+function getReflectionTime(reflection: StoredReflection) {
+  const time = new Date(reflection.createdAt).getTime();
+
+  return Number.isNaN(time) ? 0 : time;
+}
+
+function reflectionMatchesSymbol(reflection: StoredReflection, symbolSlug: string) {
+  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
+
+  return bridge?.symbolId === symbolSlug || reflection.symbolSlug === symbolSlug || reflection.room === symbolSlug;
+}
+
+function isJourneyReflection(reflection: StoredReflection) {
+  return reflection.source === "journey" || reflection.sourceType === "journey" || reflection.from === "journey";
+}
+
+export function getLatestReflectionForSymbol(reflections: StoredReflection[], symbolSlug: string) {
+  return reflections
+    .filter((reflection) => reflectionMatchesSymbol(reflection, symbolSlug))
+    .sort((a, b) => getReflectionTime(b) - getReflectionTime(a))[0];
+}
+
+export function getJourneyReflectionForStep(reflections: StoredReflection[], step: JourneyReflectionStep) {
+  const symbolReflections = reflections
+    .filter((reflection) => reflectionMatchesSymbol(reflection, step.symbol))
+    .sort((a, b) => {
+      const journeyWeight = Number(isJourneyReflection(b)) - Number(isJourneyReflection(a));
+
+      return journeyWeight || getReflectionTime(b) - getReflectionTime(a);
+    });
+
+  return symbolReflections[0];
 }
 
 export function saveStoredReflection(reflection: StoredReflection) {

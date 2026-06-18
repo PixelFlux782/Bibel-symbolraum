@@ -530,6 +530,15 @@ body {
   color: rgba(var(--gold-rgb), 0.68);
 }
 
+.symbol-archive-action--quiet {
+  border-bottom-color: rgba(var(--cyan-rgb), 0.08);
+  color: rgba(216, 209, 194, 0.4);
+}
+
+.symbol-archive-action--quiet::before {
+  background: linear-gradient(90deg, transparent, rgba(var(--cyan-rgb), 0.14));
+}
+
 .symbol-archive-action:focus-visible {
   border-color: rgba(var(--cyan-rgb), 0.24);
   color: rgba(var(--foreground-rgb), 0.82);
@@ -797,9 +806,69 @@ body {
   line-height: 1.52;
 }
 
+.symbol-journey-step__reflection {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.08);
+  padding-top: 0.85rem;
+}
+
+.symbol-journey-step .symbol-journey-step__reflection-title {
+  margin-top: 0;
+  color: rgba(var(--gold-rgb), 0.76);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  font-style: normal;
+  letter-spacing: 0.22em;
+  line-height: 1.55;
+  text-transform: uppercase;
+}
+
+.symbol-journey-step .symbol-journey-step__reflection-context {
+  margin-top: 0;
+  color: rgba(var(--cyan-rgb), 0.58);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.86rem;
+  font-style: italic;
+  line-height: 1.42;
+}
+
+.symbol-journey-step .symbol-journey-step__reflection-preview,
+.symbol-journey-step .symbol-journey-step__still {
+  margin-top: 0;
+  overflow-wrap: anywhere;
+  color: rgba(216, 209, 194, 0.72);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.symbol-journey-step .symbol-journey-step__reflection-preview {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.symbol-journey-step .symbol-journey-step__still {
+  margin-top: 1rem;
+  color: rgba(216, 209, 194, 0.48);
+}
+
+.symbol-journey-step__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin-top: 0.9rem;
+}
+
 .symbol-journey-step .symbol-archive-action {
   justify-self: start;
-  margin-top: 0.9rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .symbol-path-filters {
@@ -4278,6 +4347,57 @@ body {
   font-weight: normal;
 }
 
+.symbol-inspector-journey-note {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.18);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.026), transparent);
+  padding: 0.8rem 0.9rem;
+}
+
+.symbol-inspector-journey-note p,
+.symbol-inspector-journey-note span,
+.symbol-inspector-journey-note a {
+  overflow-wrap: anywhere;
+}
+
+.symbol-inspector-journey-note p {
+  color: rgba(216, 209, 194, 0.74);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.98rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.symbol-inspector-journey-note div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem 0.8rem;
+}
+
+.symbol-inspector-journey-note span,
+.symbol-inspector-journey-note a {
+  color: rgba(var(--cyan-rgb), 0.62);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.symbol-inspector-journey-note a {
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.12);
+  color: rgba(var(--gold-rgb), 0.7);
+  transition: border-color 500ms ease, color 500ms ease;
+}
+
+.symbol-inspector-journey-note a:hover,
+.symbol-inspector-journey-note a:focus-visible {
+  border-color: rgba(var(--gold-rgb), 0.28);
+  color: rgba(var(--gold-rgb), 0.9);
+}
+
 .symbol-inspector-accordion {
   display: grid;
   margin-top: 1.45rem;
@@ -5980,6 +6100,17 @@ body {
 
   .symbol-journey-step article {
     min-height: 0;
+  }
+
+  .symbol-journey-step .symbol-journey-step__reflection-title {
+    font-size: 0.52rem;
+    letter-spacing: 0.16em;
+  }
+
+  .symbol-journey-step__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
   }
 
   .symbol-journey-step .symbol-archive-action {

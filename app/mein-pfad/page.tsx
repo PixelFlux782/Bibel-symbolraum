@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   persistStoredReflections,
+  getJourneyReflectionForStep,
   parseStoredReflections,
   REFLECTION_STORAGE_KEY,
   resolveReflectionReturnLinks,
@@ -376,7 +377,7 @@ export default function MeinPfadPage() {
         ) : (
           <>
             <PersonalSymbolMap tracks={symbolTracks} />
-            <PersonalJourneyCard journey={waterToBreadJourney} tracks={symbolTracks} />
+            <PersonalJourneyCard journey={waterToBreadJourney} reflections={sortedReflections} />
 
             {sortedReflections.length === 0 ? (
               <div className="symbol-path-empty mx-auto mt-12 max-w-3xl text-center">
@@ -464,23 +465,45 @@ export default function MeinPfadPage() {
   );
 }
 
-function getJourneyStepHref(track: PersonalSymbolTrack | undefined, journeyHref: string) {
-  return track?.href ?? journeyHref;
-}
-
 function getJourneyStepCtaLabel(hasTrace: boolean) {
   return hasTrace ? "Raum erneut betreten" : "Raum betreten";
 }
 
+function getJourneyReflectionPreview(reflection: StoredReflection) {
+  return (reflection.answer || reflection.text || "").replace(/\s+/g, " ").trim() || "Eine Spur ist vorhanden.";
+}
+
+function getJourneyReflectionContext(step: SymbolJourney["steps"][number], reflection: StoredReflection) {
+  const sourceLabel = getSafeTraceLabel(reflection.sourceLabel, "");
+
+  if (sourceLabel) {
+    return sourceLabel;
+  }
+
+  const pathLabel = getSafeTraceLabel(reflection.pathLabel, "");
+
+  if (pathLabel) {
+    return `Deine Spur aus: ${pathLabel}`;
+  }
+
+  if (reflection.sourceType === "room" || reflection.roomHref || reflection.room) {
+    return `Aus dem ${step.label}-Raum`;
+  }
+
+  return undefined;
+}
+
 function PersonalJourneyCard({
   journey,
-  tracks,
+  reflections,
 }: {
   journey: SymbolJourney;
-  tracks: PersonalSymbolTrack[];
+  reflections: StoredReflection[];
 }) {
-  const trackBySymbol = new Map(tracks.map((track) => [track.symbolId, track]));
-  const hasAnyTrace = tracks.some((track) => track.count > 0);
+  const reflectionByStep = new Map(
+    journey.steps.map((step) => [step.symbol, getJourneyReflectionForStep(reflections, step)])
+  );
+  const hasAnyTrace = [...reflectionByStep.values()].some(Boolean);
 
   return (
     <section className="symbol-journey-card" aria-label="Journey Vom Wasser zum Brot">
@@ -513,8 +536,9 @@ function PersonalJourneyCard({
 
       <ol className="symbol-journey-steps">
         {journey.steps.map((step, index) => {
-          const track = trackBySymbol.get(step.symbol);
-          const hasTrace = Boolean(track && track.count > 0);
+          const reflection = reflectionByStep.get(step.symbol);
+          const hasTrace = Boolean(reflection);
+          const reflectionContext = reflection ? getJourneyReflectionContext(step, reflection) : undefined;
 
           return (
             <li key={step.symbol} className="symbol-journey-step">
@@ -525,9 +549,27 @@ function PersonalJourneyCard({
                   {hasTrace ? "Spur vorhanden" : "Noch offen"}
                 </p>
                 <p>{step.text}</p>
-                <Link href={hasTrace ? getJourneyStepHref(track, step.roomHref) : step.roomHref} className="symbol-archive-action">
-                  {getJourneyStepCtaLabel(hasTrace)}
-                </Link>
+                {reflection ? (
+                  <div className="symbol-journey-step__reflection">
+                    <p className="symbol-journey-step__reflection-title">Deine Spur</p>
+                    {reflectionContext ? (
+                      <p className="symbol-journey-step__reflection-context">{reflectionContext}</p>
+                    ) : null}
+                    <p className="symbol-journey-step__reflection-preview">
+                      {getJourneyReflectionPreview(reflection)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="symbol-journey-step__still">Dieser Schritt ist noch still.</p>
+                )}
+                <div className="symbol-journey-step__actions">
+                  <Link href={step.roomHref} className="symbol-archive-action">
+                    {getJourneyStepCtaLabel(hasTrace)}
+                  </Link>
+                  <Link href={step.codexHref} className="symbol-archive-action symbol-archive-action--quiet">
+                    {hasTrace ? "Im Codex vertiefen" : "Im Codex ansehen"}
+                  </Link>
+                </div>
               </article>
             </li>
           );

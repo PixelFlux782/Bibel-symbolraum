@@ -23,6 +23,7 @@ export type SymbolJourney = {
 };
 
 const WATER_TO_BREAD_JOURNEY_ID = "journey-wasser-zum-brot";
+export const SYMBOL_JOURNEY_OVERVIEW_HREF = "/mein-pfad";
 
 function buildJourneyStep({
   symbol,
@@ -85,14 +86,53 @@ export const symbolJourneys: SymbolJourney[] = [
   },
 ];
 
-export function getSymbolJourney(id: string | null | undefined) {
+export function getSymbolJourney(id: string | null | undefined): SymbolJourney | undefined {
   if (!id) return undefined;
 
   return symbolJourneys.find((journey) => journey.id === id);
 }
 
-export function getSymbolJourneyForSymbol(symbolId: string | null | undefined) {
+export function getSymbolJourneyForSymbol(symbolId: string | null | undefined): SymbolJourney | undefined {
   if (!symbolId) return undefined;
 
   return symbolJourneys.find((journey) => journey.steps.some((step) => step.symbol === symbolId));
+}
+
+export function getJourneysForSymbol(symbolId: string | null | undefined): SymbolJourney[] {
+  if (!symbolId) return [];
+
+  return symbolJourneys.filter((journey) => journey.steps.some((step) => step.symbol === symbolId));
+}
+
+export function getJourneyStepForSymbol(
+  journeyId: string | null | undefined,
+  symbolId: string | null | undefined,
+): SymbolJourneyStep | undefined {
+  if (!journeyId || !symbolId) return undefined;
+
+  return getSymbolJourney(journeyId)?.steps.find((step) => step.symbol === symbolId);
+}
+
+export function getPreviousJourneyStep(
+  journeyId: string | null | undefined,
+  symbolId: string | null | undefined,
+): SymbolJourneyStep | undefined {
+  if (!journeyId || !symbolId) return undefined;
+
+  const steps = getSymbolJourney(journeyId)?.steps ?? [];
+  const stepIndex = steps.findIndex((step) => step.symbol === symbolId);
+
+  return stepIndex > 0 ? steps[stepIndex - 1] : undefined;
+}
+
+export function getNextJourneyStep(
+  journeyId: string | null | undefined,
+  symbolId: string | null | undefined,
+): SymbolJourneyStep | undefined {
+  if (!journeyId || !symbolId) return undefined;
+
+  const steps = getSymbolJourney(journeyId)?.steps ?? [];
+  const stepIndex = steps.findIndex((step) => step.symbol === symbolId);
+
+  return stepIndex >= 0 && stepIndex < steps.length - 1 ? steps[stepIndex + 1] : undefined;
 }

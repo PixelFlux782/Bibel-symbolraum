@@ -31,6 +31,12 @@ import {
 import type { OntologyEntity, OntologyRelation, OntologyWayProjection } from "@/lib/ontology";
 import { getResonanceJourney } from "@/lib/resonance";
 import { buildRoomHref, getPatternRoomStation, hasSymbolRoom } from "@/lib/rooms/roomContext";
+import {
+  getJourneysForSymbol,
+  SYMBOL_JOURNEY_OVERVIEW_HREF,
+  type SymbolJourney,
+  type SymbolJourneyStep,
+} from "@/lib/symbols/symbolJourneys";
 import { getKnownSymbolPathLabel, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import type { BiblicalReference } from "@/types/meaningGraph";
 import type { MeaningNodeId } from "@/types/meaningGraph";
@@ -1035,6 +1041,32 @@ function SymbolAnchorReturnCard({ entryId }: { entryId: string }) {
   );
 }
 
+function SymbolJourneyNoticeSection({
+  journey,
+  step,
+}: {
+  journey: SymbolJourney;
+  step: SymbolJourneyStep;
+}) {
+  return (
+    <DetailSection title="Teil des Weges">
+      <div className="grid gap-4">
+        <p className="symbol-copy text-base italic text-muted-soft">
+          Dieses Symbol liegt auf der Journey: {journey.title}.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF} className="symbol-archive-action">
+            Journey ansehen
+          </Link>
+          <Link href={step.roomHref} className="symbol-archive-action symbol-archive-action--quiet">
+            Raum aus der Journey betreten
+          </Link>
+        </div>
+      </div>
+    </DetailSection>
+  );
+}
+
 const WATER_CODEX_ESSENCE =
   "Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird.";
 
@@ -1493,6 +1525,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const isCuratedSymbolEntry = isWaterEntry || isLightEntry || isFireEntry;
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
+  const symbolJourney = getJourneysForSymbol(entry.id)[0];
+  const symbolJourneyStep = symbolJourney?.steps.find((step) => step.symbol === entry.id);
   const codexRoomHref = buildCodexRoomHref(entry);
   const codexRoomLabel = hasSymbolRoom(entry.symbolRoomSlug) ? getOntologyEntityTitle(entry.symbolRoomSlug) : undefined;
   const pathContext = resolvePathContext({ entry, params: resolvedSearchParams });
@@ -1590,6 +1624,9 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {isLightEntry ? <LightCodexReferenceSection /> : null}
             {isFireEntry ? <FireCodexReferenceSection /> : null}
             {!isCuratedSymbolEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {symbolJourney && symbolJourneyStep ? (
+              <SymbolJourneyNoticeSection journey={symbolJourney} step={symbolJourneyStep} />
+            ) : null}
             {isPatternEntity ? (
               <PatternCodexSection
                 entity={ontologyEntity}
