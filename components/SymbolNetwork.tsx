@@ -167,7 +167,7 @@ type SearchResonanceGroupItem = {
   registryIndex: number;
 };
 
-type SymbolSearchSuggestionKind = "Symbol" | "Hebraeisch" | "Bedeutung" | "Thora" | "Journey";
+type SymbolSearchSuggestionKind = "Symbol" | "Hebraeisch" | "Bedeutung" | "Thora" | "Spur";
 
 type SymbolSearchSuggestion = {
   id: string;
@@ -312,10 +312,10 @@ const SYMBOL_LENS_MODE_LABELS: Record<SymbolLensMode, string> = {
 };
 const SYMBOL_LENS_MODE_NOTES: Record<SymbolLensMode, string> = {
   meaning: "Bedeutungsfelder und lokale Meaning-Verbindungen bleiben sichtbar.",
-  story: "Story, Journey und Resonanzpfade erscheinen als gemeinsame Erzaehlspur.",
-  hebrew: "Das hebraeische Wort oeffnet seine Buchstaben als interne Knoten.",
-  gematria: "Zahlenresonanzen erscheinen als kleine Knoten im Netz.",
-  journey: "Story, Journey und Resonanzpfade erscheinen als gemeinsame Erzaehlspur.",
+  story: "Story, Spur und Resonanz erscheinen als gemeinsame Erzaehlspur.",
+  hebrew: "Das hebraeische Wort oeffnet seine Buchstaben als innere Spur.",
+  gematria: "Zahlenresonanzen erscheinen als leise Zeichen im Raum.",
+  journey: "Story, Spur und Resonanz erscheinen als gemeinsame Erzaehlspur.",
 };
 const SYMBOL_VIEWPORT_LABELS: Record<SymbolViewportMode, string> = {
   overview: "Uebersicht",
@@ -324,10 +324,10 @@ const SYMBOL_VIEWPORT_LABELS: Record<SymbolViewportMode, string> = {
   deep: "Tiefe",
 };
 const SYMBOL_VIEWPORT_HINTS: Record<SymbolViewportMode, string> = {
-  overview: "Zeigt Archetypen + kosmischen Rahmen",
-  focus: "Zeigt Archetypen + Resonanzen",
-  detail: "Zeigt Archetypen + Symbole",
-  deep: "Zeigt Archetypen + Symbole + Erzaehlungen",
+  overview: "Die grossen Zeichen bleiben sichtbar.",
+  focus: "Nahe Resonanzen treten hervor.",
+  detail: "Unterraeume werden leise sichtbar.",
+  deep: "Erzaehlungen und Verse oeffnen Tiefe.",
 };
 const BACK_VIEWPORT_TARGETS: Partial<Record<SymbolViewportMode, SymbolViewportMode>> = {
   deep: "detail",
@@ -740,7 +740,7 @@ function getCodexSuggestionKind(entry: CodexEntry): SymbolSearchSuggestionKind {
   if (entry.type === "symbol") return "Symbol";
   if (entry.type === "hebrew-word" || entry.type === "hebrew-letter" || entry.type === "number") return "Hebraeisch";
   if (entry.type === "scripture") return "Thora";
-  if (entry.type === "journey") return "Journey";
+  if (entry.type === "journey") return "Spur";
   return "Bedeutung";
 }
 
@@ -882,7 +882,7 @@ function getSymbolSearchSuggestions(query: string): SymbolSearchSuggestion[] {
       id: `journey:${journey.id}`,
       title: journey.title,
       detail: journey.symbolLabels.slice(0, 3).join(" -> "),
-      kind: "Journey",
+      kind: "Spur",
       symbolId,
       value: journey.title,
       priority: suggestionScore(query, values, 62),
@@ -1292,7 +1292,7 @@ function getSymbolLensData(symbolId: string): SymbolLensData | null {
 
   if (meaningNodeIds.length > 0) {
     const primaryMeaning = getMeaningNodeLabel(meaningNodeIds[0]);
-    addNode("meaning", "Meaning Graph", primaryMeaning);
+    addNode("meaning", "Bedeutung", primaryMeaning);
     lensMeaningNodeIds.meaning = meaningNodeIds;
   }
 
@@ -1402,7 +1402,7 @@ function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
       <div
         className={`symbol-constellation-node relative grid h-44 w-44 place-items-center px-5 py-5 text-center transition-colors duration-700 ${
           data.isActive ? "is-active" : data.isPreviewed ? "is-previewed" : data.isRelated ? "is-related" : ""
-        } ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
+        } ${data.id === "wasser" ? "is-first-entry" : ""} ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
       >
         <div>
           <p className="symbol-breathe font-serif text-5xl leading-none" lang="he" dir="rtl">
@@ -1639,16 +1639,16 @@ function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
 
   return (
     <div className="symbol-inspector-journey-note">
-      <p>Auf dem Weg: {journey.title}</p>
+      <p>In dieser Spur: {journey.title}</p>
       {previousStep || nextStep ? (
         <div>
-          {previousStep ? <span>Vorher: {previousStep.label}</span> : null}
-          {nextStep ? <span>Weiter: {nextStep.label}</span> : null}
+          {previousStep ? <span>Vorher sichtbar: {previousStep.label}</span> : null}
+          {nextStep ? <span>Danach leuchtet: {nextStep.label}</span> : null}
         </div>
       ) : null}
       <div>
-        <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF}>Weg in Mein Pfad oeffnen</Link>
-        <Link href={step.roomHref}>Raum aus dieser Journey betreten</Link>
+        <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF}>Spur in Mein Pfad oeffnen</Link>
+        <Link href={step.roomHref}>Den Raum dieser Spur betreten</Link>
       </div>
     </div>
   );
@@ -1886,7 +1886,7 @@ function SymbolLensFocusDetail({
               )}
               {showResonanceJourneyOption && discoverableResonanceJourney ? (
                 <button type="button" onClick={() => onActivateResonanceJourney(discoverableResonanceJourney.id)} className="symbol-archive-action">
-                  Resonanzpfad entdecken
+                  Resonanzspur oeffnen
                 </button>
               ) : null}
             </div>
@@ -1980,7 +1980,7 @@ function ResonanceJourneyDetail({
           : journey.summary.replace(/\s*\n\s*/g, " ")}
       </p>
       <div className="mt-7 border-t border-white/[0.055] pt-5">
-        <p className="symbol-kicker text-cyan-soft">Schritte</p>
+        <p className="symbol-kicker text-cyan-soft">Spurenfolge</p>
         <p className="mt-4 font-serif text-xl italic leading-relaxed text-gold/80">
           <JourneySequence items={journey.nodePath.map(getSymbolLabel)} />
         </p>
@@ -2125,8 +2125,9 @@ function MobileSymbolJourney({
   if (!hasSymbolFocus) {
     return (
       <section className="symbol-mobile-guide md:hidden" aria-label="Mobile Symbolreise">
-        <p className="symbol-kicker text-cyan-soft">Vier Tore</p>
-        <h2>Waehle eine Bedeutungsspur.</h2>
+        <p className="symbol-kicker text-cyan-soft">Erster Eintritt</p>
+        <h2>Beruehre ein Zeichen.</h2>
+        <p className="symbol-copy mt-3 text-sm">Manche oeffnen einen Raum, andere eine Bedeutung. Du musst nichts verstehen, du darfst schauen und eintreten.</p>
         <div className="symbol-mobile-gates">
           {gateSymbols.map((node) => (
             <button
@@ -2607,9 +2608,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         room: "Raum",
       }[activeInspectorFocus]);
     } else if (activeResonanceJourney) {
-      items.push("Resonanzpfad");
+      items.push("Resonanzspur");
     } else if (activeJourney) {
-      items.push("Journey");
+      items.push("Spur");
     } else if (activePath) {
       items.push("Beziehung");
     } else if (activeCodexLetter) {
@@ -3685,7 +3686,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         <div className="symbol-network-main min-w-0">
           <div className="symbol-network-orientation">
             <p>Symbolnetz</p>
-            <span>Waehle ein Symbol. Folge einer Spur.</span>
+            <span>Beruehre ein Zeichen. Manche oeffnen einen Raum, andere eine Bedeutung.</span>
           </div>
 
           <MobileSymbolJourney
@@ -3713,7 +3714,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           </div>
           {activeLetterId ? (
             <div className="letter-filter-trace mt-5">
-              <span>Aktive Letter-Ansicht</span>
+              <span>Aktive Buchstabenspur</span>
               <strong lang="he" dir="rtl">
                 {hebrewLetters.find((letter) => letter.id === activeLetterId)?.glyph}
               </strong>
@@ -3882,7 +3883,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 {CURATED_RESONANCE_INSCRIPTION}
               </p>
             ) : null}
-            <div className="symbol-viewport-controls" aria-label="Symbolnetz-Zoom steuern">
+            <div className="symbol-viewport-controls" aria-label="Kartentiefe waehlen">
               <button type="button" onClick={() => setSymbolViewport("overview")} aria-label="Uebersicht anzeigen">
                 <span>Uebersicht</span>
               </button>
@@ -3951,12 +3952,12 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               className="symbol-mobile-resonance-hint md:hidden"
               onClick={() => activateResonanceJourney(discoverableResonanceJourney.id)}
             >
-              Resonanzpfad entdecken
+              Resonanzspur oeffnen
             </button>
           ) : null}
           {activeResonanceJourney ? (
             <div className="mt-4 border-l border-gold/35 pl-4 md:hidden">
-              <p className="symbol-kicker text-cyan-soft">Resonanzpfad</p>
+              <p className="symbol-kicker text-cyan-soft">Resonanzspur</p>
               <div className="mt-3 grid gap-2 font-serif text-lg italic text-gold/85">
                 {activeResonanceJourney.nodePath.map((nodeId, index) => (
                   <Fragment key={nodeId}>
@@ -3972,12 +3973,18 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
         <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isSymbolLensVisible ? "symbol-detail-panel--lens-focus" : ""}`}>
           <p className="symbol-kicker text-cyan-soft">
-            {activeSymbolLensNode ? `${activeSymbol.label}: ${activeSymbolLensNode.label}` : activeResonanceJourney ? "Resonanzpfad" : activeJourney ? "Meaning Journey" : activePath ? "Bedeutungsweg" : activeCodexLetter ? "Letter-Ursprung" : "Fokus"}
+            {activeSymbolLensNode ? `${activeSymbol.label}: ${activeSymbolLensNode.label}` : activeResonanceJourney ? "Resonanzspur" : activeJourney ? "Bedeutungsspur" : activePath ? "Bedeutungsspur" : activeCodexLetter ? "Buchstabenursprung" : hasSymbolFocus ? "Fokus" : "Erster Eintritt"}
           </p>
           <div className="mt-4 border-l border-cyan/[0.18] pl-3 text-[10px] uppercase tracking-[0.18em] text-cyan-soft/70">
-            <p>Aktuelle Ebene: {SYMBOL_VIEWPORT_LABELS[symbolViewportMode]}</p>
+            <p>Sichtbare Tiefe: {SYMBOL_VIEWPORT_LABELS[symbolViewportMode]}</p>
             <p className="mt-1 text-gold/60">{SYMBOL_VIEWPORT_HINTS[symbolViewportMode]}</p>
           </div>
+          {!hasSymbolFocus && !activeResonanceJourney && !activeJourney && !activePath && !activeCodexLetter && !inspectorSymbolLensData ? (
+            <div className="symbol-inspector-empty mt-6">
+              <p>Waehle ein Zeichen.</p>
+              <span>Seine Spur, seine Sprache und seine Beziehungen werden hier sichtbar. Wasser ist der erste stille Eintritt.</span>
+            </div>
+          ) : null}
           {activeResonanceJourney ? (
             <ResonanceJourneyDetail
               journey={activeResonanceJourney}
@@ -4021,10 +4028,10 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 <p className="symbol-copy mt-4 text-base">
                   {activeLetterResonance
                     ? `${activeCodexLetter.name} verbindet ${letterSymbols.map((symbol) => symbol.label).join(", ")} durch die Erfahrung der ${activeLetterResonance.label}.`
-                    : `${activeCodexLetter.name} verbindet ${letterSymbols.map((symbol) => symbol.label).join(", ")}. Klicke den Buchstaben, um bis zu drei Resonanzen zu oeffnen.`}
+                    : `${activeCodexLetter.name} verbindet ${letterSymbols.map((symbol) => symbol.label).join(", ")}. Beruehre den Buchstaben, um bis zu drei Resonanzen zu oeffnen.`}
                 </p>
                 {isLetterResonanceOpen && letterResonances.length > 0 ? (
-                  <div className="letter-resonance-pills mt-5" aria-label="Letter-Resonanzen">
+                  <div className="letter-resonance-pills mt-5" aria-label="Buchstabenresonanzen">
                     {letterResonances.map((resonance) => (
                       <button
                         key={resonance.id}
@@ -4044,8 +4051,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                   <p>{activeLetterSourcePath?.evidence ?? activeCodexLetter.biblicalReferences[0]?.reference ?? "Noch kein direkter Anker gewaehlt."}</p>
                 </details>
                 <details>
-                  <summary>Journeys</summary>
-                  <p>{network.journeys.find((journey) => journey.symbolPath.some((symbolId) => letterSymbolIds.has(symbolId)))?.title ?? "Noch keine Journey fuer diese Letter-Spur."}</p>
+                  <summary>Spuren</summary>
+                  <p>{network.journeys.find((journey) => journey.symbolPath.some((symbolId) => letterSymbolIds.has(symbolId)))?.title ?? "Noch keine Spur fuer diese Buchstabenspur."}</p>
                 </details>
                 <details>
                   <summary>Codex</summary>
@@ -4111,7 +4118,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                     onClick={() => activateResonanceJourney(discoverableResonanceJourney.id)}
                     className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
                   >
-                    Resonanzpfad entdecken
+                    Resonanzspur oeffnen
                   </button>
                 ) : null}
                 {activeCodexEntry ? (

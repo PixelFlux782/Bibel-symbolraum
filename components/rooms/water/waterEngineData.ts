@@ -178,7 +178,7 @@ export const waterEngineData: SymbolEngineData = {
       hebrewSummary: "Zwischen offenem und geschlossenem Mem liegt Jod: ein kleiner Impuls, der den Durchgang eroeffnet.",
       biblicalSceneIds: ["exodus-14"],
       connectionIds: ["boundary", "freedom", "spirit"],
-      reflection: { kicker: "Innere Erfahrung", question: "Wo wird ein Weg erst sichtbar, wenn du den ersten Schritt wagst?" },
+      reflection: { kicker: "Innere Erfahrung", question: "Wo wird ein Weg erst sichtbar, wenn du dich der Schwelle anvertraust?" },
     },
     {
       id: "cleansing",

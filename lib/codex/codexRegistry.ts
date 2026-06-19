@@ -80,9 +80,9 @@ const CODEX_ALIASES = {
   "zahl-1": ["Zahl 1", "Eins", "Alephwert", "Ursprungszahl", "Einheit im Codex"],
   "zahl-40": ["Zahl 40", "Vierzig", "Memwert", "Schwellenzahl", "Wasserzeit"],
   "zahl-90": ["Zahl 90", "Neunzig", "Majimwert", "Wasserzahl", "Mem-Jod-Mem"],
-  "journey-chaos-ordnung": ["Journey Chaos Ordnung", "Gefuehrter Pfad Chaos Ordnung", "Von Chaos zu Ordnung"],
-  "journey-wasser-geist": ["Journey Wasser Geist", "Gefuehrter Pfad Wasser Geist", "Wasser und Geist Spur"],
-  "journey-wueste-offenbarung": ["Journey Wueste Offenbarung", "Gefuehrter Pfad Wueste Offenbarung", "Wueste zur Offenbarung"],
+  "journey-chaos-ordnung": ["Spur Chaos Ordnung", "Chaos Ordnung Spur", "Von Chaos zu Ordnung"],
+  "journey-wasser-geist": ["Spur Wasser Geist", "Wasser und Geist Spur"],
+  "journey-wueste-offenbarung": ["Spur Wueste Offenbarung", "Wueste zur Offenbarung"],
 } satisfies Record<CodexEntryId, string[]>;
 
 function aliasesFor(entryId: CodexEntryId): string[] {
@@ -474,7 +474,7 @@ function journeyEntry({
       source: ["journey", "meaning-graph", "symbol-network", "scripture-reference"],
       sourceIds,
       tags: ["codex-seed", "journey", "bedeutungspfad"],
-      notes: "Gefuehrter Codex-Pfad fuer den Journeys-Tab.",
+      notes: "Verbundenes Spurenfeld fuer den Codex.",
     },
   };
 }
@@ -616,7 +616,7 @@ function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2"
       label: reference?.label ?? "Exodus 14",
       searchTerms: ["Schilfmeer", "Meer", "Durchzug", "Schwelle", "Rettung", "Befreiung", "Geburt eines Weges"],
       summary:
-        "Exodus 14 liest das Meer als Schwelle. Wasser steht zwischen Knechtschaft und offenem Weg, zwischen Tiefe und Rettung. Der Durchzug erklaert die Tiefe nicht weg; er macht sie zum Ort, an dem ein Volk den ersten Schritt in eine neue Freiheit findet.",
+        "Exodus 14 liest das Meer als Schwelle. Wasser steht zwischen Knechtschaft und offenem Weg, zwischen Tiefe und Rettung. Der Durchzug erklaert die Tiefe nicht weg; er macht sie zum Ort, an dem eine Spur in neue Freiheit sichtbar wird.",
       meaningFields: ["depth", "transition", "birth", "life", "desert", "guidance"] satisfies CodexEntry["meaningFields"],
       relations: [
         { targetId: "wasser", type: "anchors-scripture", label: "Wasser wird zur Schwelle zwischen altem Zustand und neuem Weg.", source: "scripture-reference" },
@@ -992,7 +992,7 @@ export const codexRegistry = [
       "Dieser Pfad folgt der Verbindung von Wasser, Tiefe, Mem und Geist. Er liest Wasser als tragenden Zwischenraum und Geist als bewegte Gegenwart, die nicht aus der Tiefe flieht, sondern an ihrer Schwelle neues Leben vorbereitet.",
     meaningFields: ["depth", "chaos", "presence", "voice", "life", "transition", "hiddenness"],
     relations: [
-      { targetId: "wasser", type: "shares-meaning", label: "Wasser ist der Grundraum dieser Journey.", source: "symbol-network" },
+      { targetId: "wasser", type: "shares-meaning", label: "Wasser ist der Grundraum dieser Spur.", source: "symbol-network" },
       { targetId: "tiefe", type: "shares-meaning", label: "Die Tiefe macht den Wasserraum als verborgenes Werden lesbar.", source: "meaning-graph" },
       { targetId: "geist", type: "continues-journey", label: "Geist wird ueber den Wassern als bewegte Gegenwart sichtbar.", source: "scripture-reference" },
       { targetId: "mem", type: "contains-letter", label: "Mem verdichtet Wasser, Tiefe und Werden im Buchstabenraum.", source: "hebrew-letter" },
@@ -1003,14 +1003,14 @@ export const codexRegistry = [
       { id: "genesis-1-2", reference: "Genesis 1,2", label: "Geist ueber den Wassern", note: "Wasser und Geist stehen gemeinsam am Anfang der Lesbarkeit.", source: "scripture-reference" },
       { id: "matthew-3-13-17", reference: "Matthaeus 3,13-17", label: "Taufe Jesu", note: "Wasser wird zur Schwelle, an der Geist und Stimme hervortreten.", source: "scripture-reference" },
     ],
-    searchTerms: ["Wasser Geist Pfad", "Ruach Wasser Sequenz", "Mem Geist Journey", "Taufe Bedeutungspfad"],
+    searchTerms: ["Wasser Geist Spur", "Ruach Wasser Sequenz", "Mem Geist Spur", "Taufe Bedeutungsspur"],
     sourceIds: ["wasser", "tiefe", "geist", "mem", "genesis-1-2", "matthew-3-13-17"],
     steps: [
       { id: "wasser-geist-1", label: "Wasser", codexId: "wasser", description: "Wasser traegt den Anfang als Tiefe, Schwelle und Moeglichkeit." },
       { id: "wasser-geist-2", label: "Tiefe", codexId: "tiefe", description: "Die Tiefe bewahrt das noch Ungesagte unter der sichtbaren Oberflaeche." },
       { id: "wasser-geist-3", label: "Mem", codexId: "mem", description: "Mem bindet Wasser, Werden und verborgene Schwelle an den Buchstabenraum." },
       { id: "wasser-geist-4", label: "Geist", codexId: "geist", description: "Geist bringt Bewegung und Gegenwart in den Wasserraum." },
-      { id: "wasser-geist-5", label: "Genesis 1,2", codexId: "genesis-1-2", description: "Der Vers verankert die Journey im Anfangsbild von Wasser und Geist." },
+      { id: "wasser-geist-5", label: "Genesis 1,2", codexId: "genesis-1-2", description: "Der Vers verankert die Spur im Anfangsbild von Wasser und Geist." },
     ],
   }),
   journeyEntry({
@@ -1033,7 +1033,7 @@ export const codexRegistry = [
       { id: "deuteronomy-8", reference: "Deuteronomium 8", label: "Wuestenweg", note: "Die Wueste wird als Schule von Vertrauen, Mangel und Erinnerung gelesen.", source: "scripture-reference" },
       { id: "exodus-3-2", reference: "Exodus 3,2", label: "Brennender Dornbusch", note: "Feuer und Ruf machen Gegenwart sichtbar, ohne den Ort zu verbrauchen.", source: "scripture-reference" },
     ],
-    searchTerms: ["Wueste Offenbarung Pfad", "Dornbusch Journey", "Reduktion Ruf Weg", "Midbar Offenbarungspfad"],
+    searchTerms: ["Wueste Offenbarung Spur", "Dornbusch Spur", "Reduktion Ruf Weg", "Midbar Offenbarungsspur"],
     sourceIds: ["wueste", "wandlung", "wort", "feuer", "offenbarung", "deuteronomy-8", "exodus-3-2"],
     steps: [
       { id: "wueste-offenbarung-1", label: "Wueste", codexId: "wueste", description: "Die Wueste reduziert das Sichtbare und macht innere Orientierung notwendig." },

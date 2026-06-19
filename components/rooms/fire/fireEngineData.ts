@@ -47,7 +47,7 @@ export const fireEngineData: SymbolEngineData = {
       reference: "Exodus 13,21",
       title: "Die Feuersaeule",
       text: "In der Nacht begleitet eine Feuersaeule Israel auf dem Weg.",
-      meaning: "Feuer wird zur Fuehrung: genug Licht fuer den naechsten Schritt.",
+      meaning: "Feuer wird zur Fuehrung: genug Licht fuer den gegenwaertigen Augenblick.",
     },
     {
       id: "malachi-3-2-3",
@@ -60,7 +60,7 @@ export const fireEngineData: SymbolEngineData = {
   connections: [
     { id: "spark", label: "Funke", relation: "Potential", detail: "In der Glut liegt eine Kraft, die noch keine sichtbare Flamme braucht." },
     { id: "presence", label: "Gegenwart", relation: "Offenbarung", detail: "Der Dornbusch brennt, ohne zu verbrennen: Feuer wird zum Zeichen tragender Naehe." },
-    { id: "calling", label: "Ruf", relation: "Berufung", detail: "Mose wird beim Namen gerufen und aus der Distanz in eine Aufgabe gefuehrt." },
+    { id: "calling", label: "Ruf", relation: "Berufung", detail: "Mose wird beim Namen gerufen und aus der Distanz in Gegenwart gefuehrt." },
     { id: "guidance", label: "Fuehrung", relation: "Weg", detail: "Die Feuersaeule gibt Richtung, ohne den ganzen Weg vorwegzunehmen." },
     { id: "purification", label: "Reinigung", relation: "Laeuterung", detail: "Feuer kann klaeren, was bleiben soll, und loesen, was seine Gestalt verloren hat." },
     { id: "transformation", label: "Verwandlung", relation: "Neue Gestalt", detail: "Was dem Feuer begegnet, bleibt nicht ganz, wie es war." },
@@ -115,7 +115,7 @@ export const fireEngineData: SymbolEngineData = {
       navigationLabel: "Feuersaeule",
       eyebrow: "Exodus 13,21",
       title: "Feuersaeule",
-      text: "In der Nacht wird Feuer zum Wegzeichen. Es nimmt die Unsicherheit nicht fort, aber es weist die Richtung fuer den naechsten Schritt.",
+      text: "In der Nacht wird Feuer zum Wegzeichen. Es nimmt die Unsicherheit nicht fort, aber es laesst Richtung sichtbar werden.",
       inscription: "Fuehrung / Nacht / Weg",
       visual: {
         image: "/Visuals/cinem_lichtraum_backround.png",

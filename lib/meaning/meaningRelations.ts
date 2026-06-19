@@ -47,7 +47,7 @@ export const meaningRelations: MeaningRelation[] = [
     id: "light-guidance",
     fromNodeId: "light",
     toNodeId: "guidance",
-    description: "Licht zeigt eine Richtung fuer den naechsten Schritt.",
+    description: "Licht laesst eine Richtung im Dunkel sichtbar werden.",
   },
   {
     id: "fire-presence",
@@ -95,7 +95,7 @@ export const meaningRelations: MeaningRelation[] = [
     id: "desert-guidance",
     fromNodeId: "desert",
     toNodeId: "guidance",
-    description: "In der Wueste wird Fuehrung fuer den naechsten Schritt sichtbar.",
+    description: "In der Wueste wird Fuehrung als leise Spur sichtbar.",
   },
   {
     id: "hiddenness-voice",
@@ -113,7 +113,7 @@ export const meaningRelations: MeaningRelation[] = [
     id: "guidance-path",
     fromNodeId: "guidance",
     toNodeId: "path",
-    description: "Fuehrung macht einen Weg fuer den naechsten Schritt begehbar.",
+    description: "Fuehrung macht einen Weg im gegenwaertigen Augenblick begehbar.",
   },
   {
     id: "life-nourishment",

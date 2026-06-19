@@ -66,7 +66,7 @@ export function CodexPersonalTraceCard({
         </Link>
         {traceRoomHref ? (
           <Link href={traceRoomHref} className="symbol-archive-action symbol-archive-action--quiet">
-            Raum erneut betreten
+            In den Raum zurueckkehren
           </Link>
         ) : null}
       </div>

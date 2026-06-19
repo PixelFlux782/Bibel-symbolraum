@@ -74,7 +74,7 @@ export const symbolPathConfigs = {
     ctaLabels: {
       codex: "Wasser im Codex lesen",
       room: "Den Wasserraum betreten",
-      roomReturn: "Wasserraum erneut betreten",
+      roomReturn: "In den Wasserraum zurueckkehren",
       symbolNetworkReturn: "Zum Symbolnetz zurueckkehren",
     },
     codexGates: {
@@ -101,12 +101,12 @@ export const symbolPathConfigs = {
         "genesis-1-2",
         "exodus-14",
       ],
-      defaultContextLabel: "Teil des Wasserpfades",
+      defaultContextLabel: "Teil der Wasserspur",
       contextLabels: {
         "genesis-1-2": "Wasser vor der Ordnung",
         "exodus-14": "Wasser als Schwelle",
       },
-      returnLabel: "Zurueck zum Wasser-Codex",
+      returnLabel: "Zum Wasser-Codex zurueckkehren",
       roomLabel: "Den Wasserraum betreten",
       roomTraceLabel: "Diese Spur im Wasserraum bewegen",
       personalPathLabel: "Meinen Pfad ansehen",
@@ -135,7 +135,7 @@ export const symbolPathConfigs = {
     ctaLabels: {
       codex: "Licht im Codex lesen",
       room: "Den Lichtraum betreten",
-      roomReturn: "Lichtraum erneut betreten",
+      roomReturn: "In den Lichtraum zurueckkehren",
       symbolNetworkReturn: "Zum Symbolnetz zurueckkehren",
     },
     codexGates: {
@@ -162,11 +162,11 @@ export const symbolPathConfigs = {
         "himmel",
         "genesis-1-3",
       ],
-      defaultContextLabel: "Teil des Lichtpfades",
+      defaultContextLabel: "Teil der Lichtspur",
       contextLabels: {
         "genesis-1-3": "Licht als erstes Sichtbarwerden",
       },
-      returnLabel: "Zurueck zum Licht-Codex",
+      returnLabel: "Zum Licht-Codex zurueckkehren",
       roomLabel: "Den Lichtraum betreten",
       roomTraceLabel: "Diese Spur im Lichtraum bewegen",
       personalPathLabel: "Meinen Lichtpfad ansehen",
@@ -195,7 +195,7 @@ export const symbolPathConfigs = {
     ctaLabels: {
       codex: "Feuer im Codex lesen",
       room: "Den Feuerraum betreten",
-      roomReturn: "Feuerraum erneut betreten",
+      roomReturn: "In den Feuerraum zurueckkehren",
       symbolNetworkReturn: "Zum Symbolnetz zurueckkehren",
     },
     codexGates: {
@@ -226,7 +226,7 @@ export const symbolPathConfigs = {
         "exodus-3-2",
         "brennender-dornbusch",
       ],
-      defaultContextLabel: "Teil des Feuerpfades",
+      defaultContextLabel: "Teil der Feuerspur",
       contextLabels: {
         esch: "Feuer als hebraeischer Klang",
         flamme: "Feuer als sichtbare Bewegung",
@@ -240,7 +240,7 @@ export const symbolPathConfigs = {
         "exodus-3-2": "Feuer im brennenden Dornbusch",
         "brennender-dornbusch": "Feuer im brennenden Dornbusch",
       },
-      returnLabel: "Zurueck zum Feuer-Codex",
+      returnLabel: "Zum Feuer-Codex zurueckkehren",
       roomLabel: "Den Feuerraum betreten",
       roomTraceLabel: "Diese Spur im Feuerraum bewegen",
       personalPathLabel: "Meinen Feuerpfad ansehen",
@@ -269,7 +269,7 @@ export const symbolPathConfigs = {
     ctaLabels: {
       codex: "Wüste im Codex lesen",
       room: "Den Wüstenraum betreten",
-      roomReturn: "Wüstenraum erneut betreten",
+      roomReturn: "In den Wüstenraum zurueckkehren",
       symbolNetworkReturn: "Zum Symbolnetz zurueckkehren",
     },
     codexGates: {
@@ -307,7 +307,7 @@ export const symbolPathConfigs = {
         "deuteronomy-8-2",
         "deuteronomy-8-3",
       ],
-      defaultContextLabel: "Teil des Wüstenpfades",
+      defaultContextLabel: "Teil der Wüstenspur",
       contextLabels: {
         midbar: "Wüste als hebräischer Klang",
         leere: "Wüste als Raum der Leere",
@@ -326,7 +326,7 @@ export const symbolPathConfigs = {
         "deuteronomy-8-2": "Wüste als Prüfung des Herzens",
         "deuteronomy-8-3": "Wüste als Brot-und-Wort-Spur",
       },
-      returnLabel: "Zurueck zum Wüsten-Codex",
+      returnLabel: "Zum Wüsten-Codex zurueckkehren",
       roomLabel: "Den Wüstenraum betreten",
       roomTraceLabel: "Diese Spur im Wüstenraum bewegen",
       personalPathLabel: "Meinen Pfad ansehen",
@@ -355,7 +355,7 @@ export const symbolPathConfigs = {
     ctaLabels: {
       codex: "Brot im Codex lesen",
       room: "Den Brotraum betreten",
-      roomReturn: "Brotraum erneut betreten",
+      roomReturn: "In den Brotraum zurueckkehren",
       symbolNetworkReturn: "Zum Symbolnetz zurueckkehren",
     },
     codexGates: {
@@ -400,7 +400,7 @@ export const symbolPathConfigs = {
         "brot-vom-himmel",
         "manna-in-der-wueste",
       ],
-      defaultContextLabel: "Teil des Brotpfades",
+      defaultContextLabel: "Teil der Brotspur",
       contextLabels: {
         lechem: "Brot als hebräischer Klang",
         manna: "Brot als Gabe im Mangel",
@@ -421,7 +421,7 @@ export const symbolPathConfigs = {
         "brot-vom-himmel": "Brot als Gabe vom Himmel",
         "manna-in-der-wueste": "Brot als Manna in der Wüste",
       },
-      returnLabel: "Zurueck zum Brot-Codex",
+      returnLabel: "Zum Brot-Codex zurueckkehren",
       roomLabel: "Den Brotraum betreten",
       roomTraceLabel: "Diese Spur im Brotraum bewegen",
       personalPathLabel: "Meinen Pfad ansehen",

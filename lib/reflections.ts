@@ -331,7 +331,7 @@ export function resolveReflectionReturnLinks(reflection: StoredReflection): Refl
     }
 
     if (reflection.roomHref) {
-      pushUniqueLink(links, { key: "room", label: "Raum erneut betreten", href: reflection.roomHref });
+      pushUniqueLink(links, { key: "room", label: "In den Raum zurueckkehren", href: reflection.roomHref });
     }
 
     pushUniqueLink(links, { key: "symbol-network", label: "Symbolnetz oeffnen", href: "/symbolnetz" });
@@ -356,7 +356,7 @@ export function resolveReflectionReturnLinks(reflection: StoredReflection): Refl
   pushUniqueLink(links, { key: "codex", label: getReflectionCodexReturnLabel(bridge.symbolId, bridge.label), href: getCodexHref(bridge.symbolId) });
   pushUniqueLink(links, {
     key: "room",
-    label: `Den ${bridge.roomLabel} erneut betreten`,
+    label: `In den ${bridge.roomLabel} zurueckkehren`,
     href: roomHref,
   });
   pushUniqueLink(links, { key: "symbol-network", label: `${bridge.label} im Symbolnetz ansehen`, href: getSymbolNetworkHref(bridge.symbolId) });
@@ -391,7 +391,7 @@ export function getReflectionContextLabel(reflection: StoredReflection) {
   }
 
   if (isJourneyReflection(reflection)) {
-    return journey ? `Aus der Journey: ${journey.title}` : "Aus der Journey";
+    return journey ? `Aus der Spur: ${journey.title}` : "Aus einer Spur";
   }
 
   if (pathLabel && !looksTechnicalLabel(pathLabel)) {
@@ -407,7 +407,7 @@ export function getReflectionContextLabel(reflection: StoredReflection) {
   }
 
   if (journey) {
-    return `Aus der Journey: ${journey.title}`;
+    return `Aus der Spur: ${journey.title}`;
   }
 
   return undefined;

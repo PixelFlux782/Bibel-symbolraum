@@ -54,7 +54,7 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "guidance",
     label: "Orientierung",
-    description: "Eine sichtbare Richtung fuer den naechsten Schritt.",
+    description: "Eine sichtbare Richtung im gegenwaertigen Dunkel.",
   },
   {
     id: "fire",
@@ -79,7 +79,7 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "desert",
     label: "Wueste",
-    description: "Ein leerer Raum, in dem Sicherheiten schwinden und der naechste Schritt neu gesucht werden muss.",
+    description: "Ein leerer Raum, in dem Sicherheiten schwinden und eine Spur neu sichtbar werden kann.",
   },
   {
     id: "lack",
@@ -99,7 +99,7 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "trust",
     label: "Vertrauen",
-    description: "Eine innere Ausrichtung, die auch ohne vollstaendige Sicherheit den naechsten Schritt wagt.",
+    description: "Eine innere Ausrichtung, die auch ohne vollstaendige Sicherheit einer leisen Spur vertraut.",
   },
   {
     id: "voice",

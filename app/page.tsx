@@ -44,11 +44,11 @@ export default function StartPage() {
             SYMBOLRAUM
           </h1>
           <p className="symbol-copy mx-auto mt-9 max-w-[16rem] text-base italic text-muted-soft sm:max-w-xl sm:text-xl">
-            Beginne mit Wasser.
+            Eine Spur oeffnet sich im Wasser.
           </p>
 
           <p className="symbol-copy mx-auto mt-7 max-w-[20rem] text-sm text-muted-soft sm:max-w-2xl sm:text-lg">
-            Der erste Raum oeffnet die Tiefe. Aus deiner Antwort entsteht eine Spur, die dich weiterfuehrt.
+            Der Wasser-Raum oeffnet die Tiefe. Was dort sichtbar wird, darf als Spur bleiben.
           </p>
 
           <div className="mt-16 flex flex-col items-center gap-6">
@@ -96,7 +96,7 @@ export default function StartPage() {
               Bedeutungsbewegung
             </p>
             <h3 className="mt-5 font-serif text-4xl italic leading-tight text-foreground-strong sm:text-5xl">
-              Aus Zeichen werden Raeume. Aus Raeumen werden Wege.
+              Aus Zeichen werden Raeume. Aus Raeumen werden Spuren.
             </h3>
 
             <div className="mt-12 grid gap-4">

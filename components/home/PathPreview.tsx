@@ -70,15 +70,15 @@ export function PathPreview() {
 
         {reflections === null ? (
           <p className="symbol-copy text-center font-serif text-xl italic text-muted-soft">
-            Dein Pfad wird gelesen...
+            Deine Spur wird still gesammelt...
           </p>
         ) : latestReflection ? (
           <div className="grid gap-8 md:grid-cols-[0.82fr_1.18fr] md:items-center">
             <div className="text-center md:text-left">
-              <p className="symbol-kicker">Dein Pfad beginnt</p>
+              <p className="symbol-kicker">Deine Spur klingt nach</p>
               <p className="mt-5 font-serif text-3xl italic leading-tight text-foreground-strong sm:text-4xl">
-                {sortedReflections.length} gespeicherte{" "}
-                {sortedReflections.length === 1 ? "Reflexion" : "Reflexionen"}
+                {sortedReflections.length} bewahrte{" "}
+                {sortedReflections.length === 1 ? "Spur" : "Spuren"}
               </p>
             </div>
 
@@ -119,13 +119,13 @@ export function PathPreview() {
         ) : (
           <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-7 text-center md:flex-row md:text-left">
             <p className="symbol-copy max-w-2xl text-xl italic">
-              Dein Pfad ist noch still. Beginne im Wasser-Raum; dort entsteht deine erste Spur.
+              Dein Pfad ist noch still. Im Wasser-Raum kann eine erste Spur sichtbar werden.
             </p>
             <Link
               href="/raeume/wasser"
               className="symbol-cta mx-auto shrink-0 md:mx-0"
             >
-              Mit Wasser beginnen
+              Den Wasser-Raum betreten
             </Link>
           </div>
         )}

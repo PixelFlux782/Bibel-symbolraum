@@ -99,7 +99,7 @@ export const hebrewWords: HebrewWord[] = [
       meaningField("or-light", "Licht", "Licht macht sichtbar und unterscheidbar.", ["Helligkeit", "Klarheit"]),
       meaningField("or-revelation", "Offenbarung", "Licht kann Verborgenes hervortreten lassen.", ["Offenheit", "Erkenntnis"]),
       meaningField("or-awareness", "Erkenntnis", "Licht kann Wahrnehmung und Bewusstsein oeffnen.", ["Bewusstsein", "Klarheit"]),
-      meaningField("or-orientation", "Orientierung", "Licht macht einen naechsten Schritt sichtbar.", ["Klarheit", "Hoffnung"]),
+      meaningField("or-orientation", "Orientierung", "Licht macht eine Spur sichtbar.", ["Klarheit", "Hoffnung"]),
       meaningField("or-presence", "Gegenwart", "Licht kann eine gegenwaertige Wirklichkeit erfahrbar machen.", ["Gegenwart", "Nahe"]),
       meaningField("or-visibility", "Sichtbarkeit", "Licht laesst Konturen und Unterschiede hervortreten.", ["Wahrnehmung", "Unterscheidung"]),
       meaningField("or-life", "Leben", "Licht kann mit Lebendigkeit und tragender Gegenwart verbunden werden.", ["Lebendigkeit", "Hoffnung"]),
@@ -170,7 +170,7 @@ export const hebrewWords: HebrewWord[] = [
     meaningFields: [
       meaningField("midbar-desert", "Wueste", "Midbar bezeichnet die Wueste und kann als Raum der Leere und des Weges gelesen werden.", ["Wueste", "Leere", "Weg"]),
       meaningField("midbar-testing", "Pruefung", "In der Wueste tritt hervor, worauf Vertrauen und Abhaengigkeit gerichtet sind.", ["Pruefung", "Abhaengigkeit", "Vertrauen"]),
-      meaningField("midbar-guidance", "Fuehrung", "Die Wueste kann zum Raum werden, in dem Fuehrung fuer den naechsten Schritt sichtbar wird.", ["Fuehrung", "Weg", "Uebergang"]),
+      meaningField("midbar-guidance", "Fuehrung", "Die Wueste kann zum Raum werden, in dem Fuehrung als leise Spur sichtbar wird.", ["Fuehrung", "Weg", "Uebergang"]),
       meaningField("midbar-word", "Stimme und Wort", "Midbar kann in behutsamer Naehe zum Bedeutungsfeld von davar gelesen werden, ohne beide Woerter gleichzusetzen.", ["Stimme", "Wort", "Hoeren"]),
       meaningField("midbar-reduction", "Reduktion", "Die Wüste entzieht Gewohntes und macht Mangel erfahrbar.", ["Leere", "Prüfung"]),
       meaningField("midbar-listening", "Hören", "Die Wüste kann als Raum der Sammlung und des Hörens gelesen werden.", ["Stille", "Ausrichtung"]),

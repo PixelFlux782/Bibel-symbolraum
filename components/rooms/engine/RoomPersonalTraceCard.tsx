@@ -60,7 +60,7 @@ export function RoomPersonalTraceCard({ roomContext, symbolSlug }: RoomPersonalT
 
   return (
     <aside className="symbol-engine__personal-trace" aria-label="Persoenliche Rueckkehr-Spur">
-      <p className="symbol-engine__personal-trace-title">Du warst hier schon</p>
+      <p className="symbol-engine__personal-trace-title">Wenn du zurueckkehrst</p>
       {contextLabel ? (
         <p className="symbol-engine__personal-trace-context">{contextLabel}</p>
       ) : null}

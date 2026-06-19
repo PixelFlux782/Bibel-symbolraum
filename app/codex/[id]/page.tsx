@@ -1058,17 +1058,17 @@ function SymbolJourneyNoticeSection({
   step: SymbolJourneyStep;
 }) {
   return (
-    <DetailSection title="Teil des Weges">
+    <DetailSection title="Teil einer Spur">
       <div className="grid gap-4">
         <p className="symbol-copy text-base italic text-muted-soft">
-          Dieses Symbol liegt auf der Journey: {journey.title}.
+          Dieses Symbol liegt in der Spur: {journey.title}.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF} className="symbol-archive-action">
             In Mein Pfad ansehen
           </Link>
           <Link href={step.roomHref} className="symbol-archive-action symbol-archive-action--quiet">
-            Raum aus der Journey betreten
+            Den Raum dieser Spur betreten
           </Link>
         </div>
       </div>
@@ -1211,9 +1211,9 @@ function WaterCodexReferenceSection() {
         </section>
 
         <section className="border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Aus dieser Tiefe</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link href={waterRoomHref} className="symbol-cta">Wasser-Raum betreten</Link>
+            <Link href={waterRoomHref} className="symbol-cta">Den Wasser-Raum betreten</Link>
             <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Erzaehlspur Wasser - Wueste - Brot ansehen</Link>
             <a href="#spur-aufnehmen" className="symbol-cta symbol-cta-secondary">Diese Spur bewahren</a>
           </div>
@@ -1324,7 +1324,7 @@ function LightCodexReferenceSection() {
         ) : null}
 
         <section className="border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Aus diesem Licht</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href={lightRoomHref} className="symbol-cta">{lightBridge?.ctaLabels.room ?? "Den Lichtraum betreten"}</Link>
             <Link href={lightBridge?.symbolNetworkHref ?? "/symbolnetz?symbol=licht"} className="symbol-cta symbol-cta-secondary">
@@ -1438,7 +1438,7 @@ function FireCodexReferenceSection() {
         ) : null}
 
         <section className="border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Aus diesem Feuer</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href={fireRoomHref} className="symbol-cta">{fireBridge?.ctaLabels.room ?? "Den Feuerraum betreten"}</Link>
             <Link href={fireBridge?.symbolNetworkHref ?? "/symbolnetz?symbol=feuer"} className="symbol-cta symbol-cta-secondary">
@@ -1585,7 +1585,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
         {isFromSymbolNetwork && activePathLabel ? (
           <p className="mt-5 max-w-2xl border-l border-gold/35 pl-4 text-[0.62rem] uppercase tracking-[0.22em] text-gold/70">
-            Resonanzpfad: {activePathLabel}
+            Resonanzspur: {activePathLabel}
           </p>
         ) : null}
 
@@ -1752,7 +1752,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                         href={codexRoomHref}
                         className="font-serif italic text-gold/85 transition-colors duration-500 hover:text-gold"
                       >
-                        {codexRoomLabel}-Raum betreten
+                        Den {codexRoomLabel}-Raum betreten
                       </Link>
                     }
                   />
@@ -1895,7 +1895,7 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
   const relatedPatterns = getRelatedPatternsForJourney(entry);
 
   return (
-    <DetailSection title="Weg" activeContext={activeContext}>
+    <DetailSection title="Spur" activeContext={activeContext}>
       {entryStep ? (
         <div className="mb-5 border border-gold/15 bg-gold/[0.035] px-4 py-4">
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Eintritt</p>
@@ -1905,7 +1905,7 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
       ) : null}
 
       <div className="mb-5 border border-white/[0.065] bg-black/10 px-4 py-4">
-        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Stationen</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Spurenfolge</p>
         <ol className="mt-3 grid gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
           {entry.steps.map((step, index) => (
             <li key={`trail-${step.id}`} className="flex items-center gap-2">
@@ -1949,7 +1949,7 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
                       href={buildRoomHref(linkedEntry.symbolRoomSlug, { path: entry.id, symbol: linkedEntry.symbolRoomSlug })}
                       className="mt-3 inline-flex text-[0.58rem] uppercase tracking-[0.2em] text-cyan-soft/75 transition-colors duration-500 hover:text-cyan-soft"
                     >
-                      {getOntologyEntityTitle(linkedEntry.symbolRoomSlug)}-Raum betreten
+                      Den {getOntologyEntityTitle(linkedEntry.symbolRoomSlug)}-Raum betreten
                     </Link>
                   ) : null}
                 </div>
@@ -1982,7 +1982,7 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
 
       {exitCore ? (
         <div className="mt-6 border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Dieser Weg oeffnet sich zu</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Spur oeffnet sich zu</p>
           <WayLinkCard
             href={withPathContext(`/codex/${exitCore.id}`, { path: entry.id })}
             title={exitCore.title}
@@ -2133,8 +2133,8 @@ function MeaningResonanceSection({ entry, activeContext }: { entry: CodexEntry; 
         </div>
 
         <div>
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Moegliche Weiterwege</p>
-          <MeaningResonanceLinkList items={resonance.onward} emptyText="Noch keine Weiterwege verbunden." />
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Moegliche Resonanzen</p>
+          <MeaningResonanceLinkList items={resonance.onward} emptyText="Noch keine Resonanzen verbunden." />
         </div>
       </div>
     </DetailSection>
@@ -2339,7 +2339,7 @@ function SymbolicTrailSection({ entry, activeContext }: { entry: CodexEntry; act
 
         {trail.onward.length > 0 ? (
           <div>
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Was hier sichtbar wird</p>
             <div className="mt-3 grid gap-3">
               {trail.onward.map(({ id, relation, target, linkedEntry }) => (
                 <Link
@@ -2375,7 +2375,7 @@ function WaysBeginningSection({
   }
 
   return (
-    <DetailSection title="Wege, die hier beginnen" activeContext={activeContext}>
+    <DetailSection title="Spuren, die sich hier oeffnen" activeContext={activeContext}>
       <div className="grid gap-3 sm:grid-cols-2">
         {patternWays.slice(0, 3).map((way, index) => (
           <WayProjectionCard
@@ -2564,7 +2564,7 @@ function PatternCodexSection({
 
         {hasNextWays ? (
           <div className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Weitergehen</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Was hier sichtbar wird</p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {roomStation ? (
                 <WayLinkCard
@@ -2598,7 +2598,7 @@ function PatternCodexSection({
                 <WayLinkCard
                   key={journey.id}
                   href={withPathContext(`/codex/${journey.id}`, { from: entity.id })}
-                  title="Weg betreten"
+                  title="Spur oeffnen"
                   note={journey.steps?.map((step) => step.label).join(" -> ") ?? journey.summary}
                   movementSteps={journey.steps?.map((step) => step.label) ?? []}
                 />

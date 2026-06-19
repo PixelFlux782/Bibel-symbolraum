@@ -63,7 +63,7 @@ export const lightEngineData: SymbolEngineData = {
       reference: "Exodus 13,21",
       title: "Licht auf dem Weg",
       text: "Die Saeule begleitet Israel durch die Nacht und macht den Weg begehbar.",
-      meaning: "Licht wird zur Orientierung: nicht als ganze Karte, sondern als Fuehrung fuer den naechsten Schritt.",
+      meaning: "Licht wird zur Orientierung: nicht als ganze Karte, sondern als leise Richtung im Dunkel.",
     },
     {
       id: "john-light",
@@ -77,7 +77,7 @@ export const lightEngineData: SymbolEngineData = {
     { id: "darkness", label: "Dunkelheit", relation: "Tiefe", detail: "Vor der Sichtbarkeit liegt ein Raum der Erwartung." },
     { id: "revelation", label: "Offenbarung", relation: "Durchbruch", detail: "Licht laesst hervortreten, was zuvor verborgen blieb." },
     { id: "awareness", label: "Erkenntnis", relation: "Bewusstsein", detail: "Sichtbarkeit kann zur inneren Wahrnehmung werden." },
-    { id: "guidance", label: "Orientierung", relation: "Fuehrung", detail: "Licht zeigt genug Weg fuer den naechsten Schritt." },
+    { id: "guidance", label: "Orientierung", relation: "Fuehrung", detail: "Licht zeigt genug Richtung fuer den Augenblick." },
     { id: "presence", label: "Gegenwart", relation: "Nahe", detail: "Licht macht eine tragende Gegenwart erfahrbar." },
     { id: "life", label: "Leben", relation: "Leuchten", detail: "Johannes verbindet Leben und Licht im Inneren." },
   ],
@@ -130,7 +130,7 @@ export const lightEngineData: SymbolEngineData = {
       id: "light-on-the-way",
       navigationLabel: "Licht auf dem Weg",
       eyebrow: "Exodus 13,21",
-      title: "Das Licht zeigt den naechsten Schritt.",
+      title: "Das Licht oeffnet eine Spur.",
       text: "In der Nacht wird Licht zur Saeule. Es nimmt den Weg nicht vorweg, aber es gibt Richtung.",
       inscription: "Saeule / Orientierung / Fuehrung",
       visual: {

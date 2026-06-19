@@ -124,7 +124,7 @@ export const breadEngineData: SymbolEngineData = {
       hebrewSummary: "Das finale Mem bewahrt die verborgene Innenseite der Gabe: Versorgung wird empfangen und nicht vollstaendig kontrolliert.",
       biblicalSceneIds: ["exodus-16-manna"],
       connectionIds: ["desert", "word"],
-      reflection: { kicker: "Innere Erfahrung", question: "Welche Gabe reicht fuer deinen heutigen Schritt?" },
+      reflection: { kicker: "Innere Erfahrung", question: "Welche Gabe reicht fuer den heutigen Tag?" },
     },
     {
       id: "breaking",

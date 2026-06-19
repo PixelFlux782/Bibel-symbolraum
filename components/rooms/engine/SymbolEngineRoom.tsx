@@ -86,7 +86,7 @@ function WaterFirstEntryNotice({ symbolSlug }: { symbolSlug: string }) {
     <aside className="symbol-engine__first-entry" aria-label="Erster Eintritt">
       <p className="symbol-engine__first-entry-title">Erster Eintritt</p>
       <p className="symbol-engine__first-entry-copy">
-        Der Weg beginnt im Wasser. Verweile einen Moment in der Tiefe. Wenn du antwortest, entsteht daraus deine erste Spur.
+        Der Wasser-Raum oeffnet sich in der Tiefe. Wenn du antwortest, bewahrt dieser Raum deine erste Spur.
       </p>
     </aside>
   );
@@ -101,14 +101,14 @@ const nextRoomNotices: Record<string, {
 }> = {
   wasser: {
     blockedBySymbol: "licht",
-    buttonLabel: "Weiter zum Licht-Raum",
-    copy: "Aus der Tiefe hebt sich Licht. Wenn du weitergehen möchtest, öffnet sich der nächste Raum.",
+    buttonLabel: "Den Licht-Raum betreten",
+    copy: "Aus der Tiefe hebt sich Licht. Eine leise Spur öffnet den Raum des Lichtes.",
     fallbackHref: "/raeume/licht",
     nextSymbol: "licht",
   },
   licht: {
     blockedBySymbol: "feuer",
-    buttonLabel: "Weiter zum Feuer-Raum",
+    buttonLabel: "Den Feuer-Raum betreten",
     copy: (
       <>
         Wo Licht offenbar wird, beginnt auch Feuer: nicht als Zerst&ouml;rung, sondern als L&auml;uterung,
@@ -120,7 +120,7 @@ const nextRoomNotices: Record<string, {
   },
   feuer: {
     blockedBySymbol: "wueste",
-    buttonLabel: "Weiter zum Wüste-Raum",
+    buttonLabel: "Den Wüste-Raum betreten",
     copy: (
       <>
         Was im Feuer gel&auml;utert wurde, tritt in die W&uuml;ste: in den Raum der Leere, der Pr&uuml;fung
@@ -132,11 +132,11 @@ const nextRoomNotices: Record<string, {
   },
   wueste: {
     blockedBySymbol: "brot",
-    buttonLabel: "Weiter zum Brot-Raum",
+    buttonLabel: "Den Brot-Raum betreten",
     copy: (
       <>
         In der W&uuml;ste wird der Mangel h&ouml;rbar. Dort, wo nichts festzuhalten bleibt, erscheint Brot
-        als Gabe f&uuml;r den n&auml;chsten Schritt.
+        als Gabe in der Leere.
       </>
     ),
     fallbackHref: "/raeume/brot",
@@ -195,8 +195,8 @@ function NextRoomNotice({ symbolSlug }: { symbolSlug: string }) {
   const href = nextStep?.symbol === notice.nextSymbol ? nextStep.roomHref : notice.fallbackHref;
 
   return (
-    <aside className="symbol-engine__next-room" aria-label="Der nächste Raum">
-      <p className="symbol-engine__next-room-title">Der nächste Raum</p>
+    <aside className="symbol-engine__next-room" aria-label="Eine Spur öffnet sich">
+      <p className="symbol-engine__next-room-title">Eine Spur öffnet sich</p>
       <p className="symbol-engine__next-room-copy">{notice.copy}</p>
       <Link href={href} className="symbol-engine__next-room-link">
         {notice.buttonLabel}
@@ -213,10 +213,10 @@ function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: 
 
   return (
     <div className="symbol-engine__onward">
-      <p>Weiter vertiefen</p>
+      <p>Was hier sichtbar wurde</p>
       <div>
         <Link href="/mein-pfad">In Mein Pfad ansehen</Link>
-        <Link href={codexHref}>Zurueck zu {data.symbolLabel} im Codex</Link>
+        <Link href={codexHref}>{data.symbolLabel} im Codex lesen</Link>
         <Link href={symbolNetworkHref}>Zum Symbolnetz zurueckkehren</Link>
         {contextReturnLink ? <Link href={contextReturnLink.returnHref}>{contextReturnLink.returnLabel}</Link> : null}
       </div>
@@ -265,11 +265,11 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         <div className="symbol-engine__actions">
           {!engine.isFirst ? (
             <button type="button" className="symbol-engine__back" onClick={engine.retreat}>
-              Zurueck
+              Zur vorherigen Tiefe
             </button>
           ) : null}
           <button type="button" className="symbol-engine__action" onClick={engine.advance}>
-            {engine.isLast ? "Reise erneut beginnen" : "Naechste Station"}
+            {engine.isLast ? "Noch einmal in die Tiefe" : "Tiefer lauschen"}
             <span aria-hidden="true" />
           </button>
         </div>

@@ -481,7 +481,7 @@ function SymbolRoomExperience({ definition }: { definition: SymbolRoomDefinition
           ) : null}
         </div>
         {resonancePath.length ? (
-          <div className="symbol-room-resonance-path mt-12" aria-label="Resonanzpfad">
+          <div className="symbol-room-resonance-path mt-12" aria-label="Resonanzspur">
             {resonancePath.map((edge, index) => {
               const targetNode = getNodeById(definition.graph, getOtherNodeId(edge, activeNodeId));
               const kind = getResonanceKind(edge.weight);

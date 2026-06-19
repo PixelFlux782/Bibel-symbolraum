@@ -29,7 +29,7 @@ const requiredLabels = [
   "In Mein Pfad ansehen",
   "Deine Spur",
   "Deine Spur zu diesem Symbol",
-  "Du warst hier schon",
+  "Wenn du zurueckkehrst",
 ];
 
 const forbiddenVisibleSnippets = [

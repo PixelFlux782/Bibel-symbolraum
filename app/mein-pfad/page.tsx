@@ -270,10 +270,10 @@ function getReflectionKnownPathLabel(reflection: StoredReflection) {
 
 function getTrackCtaLabel(config: SymbolPathConfig, hasTrace: boolean) {
   if (!hasTrace) {
-    return `${config.roomLabel} betreten`;
+    return `Den ${config.roomLabel} betreten`;
   }
 
-  return `Zur ${config.traceLabel.replace("-Spur", "spur")}`;
+  return `Zur ${config.traceLabel.replace("-Spur", "spur")} zurueckkehren`;
 }
 
 function buildPersonalSymbolTracks(reflections: StoredReflection[]): PersonalSymbolTrack[] {
@@ -376,11 +376,11 @@ export default function MeinPfadPage() {
               <div className="symbol-path-empty mx-auto mt-12 max-w-3xl text-center">
                 <p className="symbol-kicker">Dein Pfad ist noch still</p>
                 <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
-                  Beginne im Wasser-Raum. Dort entsteht deine erste Spur.
+                  Im Wasser-Raum kann deine erste Spur sichtbar werden.
                 </p>
                 <div className="symbol-path-empty__entries mt-9">
                   <Link href="/raeume/wasser" className="symbol-archive-action">
-                    Mit Wasser beginnen
+                    Den Wasser-Raum betreten
                   </Link>
                   <Link href="/symbolnetz" className="symbol-archive-action symbol-archive-action--quiet">
                     Symbolnetz oeffnen
@@ -460,7 +460,7 @@ export default function MeinPfadPage() {
 }
 
 function getJourneyStepCtaLabel(hasTrace: boolean) {
-  return hasTrace ? "Raum erneut betreten" : "Raum betreten";
+  return hasTrace ? "In diesen Raum zurueckkehren" : "Diesen Raum betreten";
 }
 
 function PersonalJourneyCard({
@@ -476,28 +476,28 @@ function PersonalJourneyCard({
   const hasAnyTrace = [...reflectionByStep.values()].some(Boolean);
 
   return (
-    <section className="symbol-journey-card" aria-label="Weg Vom Wasser zum Brot">
+    <section className="symbol-journey-card" aria-label="Spurenfeld Vom Wasser zum Brot">
       <div className="symbol-journey-card__head">
-        <p className="symbol-kicker">Gefuehrter Weg</p>
+        <p className="symbol-kicker">Verbundenes Spurenfeld</p>
         <h2>{journey.title}</h2>
-        <p className="symbol-journey-card__subtitle">Deine fuenf Grundspuren als ein Weg</p>
+        <p className="symbol-journey-card__subtitle">Deine fuenf Grundspuren in Resonanz</p>
         <p className="symbol-copy">
           Wasser, Licht, Feuer, Wueste und Brot bilden zusammen eine Bewegung: Ursprung, Offenbarung, Wandlung,
-          Pruefung und Gabe.
+          Laeuterung und Gabe.
         </p>
       </div>
 
       {!hasAnyTrace ? (
         <div className="symbol-journey-empty">
-          <p className="symbol-kicker">Der Weg ist noch still</p>
-          <p>Beginne mit Wasser oder betrete den Raum, der dich ruft.</p>
+          <p className="symbol-kicker">Das Spurenfeld ist noch still</p>
+          <p>Wasser kann sich zuerst oeffnen, oder ein anderer Raum ruft leise.</p>
           <div>
             <Link href={journey.steps[0]?.roomHref ?? "/raeume/wasser"} className="symbol-archive-action">
-              Mit Wasser beginnen
+              Den Wasser-Raum betreten
             </Link>
             {journey.steps.slice(1).map((step) => (
               <Link key={step.symbol} href={step.roomHref} className="symbol-archive-action">
-                {step.label} betreten
+                {step.label}-Raum betreten
               </Link>
             ))}
           </div>
@@ -516,7 +516,7 @@ function PersonalJourneyCard({
                 <span className="symbol-journey-step__index">{String(index + 1).padStart(2, "0")}</span>
                 <h3>{step.label}</h3>
                 <p className="symbol-journey-step__status">
-                  {hasTrace ? "Spur vorhanden" : "Noch offen"}
+                  {hasTrace ? "Spur bewahrt" : "Noch still"}
                 </p>
                 <p>{step.text}</p>
                 {reflection ? (
@@ -530,7 +530,7 @@ function PersonalJourneyCard({
                     </p>
                   </div>
                 ) : (
-                  <p className="symbol-journey-step__still">Dieser Schritt ist noch still.</p>
+                  <p className="symbol-journey-step__still">Dieser Raum ist noch still.</p>
                 )}
                 <div className="symbol-journey-step__actions">
                   <Link href={step.roomHref} className="symbol-archive-action">
@@ -551,9 +551,9 @@ function PersonalJourneyCard({
 
 function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
   return (
-    <section className="symbol-personal-map" aria-label="Persönliche Symbol-Landkarte">
+    <section className="symbol-personal-map" aria-label="Persoenliches Spurenfeld">
       <div className="symbol-personal-map__head">
-        <p className="symbol-kicker">Persönliche Symbol-Landkarte</p>
+        <p className="symbol-kicker">Persoenliches Spurenfeld</p>
         <h2>Fünf innere Spuren</h2>
       </div>
 
@@ -565,7 +565,7 @@ function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
                 {track.config.hebrew}
               </p>
               <p className="symbol-personal-track__status">
-                {track.count > 0 ? "Spur aufgenommen" : "Noch keine Spur"}
+                {track.count > 0 ? "Spur bewahrt" : "Noch still"}
               </p>
             </div>
 
@@ -574,7 +574,7 @@ function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
               {track.count > 0 ? getTraceCountLabel(track.count) : "Noch keine Spur"}
             </p>
             <p className="symbol-personal-track__last">
-              {track.lastPathLabel ? `Letzte Spur: ${track.lastPathLabel}` : "Diese Spur wartet noch."}
+              {track.lastPathLabel ? `Zuletzt beruehrt: ${track.lastPathLabel}` : "Diese Spur wartet still."}
             </p>
 
             <Link href={track.href} className="symbol-archive-action">

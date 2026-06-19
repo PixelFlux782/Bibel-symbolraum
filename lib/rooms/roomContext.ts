@@ -234,7 +234,7 @@ export function resolveRoomContext(
   if (from === "journey") {
     const journey = getSymbolJourney(path) ?? getSymbolJourneyForSymbol(symbolId);
     const journeyTitle = journey?.title ?? "Vom Wasser zum Brot";
-    const journeyTraceText = `Aus der Journey: ${journeyTitle}`;
+    const journeyTraceText = `Aus der Spur: ${journeyTitle}`;
     const pathText = pathTraceText && path !== journey?.id ? `${pathTraceText}. ` : "";
 
     return {
@@ -245,7 +245,7 @@ export function resolveRoomContext(
       pathLabel: pathDisplayLabel,
       title: "Eintritt",
       text: `${pathText}${journeyTraceText}.`,
-      mobileTitle: `Journey -> ${roomTitle}`,
+      mobileTitle: `Spur -> ${roomTitle}`,
       mobileText: pathTraceText && path !== journey?.id ? `${pathTraceText}. ${journeyTraceText}.` : journeyTraceText,
       returnHref: "/mein-pfad",
       returnLabel: "Zurueck zu Mein Pfad",
@@ -266,11 +266,11 @@ export function resolveRoomContext(
       pathId: path,
       pathLabel: pathDisplayLabel,
       title: "Eintritt",
-      text: pathTraceText ? `${pathTraceText}. Du betrittst eine Station dieses Weges.` : `${movement}. Du betrittst eine Station dieses Weges.`,
+      text: pathTraceText ? `${pathTraceText}. Du betrittst einen Raum dieser Spur.` : `${movement}. Du betrittst einen Raum dieser Spur.`,
       mobileTitle: `${movement} -> ${roomTitle}`,
-      mobileText: pathTraceText ?? "Du betrittst eine Station dieses Weges.",
+      mobileText: pathTraceText ?? "Du betrittst einen Raum dieser Spur.",
       returnHref: `/codex/${path}`,
-      returnLabel: `Zurueck zum Weg ${pathTitle}`,
+      returnLabel: `Zurueck zur Spur ${pathTitle}`,
     };
   }
 

@@ -636,7 +636,7 @@ export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
     category: 'Schöpfung / Klarheit / Orientierung',
     shortMeaning: 'Klarheit, Offenbarung und Orientierung im dunklen Raum.',
     poeticIntro: 'Licht fällt auf die Wasser und macht Konturen sichtbar. Es trennt nicht kalt, sondern schenkt Orientierung.',
-    reflectionQuestion: 'Welches kleine Licht würde gerade genügen, um den nächsten Schritt zu sehen?',
+    reflectionQuestion: 'Welches kleine Licht würde gerade genügen, damit eine Spur sichtbar wird?',
     relatedSymbols: ['wasser', 'geist', 'reinigung', 'brot', 'baum'],
     relations: [
       {
@@ -871,7 +871,7 @@ export const SYMBOLS: SymbolItem[] = [
     bibleReferences: ['Johannes 14,6', 'Psalm 23,3', 'Jesaja 30,21'],
     hebrewTrace: 'Der Weg als Lebensspur und Ruf zur Entscheidung.',
     numberMeaning: '3 – Entwicklung, Weg und das Gelenk zwischen Anfang und Ziel.',
-    lifeQuestion: 'Wohin führt dein nächster Schritt, wenn du ehrlich vertraust?',
+    lifeQuestion: 'Welche Spur öffnet sich, wenn du ehrlich vertraust?',
     meditation: 'Stell dir einen schmalen Pfad vor, der vor dir auftaucht und dich ruhig weiterführt.',
     connectedSymbols: ['licht', 'wasser', 'berg'],
   },

@@ -89,7 +89,7 @@ const lightSymbolGraph: SymbolGraph = {
       id: "way",
       type: "spiritual-symbol",
       label: "Weg",
-      shortMeaning: "Licht wird zur Orientierung f\u00fcr den n\u00e4chsten Schritt.",
+      shortMeaning: "Licht wird zur Orientierung im gegenwaertigen Dunkel.",
       importance: 0.84,
       depthLevel: 1,
       visuals: { material: "gold-thread", accent: "gold", glow: 0.76, opacity: 0.84, motion: "emerging" },
@@ -149,7 +149,7 @@ const lightSymbolGraph: SymbolGraph = {
       meaningQuality: "transition",
       emotionalTone: "hope",
       visualBehavior: "emerging",
-      explanation: "Licht nimmt den Weg nicht vorweg, aber es zeigt den n\u00e4chsten Schritt.",
+      explanation: "Licht nimmt den Weg nicht vorweg, aber es laesst eine Spur sichtbar werden.",
     },
     {
       source: "light",
@@ -219,7 +219,7 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
       id: "way",
       symbolNodeId: "way",
       state: "way",
-      impulse: "Der n\u00e4chste Schritt tritt hervor.",
+      impulse: "Eine Spur tritt hervor.",
       experienceState: { mood: "hope", motion: "guiding", light: "gold-axis", density: 0.46, transition: "follow" },
     },
     {
@@ -232,7 +232,7 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
   ],
   decision: {
     kicker: "Reflexionsraum",
-    reflectionQuestion: "Wo brauchst du gerade genug Licht f\u00fcr den n\u00e4chsten Schritt?",
+    reflectionQuestion: "Wo brauchst du gerade genug Licht fuer das, was sich zeigt?",
     textareaLabel: "Reflexion zum Lichtraum",
     placeholder: "Still notieren...",
     storageNotice: "Deine Reflexion bleibt nur auf diesem Ger\u00e4t gespeichert.",

@@ -40,7 +40,7 @@ const waterJourney: WaterJourneyStage[] = [
     id: "exodus",
     eyebrow: "Exodus 14",
     title: "Die Grenze wird zum Weg.",
-    text: "Das Meer verschwindet nicht. Es teilt sich. Befreiung beginnt dort, wo du den ersten Schritt durch die Grenze wagst.",
+    text: "Das Meer verschwindet nicht. Es teilt sich. Befreiung beginnt dort, wo du dich der Grenze anvertraust.",
     action: "Durch das Wasser gehen",
     image: "/Visuals/wasser_szenenbild.png",
     alt: "Der Weg durch das geteilte Meer im Exodus",
@@ -51,7 +51,7 @@ const waterJourney: WaterJourneyStage[] = [
     eyebrow: "Licht",
     title: "Aus der Tiefe steigt Licht.",
     text: "Du kehrst nicht an dieselbe Oberfläche zurück. Was Grenze war, ist Durchgang geworden.",
-    action: "Die Reise erneut beginnen",
+    action: "Noch einmal ins Wasser lauschen",
     image: "/Visuals/cinem_lichtraum_backround.png",
     alt: "Ein dunkler Raum, der sich durch einen goldenen Lichtstrahl öffnet",
     inscription: "Offenbarung · Neubeginn",
@@ -143,7 +143,7 @@ export default function WaterRoom() {
       </section>
 
       <p className="water-journey__hint">
-        {isComplete ? "Die Spur ist sichtbar geworden." : "Eine Handlung führt weiter."}
+        {isComplete ? "Die Spur ist sichtbar geworden." : "Eine Spur oeffnet sich leise."}
       </p>
     </main>
   );

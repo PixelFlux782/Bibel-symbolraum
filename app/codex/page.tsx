@@ -36,7 +36,7 @@ const CODEX_GROUPS: { type: CodexEntryType; label: string; optional?: boolean }[
   { type: "meaning", label: "Bedeutung" },
   { type: "meaning-field", label: "Bedeutungsfelder", optional: true },
   { type: "number", label: "Zahlen", optional: true },
-  { type: "journey", label: "Wege", optional: true },
+  { type: "journey", label: "Spuren", optional: true },
 ];
 
 const CODEX_VIEWS: { id: CodexViewId; label: string; description: string }[] = [
@@ -47,7 +47,7 @@ const CODEX_VIEWS: { id: CodexViewId; label: string; description: string }[] = [
   { id: "torah", label: "Thora", description: "Schrift- und Versanker" },
   { id: "gematria", label: "Gematria", description: "Zahlen und Werte" },
   { id: "meaning", label: "Bedeutung", description: "Bedeutungsfelder" },
-  { id: "journeys", label: "Wege", description: "Gef&uuml;hrte Wege" },
+  { id: "journeys", label: "Spuren", description: "Verbundene Spuren" },
 ];
 
 const TORAH_SEQUENCE = [
@@ -87,7 +87,7 @@ const CODEX_TYPE_RESONANCE_LABELS: Partial<Record<CodexEntryType, string>> = {
   scripture: "Schriftanker",
   meaning: "Bedeutung",
   "meaning-field": "Bedeutungsfeld",
-  journey: "Weg",
+  journey: "Spur",
 };
 
 const RESONANCE_PATH_PRIORITIES: Partial<Record<string, Partial<Record<ResonancePathStationKind, string[]>>>> = {
@@ -220,7 +220,7 @@ function buildCodexResonanceTeaser(entry: CodexEntry) {
     ...getEntryRelationLabels(entry),
     ...entry.meaningFields.map(getMeaningFieldLabel),
     ...getEntryScriptureLabels(entry),
-    ...getEntryJourneyLabels(entry).map((label) => `Weg ${label}`),
+    ...getEntryJourneyLabels(entry).map((label) => `Spur ${label}`),
     entry.symbolRoomSlug ? `Symbolraum ${getConnectedEntryLabel(entry.symbolRoomSlug)}` : null,
   ]).slice(0, 6);
 
@@ -342,7 +342,7 @@ function getStationEntryLabel(entry: CodexEntry) {
 }
 
 function getStationKindLabel(kind: ResonancePathStationKind) {
-  if (kind === "Journey") return "Weg";
+  if (kind === "Journey") return "Spur";
   if (kind === "Hebraeisch") return "Hebr\u00e4isch";
 
   return kind;
@@ -400,7 +400,7 @@ function buildResonancePath(entry: CodexEntry): ResonancePathStation[] {
     numberEntry ? { kind: "Zahl", label: getStationEntryLabel(numberEntry), entry: numberEntry } : null,
     meaningEntry ? { kind: "Bedeutung", label: meaningEntry.title, entry: meaningEntry } : null,
     scriptureEntry ? { kind: "Thora", label: scriptureEntry.title, entry: scriptureEntry } : null,
-    journeyEntry ? { kind: "Journey", label: `Weg ${journeyEntry.title}`, entry: journeyEntry } : null,
+    journeyEntry ? { kind: "Journey", label: `Spur ${journeyEntry.title}`, entry: journeyEntry } : null,
   ];
 
   return stations.filter((station): station is ResonancePathStation => Boolean(station?.label.trim()));
@@ -432,7 +432,7 @@ function CodexResonancePath({
 
   return (
     <nav
-      aria-label={`Resonanzpfad fuer ${entry.title}`}
+      aria-label={`Resonanzspur fuer ${entry.title}`}
       className="mt-4 overflow-hidden border border-gold/[0.13] bg-[linear-gradient(90deg,rgba(189,160,109,0.07),rgba(255,255,255,0.018)_46%,rgba(127,184,201,0.035))] px-4 py-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] backdrop-blur-md sm:px-5"
     >
       <ol className="flex flex-wrap items-stretch gap-2 sm:gap-3">
@@ -897,7 +897,7 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
           </div>
           <div className="border-t border-white/[0.06] pt-4">
             <p className="text-[0.58rem] uppercase tracking-[0.26em] text-muted-soft">
-              {entry.steps?.length ? "Schritte" : "Bibelanker"}
+              {entry.steps?.length ? "Spurenfolge" : "Bibelanker"}
             </p>
             <p className="mt-2 font-serif text-2xl text-gold/80">
               {entry.steps?.length ?? entry.scriptureAnchors.length}
@@ -1169,7 +1169,7 @@ function MobileCodexMeaningTrails({
         <button type="button" onClick={() => onSelectView("letters")}>Buchstaben</button>
         <button type="button" onClick={() => onSelectView("gematria")}>Zahlen</button>
         <button type="button" onClick={() => onSelectView("torah")}>Thora</button>
-        <button type="button" onClick={() => onSelectView("journeys")}>Wege</button>
+        <button type="button" onClick={() => onSelectView("journeys")}>Spuren</button>
       </div>
     </section>
   );
