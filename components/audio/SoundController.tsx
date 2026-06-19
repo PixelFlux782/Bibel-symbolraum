@@ -6,8 +6,8 @@ export default function SoundController() {
   const { enabled, toggleSound } = useSoundPreference();
 
   const helperText = enabled
-    ? "Leiser Hintergrundton ist aktiviert. Der spätere Drone-/Wasser-Controller bleibt als Architektur vorbereitet."
-    : "Ton aus. Keine Audiospur startet automatisch. Aktivieren, um den späteren Audio-Prototyp vorzubereiten.";
+    ? "Leiser Hintergrundton ist aktiviert. Wasser und Stille bleiben im Raum."
+    : "Ton aus. Keine Spur beginnt von selbst. Aktivieren, wenn ein leiser Hintergrundton den Raum begleiten darf.";
 
   return (
     <div className="pointer-events-auto shrink-0">

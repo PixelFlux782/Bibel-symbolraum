@@ -246,7 +246,7 @@ function getTouchedSummary(reflections: StoredReflection[]) {
 }
 
 function getTraceCountLabel(count: number) {
-  return count === 1 ? "1 Spur" : `${count} Spuren`;
+  return count === 1 ? "Eine Spur" : `${count} Spuren`;
 }
 
 function getReflectionSymbolId(reflection: StoredReflection): ConfiguredSymbolId | undefined {
@@ -397,7 +397,11 @@ export default function MeinPfadPage() {
                   Er bewahrt die Stellen, an denen etwas in dir nachklang.
                 </p>
                 <p className="symbol-path-summary__meta mt-5">
-                  {[getTraceCountLabel(sortedReflections.length), ...touchedSummary].join(" / ")}
+                  {sortedReflections.length === 1
+                    ? touchedSummary.length > 0
+                      ? `${touchedSummary[0]} bewahrt`
+                      : "Eine Spur bewahrt"
+                    : [getTraceCountLabel(sortedReflections.length), ...touchedSummary].join(" / ")}
                 </p>
                 {repeatedTouches.length > 0 ? (
                   <p className="symbol-path-resonance mt-4">

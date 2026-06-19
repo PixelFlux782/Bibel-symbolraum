@@ -714,7 +714,7 @@
   .symbol-engine__navigation { top: 5.6rem; }
   .symbol-engine__navigation ol { gap: 0.74rem; }
   .symbol-engine__navigation-step { font-size: 0; }
-  .symbol-engine__content { max-width: none; padding-bottom: 18.5rem; }
+  .symbol-engine__content { max-width: none; padding-bottom: 28rem; }
   .symbol-engine__entry-trace { gap: 0.62rem; margin-bottom: 1.2rem; padding: 0.78rem 0.9rem; }
   .symbol-engine__first-entry { gap: 0.4rem; margin-bottom: 1.05rem; padding: 0.72rem 0.82rem; }
   .symbol-engine__first-entry-copy { font-size: 0.82rem; line-height: 1.35; }
@@ -744,14 +744,24 @@
   .symbol-engine__glyph { margin-bottom: -1.2rem; font-size: 4.8rem; }
   .symbol-engine__content h1 { font-size: clamp(2.5rem, 12vw, 3.65rem); }
   .symbol-engine__text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
-  .symbol-engine__layers { gap: 0.42rem; }
-  .symbol-engine__dimension-bar { grid-column: span 2; }
+  .symbol-engine__actions { margin-top: 1.1rem; margin-bottom: 1.4rem; }
+  .symbol-engine__layers {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .symbol-engine__dimension-bar { grid-column: auto; }
   .symbol-engine__layer,
   .symbol-engine__reflection { padding: 0.68rem 0.72rem; }
   .symbol-engine__biblical-layer article p:last-child,
   .symbol-engine__hebrew-letters p { display: none; }
   .symbol-engine__hebrew-letters { gap: 0.45rem 0.65rem; }
-  .symbol-engine__living-codex { max-height: 11.25rem; }
+  .symbol-engine__living-codex { max-height: 10.5rem; }
+  .symbol-engine__reflection-input { min-height: 4.2rem; }
+  .symbol-engine__reflection-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
   .symbol-engine__hebrew-explanation { display: none; }
   .symbol-engine__connections p { display: none; }
   .symbol-engine__reflection blockquote { font-size: 0.88rem; }

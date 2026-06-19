@@ -253,7 +253,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         {roomContext ? <RoomEntryTrace context={roomContext} /> : null}
         {!roomContext ? <WaterFirstEntryNotice symbolSlug={data.slug} /> : null}
         <RoomPersonalTraceCard symbolSlug={data.slug} roomContext={roomContext} />
-        {!roomContext ? <NextRoomNotice symbolSlug={data.slug} /> : null}
+        <NextRoomNotice symbolSlug={data.slug} />
         <p className="symbol-engine__eyebrow">
           {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
           {activeState.eyebrow}
