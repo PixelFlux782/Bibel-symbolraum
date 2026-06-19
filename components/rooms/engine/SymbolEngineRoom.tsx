@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import type { SymbolEngineData } from "@/types/engine";
 import { recordRoomVisitForRoute } from "@/lib/pathActivity";
 import {
@@ -92,8 +92,61 @@ function WaterFirstEntryNotice({ symbolSlug }: { symbolSlug: string }) {
   );
 }
 
-function WaterNextRoomNotice({ symbolSlug }: { symbolSlug: string }) {
+const nextRoomNotices: Record<string, {
+  blockedBySymbol: string;
+  buttonLabel: string;
+  copy: ReactNode;
+  fallbackHref: string;
+  nextSymbol: string;
+}> = {
+  wasser: {
+    blockedBySymbol: "licht",
+    buttonLabel: "Weiter zum Licht-Raum",
+    copy: "Aus der Tiefe hebt sich Licht. Wenn du weitergehen möchtest, öffnet sich der nächste Raum.",
+    fallbackHref: "/raeume/licht",
+    nextSymbol: "licht",
+  },
+  licht: {
+    blockedBySymbol: "feuer",
+    buttonLabel: "Weiter zum Feuer-Raum",
+    copy: (
+      <>
+        Wo Licht offenbar wird, beginnt auch Feuer: nicht als Zerst&ouml;rung, sondern als L&auml;uterung,
+        W&auml;rme und innere Wandlung.
+      </>
+    ),
+    fallbackHref: "/raeume/feuer",
+    nextSymbol: "feuer",
+  },
+  feuer: {
+    blockedBySymbol: "wueste",
+    buttonLabel: "Weiter zum Wüste-Raum",
+    copy: (
+      <>
+        Was im Feuer gel&auml;utert wurde, tritt in die W&uuml;ste: in den Raum der Leere, der Pr&uuml;fung
+        und der h&ouml;rbaren Stimme.
+      </>
+    ),
+    fallbackHref: "/raeume/wueste",
+    nextSymbol: "wueste",
+  },
+  wueste: {
+    blockedBySymbol: "brot",
+    buttonLabel: "Weiter zum Brot-Raum",
+    copy: (
+      <>
+        In der W&uuml;ste wird der Mangel h&ouml;rbar. Dort, wo nichts festzuhalten bleibt, erscheint Brot
+        als Gabe f&uuml;r den n&auml;chsten Schritt.
+      </>
+    ),
+    fallbackHref: "/raeume/brot",
+    nextSymbol: "brot",
+  },
+};
+
+function NextRoomNotice({ symbolSlug }: { symbolSlug: string }) {
   const [reflections, setReflections] = useState<StoredReflection[] | null>(null);
+  const notice = nextRoomNotices[symbolSlug];
 
   useEffect(() => {
     function refreshReflections() {
@@ -112,12 +165,14 @@ function WaterNextRoomNotice({ symbolSlug }: { symbolSlug: string }) {
   }, []);
 
   const nextStep = useMemo(() => {
+    if (!notice) return undefined;
+
     const journey = getSymbolJourneyForSymbol(symbolSlug);
 
     return getNextJourneyStep(journey?.id, symbolSlug);
-  }, [symbolSlug]);
+  }, [notice, symbolSlug]);
 
-  const hasPersonalWaterTrace = useMemo(() => {
+  const hasCurrentRoomTrace = useMemo(() => {
     if (!reflections) return false;
 
     const reflection = getRoomReflectionForSymbol(reflections, symbolSlug);
@@ -125,26 +180,26 @@ function WaterNextRoomNotice({ symbolSlug }: { symbolSlug: string }) {
     return Boolean(reflection && getReflectionPreview(reflection));
   }, [reflections, symbolSlug]);
 
-  const hasPersonalLightTrace = useMemo(() => {
-    if (!reflections) return false;
+  const hasNextRoomTrace = useMemo(() => {
+    if (!reflections || !notice) return false;
 
-    const reflection = getRoomReflectionForSymbol(reflections, "licht");
+    const reflection = getRoomReflectionForSymbol(reflections, notice.blockedBySymbol);
 
     return Boolean(reflection && getReflectionPreview(reflection));
-  }, [reflections]);
+  }, [notice, reflections]);
 
-  if (symbolSlug !== "wasser" || nextStep?.symbol !== "licht" || !hasPersonalWaterTrace || hasPersonalLightTrace) {
+  if (!notice || !hasCurrentRoomTrace || hasNextRoomTrace) {
     return null;
   }
+
+  const href = nextStep?.symbol === notice.nextSymbol ? nextStep.roomHref : notice.fallbackHref;
 
   return (
     <aside className="symbol-engine__next-room" aria-label="Der nächste Raum">
       <p className="symbol-engine__next-room-title">Der nächste Raum</p>
-      <p className="symbol-engine__next-room-copy">
-        Aus der Tiefe hebt sich Licht. Wenn du weitergehen möchtest, öffnet sich der nächste Raum.
-      </p>
-      <Link href={nextStep.roomHref} className="symbol-engine__next-room-link">
-        Weiter zum Licht-Raum
+      <p className="symbol-engine__next-room-copy">{notice.copy}</p>
+      <Link href={href} className="symbol-engine__next-room-link">
+        {notice.buttonLabel}
       </Link>
     </aside>
   );
@@ -198,7 +253,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         {roomContext ? <RoomEntryTrace context={roomContext} /> : null}
         {!roomContext ? <WaterFirstEntryNotice symbolSlug={data.slug} /> : null}
         <RoomPersonalTraceCard symbolSlug={data.slug} roomContext={roomContext} />
-        {!roomContext ? <WaterNextRoomNotice symbolSlug={data.slug} /> : null}
+        {!roomContext ? <NextRoomNotice symbolSlug={data.slug} /> : null}
         <p className="symbol-engine__eyebrow">
           {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}
           {activeState.eyebrow}
