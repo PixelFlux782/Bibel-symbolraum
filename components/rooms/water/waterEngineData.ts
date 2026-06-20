@@ -124,7 +124,7 @@ export const waterEngineData: SymbolEngineData = {
       inscription: "Offenes Mem / Ursprung / Tiefe",
       visual: {
         image: visualAssets.wasserDepth,
-        backgroundImage: visualAssets.tiefenraum,
+        backgroundImage: visualAssets.wasserInterface,
         alt: "Tiefer Wasserraum mit Lichtstrahl und hebraeischem Zeichen",
         atmosphere: { id: "depth", mood: "still", motion: "sinkend", light: "tiefblau", density: 0.88 },
         veilOpacity: 0.78,
@@ -212,7 +212,7 @@ export const waterEngineData: SymbolEngineData = {
       inscription: "Jordan / Taufe / Verwandlung",
       visual: {
         image: visualAssets.wasserHebrew,
-        backgroundImage: visualAssets.archivHero,
+        backgroundImage: visualAssets.wasserHebrew,
         alt: "Hebraeisches Wassersymbol in einem dunklen Raum",
         atmosphere: { id: "baptism", mood: "offen", motion: "auftauchend", light: "weichgold", density: 0.48 },
         veilOpacity: 0.56,

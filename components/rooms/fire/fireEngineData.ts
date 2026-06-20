@@ -75,8 +75,8 @@ export const fireEngineData: SymbolEngineData = {
       text: "Waerme wartet unter der Oberflaeche. Ein Funke genuegt, damit sichtbar wird, was bereits in Bewegung ist.",
       inscription: "Potential / Glut / Funke",
       visual: {
-        image: visualAssets.feuerHero,
-        backgroundImage: visualAssets.tiefenraum,
+        image: visualAssets.feuerGlut,
+        backgroundImage: visualAssets.feuerAsh,
         alt: "Verborgene warme Glut in einem dunklen Raum",
         atmosphere: { id: "hidden-fire", mood: "erwartend", motion: "glimmend", light: "tiefes amber", density: 0.68 },
         veilOpacity: 0.72,
@@ -98,7 +98,7 @@ export const fireEngineData: SymbolEngineData = {
       inscription: "Offenbarung / Gegenwart / Ruf",
       visual: {
         image: visualAssets.feuerHero,
-        backgroundImage: visualAssets.tiefenraum,
+        backgroundImage: visualAssets.feuerGlut,
         alt: "Warme goldene Lichtachsen erinnern an einen brennenden Dornbusch",
         atmosphere: { id: "burning-bush", mood: "wach", motion: "aufflammend", light: "warmes gold", density: 0.54 },
         veilOpacity: 0.56,
@@ -120,7 +120,7 @@ export const fireEngineData: SymbolEngineData = {
       inscription: "Fuehrung / Nacht / Weg",
       visual: {
         image: visualAssets.feuerHero,
-        backgroundImage: visualAssets.tiefenraum,
+        backgroundImage: visualAssets.feuerGlut,
         alt: "Goldene Lichtsaeule weist durch einen dunklen Raum",
         atmosphere: { id: "pillar-of-fire", mood: "entschieden", motion: "weisend", light: "goldene saeule", density: 0.48 },
         veilOpacity: 0.5,
@@ -141,8 +141,8 @@ export const fireEngineData: SymbolEngineData = {
       text: "Feuer kann klaeren, ohne das Wesentliche auszuloeschen. In der Laeuterung bekommt Verwandlung eine neue Gestalt.",
       inscription: "Laeuterung / Reinigung / Verwandlung",
       visual: {
-        image: visualAssets.feuerHero,
-        backgroundImage: visualAssets.feuerHero,
+        image: visualAssets.feuerMacro,
+        backgroundImage: visualAssets.feuerHebrew,
         alt: "Warmer goldener Feuerschein sammelt sich in einem tiefen Raum",
         atmosphere: { id: "refining-fire", mood: "klaerend", motion: "sammelnd", light: "lebendiges gold", density: 0.4 },
         veilOpacity: 0.48,

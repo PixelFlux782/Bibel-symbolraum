@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-20T14:19:57.627Z",
+  "generatedAt": "2026-06-20T14:33:55.085Z",
   "bases": [
     {
       "name": "local",
-      "url": "http://127.0.0.1:3000"
+      "url": "http://localhost:3000"
     }
   ],
   "routes": [
@@ -63,7 +63,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -81,7 +81,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -99,7 +99,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -117,7 +117,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -135,7 +135,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover opacity-50",
           "rect": {
@@ -188,7 +188,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -206,7 +206,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -224,7 +224,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -242,7 +242,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -261,20 +261,7 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [
-        {
-          "type": "warning",
-          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
-        },
-        {
-          "type": "warning",
-          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
-        },
-        {
-          "type": "warning",
-          "text": "Image with src \"/Visuals/symbolnetz_backround.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height."
-        }
-      ],
+      "consoleMessages": [],
       "heroRect": null,
       "h1Text": null,
       "h1Color": null
@@ -306,7 +293,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -324,7 +311,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -342,7 +329,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -360,7 +347,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -379,12 +366,7 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [
-        {
-          "type": "warning",
-          "text": "Image with src \"/Visuals/hebr_archiv_waende_background.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height."
-        }
-      ],
+      "consoleMessages": [],
       "heroRect": null,
       "h1Text": "Entdeckter Hebrew Codex",
       "h1Color": "rgba(245, 241, 232, 0.96)"
@@ -418,7 +400,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -436,7 +418,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -454,7 +436,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -472,7 +454,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -526,7 +508,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -544,7 +526,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -562,7 +544,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -580,7 +562,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -598,14 +580,14 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
           "alt": "Weiter dunkler Wasserraum vor der Ordnung",
           "className": "symbol-engine__image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1102
+            "height": 1101
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -616,14 +598,14 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=1920&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1102
+            "height": 1101
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -664,7 +646,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -682,7 +664,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -700,7 +682,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -718,7 +700,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -735,22 +717,22 @@
           "normalized": "/Visuals/licht_raum_hero.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
           "className": "symbol-engine__image",
           "rect": {
-            "x": -1,
-            "y": -1,
-            "width": 1442,
-            "height": 1102
+            "x": 0,
+            "y": 0,
+            "width": 1441,
+            "height": 1101
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.76",
           "zIndex": "auto",
-          "normalized": "/Visuals/tiefenraum_backround.png"
+          "normalized": "/Visuals/licht_raum_hero.png"
         }
       ],
       "visibleBackgrounds": [],
@@ -787,7 +769,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -805,7 +787,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -823,7 +805,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -841,7 +823,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -859,14 +841,14 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
           "alt": "Verborgene warme Glut in einem dunklen Raum",
           "className": "symbol-engine__image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1102
+            "height": 1101
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -876,22 +858,22 @@
           "normalized": "/Visuals/feuer_glut_raum.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1102
+            "height": 1101
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/tiefenraum_backround.png"
+          "normalized": "/Visuals/feuer_glut_raum.png"
         }
       ],
       "visibleBackgrounds": [],
@@ -928,7 +910,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -946,7 +928,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -964,7 +946,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -982,7 +964,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1000,14 +982,14 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
           "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
           "className": "symbol-engine__image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1101
+            "height": 1102
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -1051,7 +1033,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1069,7 +1051,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1087,7 +1069,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1105,7 +1087,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1123,14 +1105,14 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
           "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
           "className": "symbol-engine__image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1102
+            "height": 1101
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -1140,22 +1122,22 @@
           "normalized": "/Visuals/brot_manna_gabe.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1102
+            "height": 1101
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/licht_raum_hero.png"
+          "normalized": "/Visuals/brot_manna_gabe.png"
         }
       ],
       "visibleBackgrounds": [],
@@ -1192,7 +1174,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1210,7 +1192,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1228,7 +1210,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1246,7 +1228,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1264,7 +1246,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover opacity-50",
           "rect": {
@@ -1317,7 +1299,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1335,7 +1317,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1353,7 +1335,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1371,7 +1353,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1390,28 +1372,7 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [
-        {
-          "type": "warning",
-          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
-        },
-        {
-          "type": "warning",
-          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
-        },
-        {
-          "type": "warning",
-          "text": "[React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#004"
-        },
-        {
-          "type": "warning",
-          "text": "Image with src \"/Visuals/symbolnetz_backround.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height."
-        },
-        {
-          "type": "warning",
-          "text": "[React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#004"
-        }
-      ],
+      "consoleMessages": [],
       "heroRect": null,
       "h1Text": null,
       "h1Color": null
@@ -1443,7 +1404,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1461,7 +1422,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1479,7 +1440,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1497,7 +1458,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1516,12 +1477,7 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [
-        {
-          "type": "warning",
-          "text": "Image with src \"/Visuals/hebr_archiv_waende_background.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height."
-        }
-      ],
+      "consoleMessages": [],
       "heroRect": null,
       "h1Text": "Entdeckter Hebrew Codex",
       "h1Color": "rgba(245, 241, 232, 0.96)"
@@ -1555,7 +1511,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1573,7 +1529,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1591,7 +1547,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1609,7 +1565,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1663,7 +1619,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1681,7 +1637,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1699,7 +1655,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1717,7 +1673,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1735,7 +1691,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
           "alt": "Weiter dunkler Wasserraum vor der Ordnung",
           "className": "symbol-engine__image",
           "rect": {
@@ -1753,7 +1709,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=640&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
@@ -1801,7 +1757,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1819,7 +1775,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1837,7 +1793,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1855,7 +1811,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1872,8 +1828,8 @@
           "normalized": "/Visuals/licht_raum_hero.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
           "className": "symbol-engine__image",
           "rect": {
@@ -1887,7 +1843,7 @@
           "objectPosition": "50% 50%",
           "opacity": "0.76",
           "zIndex": "auto",
-          "normalized": "/Visuals/tiefenraum_backround.png"
+          "normalized": "/Visuals/licht_raum_hero.png"
         }
       ],
       "visibleBackgrounds": [],
@@ -1924,7 +1880,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1942,7 +1898,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1960,7 +1916,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1978,7 +1934,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1996,7 +1952,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
           "alt": "Verborgene warme Glut in einem dunklen Raum",
           "className": "symbol-engine__image",
           "rect": {
@@ -2013,8 +1969,8 @@
           "normalized": "/Visuals/feuer_glut_raum.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
@@ -2028,7 +1984,7 @@
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/tiefenraum_backround.png"
+          "normalized": "/Visuals/feuer_glut_raum.png"
         }
       ],
       "visibleBackgrounds": [],
@@ -2065,7 +2021,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -2083,7 +2039,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -2101,7 +2057,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -2119,7 +2075,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -2137,14 +2093,14 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
           "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
           "className": "symbol-engine__image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1045
+            "height": 1044
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -2188,7 +2144,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -2206,7 +2162,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -2224,7 +2180,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -2242,7 +2198,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -2260,7 +2216,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
           "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
           "className": "symbol-engine__image",
           "rect": {
@@ -2277,8 +2233,8 @@
           "normalized": "/Visuals/brot_manna_gabe.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
+          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
@@ -2292,7 +2248,7 @@
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/licht_raum_hero.png"
+          "normalized": "/Visuals/brot_manna_gabe.png"
         }
       ],
       "visibleBackgrounds": [],

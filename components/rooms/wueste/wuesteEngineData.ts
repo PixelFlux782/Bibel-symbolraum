@@ -99,7 +99,7 @@ export const wuesteEngineData: SymbolEngineData = {
       text: "Kein Wasser. Keine Sicherheit. Die Wueste nimmt nicht nur etwas fort, sie macht sichtbar, worauf Vertrauen bisher geruht hat.",
       inscription: "Leere / Mangel / Abhaengigkeit",
       visual: {
-        image: visualAssets.wuesteHero,
+        image: visualAssets.wuesteDust,
         alt: "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
         atmosphere: { id: "desert-emptiness", mood: "still", motion: "verlangsamend", light: "nachtblau", density: 0.84 },
         veilOpacity: 0.78,
@@ -121,8 +121,8 @@ export const wuesteEngineData: SymbolEngineData = {
       text: "Hunger, Durst, Angst und der Wunsch nach Kontrolle treten in der Leere deutlicher hervor. Ohne Ablenkung bekommt das Innere Kontur.",
       inscription: "Pruefung / Verborgenheit / Vertrauen",
       visual: {
-        image: visualAssets.wuesteHero,
-        backgroundImage: visualAssets.wuesteHero,
+        image: visualAssets.wuesteMacro,
+        backgroundImage: visualAssets.wuesteDust,
         alt: "Trockener dunkler Raum mit feinem Staub und einer fernen Lichtachse",
         atmosphere: { id: "desert-testing", mood: "gespannt", motion: "staubend", light: "ferne Achse", density: 0.72 },
         veilOpacity: 0.74,
@@ -144,7 +144,7 @@ export const wuesteEngineData: SymbolEngineData = {
       text: "Die Feuersaeule nimmt die Wueste nicht fort. Sie macht in der dunklen Weite eine Richtung sichtbar und traegt die Spur.",
       inscription: "Feuersaeule / Licht / Gegenwart",
       visual: {
-        image: visualAssets.lichtHero,
+        image: visualAssets.wuestePath,
         alt: "Ruhige goldene Lichtsaeule in einer weiten dunklen Landschaft",
         atmosphere: { id: "desert-guidance", mood: "gesammelt", motion: "weisend", light: "goldene Saeule", density: 0.52 },
         veilOpacity: 0.58,
@@ -166,8 +166,8 @@ export const wuesteEngineData: SymbolEngineData = {
       text: "Nicht die Fuelle spricht, sondern die Stille. Die Wueste wird zum Ort des Wortes, ohne dass sich ihr Geheimnis in einer einfachen Gleichung aufloest.",
       inscription: "Stille / Stimme / Wort",
       visual: {
-        image: visualAssets.wuesteHero,
-        backgroundImage: visualAssets.lichtHero,
+        image: visualAssets.wuesteHebrew,
+        backgroundImage: visualAssets.wuestePath,
         alt: "Warme hebraeische Spuren in einem dunklen stillen Archivraum",
         atmosphere: { id: "desert-voice", mood: "lauschend", motion: "sammelnd", light: "warmes Gold", density: 0.42 },
         veilOpacity: 0.64,

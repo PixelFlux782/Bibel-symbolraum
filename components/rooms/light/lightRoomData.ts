@@ -190,7 +190,7 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
       alt: "Dunkelblauer Raum mit warmen Lichtachsen",
     },
     backgroundImage: {
-      src: visualAssets.lichtHero,
+      src: visualAssets.lichtDepth,
       alt: "Atmosph\u00e4rischer Lichtraum",
     },
   },
@@ -267,7 +267,7 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
         "linear-gradient(116deg, transparent 18%, rgba(var(--symbol-room-accent-rgb), 0.075) 18.2%, transparent 18.7%), linear-gradient(64deg, transparent 70%, rgba(245, 241, 232, 0.045) 70.2%, transparent 70.7%), radial-gradient(circle at 50% 18%, rgba(var(--symbol-room-accent-rgb), 0.12), transparent 30%), var(--symbol-room-background)",
     },
     encounterImage: {
-      src: visualAssets.lichtHero,
+      src: visualAssets.lichtMacro,
       alt: "Dunkelblauer Raum mit warmen Lichtachsen",
     },
     journeyKicker: "Symbolreise",

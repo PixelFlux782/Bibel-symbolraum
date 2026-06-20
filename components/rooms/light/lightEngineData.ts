@@ -91,7 +91,7 @@ export const lightEngineData: SymbolEngineData = {
       text: "Dunkelheit liegt ueber dem Anfang. Der Raum ist still, tief und erwartend.",
       inscription: "Dunkelheit / Tiefe / Erwartung",
       visual: {
-        image: visualAssets.tiefenraum,
+        image: visualAssets.lichtDepth,
         alt: "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
         atmosphere: { id: "before-light", mood: "erwartend", motion: "schwebend", light: "verborgen", density: 0.82 },
         veilOpacity: 0.78,
@@ -114,7 +114,7 @@ export const lightEngineData: SymbolEngineData = {
       inscription: "Licht / Offenbarung / Durchbruch",
       visual: {
         image: visualAssets.lichtHero,
-        backgroundImage: visualAssets.tiefenraum,
+        backgroundImage: visualAssets.lichtDepth,
         alt: "Goldene Lichtachsen brechen ruhig durch einen tiefen nebligen Raum",
         atmosphere: { id: "revelation", mood: "offen", motion: "durchbrechend", light: "goldene Achse", density: 0.58 },
         veilOpacity: 0.56,
@@ -136,7 +136,7 @@ export const lightEngineData: SymbolEngineData = {
       inscription: "Saeule / Orientierung / Fuehrung",
       visual: {
         image: visualAssets.lichtHero,
-        backgroundImage: visualAssets.tiefenraum,
+        backgroundImage: visualAssets.lichtDepth,
         alt: "Ruhige goldene Lichtachse weist durch einen dunklen nebligen Raum",
         atmosphere: { id: "guidance", mood: "gesammelt", motion: "weisend", light: "goldene Saeule", density: 0.5 },
         veilOpacity: 0.52,
@@ -157,8 +157,8 @@ export const lightEngineData: SymbolEngineData = {
       text: "Licht bleibt nicht nur vor dir. Es wird zu Bewusstsein, Gegenwart und lebendigem Leuchten im Inneren.",
       inscription: "Bewusstsein / Gegenwart / Leben",
       visual: {
-        image: visualAssets.lichtHero,
-        backgroundImage: visualAssets.lichtHero,
+        image: visualAssets.lichtHebrew,
+        backgroundImage: visualAssets.lichtMacro,
         alt: "Warmer goldener Lichtschein sammelt sich in einem ruhigen tiefen Raum",
         atmosphere: { id: "inner-light", mood: "gegenwaertig", motion: "sammelnd", light: "weichgold", density: 0.38 },
         veilOpacity: 0.48,
