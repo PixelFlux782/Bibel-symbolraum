@@ -91,7 +91,7 @@ export const lightEngineData: SymbolEngineData = {
       text: "Dunkelheit liegt ueber dem Anfang. Der Raum ist still, tief und erwartend.",
       inscription: "Dunkelheit / Tiefe / Erwartung",
       visual: {
-        image: visualAssets.lichtOrderLine,
+        image: visualAssets.lichtCinema,
         alt: "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
         atmosphere: { id: "before-light", mood: "erwartend", motion: "schwebend", light: "verborgen", density: 0.82 },
         veilOpacity: 0.78,

@@ -101,7 +101,7 @@ export const waterEngineData: SymbolEngineData = {
       text: "Wasser erscheint vor jeder klaren Grenze. Die Tiefe ist dunkel, aber nicht leer: Ueber ihr schwebt bereits Bewegung.",
       inscription: "Tiefe / Geist / Moeglichkeit",
       visual: {
-        image: visualAssets.wasserDepth,
+        image: visualAssets.wasserCinema,
         backgroundImage: visualAssets.wasserInterface,
         alt: "Weiter dunkler Wasserraum vor der Ordnung",
         atmosphere: { id: "origin", mood: "erwartend", motion: "schwebend", light: "untergetaucht", density: 0.54 },
@@ -189,7 +189,7 @@ export const waterEngineData: SymbolEngineData = {
       text: "In der Flut liegt eine harte Ambivalenz: Was geworden ist, wird aufgeloest. Danach muss Leben wieder Boden finden.",
       inscription: "Flut / Loesung / Neubeginn",
       visual: {
-        image: visualAssets.wasserMacro,
+        image: visualAssets.wasserMap,
         backgroundImage: visualAssets.wasserInterface,
         alt: "Wasser in dichter Bewegung",
         atmosphere: { id: "cleansing", mood: "klaerend", motion: "spuelend", light: "silbrig", density: 0.62 },
@@ -254,7 +254,7 @@ export const waterEngineData: SymbolEngineData = {
       text: "Die Reise endet nicht an der Oberflaeche. Wasser bleibt Tiefe, Grenze und Durchgang. Doch nun ist auch die Quelle sichtbar.",
       inscription: "Majim / Quelle / Leben",
       visual: {
-        image: visualAssets.wasserDepth,
+        image: visualAssets.wasserRoomHero,
         backgroundImage: visualAssets.wasserInterface,
         alt: "Wasserraum zwischen Tiefe und Licht",
         atmosphere: { id: "source", mood: "gesammelt", motion: "aufsteigend", light: "offen", density: 0.34 },

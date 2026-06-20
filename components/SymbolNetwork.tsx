@@ -27,7 +27,9 @@ import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { visualAssets } from "@/lib/visualAssets";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import type { MeaningBridge } from "@/lib/meaning-bridges";
+import { derivePersonalWay, type PersonalWay } from "@/lib/personalWay";
 import { recordActivatedLetter } from "@/lib/pathActivity";
+import { STORED_REFLECTIONS_UPDATED_EVENT } from "@/lib/reflections";
 import { meaningNodes as allMeaningNodes } from "@/lib/meaning/meaningNodes";
 import { biblicalMeaningLinks, hebrewMeaningLinks, symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
 import {
@@ -90,6 +92,8 @@ type SymbolNodeData = SymbolMeaningNetworkNode & {
   lensLabel?: string;
   lensNote?: string;
   emergenceIndex?: number;
+  isTouchedOnWay: boolean;
+  isFamiliarOnWay: boolean;
 };
 
 type MeaningNodeData = SymbolMeaningSatellite & {
@@ -1388,6 +1392,18 @@ function InspectorCtaList({ ctas }: { ctas: SymbolInspectorCta[] }) {
   );
 }
 
+function getSymbolWayMemoryNotice(personalWay: PersonalWay | null, symbolId: string) {
+  if (personalWay?.familiarSymbols.includes(symbolId)) {
+    return "Dieses Zeichen kehrt auf deinem Weg wieder.";
+  }
+
+  if (personalWay?.touchedSymbols.includes(symbolId)) {
+    return "Dieses Zeichen wurde auf deinem Weg schon beruehrt.";
+  }
+
+  return null;
+}
+
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
   return (
     <div
@@ -1403,7 +1419,7 @@ function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
       <div
         className={`symbol-constellation-node relative grid h-44 w-44 place-items-center px-5 py-5 text-center transition-colors duration-700 ${
           data.isActive ? "is-active" : data.isPreviewed ? "is-previewed" : data.isRelated ? "is-related" : ""
-        } ${data.id === "wasser" ? "is-first-entry" : ""} ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
+        } ${data.id === "wasser" ? "is-first-entry" : ""} ${data.isTouchedOnWay ? "is-touched-on-way" : ""} ${data.isFamiliarOnWay ? "is-familiar-on-way" : ""} ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
       >
         <div>
           <p className="symbol-breathe font-serif text-5xl leading-none" lang="he" dir="rtl">
@@ -2213,6 +2229,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const [activeSubspaceId, setActiveSubspaceId] = useState<string | null>(null);
   const [symbolViewportMode, setSymbolViewportMode] = useState<SymbolViewportMode>("overview");
   const [flowViewport, setFlowViewport] = useState({ x: 0, y: 0, zoom: 1 });
+  const [personalWay, setPersonalWay] = useState<PersonalWay | null>(null);
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
   const { isEntering } = useRoomTransition();
   const searchSuggestions = useMemo(() => getSymbolSearchSuggestions(searchQuery), [searchQuery]);
@@ -2221,6 +2238,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
   const activeSymbolBridge = getSymbolPathConfig(activeSymbol.id);
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
+  const activeSymbolWayMemoryNotice = getSymbolWayMemoryNotice(personalWay, activeSymbol.id);
   const activeCodexHref = activeCodexEntry
     ? buildSymbolNetworkCodexHref({
         entryId: activeCodexEntry.id,
@@ -2230,6 +2248,22 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         activeResonanceJourneyId,
       })
     : undefined;
+
+  useEffect(() => {
+    function refreshPersonalWay() {
+      setPersonalWay(derivePersonalWay());
+    }
+
+    refreshPersonalWay();
+
+    window.addEventListener("storage", refreshPersonalWay);
+    window.addEventListener(STORED_REFLECTIONS_UPDATED_EVENT, refreshPersonalWay);
+
+    return () => {
+      window.removeEventListener("storage", refreshPersonalWay);
+      window.removeEventListener(STORED_REFLECTIONS_UPDATED_EVENT, refreshPersonalWay);
+    };
+  }, []);
   const activeRoomHref = buildSymbolNetworkRoomHref({
     roomHref: activeSymbol.roomHref,
     symbolId: activeSymbol.id,
@@ -2825,6 +2859,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       ]),
     [focusedSymbolId, isJourneyFocus, journeyFocusMeaningIds, journeyFocusSymbolIds, relationSymbolIds]
   );
+  const touchedSymbolIds = useMemo(() => new Set(personalWay?.touchedSymbols ?? []), [personalWay]);
+  const familiarSymbolIds = useMemo(() => new Set(personalWay?.familiarSymbols ?? []), [personalWay]);
   const nodes = useMemo<Node<SymbolNodeData | MeaningNodeData | LetterNodeData | NumberNodeData | HierarchyNodeData>[]>(
     () => {
       if (activeLetterId && activeCodexLetter && activeLetterNodeId) {
@@ -2846,6 +2882,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 showActions: false,
                 activeLens: null,
                 emergenceIndex,
+                isTouchedOnWay: touchedSymbolIds.has(node.id),
+                isFamiliarOnWay: familiarSymbolIds.has(node.id),
               },
             };
           }),
@@ -2973,6 +3011,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               lensLabel,
               lensNote: undefined,
               emergenceIndex: activeLetterId && letterSymbolIds.has(node.id) ? letterSymbols.findIndex((symbol) => symbol.id === node.id) : undefined,
+              isTouchedOnWay: touchedSymbolIds.has(node.id),
+              isFamiliarOnWay: familiarSymbolIds.has(node.id),
             },
           };
         }),
@@ -3036,7 +3076,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         })) : []),
       ];
     },
-    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceLens, activeLetterId, activeLetterNodeId, activePathId, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode]
+    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceLens, activeLetterId, activeLetterNodeId, activePathId, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, familiarSymbolIds, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode, touchedSymbolIds]
   );
 
   useEffect(() => {
@@ -3519,10 +3559,15 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     if (!path.joint) return;
 
     setActiveSubspaceId(null);
-    recordActivatedLetter({
+    const didRecordLetter = recordActivatedLetter({
       letterId: path.joint.letterId,
       pathId: path.id,
     });
+
+    if (didRecordLetter) {
+      setPersonalWay(derivePersonalWay());
+    }
+
     setActiveLetterId(path.joint.letterId);
     setIsLetterResonanceOpen(false);
     setActiveLetterResonanceId(null);
@@ -4088,6 +4133,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeSymbol.label}</h2>
               <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
               <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
+              {activeSymbolWayMemoryNotice ? (
+                <p className="symbol-way-memory-note mt-5">{activeSymbolWayMemoryNotice}</p>
+              ) : null}
               {activeSymbol.id === "wasser" ? (
                 <p className="symbol-first-entry-note mt-5">Erster Eintritt: Wasser</p>
               ) : null}

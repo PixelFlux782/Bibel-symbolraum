@@ -158,7 +158,7 @@ export const breadEngineData: SymbolEngineData = {
       text: "Christus spricht vom Brot des Lebens. Das einfache Brot bleibt alltaegliche Nahrung und oeffnet zugleich einen tieferen Raum: Leben wird empfangen, geteilt und vom Wort getragen.",
       inscription: "Christus / Leben / Wort",
       visual: {
-        image: visualAssets.brotDew,
+        image: visualAssets.brotHero,
         alt: "Warmer heller Lichtschein in einem tiefen Raum als Bild fuer das Brot des Lebens",
         atmosphere: { id: "bread-of-life", mood: "gesammelt", motion: "oeffnend", light: "warmes gold", density: 0.38 },
         veilOpacity: 0.54,
