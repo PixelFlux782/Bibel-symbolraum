@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PathPreview } from "@/components/home/PathPreview";
+import { visualAssets } from "@/lib/visualAssets";
 
 const MEANING_FLOW = [
   "Hebraeischer Buchstabe",
@@ -74,7 +75,7 @@ export default function StartPage() {
         <div className="mx-auto grid max-w-6xl items-end gap-14 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="scroll-reveal relative min-h-[28rem] overflow-hidden shadow-[0_34px_120px_rgba(0,0,0,0.34)]">
             <Image
-              src="/Visuals/symbolnetz_backround.png"
+              src={visualAssets.symbolnetzHero}
               alt="Dunkles Symbolnetz mit leuchtenden Verbindungen"
               fill
               sizes="(min-width: 1024px) 54vw, 100vw"

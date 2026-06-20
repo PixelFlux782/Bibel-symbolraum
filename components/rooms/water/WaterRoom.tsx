@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { visualAssets } from "@/lib/visualAssets";
 
 type WaterJourneyStage = {
   id: string;
@@ -22,7 +23,7 @@ const waterJourney: WaterJourneyStage[] = [
     title: "Wasser trägt. Wasser trennt.",
     text: "Bleib einen Moment an der Oberfläche. Vor dir liegt kein Thema, sondern eine Schwelle.",
     action: "Unter die Oberfläche",
-    image: "/Visuals/wasser_interface_backround.png",
+    image: visualAssets.wasserInterface,
     alt: "Ein ruhiger Wasserraum zwischen Tiefe und Licht",
   },
   {
@@ -31,7 +32,7 @@ const waterJourney: WaterJourneyStage[] = [
     title: "Die Tiefe öffnet sich.",
     text: "Im Dunkel liegt nicht nur Gefahr. Mem, der Buchstabe des Wassers, trägt Chaos, Ursprung und Geburt zugleich.",
     action: "Der Spur folgen",
-    image: "/Visuals/wasser_tiefenbild.png",
+    image: visualAssets.wasserDepth,
     alt: "Ein tiefer Wasserraum mit einem Lichtstrahl und hebräischen Zeichen",
     glyph: "מ",
     inscription: "Mem · Tiefe · Ursprung",
@@ -42,7 +43,7 @@ const waterJourney: WaterJourneyStage[] = [
     title: "Die Grenze wird zum Weg.",
     text: "Das Meer verschwindet nicht. Es teilt sich. Befreiung beginnt dort, wo du dich der Grenze anvertraust.",
     action: "Durch das Wasser gehen",
-    image: "/Visuals/wasser_szenenbild.png",
+    image: visualAssets.wasserScene,
     alt: "Der Weg durch das geteilte Meer im Exodus",
     inscription: "Grenze · Durchzug · Befreiung",
   },
@@ -52,7 +53,7 @@ const waterJourney: WaterJourneyStage[] = [
     title: "Aus der Tiefe steigt Licht.",
     text: "Du kehrst nicht an dieselbe Oberfläche zurück. Was Grenze war, ist Durchgang geworden.",
     action: "Noch einmal ins Wasser lauschen",
-    image: "/Visuals/wasser_makro.png",
+    image: visualAssets.wasserMacro,
     alt: "Eine ruhige Wasseroberfläche mit feinem Licht",
     inscription: "Offenbarung · Neubeginn",
   },

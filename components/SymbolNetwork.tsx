@@ -24,6 +24,7 @@ import type { CodexEntry } from "@/lib/codex/types";
 import { calculateGematria } from "@/lib/hebrew/gematria";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
+import { visualAssets } from "@/lib/visualAssets";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import type { MeaningBridge } from "@/lib/meaning-bridges";
 import { recordActivatedLetter } from "@/lib/pathActivity";
@@ -3678,7 +3679,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   return (
     <section className="symbol-page symbol-section symbol-network-page relative min-h-[100svh]">
       <div className="absolute inset-0">
-        <Image src="/Visuals/symbolnetz_backround.png" alt="" fill priority sizes="100vw" className="sacred-drift object-cover opacity-[0.18]" />
+        <Image src={visualAssets.symbolnetzHero} alt="" fill priority sizes="100vw" className="sacred-drift object-cover opacity-[0.18]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.78)_78%,rgba(0,0,0,0.95)_100%)]" />
       </div>
 

@@ -1,4 +1,5 @@
 import type { SymbolEngineData } from "@/types/engine";
+import { visualAssets } from "@/lib/visualAssets";
 
 export const fireEngineData: SymbolEngineData = {
   id: "fire-engine",
@@ -74,8 +75,8 @@ export const fireEngineData: SymbolEngineData = {
       text: "Waerme wartet unter der Oberflaeche. Ein Funke genuegt, damit sichtbar wird, was bereits in Bewegung ist.",
       inscription: "Potential / Glut / Funke",
       visual: {
-        image: "/Visuals/cinem_lichtraum_backround.png",
-        backgroundImage: "/Visuals/tiefenraum_backround.png",
+        image: visualAssets.feuerHero,
+        backgroundImage: visualAssets.tiefenraum,
         alt: "Verborgene warme Glut in einem dunklen Raum",
         atmosphere: { id: "hidden-fire", mood: "erwartend", motion: "glimmend", light: "tiefes amber", density: 0.68 },
         veilOpacity: 0.72,
@@ -96,8 +97,8 @@ export const fireEngineData: SymbolEngineData = {
       text: "Der Dornbusch brennt und wird nicht verzehrt. Feuer wird zur Offenbarung: Eine Gegenwart tritt hervor und ruft Mose beim Namen.",
       inscription: "Offenbarung / Gegenwart / Ruf",
       visual: {
-        image: "/Visuals/cinem_lichtraum_backround.png",
-        backgroundImage: "/Visuals/tiefenraum_backround.png",
+        image: visualAssets.feuerHero,
+        backgroundImage: visualAssets.tiefenraum,
         alt: "Warme goldene Lichtachsen erinnern an einen brennenden Dornbusch",
         atmosphere: { id: "burning-bush", mood: "wach", motion: "aufflammend", light: "warmes gold", density: 0.54 },
         veilOpacity: 0.56,
@@ -118,8 +119,8 @@ export const fireEngineData: SymbolEngineData = {
       text: "In der Nacht wird Feuer zum Wegzeichen. Es nimmt die Unsicherheit nicht fort, aber es laesst Richtung sichtbar werden.",
       inscription: "Fuehrung / Nacht / Weg",
       visual: {
-        image: "/Visuals/cinem_lichtraum_backround.png",
-        backgroundImage: "/Visuals/tiefenraum_backround.png",
+        image: visualAssets.feuerHero,
+        backgroundImage: visualAssets.tiefenraum,
         alt: "Goldene Lichtsaeule weist durch einen dunklen Raum",
         atmosphere: { id: "pillar-of-fire", mood: "entschieden", motion: "weisend", light: "goldene saeule", density: 0.48 },
         veilOpacity: 0.5,
@@ -140,8 +141,8 @@ export const fireEngineData: SymbolEngineData = {
       text: "Feuer kann klaeren, ohne das Wesentliche auszuloeschen. In der Laeuterung bekommt Verwandlung eine neue Gestalt.",
       inscription: "Laeuterung / Reinigung / Verwandlung",
       visual: {
-        image: "/Visuals/cinem_lichtraum_backround.png",
-        backgroundImage: "/Visuals/cinem_lichtraum_backround.png",
+        image: visualAssets.feuerHero,
+        backgroundImage: visualAssets.feuerHero,
         alt: "Warmer goldener Feuerschein sammelt sich in einem tiefen Raum",
         atmosphere: { id: "refining-fire", mood: "klaerend", motion: "sammelnd", light: "lebendiges gold", density: 0.4 },
         veilOpacity: 0.48,

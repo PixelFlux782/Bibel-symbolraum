@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { memo, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
+import { visualAssets } from '@/lib/visualAssets';
 
 type BackgroundConfig = {
   image: string;
@@ -12,21 +13,25 @@ type BackgroundConfig = {
 
 function getBackgroundConfig(pathname: string): BackgroundConfig {
   const rooms: Record<string, BackgroundConfig> = {
-    '/': { image: '/Visuals/Logo_hero.png', position: 'center', opacity: 0.74 },
-    '/symbolnetz': { image: '/Visuals/symbolnetz_backround.png', position: 'center', opacity: 0.78 },
-    '/mein-pfad': { image: '/Visuals/hebr_archiv_waende_background.png', position: 'center 42%', opacity: 0.9 },
-    '/wasser': { image: '/Visuals/wasser_interface_backround.png', position: 'center', opacity: 0.8 },
-    '/raeume/wasser': { image: '/Visuals/wasser_tiefenbild.png', position: 'center', opacity: 0.82 },
-    '/symbol/wasser': { image: '/Visuals/wasser_tiefenbild.png', position: 'center', opacity: 0.84 },
-    '/symbol/wasser/tiefe': { image: '/Visuals/wasser_tiefenbild.png', position: 'center', opacity: 0.86 },
-    '/symbol/wasser/hebraeisch': { image: '/Visuals/wasser_hebr_symbl.png', position: 'center', opacity: 0.84 },
-    '/symbol/wasser/szene': { image: '/Visuals/wasser_szenenbild.png', position: 'center', opacity: 0.84 },
-    '/archiv': { image: '/Visuals/hebr_archiv_waende_background.png', position: 'center 42%', opacity: 0.9 },
-    '/symbole': { image: '/Visuals/symbolnetz_backround.png', position: 'center', opacity: 0.84 },
-    '/symbole/wasser': { image: '/Visuals/wasser_interface_backround.png', position: 'center', opacity: 0.82 },
+    '/': { image: visualAssets.startHero, position: 'center', opacity: 0.74 },
+    '/symbolnetz': { image: visualAssets.symbolnetzHero, position: 'center', opacity: 0.78 },
+    '/mein-pfad': { image: visualAssets.pfadHero, position: 'center 42%', opacity: 0.9 },
+    '/wasser': { image: visualAssets.wasserInterface, position: 'center', opacity: 0.8 },
+    '/raeume/wasser': { image: visualAssets.wasserDepth, position: 'center', opacity: 0.82 },
+    '/raeume/licht': { image: visualAssets.lichtHero, position: 'center', opacity: 0.82 },
+    '/raeume/feuer': { image: visualAssets.feuerHero, position: 'center', opacity: 0.82 },
+    '/raeume/wueste': { image: visualAssets.wuesteHero, position: 'center', opacity: 0.68 },
+    '/raeume/brot': { image: visualAssets.brotHero, position: 'center', opacity: 0.68 },
+    '/symbol/wasser': { image: visualAssets.wasserDepth, position: 'center', opacity: 0.84 },
+    '/symbol/wasser/tiefe': { image: visualAssets.wasserDepth, position: 'center', opacity: 0.86 },
+    '/symbol/wasser/hebraeisch': { image: visualAssets.wasserHebrew, position: 'center', opacity: 0.84 },
+    '/symbol/wasser/szene': { image: visualAssets.wasserScene, position: 'center', opacity: 0.84 },
+    '/archiv': { image: visualAssets.archivHero, position: 'center 42%', opacity: 0.9 },
+    '/symbole': { image: visualAssets.symbolnetzHero, position: 'center', opacity: 0.84 },
+    '/symbole/wasser': { image: visualAssets.wasserInterface, position: 'center', opacity: 0.82 },
   };
 
-  return rooms[pathname] ?? { image: '/Visuals/tiefenraum_backround.png', position: 'center', opacity: 0.68 };
+  return rooms[pathname] ?? { image: visualAssets.tiefenraum, position: 'center', opacity: 0.68 };
 }
 
 const AmbientBackground = memo(() => {
@@ -38,7 +43,7 @@ const AmbientBackground = memo(() => {
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#02050b] text-transparent">
       <div className="absolute inset-[-4%] sacred-drift">
         <Image
-          src="/Visuals/tiefenraum_backround.png"
+          src={visualAssets.tiefenraum}
           alt=""
           fill
           sizes="100vw"
@@ -49,7 +54,7 @@ const AmbientBackground = memo(() => {
 
       <div className="absolute inset-[-3%] light-pulse mix-blend-screen">
         <Image
-          src="/Visuals/cinem_lichtraum_backround.png"
+          src={visualAssets.lichtHero}
           alt=""
           fill
           sizes="100vw"
@@ -60,7 +65,7 @@ const AmbientBackground = memo(() => {
 
       <div className="absolute inset-[-2%] sacred-drift mix-blend-screen">
         <Image
-          src="/Visuals/symbolnetz_backround.png"
+          src={visualAssets.symbolnetzHero}
           alt=""
           fill
           sizes="100vw"

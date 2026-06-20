@@ -18,6 +18,7 @@ import {
   REFLECTION_STORAGE_KEY,
   type StoredReflection,
 } from "@/lib/reflections";
+import { visualAssets } from "@/lib/visualAssets";
 
 const emptyActivity: StoredPathActivity = {
   roomVisits: [],
@@ -108,7 +109,7 @@ export default function ArchivPage() {
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-40 md:py-36">
       <div className="pointer-events-none absolute inset-0 z-0">
         <Image
-          src="/Visuals/hebr_archiv_waende_background.png"
+          src={visualAssets.archivHero}
           alt=""
           fill
           priority

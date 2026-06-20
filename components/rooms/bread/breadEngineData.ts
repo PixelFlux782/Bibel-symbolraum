@@ -1,4 +1,5 @@
 import type { SymbolEngineData } from "@/types/engine";
+import { visualAssets } from "@/lib/visualAssets";
 
 export const breadEngineData: SymbolEngineData = {
   id: "bread-engine",
@@ -90,8 +91,8 @@ export const breadEngineData: SymbolEngineData = {
       text: "Brot beginnt unscheinbar. Wasser traegt das Wachstum, Licht laesst das Korn reifen, und lange bleibt verborgen, was einmal Nahrung werden kann.",
       inscription: "Korn / Wachstum / Verborgenheit",
       visual: {
-        image: "/Visuals/tiefenraum_backround.png",
-        backgroundImage: "/Visuals/cinem_lichtraum_backround.png",
+        image: visualAssets.brotHero,
+        backgroundImage: visualAssets.lichtHero,
         alt: "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
         atmosphere: { id: "bread-grain", mood: "erwartend", motion: "keimend", light: "sanftes morgenlicht", density: 0.64 },
         veilOpacity: 0.7,
@@ -113,7 +114,7 @@ export const breadEngineData: SymbolEngineData = {
       text: "Manna faellt nicht auf Vorrat, sondern fuer den heutigen Tag. Im Mangel wird sichtbar, dass Leben nicht allein aus eigener Verfuegbarkeit getragen wird.",
       inscription: "Manna / Gabe / Vertrauen",
       visual: {
-        image: "/Visuals/tiefenraum_backround.png",
+        image: visualAssets.brotHero,
         alt: "Dunkler weiter Raum mit feinen hellen Spuren als Bild fuer Manna in der Wueste",
         atmosphere: { id: "bread-manna", mood: "still", motion: "fallend", light: "feines gold", density: 0.56 },
         veilOpacity: 0.68,
@@ -135,7 +136,7 @@ export const breadEngineData: SymbolEngineData = {
       text: "Das Brot bleibt nicht unberuehrt auf dem Tisch. Es wird genommen, gebrochen und geteilt; gerade darin wird aus Nahrung eine gemeinsame Gabe.",
       inscription: "Brechen / Teilen / Gemeinschaft",
       visual: {
-        image: "/Visuals/cinem_lichtraum_backround.png",
+        image: visualAssets.lichtHero,
         alt: "Warme Lichtspuren in einem dunklen Raum als Bild fuer geteiltes Brot am Tisch",
         atmosphere: { id: "bread-breaking", mood: "warm", motion: "teilend", light: "tischgold", density: 0.46 },
         veilOpacity: 0.6,
@@ -157,7 +158,7 @@ export const breadEngineData: SymbolEngineData = {
       text: "Christus spricht vom Brot des Lebens. Das einfache Brot bleibt alltaegliche Nahrung und oeffnet zugleich einen tieferen Raum: Leben wird empfangen, geteilt und vom Wort getragen.",
       inscription: "Christus / Leben / Wort",
       visual: {
-        image: "/Visuals/cinem_lichtraum_backround.png",
+        image: visualAssets.lichtHero,
         alt: "Warmer heller Lichtschein in einem tiefen Raum als Bild fuer das Brot des Lebens",
         atmosphere: { id: "bread-of-life", mood: "gesammelt", motion: "oeffnend", light: "warmes gold", density: 0.38 },
         veilOpacity: 0.54,

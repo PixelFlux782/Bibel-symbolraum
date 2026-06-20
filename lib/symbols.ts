@@ -1,4 +1,5 @@
 import { calculateGematria, getHebrewLetterValue } from './hebrew/gematria';
+import { visualAssets } from './visualAssets';
 
 export type SymbolItem = {
   slug: string;
@@ -368,12 +369,12 @@ export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
     ],
     imageAssets: [
       {
-        src: '/Visuals/wasser_tiefenbild.png',
+        src: visualAssets.wasserHero,
         alt: 'Dunkler Wasserraum mit bewegter Oberfläche',
         role: 'hero',
       },
       {
-        src: '/Visuals/symbolnetz_backround.png',
+        src: visualAssets.symbolnetzHero,
         alt: 'Atmosphärischer Hintergrund des Symbolnetzes',
         role: 'background',
       },

@@ -1,4 +1,5 @@
 import type { SymbolEngineData } from "@/types/engine";
+import { visualAssets } from "@/lib/visualAssets";
 
 export const waterEngineData: SymbolEngineData = {
   id: "water-engine",
@@ -100,8 +101,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Wasser erscheint vor jeder klaren Grenze. Die Tiefe ist dunkel, aber nicht leer: Ueber ihr schwebt bereits Bewegung.",
       inscription: "Tiefe / Geist / Moeglichkeit",
       visual: {
-        image: "/Visuals/wasser_tiefenbild.png",
-        backgroundImage: "/Visuals/wasser_interface_backround.png",
+        image: visualAssets.wasserDepth,
+        backgroundImage: visualAssets.wasserInterface,
         alt: "Weiter dunkler Wasserraum vor der Ordnung",
         atmosphere: { id: "origin", mood: "erwartend", motion: "schwebend", light: "untergetaucht", density: 0.54 },
         veilOpacity: 0.72,
@@ -122,8 +123,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Das offene Mem ist keine Antwort. Es ist ein Raum, in dem Ursprung, Unsicherheit und Geburt nebeneinander liegen duerfen.",
       inscription: "Offenes Mem / Ursprung / Tiefe",
       visual: {
-        image: "/Visuals/wasser_tiefenbild.png",
-        backgroundImage: "/Visuals/tiefenraum_backround.png",
+        image: visualAssets.wasserDepth,
+        backgroundImage: visualAssets.tiefenraum,
         alt: "Tiefer Wasserraum mit Lichtstrahl und hebraeischem Zeichen",
         atmosphere: { id: "depth", mood: "still", motion: "sinkend", light: "tiefblau", density: 0.88 },
         veilOpacity: 0.78,
@@ -144,8 +145,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Wasser ist nicht nur Weite. Es bekommt Ufer, Gewicht und Widerstand. Gerade die Grenze macht einen Uebergang sichtbar.",
       inscription: "Geschlossenes Mem / Ufer / Sammlung",
       visual: {
-        image: "/Visuals/wasser_makro.png",
-        backgroundImage: "/Visuals/wasser_interface_backround.png",
+        image: visualAssets.wasserMacro,
+        backgroundImage: visualAssets.wasserInterface,
         alt: "Nahaufnahme einer bewegten Wasseroberflaeche",
         atmosphere: { id: "boundary", mood: "konzentriert", motion: "kreisend", light: "gebrochen", density: 0.68 },
         veilOpacity: 0.66,
@@ -166,8 +167,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Das Meer verschwindet nicht. Es teilt sich. Befreiung beginnt dort, wo der erste Schritt mitten durch die Grenze fuehrt.",
       inscription: "Grenze / Durchzug / Befreiung",
       visual: {
-        image: "/Visuals/wasser_szenenbild.png",
-        backgroundImage: "/Visuals/wasser_interface_backround.png",
+        image: visualAssets.wasserScene,
+        backgroundImage: visualAssets.wasserInterface,
         alt: "Der Weg durch das geteilte Meer im Exodus",
         atmosphere: { id: "exodus", mood: "entschieden", motion: "teilend", light: "goldene Passage", density: 0.74 },
         veilOpacity: 0.52,
@@ -188,8 +189,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "In der Flut liegt eine harte Ambivalenz: Was geworden ist, wird aufgeloest. Danach muss Leben wieder Boden finden.",
       inscription: "Flut / Loesung / Neubeginn",
       visual: {
-        image: "/Visuals/wasser_makro.png",
-        backgroundImage: "/Visuals/wasser_interface_backround.png",
+        image: visualAssets.wasserMacro,
+        backgroundImage: visualAssets.wasserInterface,
         alt: "Wasser in dichter Bewegung",
         atmosphere: { id: "cleansing", mood: "klaerend", motion: "spuelend", light: "silbrig", density: 0.62 },
         veilOpacity: 0.58,
@@ -210,8 +211,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Am Jordan wird Wasser zur Schwelle. Der Weg fuehrt hinab und wieder hinauf: dieselbe Person, und doch ein neuer Anfang.",
       inscription: "Jordan / Taufe / Verwandlung",
       visual: {
-        image: "/Visuals/wasser_hebr_symbl.png",
-        backgroundImage: "/Visuals/hebr_archiv_waende_background.png",
+        image: visualAssets.wasserHebrew,
+        backgroundImage: visualAssets.archivHero,
         alt: "Hebraeisches Wassersymbol in einem dunklen Raum",
         atmosphere: { id: "baptism", mood: "offen", motion: "auftauchend", light: "weichgold", density: 0.48 },
         veilOpacity: 0.56,
@@ -232,8 +233,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Lebendiges Wasser wird nicht nur gereicht. Es beginnt im Menschen selbst zu quellen und verwandelt Durst in Bewegung.",
       inscription: "Durst / Quelle / Leben",
       visual: {
-        image: "/Visuals/wasser_interface_backround.png",
-        backgroundImage: "/Visuals/wasser_makro.png",
+        image: visualAssets.wasserInterface,
+        backgroundImage: visualAssets.wasserMacro,
         alt: "Leuchtender Wasserraum mit aufsteigender Bewegung",
         atmosphere: { id: "living-water", mood: "lebendig", motion: "stroemend", light: "cyan und gold", density: 0.42 },
         veilOpacity: 0.48,
@@ -253,8 +254,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Die Reise endet nicht an der Oberflaeche. Wasser bleibt Tiefe, Grenze und Durchgang. Doch nun ist auch die Quelle sichtbar.",
       inscription: "Majim / Quelle / Leben",
       visual: {
-        image: "/Visuals/wasser_tiefenbild.png",
-        backgroundImage: "/Visuals/wasser_interface_backround.png",
+        image: visualAssets.wasserDepth,
+        backgroundImage: visualAssets.wasserInterface,
         alt: "Wasserraum zwischen Tiefe und Licht",
         atmosphere: { id: "source", mood: "gesammelt", motion: "aufsteigend", light: "offen", density: 0.34 },
         veilOpacity: 0.46,

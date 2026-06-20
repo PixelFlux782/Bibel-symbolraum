@@ -5,6 +5,7 @@ import type {
   SymbolGraph,
   VisualTraits,
 } from "@/lib/symbolism";
+import { visualAssets } from "@/lib/visualAssets";
 
 const fireVisuals: VisualTraits = {
   material: "gold-thread",
@@ -185,11 +186,11 @@ export const fireRoomDefinition: SymbolRoomDefinition = {
     ctaLabel: "Der Waerme folgen",
     ctaHref: "#symbolreise",
     heroImage: {
-      src: "/Visuals/cinem_lichtraum_backround.png",
+      src: visualAssets.feuerHero,
       alt: "Dunkler Raum mit warmen goldenen Lichtachsen",
     },
     backgroundImage: {
-      src: "/Visuals/cinem_lichtraum_backround.png",
+      src: visualAssets.feuerHero,
       alt: "Atmosphaerischer Raum mit warmem Licht",
     },
   },
@@ -266,7 +267,7 @@ export const fireRoomDefinition: SymbolRoomDefinition = {
         "radial-gradient(circle at 50% 78%, rgba(var(--symbol-room-ambient-rgb), 0.16), transparent 34%), radial-gradient(circle at 52% 42%, rgba(var(--symbol-room-accent-rgb), 0.1), transparent 28%), linear-gradient(180deg, rgba(var(--symbol-room-shadow-rgb), 0.96), var(--symbol-room-background))",
     },
     encounterImage: {
-      src: "/Visuals/cinem_lichtraum_backround.png",
+      src: visualAssets.feuerHero,
       alt: "Dunkler Raum mit warmen goldenen Lichtachsen",
     },
     journeyKicker: "Symbolreise",

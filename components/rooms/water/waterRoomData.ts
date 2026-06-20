@@ -1,5 +1,6 @@
 import type { SymbolRoomDefinition } from "@/components/rooms/types";
 import { waterSymbolGraph } from "@/lib/symbolism";
+import { visualAssets } from "@/lib/visualAssets";
 
 export const waterRoomDefinition: SymbolRoomDefinition = {
   id: "water-room",
@@ -13,11 +14,11 @@ export const waterRoomDefinition: SymbolRoomDefinition = {
     ctaLabel: "In die Tiefe gehen",
     ctaHref: "#symbolreise",
     heroImage: {
-      src: "/Visuals/wasser_tiefenbild.png",
+      src: visualAssets.wasserHero,
       alt: "Ruhiger tiefer Wasserraum",
     },
     backgroundImage: {
-      src: "/Visuals/wasser_interface_backround.png",
+      src: visualAssets.wasserInterface,
       alt: "Atmosph\u00e4rischer Wasserraum",
     },
   },
@@ -177,7 +178,7 @@ export const waterRoomDefinition: SymbolRoomDefinition = {
         "radial-gradient(circle at 50% 12%, rgba(var(--symbol-room-ambient-rgb), 0.045), transparent 28%), radial-gradient(circle at 48% 52%, rgba(var(--symbol-room-accent-rgb), 0.035), transparent 38%), var(--symbol-room-background)",
     },
     encounterImage: {
-      src: "/Visuals/wasser_interface_backround.png",
+      src: visualAssets.wasserInterface,
       alt: "Atmosph\u00e4rischer Wasserraum",
     },
     journeyKicker: "Symbolreise",

@@ -5,6 +5,7 @@ import type {
   SymbolGraph,
   VisualTraits,
 } from "@/lib/symbolism";
+import { visualAssets } from "@/lib/visualAssets";
 
 const lightVisuals: VisualTraits = {
   material: "gold-thread",
@@ -185,11 +186,11 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
     ctaLabel: "Dem Licht folgen",
     ctaHref: "#symbolreise",
     heroImage: {
-      src: "/Visuals/cinem_lichtraum_backround.png",
+      src: visualAssets.lichtHero,
       alt: "Dunkelblauer Raum mit warmen Lichtachsen",
     },
     backgroundImage: {
-      src: "/Visuals/cinem_lichtraum_backround.png",
+      src: visualAssets.lichtHero,
       alt: "Atmosph\u00e4rischer Lichtraum",
     },
   },
@@ -266,7 +267,7 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
         "linear-gradient(116deg, transparent 18%, rgba(var(--symbol-room-accent-rgb), 0.075) 18.2%, transparent 18.7%), linear-gradient(64deg, transparent 70%, rgba(245, 241, 232, 0.045) 70.2%, transparent 70.7%), radial-gradient(circle at 50% 18%, rgba(var(--symbol-room-accent-rgb), 0.12), transparent 30%), var(--symbol-room-background)",
     },
     encounterImage: {
-      src: "/Visuals/cinem_lichtraum_backround.png",
+      src: visualAssets.lichtHero,
       alt: "Dunkelblauer Raum mit warmen Lichtachsen",
     },
     journeyKicker: "Symbolreise",
