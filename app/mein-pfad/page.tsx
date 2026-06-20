@@ -21,7 +21,12 @@ import {
   type ConfiguredSymbolId,
   type SymbolPathConfig,
 } from "@/lib/symbols/symbolPathConfig";
-import { symbolJourneys, type SymbolJourney } from "@/lib/symbols/symbolJourneys";
+import {
+  getGreatMovement,
+  symbolJourneys,
+  type SymbolicGreatMovementStep,
+  type SymbolJourney,
+} from "@/lib/symbols/symbolJourneys";
 import { derivePersonalWay, type PersonalWay, type PersonalWayOpening } from "@/lib/personalWay";
 
 function formatDate(value: string) {
@@ -304,6 +309,14 @@ function buildPersonalSymbolTracks(reflections: StoredReflection[]): PersonalSym
   });
 }
 
+function getTouchedSymbolSet(reflections: StoredReflection[]) {
+  return new Set(
+    reflections
+      .map((reflection) => getReflectionSymbolId(reflection))
+      .filter((symbolId): symbolId is ConfiguredSymbolId => Boolean(symbolId))
+  );
+}
+
 function filterReflectionsBySymbol(reflections: StoredReflection[], filter: SymbolFilterKey) {
   if (filter === "all") {
     return reflections;
@@ -377,6 +390,10 @@ export default function MeinPfadPage() {
     () => (reflections === null ? null : derivePersonalWay({ reflections: sortedReflections })),
     [reflections, sortedReflections]
   );
+  const greatMovement = useMemo(
+    () => getGreatMovement(getTouchedSymbolSet(sortedReflections)),
+    [sortedReflections]
+  );
   const hasWay = hasPersonalWay(personalWay);
   const symbolTracks = useMemo(() => buildPersonalSymbolTracks(sortedReflections), [sortedReflections]);
   const filteredReflections = useMemo(
@@ -427,6 +444,8 @@ export default function MeinPfadPage() {
           </div>
         ) : (
           <>
+            <GreatMovementSection movement={greatMovement} />
+
             {hasWay ? (
               <>
                 <PersonalSymbolMap tracks={symbolTracks} />
@@ -523,6 +542,28 @@ export default function MeinPfadPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function GreatMovementSection({ movement }: { movement: SymbolicGreatMovementStep[] }) {
+  return (
+    <section className="symbol-great-movement" aria-labelledby="great-movement-title">
+      <h2 id="great-movement-title">Die gro&szlig;e Bewegung</h2>
+      <div className="symbol-great-movement__lines">
+        {movement.map((step) => (
+          <Link
+            key={step.symbol}
+            href={step.href}
+            className={`symbol-great-movement__line${step.isNear ? " is-near" : ""}`}
+          >
+            <span className="symbol-great-movement__symbol">{step.label}</span>
+            <span aria-hidden="true" className="symbol-great-movement__dash">-</span>
+            <span className="symbol-great-movement__text">{step.text}</span>
+            {step.isNear ? <span className="symbol-great-movement__near">nahe</span> : null}
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 

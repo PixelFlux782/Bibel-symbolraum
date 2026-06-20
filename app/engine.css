@@ -346,6 +346,36 @@
 }
 
 .symbol-engine__inscription { margin-top: 1.15rem; color: rgba(var(--gold-rgb), 0.78); }
+.symbol-engine__resonance-room {
+  display: grid;
+  max-width: 34rem;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.18);
+  padding-left: 0.92rem;
+}
+
+.symbol-engine__resonance-room-title {
+  color: rgba(var(--cyan-rgb), 0.66);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.symbol-engine__resonance-room ul {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.symbol-engine__resonance-room li {
+  color: rgba(var(--foreground-rgb), 0.62);
+  font-family: var(--font-serif), serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.42;
+}
+
 .symbol-engine__actions { display: flex; align-items: center; gap: 1.4rem; margin-top: 1.6rem; }
 .symbol-engine__action,
 .symbol-engine__back {
@@ -761,6 +791,15 @@
   .symbol-engine__content h1 { font-size: clamp(2.5rem, 12vw, 3.65rem); }
   .symbol-engine__text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
   .symbol-engine__actions { margin-top: 1.1rem; margin-bottom: 1.4rem; }
+  .symbol-engine__resonance-room {
+    gap: 0.38rem;
+    margin-top: 0.9rem;
+    padding-left: 0.72rem;
+  }
+  .symbol-engine__resonance-room li {
+    font-size: 0.82rem;
+    line-height: 1.34;
+  }
   .symbol-engine__layers {
     grid-template-columns: 1fr;
     gap: 0.5rem;

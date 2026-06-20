@@ -22,8 +22,56 @@ export type SymbolJourney = {
   steps: SymbolJourneyStep[];
 };
 
+export type SymbolicGreatMovementStep = {
+  symbol: ConfiguredSymbolId;
+  label: string;
+  text: string;
+  href: string;
+  isNear?: boolean;
+};
+
 const WATER_TO_BREAD_JOURNEY_ID = "journey-wasser-zum-brot";
 export const SYMBOL_JOURNEY_OVERVIEW_HREF = "/mein-pfad";
+
+export const SYMBOLIC_GREAT_MOVEMENT: SymbolicGreatMovementStep[] = [
+  {
+    symbol: "wasser",
+    label: "Wasser",
+    text: "Die Tiefe wird betreten.",
+    href: getSymbolPathConfig("wasser")?.roomHref ?? "/raeume/wasser",
+  },
+  {
+    symbol: "licht",
+    label: "Licht",
+    text: "Die Tiefe wird sichtbar.",
+    href: getSymbolPathConfig("licht")?.roomHref ?? "/raeume/licht",
+  },
+  {
+    symbol: "feuer",
+    label: "Feuer",
+    text: "Sichtbarkeit wird Ruf.",
+    href: getSymbolPathConfig("feuer")?.roomHref ?? "/raeume/feuer",
+  },
+  {
+    symbol: "wueste",
+    label: getSymbolPathConfig("wueste")?.label ?? "Wueste",
+    text: "Der Ruf wird Pruefung.",
+    href: getSymbolPathConfig("wueste")?.roomHref ?? "/raeume/wueste",
+  },
+  {
+    symbol: "brot",
+    label: "Brot",
+    text: "Die Pruefung wird Gabe.",
+    href: getSymbolPathConfig("brot")?.roomHref ?? "/raeume/brot",
+  },
+];
+
+export function getGreatMovement(touchedSymbols?: ReadonlySet<string>): SymbolicGreatMovementStep[] {
+  return SYMBOLIC_GREAT_MOVEMENT.map((step) => ({
+    ...step,
+    isNear: touchedSymbols?.has(step.symbol) || undefined,
+  }));
+}
 
 function buildJourneyStep({
   symbol,

@@ -814,6 +814,80 @@ body {
   color: rgba(var(--cyan-rgb), 0.84);
 }
 
+.symbol-great-movement {
+  display: grid;
+  gap: clamp(1.15rem, 2.5vw, 1.65rem);
+  max-width: 42rem;
+  margin: 0 auto clamp(3rem, 6.5vw, 5rem);
+  border-top: 1px solid rgba(var(--gold-rgb), 0.08);
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.05);
+  padding: clamp(1.35rem, 3.4vw, 2.15rem) 0;
+}
+
+.symbol-great-movement h2 {
+  color: rgba(var(--foreground-rgb), 0.92);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(2rem, 4.5vw, 3.45rem);
+  font-style: italic;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.symbol-great-movement__lines {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.symbol-great-movement__line {
+  display: grid;
+  grid-template-columns: minmax(4.8rem, max-content) auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.55rem;
+  min-width: 0;
+  color: rgba(216, 209, 194, 0.62);
+  text-decoration: none;
+  transition: color 700ms ease;
+}
+
+.symbol-great-movement__line:hover,
+.symbol-great-movement__line:focus-visible {
+  color: rgba(216, 209, 194, 0.86);
+}
+
+.symbol-great-movement__line.is-near {
+  color: rgba(216, 209, 194, 0.78);
+}
+
+.symbol-great-movement__symbol {
+  color: rgba(var(--gold-rgb), 0.74);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.12rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.symbol-great-movement__dash {
+  color: rgba(var(--cyan-rgb), 0.32);
+}
+
+.symbol-great-movement__text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.02rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.symbol-great-movement__near {
+  color: rgba(var(--cyan-rgb), 0.52);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
 .symbol-journey-card {
   margin: 0 auto clamp(3rem, 6.5vw, 5rem);
   border-top: 1px solid rgba(var(--gold-rgb), 0.08);
@@ -6458,6 +6532,30 @@ body {
   .symbol-personal-way__opening span {
     font-size: 0.52rem;
     letter-spacing: 0.16em;
+  }
+
+  .symbol-great-movement {
+    max-width: 100%;
+    margin-bottom: 2.35rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.4rem;
+  }
+
+  .symbol-great-movement h2 {
+    font-size: 2.3rem;
+    text-align: left;
+  }
+
+  .symbol-great-movement__line {
+    grid-template-columns: minmax(4.35rem, max-content) auto minmax(0, 1fr);
+    gap: 0.42rem;
+  }
+
+  .symbol-great-movement__near {
+    grid-column: 3;
+    margin-top: -0.1rem;
+    font-size: 0.5rem;
+    letter-spacing: 0.14em;
   }
 
   .symbol-journey-card {

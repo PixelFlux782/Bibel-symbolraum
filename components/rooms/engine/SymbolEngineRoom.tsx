@@ -11,6 +11,7 @@ import {
   STORED_REFLECTIONS_UPDATED_EVENT,
   type StoredReflection,
 } from "@/lib/reflections";
+import { getResonanceRoom } from "@/lib/resonance";
 import type { RoomContext } from "@/lib/rooms/roomContext";
 import { getCodexHref, getSymbolNetworkHref, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import { getNextJourneyStep, getSymbolJourneyForSymbol } from "@/lib/symbols/symbolJourneys";
@@ -224,6 +225,25 @@ function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: 
   );
 }
 
+function ResonanceRoomReadout({ symbolSlug }: { symbolSlug: string }) {
+  const resonanceRoom = getResonanceRoom(symbolSlug);
+
+  if (resonanceRoom.statements.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="symbol-engine__resonance-room" aria-label="Resonanzraum">
+      <p className="symbol-engine__resonance-room-title">Resonanzraum</p>
+      <ul>
+        {resonanceRoom.statements.map((statement) => (
+          <li key={`${statement.type}-${statement.text}`}>{statement.text}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEngineRoomProps) {
   const engine = useSymbolEngine(data, { initialStateId });
   const { activeState } = engine;
@@ -262,6 +282,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         <h1>{activeState.title}</h1>
         <p className="symbol-engine__text">{activeState.text}</p>
         <p className="symbol-engine__inscription">{activeState.inscription}</p>
+        <ResonanceRoomReadout symbolSlug={data.slug} />
         <div className="symbol-engine__actions">
           {!engine.isFirst ? (
             <button type="button" className="symbol-engine__back" onClick={engine.retreat}>
