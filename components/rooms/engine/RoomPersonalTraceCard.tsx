@@ -10,8 +10,9 @@ import {
   STORED_REFLECTIONS_UPDATED_EVENT,
   type StoredReflection,
 } from "@/lib/reflections";
-import type { RoomContext } from "@/lib/rooms/roomContext";
+import { deriveRoomWaymark, type RoomContext } from "@/lib/rooms/roomContext";
 import { getCodexHref, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import { derivePersonalWay } from "@/lib/personalWay";
 
 type RoomPersonalTraceCardProps = {
   roomContext?: RoomContext;
@@ -46,29 +47,48 @@ export function RoomPersonalTraceCard({ roomContext, symbolSlug }: RoomPersonalT
     });
   }, [reflections, roomContext?.source, symbolBridge]);
 
-  if (!reflection || !symbolBridge) {
+  const waymark = useMemo(() => {
+    if (!reflections || !symbolBridge) return null;
+
+    return deriveRoomWaymark({
+      personalWay: derivePersonalWay({ reflections }),
+      roomContext,
+      symbolId: symbolBridge.symbolId,
+    });
+  }, [reflections, roomContext, symbolBridge]);
+
+  if (!symbolBridge) {
     return null;
   }
 
-  const preview = getReflectionPreview(reflection);
+  const preview = reflection ? getReflectionPreview(reflection) : "";
 
-  if (!preview) {
+  if (!preview && !waymark) {
     return null;
   }
 
-  const contextLabel = roomContext?.source === "journey" ? undefined : getReflectionContextLabel(reflection);
+  const contextLabel = reflection && roomContext?.source !== "journey" ? getReflectionContextLabel(reflection) : undefined;
 
   return (
-    <aside className="symbol-engine__personal-trace" aria-label="Persoenliche Rueckkehr-Spur">
-      <p className="symbol-engine__personal-trace-title">Wenn du zurueckkehrst</p>
-      {contextLabel ? (
-        <p className="symbol-engine__personal-trace-context">{contextLabel}</p>
+    <aside className="symbol-engine__personal-trace" aria-label={preview ? "Persoenliche Rueckkehr-Spur" : "Wegmarke"}>
+      {preview ? (
+        <>
+          <p className="symbol-engine__personal-trace-title">Wenn du zurueckkehrst</p>
+          {contextLabel ? (
+            <p className="symbol-engine__personal-trace-context">{contextLabel}</p>
+          ) : null}
+          <p className="symbol-engine__personal-trace-preview">&bdquo;{preview}&ldquo;</p>
+        </>
       ) : null}
-      <p className="symbol-engine__personal-trace-preview">&bdquo;{preview}&ldquo;</p>
-      <div className="symbol-engine__personal-trace-actions">
-        <Link href="/mein-pfad">In Mein Pfad ansehen</Link>
-        <Link href={reflection.codexHref ?? getCodexHref(symbolBridge.symbolId)}>Im Codex vertiefen</Link>
-      </div>
+      {waymark ? (
+        <p className="symbol-engine__personal-trace-waymark">{waymark.text}</p>
+      ) : null}
+      {reflection ? (
+        <div className="symbol-engine__personal-trace-actions">
+          <Link href="/mein-pfad">In Mein Pfad ansehen</Link>
+          <Link href={reflection.codexHref ?? getCodexHref(symbolBridge.symbolId)}>Im Codex vertiefen</Link>
+        </div>
+      ) : null}
     </aside>
   );
 }

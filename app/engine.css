@@ -268,6 +268,22 @@
   overflow-wrap: anywhere;
 }
 
+.symbol-engine__personal-trace-waymark {
+  max-width: 28rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.08);
+  padding-top: 0.52rem;
+  color: rgba(var(--gold-rgb), 0.7);
+  font-family: var(--font-serif), serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.symbol-engine__personal-trace-waymark:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .symbol-engine__personal-trace-preview {
   display: -webkit-box;
   max-width: 28rem;

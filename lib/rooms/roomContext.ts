@@ -9,7 +9,8 @@ import {
   getSymbolNetworkHref,
   getSymbolTraceFallbackLabel,
 } from "@/lib/symbols/symbolPathConfig";
-import { getSymbolJourney, getSymbolJourneyForSymbol } from "@/lib/symbols/symbolJourneys";
+import { getNextJourneyStep, getSymbolJourney, getSymbolJourneyForSymbol } from "@/lib/symbols/symbolJourneys";
+import type { PersonalWay, PersonalWayOpening } from "@/lib/personalWay";
 
 export type RoomSearchParams = Promise<Record<string, string | string[] | undefined>>;
 export type RoomContextSource = "codex" | "symbolnetz" | "pattern" | "journey" | "mein-pfad";
@@ -25,6 +26,12 @@ export type RoomContext = {
   mobileText: string;
   returnHref: string;
   returnLabel: string;
+};
+
+export type RoomWaymarkState = "visited-room" | "familiar-symbol" | "journey-arrival" | "next-opening";
+export type RoomWaymark = {
+  state: RoomWaymarkState;
+  text: string;
 };
 
 const roomLabels: Record<string, string> = {
@@ -103,6 +110,73 @@ function getPersonalTracePhrase(symbolId: string) {
   const traceLabel = getSymbolPathConfig(symbolId)?.traceLabel;
 
   return traceLabel ? `bewahrten ${traceLabel}` : "bewahrten Spur";
+}
+
+function getOpeningHrefSymbol(opening: PersonalWayOpening) {
+  const normalizedHref = opening.href.split(/[?#]/, 1)[0];
+  const match = normalizedHref.match(/^\/raeume\/([^/]+)$/);
+
+  return match?.[1];
+}
+
+function getNaturalNextOpening(personalWay: PersonalWay, symbolId: string) {
+  const journey = getSymbolJourneyForSymbol(symbolId);
+  const nextStep = getNextJourneyStep(journey?.id, symbolId);
+
+  if (!nextStep) {
+    return undefined;
+  }
+
+  return personalWay.nextOpenings.find((opening) => getOpeningHrefSymbol(opening) === nextStep.symbol);
+}
+
+export function deriveRoomWaymark({
+  personalWay,
+  roomContext,
+  symbolId,
+}: {
+  personalWay: PersonalWay;
+  roomContext?: RoomContext;
+  symbolId: string;
+}): RoomWaymark | null {
+  if (roomContext?.source === "journey") {
+    if (symbolId === "licht") {
+      return {
+        state: "journey-arrival",
+        text: "Du kommst aus der Tiefe. Von hier hebt sich Licht.",
+      };
+    }
+
+    return {
+      state: "journey-arrival",
+      text: "Du kommst aus einer Spur. Von hier oeffnet sich der Raum.",
+    };
+  }
+
+  if (personalWay.familiarSymbols.includes(symbolId)) {
+    return {
+      state: "familiar-symbol",
+      text: "Dieses Zeichen kehrt in deiner Spur wieder.",
+    };
+  }
+
+  const naturalNextOpening = getNaturalNextOpening(personalWay, symbolId);
+
+  if (naturalNextOpening) {
+    return {
+      state: "next-opening",
+      text: "Von hier fuehrt der Weg weiter.",
+    };
+  }
+
+  if (personalWay.visitedRooms.includes(symbolId)) {
+    return {
+      state: "visited-room",
+      text: "Dieser Raum ist dir nicht mehr fremd.",
+    };
+  }
+
+  return null;
 }
 
 export function hasSymbolRoom(symbolId: string | null | undefined): symbolId is string {
