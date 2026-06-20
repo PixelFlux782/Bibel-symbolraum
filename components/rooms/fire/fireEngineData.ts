@@ -119,9 +119,9 @@ export const fireEngineData: SymbolEngineData = {
       text: "In der Nacht wird Feuer zum Wegzeichen. Es nimmt die Unsicherheit nicht fort, aber es laesst Richtung sichtbar werden.",
       inscription: "Fuehrung / Nacht / Weg",
       visual: {
-        image: visualAssets.feuerHero,
-        backgroundImage: visualAssets.feuerSmoke,
-        alt: "Goldene Lichtsaeule weist durch einen dunklen Raum",
+        image: visualAssets.feuerSmoke,
+        backgroundImage: visualAssets.feuerHero,
+        alt: "Rauch und warmer Feuerschein steigen wie eine Spur durch einen dunklen Raum",
         atmosphere: { id: "pillar-of-fire", mood: "entschieden", motion: "weisend", light: "goldene saeule", density: 0.48 },
         veilOpacity: 0.5,
       },

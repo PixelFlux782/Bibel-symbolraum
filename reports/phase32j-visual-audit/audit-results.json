@@ -1,0 +1,2844 @@
+[
+  {
+    "viewport": "desktop",
+    "route": "/",
+    "file": "reports\\phase32j-visual-audit\\desktop-home.png",
+    "title": "Bibel-Symbolraum",
+    "url": "http://localhost:3000/",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover opacity-50"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=828&q=75",
+        "naturalWidth": 777,
+        "naturalHeight": 1166,
+        "alt": "Dunkles Symbolnetz mit leuchtenden Verbindungen",
+        "cls": "sacred-drift object-cover"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 2406.28125
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/symbolnetz",
+    "file": "reports\\phase32j-visual-audit\\desktop-homesymbolnetz.png",
+    "title": "Symbolnetz | Bibel-Symbolraum",
+    "url": "http://localhost:3000/symbolnetz",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "sacred-drift object-cover opacity-[0.18]"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/archiv",
+    "file": "reports\\phase32j-visual-audit\\desktop-homearchiv.png",
+    "title": "Bibel-Symbolraum",
+    "url": "http://localhost:3000/archiv",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "sacred-drift object-cover opacity-[0.32]"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 3144.15625
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/mein-pfad",
+    "file": "reports\\phase32j-visual-audit\\desktop-homemein-pfad.png",
+    "title": "Bibel-Symbolraum",
+    "url": "http://localhost:3000/mein-pfad",
+    "imgCount": 4,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wasser",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-wasser.png",
+    "title": "Wasser-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wasser",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "Weiter dunkler Wasserraum vor der Ordnung",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/licht",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-licht.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/feuer",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-feuer.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Verborgene warme Glut in einem dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-wueste.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/brot",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-brot.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/licht?state=before-light",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-licht-state-before-light.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=before-light",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/licht?state=let-there-be-light",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-licht-state-let-there-be-light.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=let-there-be-light",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Goldene Lichtachsen brechen ruhig durch einen tiefen nebligen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/licht?state=light-on-the-way",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-licht-state-light-on-the-way.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=light-on-the-way",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Ruhige goldene Lichtachse weist durch einen dunklen nebligen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/licht?state=light-within",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-licht-state-light-within.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=light-within",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_spiegel_erkenntnis.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Warmer goldener Lichtschein sammelt sich in einem ruhigen tiefen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_spiegel_erkenntnis.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/feuer?state=hidden-fire",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-feuer-state-hidden-fire.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=hidden-fire",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Verborgene warme Glut in einem dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/feuer?state=burning-bush",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-feuer-state-burning-bush.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=burning-bush",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Warme goldene Lichtachsen erinnern an einen brennenden Dornbusch",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/feuer?state=pillar-of-fire",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-feuer-state-pillar-of-fire.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=pillar-of-fire",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Goldene Lichtsaeule weist durch einen dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_rauch_spur.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/feuer?state=refining-fire",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-feuer-state-refining-fire.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=refining-fire",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Warmer goldener Feuerschein sammelt sich in einem tiefen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste?state=emptiness",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-wueste-state-emptiness.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=emptiness",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste?state=testing",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-wueste-state-testing.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=testing",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Trockener dunkler Raum mit feinem Staub und einer fernen Lichtachse",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste?state=guidance",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-wueste-state-guidance.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=guidance",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_pfadschatten.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Ruhige goldene Lichtsaeule in einer weiten dunklen Landschaft",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste?state=voice",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-wueste-state-voice.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=voice",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Warme hebraeische Spuren in einem dunklen stillen Archivraum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_pfadschatten.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1095.09375
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/brot?state=grain",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-brot-state-grain.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=grain",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/brot?state=manna",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-brot-state-manna.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=manna",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Dunkler weiter Raum mit feinen hellen Spuren als Bild fuer Manna in der Wueste",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/brot?state=breaking",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-brot-state-breaking.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=breaking",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_krumenweg.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Warme Lichtspuren in einem dunklen Raum als Bild fuer geteiltes Brot am Tisch",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/brot?state=bread-of-life",
+    "file": "reports\\phase32j-visual-audit\\desktop-homeraeume-brot-state-bread-of-life.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=bread-of-life",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "alt": "Warmer heller Lichtschein in einem tiefen Raum als Bild fuer das Brot des Lebens",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 1088
+    }
+  },
+  {
+    "viewport": "desktop",
+    "browserIssues": [
+      {
+        "type": "warning",
+        "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "Image with src \"/Visuals/symbolnetz_backround.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height.",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "Image with src \"/Visuals/hebr_archiv_waende_background.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height.",
+        "route": "http://localhost:3000/archiv"
+      }
+    ]
+  },
+  {
+    "viewport": "mobile",
+    "route": "/",
+    "file": "reports\\phase32j-visual-audit\\mobile-home.png",
+    "title": "Bibel-Symbolraum",
+    "url": "http://localhost:3000/",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover opacity-50"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "Dunkles Symbolnetz mit leuchtenden Verbindungen",
+        "cls": "sacred-drift object-cover"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 2941.015625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/symbolnetz",
+    "file": "reports\\phase32j-visual-audit\\mobile-homesymbolnetz.png",
+    "title": "Symbolnetz | Bibel-Symbolraum",
+    "url": "http://localhost:3000/symbolnetz",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "sacred-drift object-cover opacity-[0.18]"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1376.46875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/archiv",
+    "file": "reports\\phase32j-visual-audit\\mobile-homearchiv.png",
+    "title": "Bibel-Symbolraum",
+    "url": "http://localhost:3000/archiv",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "sacred-drift object-cover opacity-[0.32]"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 8445.96875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/mein-pfad",
+    "file": "reports\\phase32j-visual-audit\\mobile-homemein-pfad.png",
+    "title": "Bibel-Symbolraum",
+    "url": "http://localhost:3000/mein-pfad",
+    "imgCount": 4,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1119.15625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wasser",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-wasser.png",
+    "title": "Wasser-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wasser",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "Weiter dunkler Wasserraum vor der Ordnung",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1294.765625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/licht",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-licht.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1174.421875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/feuer",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-feuer.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Verborgene warme Glut in einem dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1199.6875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-wueste.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1199.6875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/brot",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-brot.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1244.140625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/licht?state=before-light",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-licht-state-before-light.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=before-light",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1174.421875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/licht?state=let-there-be-light",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-licht-state-let-there-be-light.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=let-there-be-light",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Goldene Lichtachsen brechen ruhig durch einen tiefen nebligen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1244.140625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/licht?state=light-on-the-way",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-licht-state-light-on-the-way.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=light-on-the-way",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Ruhige goldene Lichtachse weist durch einen dunklen nebligen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_morgenlinie_ordung.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1174.421875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/licht?state=light-within",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-licht-state-light-within.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/licht?state=light-within",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_spiegel_erkenntnis.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Warmer goldener Lichtschein sammelt sich in einem ruhigen tiefen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_spiegel_erkenntnis.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1213.609375
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/feuer?state=hidden-fire",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-feuer-state-hidden-fire.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=hidden-fire",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Verborgene warme Glut in einem dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1199.6875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/feuer?state=burning-bush",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-feuer-state-burning-bush.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=burning-bush",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Warme goldene Lichtachsen erinnern an einen brennenden Dornbusch",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1199.6875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/feuer?state=pillar-of-fire",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-feuer-state-pillar-of-fire.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=pillar-of-fire",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Goldene Lichtsaeule weist durch einen dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_rauch_spur.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1155.234375
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/feuer?state=refining-fire",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-feuer-state-refining-fire.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/feuer?state=refining-fire",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Warmer goldener Feuerschein sammelt sich in einem tiefen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1213.609375
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste?state=emptiness",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-wueste-state-emptiness.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=emptiness",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1199.6875
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste?state=testing",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-wueste-state-testing.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=testing",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Trockener dunkler Raum mit feinem Staub und einer fernen Lichtachse",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1244.140625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste?state=guidance",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-wueste-state-guidance.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=guidance",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_pfadschatten.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Ruhige goldene Lichtsaeule in einer weiten dunklen Landschaft",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1244.140625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste?state=voice",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-wueste-state-voice.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/wueste?state=voice",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Warme hebraeische Spuren in einem dunklen stillen Archivraum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_pfadschatten.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1258.0625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/brot?state=grain",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-brot-state-grain.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=grain",
+    "imgCount": 6,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1244.140625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/brot?state=manna",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-brot-state-manna.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=manna",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Dunkler weiter Raum mit feinen hellen Spuren als Bild fuer Manna in der Wueste",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1244.140625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/brot?state=breaking",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-brot-state-breaking.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=breaking",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_krumenweg.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Warme Lichtspuren in einem dunklen Raum als Bild fuer geteiltes Brot am Tisch",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1244.140625
+    }
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/brot?state=bread-of-life",
+    "file": "reports\\phase32j-visual-audit\\mobile-homeraeume-brot-state-bread-of-life.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "url": "http://localhost:3000/raeume/brot?state=bread-of-life",
+    "imgCount": 5,
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "alt": "Warmer heller Lichtschein in einem tiefen Raum als Bild fuer das Brot des Lebens",
+        "cls": "symbol-engine__image"
+      }
+    ],
+    "body": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 1213.609375
+    }
+  },
+  {
+    "viewport": "mobile",
+    "browserIssues": [
+      {
+        "type": "warning",
+        "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "[React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#004",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "Image with src \"/Visuals/symbolnetz_backround.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height.",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "[React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#004",
+        "route": "http://localhost:3000/symbolnetz"
+      },
+      {
+        "type": "warning",
+        "text": "Image with src \"/Visuals/hebr_archiv_waende_background.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height.",
+        "route": "http://localhost:3000/archiv"
+      }
+    ]
+  }
+]

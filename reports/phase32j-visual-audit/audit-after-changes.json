@@ -1,0 +1,450 @@
+[
+  {
+    "viewport": "desktop",
+    "route": "/raeume/feuer?state=pillar-of-fire",
+    "file": "reports\\phase32j-visual-audit\\desktop-after-homeraeume-feuer-state-pillar-of-fire.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_rauch_spur.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "Rauch und warmer Feuerschein steigen wie eine Spur durch einen dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste?state=emptiness",
+    "file": "reports\\phase32j-visual-audit\\desktop-after-homeraeume-wueste-state-emptiness.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste?state=testing",
+    "file": "reports\\phase32j-visual-audit\\desktop-after-homeraeume-wueste-state-testing.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "Trockener dunkler Raum mit feinem Staub und einer fernen Lichtachse",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  },
+  {
+    "viewport": "desktop",
+    "route": "/raeume/wueste?state=voice",
+    "file": "reports\\phase32j-visual-audit\\desktop-after-homeraeume-wueste-state-voice.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+        "naturalWidth": 768,
+        "naturalHeight": 1152,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "Warme hebraeische Spuren in einem dunklen stillen Archivraum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_pfadschatten.png&w=1920&q=75",
+        "naturalWidth": 1254,
+        "naturalHeight": 705,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/feuer?state=pillar-of-fire",
+    "file": "reports\\phase32j-visual-audit\\mobile-after-homeraeume-feuer-state-pillar-of-fire.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_rauch_spur.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "Rauch und warmer Feuerschein steigen wie eine Spur durch einen dunklen Raum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste?state=emptiness",
+    "file": "reports\\phase32j-visual-audit\\mobile-after-homeraeume-wueste-state-emptiness.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste?state=testing",
+    "file": "reports\\phase32j-visual-audit\\mobile-after-homeraeume-wueste-state-testing.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "Trockener dunkler Raum mit feinem Staub und einer fernen Lichtachse",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  },
+  {
+    "viewport": "mobile",
+    "route": "/raeume/wueste?state=voice",
+    "file": "reports\\phase32j-visual-audit\\mobile-after-homeraeume-wueste-state-voice.png",
+    "broken": [],
+    "imgs": [
+      {
+        "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-70"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.24]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 585,
+        "complete": true,
+        "alt": "",
+        "cls": "object-cover opacity-[0.12]"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "sacred-drift object-cover"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_hebrew_sand.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "Warme hebraeische Spuren in einem dunklen stillen Archivraum",
+        "cls": "symbol-engine__image"
+      },
+      {
+        "src": "/_next/image?url=%2FVisuals%2Fwueste_pfadschatten.png&w=640&q=75",
+        "naturalWidth": 390,
+        "naturalHeight": 219,
+        "complete": true,
+        "alt": "",
+        "cls": "symbol-engine__background-image"
+      }
+    ]
+  }
+]

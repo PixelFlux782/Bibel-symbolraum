@@ -99,7 +99,8 @@ export const wuesteEngineData: SymbolEngineData = {
       text: "Kein Wasser. Keine Sicherheit. Die Wueste nimmt nicht nur etwas fort, sie macht sichtbar, worauf Vertrauen bisher geruht hat.",
       inscription: "Leere / Mangel / Abhaengigkeit",
       visual: {
-        image: visualAssets.wuesteDust,
+        image: visualAssets.wuesteHero,
+        backgroundImage: visualAssets.wuesteDust,
         alt: "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
         atmosphere: { id: "desert-emptiness", mood: "still", motion: "verlangsamend", light: "nachtblau", density: 0.84 },
         veilOpacity: 0.78,
@@ -121,8 +122,8 @@ export const wuesteEngineData: SymbolEngineData = {
       text: "Hunger, Durst, Angst und der Wunsch nach Kontrolle treten in der Leere deutlicher hervor. Ohne Ablenkung bekommt das Innere Kontur.",
       inscription: "Pruefung / Verborgenheit / Vertrauen",
       visual: {
-        image: visualAssets.wuesteMacro,
-        backgroundImage: visualAssets.wuesteDust,
+        image: visualAssets.wuesteDust,
+        backgroundImage: visualAssets.wuesteMacro,
         alt: "Trockener dunkler Raum mit feinem Staub und einer fernen Lichtachse",
         atmosphere: { id: "desert-testing", mood: "gespannt", motion: "staubend", light: "ferne Achse", density: 0.72 },
         veilOpacity: 0.74,
