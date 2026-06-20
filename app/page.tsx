@@ -24,6 +24,16 @@ export default function StartPage() {
     <div className="symbol-page">
       <section className="symbol-section symbol-portal relative flex min-h-screen items-center justify-center overflow-hidden pb-28 pt-36 md:pt-32">
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+          <Image
+            src={visualAssets.startHero}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="sacred-drift object-cover opacity-50"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,5,12,0.66),rgba(2,5,12,0.24)_42%,rgba(2,5,12,0.78))]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(2,5,12,0.1)_0%,rgba(2,5,12,0.44)_68%,rgba(2,5,12,0.84)_100%)]" />
           <div className="symbol-portal-depth absolute inset-0" />
           <div className="symbol-portal-noise absolute inset-0" />
           <div className="symbol-portal-breath absolute left-1/2 top-1/2 h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full" />
