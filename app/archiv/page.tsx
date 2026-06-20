@@ -113,9 +113,9 @@ export default function ArchivPage() {
           fill
           priority
           sizes="100vw"
-          className="sacred-drift object-cover opacity-[0.24]"
+          className="sacred-drift object-cover opacity-[0.32]"
         />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_18%,rgba(189,160,109,0.12),transparent_28%),linear-gradient(180deg,rgba(2,5,12,0.42),rgba(2,5,12,0.78)_48%,rgba(2,5,12,0.96))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_18%,rgba(189,160,109,0.1),transparent_28%),linear-gradient(180deg,rgba(2,5,12,0.5),rgba(2,5,12,0.82)_48%,rgba(2,5,12,0.97))]" />
         <div className="absolute inset-x-[8%] top-[24rem] h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
       </div>
 

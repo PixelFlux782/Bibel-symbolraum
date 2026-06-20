@@ -14,19 +14,19 @@ function getBackgroundConfig(pathname: string): BackgroundConfig {
   const rooms: Record<string, BackgroundConfig> = {
     '/': { image: '/Visuals/Logo_hero.png', position: 'center', opacity: 0.74 },
     '/symbolnetz': { image: '/Visuals/symbolnetz_backround.png', position: 'center', opacity: 0.78 },
-    '/mein-pfad': { image: '/Visuals/hebr_archiv_waende_background.png', position: 'center', opacity: 0.76 },
-    '/wasser': { image: '/Visuals/wasser_cinema_hero.png', position: 'center', opacity: 0.82 },
-    '/raeume/wasser': { image: '/Visuals/wasser_cinema_hero.png', position: 'center', opacity: 0.82 },
-    '/symbol/wasser': { image: '/Visuals/wasser_cinema_hero.png', position: 'center', opacity: 0.86 },
+    '/mein-pfad': { image: '/Visuals/hebr_archiv_waende_background.png', position: 'center 42%', opacity: 0.9 },
+    '/wasser': { image: '/Visuals/wasser_interface_backround.png', position: 'center', opacity: 0.8 },
+    '/raeume/wasser': { image: '/Visuals/wasser_tiefenbild.png', position: 'center', opacity: 0.82 },
+    '/symbol/wasser': { image: '/Visuals/wasser_tiefenbild.png', position: 'center', opacity: 0.84 },
     '/symbol/wasser/tiefe': { image: '/Visuals/wasser_tiefenbild.png', position: 'center', opacity: 0.86 },
     '/symbol/wasser/hebraeisch': { image: '/Visuals/wasser_hebr_symbl.png', position: 'center', opacity: 0.84 },
     '/symbol/wasser/szene': { image: '/Visuals/wasser_szenenbild.png', position: 'center', opacity: 0.84 },
-    '/archiv': { image: '/Visuals/hebr_archiv_waende_background.png', position: 'center', opacity: 0.82 },
+    '/archiv': { image: '/Visuals/hebr_archiv_waende_background.png', position: 'center 42%', opacity: 0.9 },
     '/symbole': { image: '/Visuals/symbolnetz_backround.png', position: 'center', opacity: 0.84 },
-    '/symbole/wasser': { image: '/Visuals/wasser_cinema_hero.png', position: 'center', opacity: 0.86 },
+    '/symbole/wasser': { image: '/Visuals/wasser_interface_backround.png', position: 'center', opacity: 0.82 },
   };
 
-  return rooms[pathname] ?? { image: '/Visuals/tiefenraum_backround.png', position: 'center', opacity: 0.82 };
+  return rooms[pathname] ?? { image: '/Visuals/tiefenraum_backround.png', position: 'center', opacity: 0.68 };
 }
 
 const AmbientBackground = memo(() => {
@@ -42,8 +42,8 @@ const AmbientBackground = memo(() => {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover opacity-80"
-          quality={82}
+          className="object-cover opacity-70"
+          quality={75}
         />
       </div>
 
@@ -53,8 +53,8 @@ const AmbientBackground = memo(() => {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover opacity-[0.42]"
-          quality={78}
+          className="object-cover opacity-[0.24]"
+          quality={75}
         />
       </div>
 
@@ -64,8 +64,8 @@ const AmbientBackground = memo(() => {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover opacity-[0.18]"
-          quality={74}
+          className="object-cover opacity-[0.12]"
+          quality={75}
         />
       </div>
 
@@ -80,7 +80,7 @@ const AmbientBackground = memo(() => {
             objectPosition: config.position,
             opacity: roomOpacity * 0.28,
           }}
-          quality={76}
+          quality={75}
         />
       </div>
 

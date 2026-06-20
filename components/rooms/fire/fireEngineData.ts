@@ -97,7 +97,7 @@ export const fireEngineData: SymbolEngineData = {
       inscription: "Offenbarung / Gegenwart / Ruf",
       visual: {
         image: "/Visuals/cinem_lichtraum_backround.png",
-        backgroundImage: "/Visuals/hebr_archiv_waende_background.png",
+        backgroundImage: "/Visuals/tiefenraum_backround.png",
         alt: "Warme goldene Lichtachsen erinnern an einen brennenden Dornbusch",
         atmosphere: { id: "burning-bush", mood: "wach", motion: "aufflammend", light: "warmes gold", density: 0.54 },
         veilOpacity: 0.56,
@@ -119,7 +119,7 @@ export const fireEngineData: SymbolEngineData = {
       inscription: "Fuehrung / Nacht / Weg",
       visual: {
         image: "/Visuals/cinem_lichtraum_backround.png",
-        backgroundImage: "/Visuals/symbolnetz_backround.png",
+        backgroundImage: "/Visuals/tiefenraum_backround.png",
         alt: "Goldene Lichtsaeule weist durch einen dunklen Raum",
         atmosphere: { id: "pillar-of-fire", mood: "entschieden", motion: "weisend", light: "goldene saeule", density: 0.48 },
         veilOpacity: 0.5,
@@ -140,7 +140,7 @@ export const fireEngineData: SymbolEngineData = {
       text: "Feuer kann klaeren, ohne das Wesentliche auszuloeschen. In der Laeuterung bekommt Verwandlung eine neue Gestalt.",
       inscription: "Laeuterung / Reinigung / Verwandlung",
       visual: {
-        image: "/Visuals/hebr_archiv_waende_background.png",
+        image: "/Visuals/cinem_lichtraum_backround.png",
         backgroundImage: "/Visuals/cinem_lichtraum_backround.png",
         alt: "Warmer goldener Feuerschein sammelt sich in einem tiefen Raum",
         atmosphere: { id: "refining-fire", mood: "klaerend", motion: "sammelnd", light: "lebendiges gold", density: 0.4 },

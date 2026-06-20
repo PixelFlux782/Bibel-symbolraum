@@ -100,7 +100,7 @@ export const waterEngineData: SymbolEngineData = {
       text: "Wasser erscheint vor jeder klaren Grenze. Die Tiefe ist dunkel, aber nicht leer: Ueber ihr schwebt bereits Bewegung.",
       inscription: "Tiefe / Geist / Moeglichkeit",
       visual: {
-        image: "/Visuals/wasser_hero.png",
+        image: "/Visuals/wasser_tiefenbild.png",
         backgroundImage: "/Visuals/wasser_interface_backround.png",
         alt: "Weiter dunkler Wasserraum vor der Ordnung",
         atmosphere: { id: "origin", mood: "erwartend", motion: "schwebend", light: "untergetaucht", density: 0.54 },
@@ -167,7 +167,7 @@ export const waterEngineData: SymbolEngineData = {
       inscription: "Grenze / Durchzug / Befreiung",
       visual: {
         image: "/Visuals/wasser_szenenbild.png",
-        backgroundImage: "/Visuals/symbolnetz_backround.png",
+        backgroundImage: "/Visuals/wasser_interface_backround.png",
         alt: "Der Weg durch das geteilte Meer im Exodus",
         atmosphere: { id: "exodus", mood: "entschieden", motion: "teilend", light: "goldene Passage", density: 0.74 },
         veilOpacity: 0.52,
@@ -233,7 +233,7 @@ export const waterEngineData: SymbolEngineData = {
       inscription: "Durst / Quelle / Leben",
       visual: {
         image: "/Visuals/wasser_interface_backround.png",
-        backgroundImage: "/Visuals/cinem_lichtraum_backround.png",
+        backgroundImage: "/Visuals/wasser_makro.png",
         alt: "Leuchtender Wasserraum mit aufsteigender Bewegung",
         atmosphere: { id: "living-water", mood: "lebendig", motion: "stroemend", light: "cyan und gold", density: 0.42 },
         veilOpacity: 0.48,
@@ -253,8 +253,8 @@ export const waterEngineData: SymbolEngineData = {
       text: "Die Reise endet nicht an der Oberflaeche. Wasser bleibt Tiefe, Grenze und Durchgang. Doch nun ist auch die Quelle sichtbar.",
       inscription: "Majim / Quelle / Leben",
       visual: {
-        image: "/Visuals/wasser_hero.png",
-        backgroundImage: "/Visuals/cinem_lichtraum_backround.png",
+        image: "/Visuals/wasser_tiefenbild.png",
+        backgroundImage: "/Visuals/wasser_interface_backround.png",
         alt: "Wasserraum zwischen Tiefe und Licht",
         atmosphere: { id: "source", mood: "gesammelt", motion: "aufsteigend", light: "offen", density: 0.34 },
         veilOpacity: 0.46,

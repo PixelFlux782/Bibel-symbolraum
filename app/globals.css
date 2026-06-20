@@ -593,6 +593,13 @@ body {
   position: relative;
 }
 
+.symbol-path-memory-backdrop {
+  background: url("/Visuals/hebr_archiv_waende_background.png") center 42% / cover no-repeat;
+  opacity: 0.13;
+  filter: saturate(0.78) contrast(0.92);
+  mix-blend-mode: screen;
+}
+
 .symbol-personal-map {
   margin-bottom: clamp(2.5rem, 6vw, 4.25rem);
   border-top: 1px solid rgba(var(--gold-rgb), 0.1);

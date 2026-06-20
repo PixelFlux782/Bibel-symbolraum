@@ -344,6 +344,7 @@ export default function MeinPfadPage() {
   return (
     <div className="symbol-page symbol-section min-h-screen py-36 md:py-40">
       <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="symbol-path-memory-backdrop absolute inset-[-6%]" />
         <div className="sacred-drift absolute inset-[-8%] bg-[radial-gradient(circle_at_50%_18%,rgba(189,160,109,0.1),transparent_26%),radial-gradient(circle_at_28%_68%,rgba(91,152,174,0.075),transparent_30%)]" />
         <div className="absolute inset-x-[8%] top-[22rem] h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,5,12,0.18),rgba(2,5,12,0.76)_48%,rgba(2,5,12,0.94))]" />

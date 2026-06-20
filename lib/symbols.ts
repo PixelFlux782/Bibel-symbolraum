@@ -368,7 +368,7 @@ export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
     ],
     imageAssets: [
       {
-        src: '/Visuals/water-symbolraum.png',
+        src: '/Visuals/wasser_tiefenbild.png',
         alt: 'Dunkler Wasserraum mit bewegter Oberfläche',
         role: 'hero',
       },

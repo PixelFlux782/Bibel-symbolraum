@@ -13,8 +13,8 @@ export const waterRoomDefinition: SymbolRoomDefinition = {
     ctaLabel: "In die Tiefe gehen",
     ctaHref: "#symbolreise",
     heroImage: {
-      src: "/Visuals/wasser_cinema_hero.png",
-      alt: "Dunkler cineastischer Wasserraum",
+      src: "/Visuals/wasser_tiefenbild.png",
+      alt: "Ruhiger tiefer Wasserraum",
     },
     backgroundImage: {
       src: "/Visuals/wasser_interface_backround.png",

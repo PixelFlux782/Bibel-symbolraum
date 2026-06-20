@@ -22,8 +22,8 @@ const waterJourney: WaterJourneyStage[] = [
     title: "Wasser trägt. Wasser trennt.",
     text: "Bleib einen Moment an der Oberfläche. Vor dir liegt kein Thema, sondern eine Schwelle.",
     action: "Unter die Oberfläche",
-    image: "/Visuals/wasser_cinema_hero.png",
-    alt: "Ein weiter Wasserraum zwischen Tiefe und Licht",
+    image: "/Visuals/wasser_interface_backround.png",
+    alt: "Ein ruhiger Wasserraum zwischen Tiefe und Licht",
   },
   {
     id: "depth",
@@ -52,8 +52,8 @@ const waterJourney: WaterJourneyStage[] = [
     title: "Aus der Tiefe steigt Licht.",
     text: "Du kehrst nicht an dieselbe Oberfläche zurück. Was Grenze war, ist Durchgang geworden.",
     action: "Noch einmal ins Wasser lauschen",
-    image: "/Visuals/cinem_lichtraum_backround.png",
-    alt: "Ein dunkler Raum, der sich durch einen goldenen Lichtstrahl öffnet",
+    image: "/Visuals/wasser_makro.png",
+    alt: "Eine ruhige Wasseroberfläche mit feinem Licht",
     inscription: "Offenbarung · Neubeginn",
   },
 ];
