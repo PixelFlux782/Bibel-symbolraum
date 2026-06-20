@@ -120,7 +120,7 @@ export const fireEngineData: SymbolEngineData = {
       inscription: "Fuehrung / Nacht / Weg",
       visual: {
         image: visualAssets.feuerHero,
-        backgroundImage: visualAssets.feuerGlut,
+        backgroundImage: visualAssets.feuerSmoke,
         alt: "Goldene Lichtsaeule weist durch einen dunklen Raum",
         atmosphere: { id: "pillar-of-fire", mood: "entschieden", motion: "weisend", light: "goldene saeule", density: 0.48 },
         veilOpacity: 0.5,
@@ -142,7 +142,7 @@ export const fireEngineData: SymbolEngineData = {
       inscription: "Laeuterung / Reinigung / Verwandlung",
       visual: {
         image: visualAssets.feuerMacro,
-        backgroundImage: visualAssets.feuerHebrew,
+        backgroundImage: visualAssets.feuerAsh,
         alt: "Warmer goldener Feuerschein sammelt sich in einem tiefen Raum",
         atmosphere: { id: "refining-fire", mood: "klaerend", motion: "sammelnd", light: "lebendiges gold", density: 0.4 },
         veilOpacity: 0.48,

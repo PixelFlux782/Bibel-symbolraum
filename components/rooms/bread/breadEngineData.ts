@@ -91,7 +91,7 @@ export const breadEngineData: SymbolEngineData = {
       text: "Brot beginnt unscheinbar. Wasser traegt das Wachstum, Licht laesst das Korn reifen, und lange bleibt verborgen, was einmal Nahrung werden kann.",
       inscription: "Korn / Wachstum / Verborgenheit",
       visual: {
-        image: visualAssets.brotMacro,
+        image: visualAssets.brotGrain,
         backgroundImage: visualAssets.brotDew,
         alt: "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
         atmosphere: { id: "bread-grain", mood: "erwartend", motion: "keimend", light: "sanftes morgenlicht", density: 0.64 },
@@ -136,7 +136,7 @@ export const breadEngineData: SymbolEngineData = {
       text: "Das Brot bleibt nicht unberuehrt auf dem Tisch. Es wird genommen, gebrochen und geteilt; gerade darin wird aus Nahrung eine gemeinsame Gabe.",
       inscription: "Brechen / Teilen / Gemeinschaft",
       visual: {
-        image: visualAssets.brotStone,
+        image: visualAssets.brotPath,
         alt: "Warme Lichtspuren in einem dunklen Raum als Bild fuer geteiltes Brot am Tisch",
         atmosphere: { id: "bread-breaking", mood: "warm", motion: "teilend", light: "tischgold", density: 0.46 },
         veilOpacity: 0.6,

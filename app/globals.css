@@ -4416,6 +4416,40 @@ body {
   line-height: 1.62;
 }
 
+.codex-personal-trace__waymark {
+  display: grid;
+  gap: 0.7rem;
+  max-width: 40rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.2);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.045), transparent 82%);
+  padding: 0.85rem 0 0.95rem 1rem;
+}
+
+.codex-personal-trace__waymark p:not(.symbol-kicker) {
+  color: rgba(216, 209, 194, 0.76);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.08rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.codex-personal-trace__waymark-link {
+  justify-self: start;
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.28);
+  color: rgba(var(--cyan-rgb), 0.82);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition:
+    border-color 500ms ease,
+    color 500ms ease;
+}
+
+.codex-personal-trace__waymark-link:hover {
+  border-color: rgba(var(--gold-rgb), 0.38);
+  color: rgba(var(--gold-rgb), 0.92);
+}
+
 .codex-personal-trace__actions {
   display: flex;
   flex-wrap: wrap;
@@ -6444,6 +6478,19 @@ body {
     max-width: 100%;
     font-size: 1.02rem;
     line-height: 1.58;
+  }
+
+  .codex-personal-trace__waymark {
+    max-width: 100%;
+    padding-left: 0.85rem;
+  }
+
+  .codex-personal-trace__waymark p:not(.symbol-kicker) {
+    font-size: 1rem;
+  }
+
+  .codex-personal-trace__waymark-link {
+    overflow-wrap: anywhere;
   }
 
   .codex-personal-trace__actions {

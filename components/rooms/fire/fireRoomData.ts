@@ -267,7 +267,7 @@ export const fireRoomDefinition: SymbolRoomDefinition = {
         "radial-gradient(circle at 50% 78%, rgba(var(--symbol-room-ambient-rgb), 0.16), transparent 34%), radial-gradient(circle at 52% 42%, rgba(var(--symbol-room-accent-rgb), 0.1), transparent 28%), linear-gradient(180deg, rgba(var(--symbol-room-shadow-rgb), 0.96), var(--symbol-room-background))",
     },
     encounterImage: {
-      src: visualAssets.feuerGlut,
+      src: visualAssets.feuerSmoke,
       alt: "Dunkler Raum mit warmen goldenen Lichtachsen",
     },
     journeyKicker: "Symbolreise",

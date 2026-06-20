@@ -1638,13 +1638,12 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {symbolJourney && symbolJourneyStep ? (
               <SymbolJourneyNoticeSection journey={symbolJourney} step={symbolJourneyStep} />
             ) : null}
-            {personalTraceSymbolSlug ? (
-              <CodexPersonalTraceCard
-                symbolSlug={personalTraceSymbolSlug}
-                roomHref={personalTraceSymbolConfig?.roomHref}
-                journeyTitle={symbolJourney?.title}
-              />
-            ) : null}
+            <CodexPersonalTraceCard
+              entryId={entry.id}
+              symbolSlug={personalTraceSymbolSlug}
+              roomHref={personalTraceSymbolConfig?.roomHref}
+              journeyTitle={symbolJourney?.title}
+            />
             {isPatternEntity ? (
               <PatternCodexSection
                 entity={ontologyEntity}
