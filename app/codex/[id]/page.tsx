@@ -30,7 +30,7 @@ import {
   sortOntologyRelations,
 } from "@/lib/ontology";
 import type { OntologyEntity, OntologyRelation, OntologyWayProjection } from "@/lib/ontology";
-import { getResonanceJourney } from "@/lib/resonance";
+import { getResonanceJourney, getResonanceRoom } from "@/lib/resonance";
 import { buildRoomHref, getPatternRoomStation, hasSymbolRoom } from "@/lib/rooms/roomContext";
 import {
   getJourneysForSymbol,
@@ -1156,6 +1156,8 @@ function WaterCodexReferenceSection() {
           </section>
         ) : null}
 
+        <ResonanceRoomInline symbolId="wasser" />
+
         {waterChipLinks.scriptureAnchors.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bibelstellen</p>
@@ -1302,6 +1304,8 @@ function LightCodexReferenceSection() {
           </section>
         ) : null}
 
+        <ResonanceRoomInline symbolId="licht" />
+
         {lightChipLinks.scriptureAnchors.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bibelanker</p>
@@ -1416,6 +1420,8 @@ function FireCodexReferenceSection() {
           </section>
         ) : null}
 
+        <ResonanceRoomInline symbolId="feuer" />
+
         {fireChipLinks.scriptureAnchors.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bibelanker</p>
@@ -1447,6 +1453,69 @@ function FireCodexReferenceSection() {
           </div>
         </section>
       </div>
+    </DetailSection>
+  );
+}
+
+function ResonanceRoomInline({ symbolId }: { symbolId: string }) {
+  const resonanceRoom = getResonanceRoom(symbolId);
+
+  if (resonanceRoom.statements.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="border-t border-white/[0.06] pt-6">
+      <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Resonanzraum</p>
+      <ul className="mt-4 grid gap-3">
+        {resonanceRoom.statements.map((statement) => (
+          <li key={`${statement.type}-${statement.text}`}>
+            {statement.href ? (
+              <Link
+                href={statement.href}
+                className="symbol-copy block border-l border-gold/25 pl-4 text-base italic text-foreground-strong transition-colors duration-500 hover:border-gold/45 hover:text-gold"
+              >
+                {statement.text}
+              </Link>
+            ) : (
+              <p className="symbol-copy border-l border-gold/25 pl-4 text-base italic text-foreground-strong">
+                {statement.text}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function ResonanceRoomSection({ symbolId }: { symbolId: string }) {
+  const resonanceRoom = getResonanceRoom(symbolId);
+
+  if (resonanceRoom.statements.length === 0) {
+    return null;
+  }
+
+  return (
+    <DetailSection title="Resonanzraum">
+      <ul className="grid gap-3">
+        {resonanceRoom.statements.map((statement) => (
+          <li key={`${statement.type}-${statement.text}`}>
+            {statement.href ? (
+              <Link
+                href={statement.href}
+                className="symbol-copy block border-l border-gold/25 pl-4 text-base italic text-foreground-strong transition-colors duration-500 hover:border-gold/45 hover:text-gold"
+              >
+                {statement.text}
+              </Link>
+            ) : (
+              <p className="symbol-copy border-l border-gold/25 pl-4 text-base italic text-foreground-strong">
+                {statement.text}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
     </DetailSection>
   );
 }
@@ -1531,7 +1600,10 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const isWaterEntry = entry.id === "wasser";
   const isLightEntry = entry.id === "licht";
   const isFireEntry = entry.id === "feuer";
+  const isWuesteEntry = entry.id === "wueste";
+  const isBreadEntry = entry.id === "brot";
   const isCuratedSymbolEntry = isWaterEntry || isLightEntry || isFireEntry;
+  const shouldShowStandaloneResonanceRoom = isWuesteEntry || isBreadEntry;
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
   const symbolJourney = getJourneysForSymbol(entry.id)[0];
@@ -1698,6 +1770,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 </div>
               </DetailSection>
             ) : null}
+
+            {shouldShowStandaloneResonanceRoom ? <ResonanceRoomSection symbolId={entry.id} /> : null}
 
             {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <OntologyMetadataSection
