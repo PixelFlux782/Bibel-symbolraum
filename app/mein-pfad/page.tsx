@@ -48,7 +48,7 @@ function isTechnicalTraceLabel(value: string | undefined) {
   return Boolean(value && (/_|->/.test(value) || /^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(value)));
 }
 
-function getSafeTraceLabel(value: string | undefined, fallback = "Symbol-Spur") {
+function getSafeTraceLabel(value: string | undefined, fallback = "Symbolzeichen") {
   const label = cleanTraceLabel(value);
 
   return label && !isTechnicalTraceLabel(label) ? label : fallback;
@@ -96,7 +96,7 @@ function getTraceContext(reflection: StoredReflection) {
     const configuredBridge = getSymbolPathConfigFromReflectionLike(reflection);
     const pathLabel = cleanTraceLabel(reflection.pathLabel);
 
-    return pathLabel || configuredBridge?.traceLabel || "Symbol-Spur";
+    return pathLabel || configuredBridge?.label || "Symbolzeichen";
   }
 
   const roomContext = getRoomContextLabel(reflection);
@@ -123,7 +123,7 @@ function getTraceContext(reflection: StoredReflection) {
     return bridge.traceLabel;
   }
 
-  return "Aeltere Spur";
+  return "Fruehere Wegstelle";
 }
 
 function getTraceTitle(reflection: StoredReflection) {
@@ -181,10 +181,10 @@ const MAX_WAY_FAMILIAR_ITEMS = 5;
 const MAX_WAY_OPENINGS = 3;
 
 const groupOrder: Array<{ key: ReflectionGroupKey; label: string }> = [
-  { key: "rooms", label: "Spuren aus Raeumen" },
-  { key: "codex", label: "Spuren aus dem Codex" },
-  { key: "network", label: "Spuren aus dem Netz" },
-  { key: "older", label: "Aeltere Spuren" },
+  { key: "rooms", label: "Aus den Raeumen" },
+  { key: "codex", label: "Aus dem Codex" },
+  { key: "network", label: "Aus dem Symbolnetz" },
+  { key: "older", label: "Fruehere Wegstellen" },
 ];
 
 function getReflectionGroupKey(reflection: StoredReflection): ReflectionGroupKey {
@@ -252,7 +252,7 @@ function getTouchedSummary(reflections: StoredReflection[]) {
 }
 
 function getTraceCountLabel(count: number) {
-  return count === 1 ? "Eine Spur" : `${count} Spuren`;
+  return count === 1 ? "Eine Wegstelle" : `${count} Wegstellen`;
 }
 
 function getReflectionSymbolId(reflection: StoredReflection): ConfiguredSymbolId | undefined {
@@ -279,7 +279,7 @@ function getTrackCtaLabel(config: SymbolPathConfig, hasTrace: boolean) {
     return `Den ${config.roomLabel} betreten`;
   }
 
-  return `Zur ${config.traceLabel.replace("-Spur", "spur")} zurueckkehren`;
+  return `In den ${config.roomLabel} zurueckkehren`;
 }
 
 function buildPersonalSymbolTracks(reflections: StoredReflection[]): PersonalSymbolTrack[] {
@@ -409,20 +409,20 @@ export default function MeinPfadPage() {
 
       <div className="relative z-10 mx-auto max-w-5xl">
         <header className="symbol-fade-in mb-14 text-center">
-          <p className="symbol-kicker mb-7">Mein Pfad</p>
+          <p className="symbol-kicker mb-7">Der Weg</p>
           <h1 className="mx-auto max-w-4xl font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
-            Bewahrte Spuren
+            Dein Weg durch den SYMBOLRAUM
           </h1>
           <p className="symbol-copy mx-auto mt-8 max-w-2xl text-xl italic md:text-2xl">
-            Hier sammeln sich die Spuren, die du im SYMBOLRAUM bewahrt hast.
+            Hier bleiben die Orte lesbar, an denen ein Zeichen in dir nachgeklungen hat.
           </p>
         </header>
 
         {reflections === null ? (
           <div className="symbol-path-empty mx-auto max-w-3xl text-center">
-            <p className="symbol-kicker">Der Pfad wird still</p>
+            <p className="symbol-kicker">Der Weg wird still</p>
             <p className="mt-6 font-serif text-3xl italic text-foreground-strong">
-              Die bewahrten Spuren oeffnen sich gerade.
+              Deine Wegstellen oeffnen sich gerade.
             </p>
           </div>
         ) : (
@@ -437,9 +437,9 @@ export default function MeinPfadPage() {
 
             {!hasWay ? (
               <div className="symbol-path-empty mx-auto mt-12 max-w-3xl text-center">
-                <p className="symbol-kicker">Dein Pfad ist noch still</p>
+                <p className="symbol-kicker">Der Weg ist noch still</p>
                 <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
-                  Im Wasser-Raum kann deine erste Spur sichtbar werden.
+                  Im Wasser-Raum kann der erste Nachklang sichtbar werden.
                 </p>
                 <div className="symbol-path-empty__entries mt-9">
                   <Link href="/raeume/wasser" className="symbol-archive-action">
@@ -455,7 +455,7 @@ export default function MeinPfadPage() {
             {sortedReflections.length > 0 ? (
               <section className="symbol-path-summary mx-auto mb-10 max-w-3xl text-center" aria-label="Pfadverdichtung">
                 <p className="symbol-copy text-xl italic md:text-2xl">
-                  Dein Pfad sammelt keine Antworten.
+                  Dein Weg sammelt keine Antworten.
                   <br />
                   Er bewahrt die Stellen, an denen etwas in dir nachklang.
                 </p>
@@ -463,12 +463,12 @@ export default function MeinPfadPage() {
                   {sortedReflections.length === 1
                     ? touchedSummary.length > 0
                       ? `${touchedSummary[0]} bewahrt`
-                      : "Eine Spur bewahrt"
+                      : "Eine Wegstelle"
                     : [getTraceCountLabel(sortedReflections.length), ...touchedSummary].join(" / ")}
                 </p>
                 {repeatedTouches.length > 0 ? (
                   <p className="symbol-path-resonance mt-4">
-                    Mehrfach beruehrt: {repeatedTouches.join(", ")}
+                    Wiederkehrend nahe: {repeatedTouches.join(", ")}
                   </p>
                 ) : null}
               </section>
@@ -483,14 +483,14 @@ export default function MeinPfadPage() {
             ) : null}
 
             {sortedReflections.length === 0 ? null : filteredReflections.length === 0 ? (
-              <section className="symbol-path-empty mx-auto max-w-3xl text-center" aria-label="Keine Spuren in diesem Filter">
-                <p className="symbol-kicker">Noch keine Spur</p>
+              <section className="symbol-path-empty mx-auto max-w-3xl text-center" aria-label="Keine Wegstelle in diesem Zeichen">
+                <p className="symbol-kicker">Noch still</p>
                 <p className="mt-5 font-serif text-2xl italic text-foreground-strong">
-                  Diese Symbolspur wartet noch auf ihren ersten Eintrag.
+                  Dieses Zeichen wartet noch auf seinen ersten Nachklang.
                 </p>
               </section>
             ) : showGroups ? (
-              <div className="grid gap-10" aria-label="Bewahrte Spuren">
+              <div className="grid gap-10" aria-label="Wegstellen">
                 {reflectionGroups.map((group) => (
                   <section key={group.key} className="symbol-path-group">
                     <h2 className="symbol-path-group__title">{group.label}</h2>
@@ -508,7 +508,7 @@ export default function MeinPfadPage() {
                 ))}
               </div>
             ) : (
-              <section className="symbol-path-list grid gap-5" aria-label="Bewahrte Spuren">
+              <section className="symbol-path-list grid gap-5" aria-label="Wegstellen">
                 {filteredReflections.map((reflection) => (
                   <ReflectionArticle
                     key={reflection.id}
@@ -543,11 +543,11 @@ function PersonalWaySection({ personalWay }: { personalWay: PersonalWay }) {
   return (
     <section className="symbol-personal-way" aria-label="Der Weg">
       <div className="symbol-personal-way__head">
-        <p className="symbol-kicker">Mein Pfad</p>
+        <p className="symbol-kicker">Der Weg</p>
         <h2>Der Weg</h2>
         <p>
-          Nicht alles, was du beruehrt hast, ist Vergangenheit. Manche Zeichen bleiben nahe und oeffnen von hier aus
-          den naechsten Raum.
+          Nicht alles, was du beruehrt hast, liegt hinter dir. Manche Zeichen bleiben nahe und oeffnen von hier aus
+          einen naechsten Raum.
         </p>
       </div>
 
@@ -596,7 +596,7 @@ function WayQuietArea({
 function WayOpeningsArea({ openings }: { openings: PersonalWayOpening[] }) {
   return (
     <article className="symbol-personal-way__area symbol-personal-way__area--openings">
-      <h3>Was sich oeffnet</h3>
+      <h3>Was sich leise oeffnet</h3>
       {openings.length > 0 ? (
         <div className="symbol-personal-way__openings">
           {openings.map((opening) => (
@@ -607,7 +607,7 @@ function WayOpeningsArea({ openings }: { openings: PersonalWayOpening[] }) {
           ))}
         </div>
       ) : (
-        <p>Der naechste Raum muss sich nicht draengen. Deine Spur bleibt lesbar.</p>
+        <p>Der naechste Raum muss sich nicht draengen. Dein Weg bleibt lesbar.</p>
       )}
     </article>
   );
@@ -626,11 +626,11 @@ function PersonalJourneyCard({
   const hasAnyTrace = [...reflectionByStep.values()].some(Boolean);
 
   return (
-    <section className="symbol-journey-card" aria-label="Spurenfeld Vom Wasser zum Brot">
+    <section className="symbol-journey-card" aria-label="Weg vom Wasser zum Brot">
       <div className="symbol-journey-card__head">
-        <p className="symbol-kicker">Verbundenes Spurenfeld</p>
+        <p className="symbol-kicker">Verbundener Weg</p>
         <h2>{journey.title}</h2>
-        <p className="symbol-journey-card__subtitle">Deine fuenf Grundspuren in Resonanz</p>
+        <p className="symbol-journey-card__subtitle">Fuenf Zeichen in Resonanz</p>
         <p className="symbol-copy">
           Wasser, Licht, Feuer, Wueste und Brot bilden zusammen eine Bewegung: Ursprung, Offenbarung, Wandlung,
           Laeuterung und Gabe.
@@ -639,7 +639,7 @@ function PersonalJourneyCard({
 
       {!hasAnyTrace ? (
         <div className="symbol-journey-empty">
-          <p className="symbol-kicker">Das Spurenfeld ist noch still</p>
+          <p className="symbol-kicker">Der Weg ist noch still</p>
           <p>Wasser kann sich zuerst oeffnen, oder ein anderer Raum ruft leise.</p>
           <div>
             <Link href={journey.steps[0]?.roomHref ?? "/raeume/wasser"} className="symbol-archive-action">
@@ -666,17 +666,17 @@ function PersonalJourneyCard({
                 <span className="symbol-journey-step__index">{String(index + 1).padStart(2, "0")}</span>
                 <h3>{step.label}</h3>
                 <p className="symbol-journey-step__status">
-                  {hasTrace ? "Spur bewahrt" : "Noch still"}
+                  {hasTrace ? "Auf deinem Weg" : "Noch still"}
                 </p>
                 <p>{step.text}</p>
                 {reflection ? (
                   <div className="symbol-journey-step__reflection">
-                    <p className="symbol-journey-step__reflection-title">Deine Spur</p>
+                    <p className="symbol-journey-step__reflection-title">Dein Nachklang</p>
                     {reflectionContext ? (
                       <p className="symbol-journey-step__reflection-context">{reflectionContext}</p>
                     ) : null}
                     <p className="symbol-journey-step__reflection-preview">
-                      {getReflectionPreview(reflection) || "Eine Spur ist bereits hier."}
+                      {getReflectionPreview(reflection) || "Ein Nachklang ist bereits hier."}
                     </p>
                   </div>
                 ) : (
@@ -701,10 +701,10 @@ function PersonalJourneyCard({
 
 function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
   return (
-    <section className="symbol-personal-map" aria-label="Persoenliches Spurenfeld">
+    <section className="symbol-personal-map" aria-label="Persoenlicher Weg">
       <div className="symbol-personal-map__head">
-        <p className="symbol-kicker">Persoenliches Spurenfeld</p>
-        <h2>Fünf innere Spuren</h2>
+        <p className="symbol-kicker">Wegzeichen</p>
+        <h2>Fuenf innere Zeichen</h2>
       </div>
 
       <div className="symbol-personal-map__grid">
@@ -715,16 +715,16 @@ function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
                 {track.config.hebrew}
               </p>
               <p className="symbol-personal-track__status">
-                {track.count > 0 ? "Spur bewahrt" : "Noch still"}
+                {track.count > 0 ? "Auf deinem Weg" : "Noch still"}
               </p>
             </div>
 
-            <h3>{track.config.traceLabel}</h3>
+            <h3>{track.config.label}</h3>
             <p className="symbol-personal-track__count">
-              {track.count > 0 ? getTraceCountLabel(track.count) : "Noch keine Spur"}
+              {track.count > 0 ? getTraceCountLabel(track.count) : "Noch unberuehrt"}
             </p>
             <p className="symbol-personal-track__last">
-              {track.lastPathLabel ? `Zuletzt beruehrt: ${track.lastPathLabel}` : "Diese Spur wartet still."}
+              {track.lastPathLabel ? `Zuletzt nahe: ${track.lastPathLabel}` : "Dieses Zeichen wartet still."}
             </p>
 
             <Link href={track.href} className="symbol-archive-action">
@@ -747,7 +747,7 @@ function SymbolPathFilters({
   onSelectFilter: (filter: SymbolFilterKey) => void;
 }) {
   return (
-    <div className="symbol-path-filters" aria-label="Spuren nach Symbol filtern">
+    <div className="symbol-path-filters" aria-label="Wegzeichen ansehen">
       <button
         type="button"
         className={activeFilter === "all" ? "is-active" : undefined}
@@ -811,7 +811,7 @@ function ReflectionArticle({
           onClick={() => onRemove(reflection.id)}
           className="symbol-archive-action"
         >
-          Spur entfernen
+          Wegstelle loesen
         </button>
       </div>
     </article>

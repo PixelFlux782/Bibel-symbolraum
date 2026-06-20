@@ -70,10 +70,10 @@ export function RoomPersonalTraceCard({ roomContext, symbolSlug }: RoomPersonalT
   const contextLabel = reflection && roomContext?.source !== "journey" ? getReflectionContextLabel(reflection) : undefined;
 
   return (
-    <aside className="symbol-engine__personal-trace" aria-label={preview ? "Persoenliche Rueckkehr-Spur" : "Wegmarke"}>
+    <aside className="symbol-engine__personal-trace" aria-label={preview ? "Persoenlicher Nachklang" : "Wegmarke"}>
       {preview ? (
         <>
-          <p className="symbol-engine__personal-trace-title">Wenn du zurueckkehrst</p>
+          <p className="symbol-engine__personal-trace-title">Auf deinem Weg</p>
           {contextLabel ? (
             <p className="symbol-engine__personal-trace-context">{contextLabel}</p>
           ) : null}
@@ -85,7 +85,7 @@ export function RoomPersonalTraceCard({ roomContext, symbolSlug }: RoomPersonalT
       ) : null}
       {reflection ? (
         <div className="symbol-engine__personal-trace-actions">
-          <Link href="/mein-pfad">In Mein Pfad ansehen</Link>
+          <Link href="/mein-pfad">Den Weg ansehen</Link>
           <Link href={reflection.codexHref ?? getCodexHref(symbolBridge.symbolId)}>Im Codex vertiefen</Link>
         </div>
       ) : null}

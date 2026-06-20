@@ -72,13 +72,13 @@ function deriveCodexWaymark({
 
   if (isFamiliar) {
     return {
-      text: "Dieses Zeichen ist dir nicht mehr fremd. Es kehrt in deiner Spur wieder.",
+      text: "Dieses Zeichen ist dir nicht mehr fremd. Es kehrt auf deinem Weg wieder.",
     };
   }
 
   if (isTouched) {
     return {
-      text: "Dieser Begriff liegt bereits auf deinem Weg.",
+      text: "Dieses Zeichen liegt bereits auf deinem Weg.",
     };
   }
 
@@ -138,10 +138,10 @@ export function CodexPersonalTraceCard({
   const traceRoomHref = reflection?.roomHref ?? roomHref;
 
   return (
-    <section className="codex-personal-trace" aria-label={reflection ? "Deine Spur zu diesem Symbol" : "Wegmarke"}>
+    <section className="codex-personal-trace" aria-label={reflection ? "Dein Nachklang zu diesem Zeichen" : "Wegmarke"}>
       {reflection ? (
         <>
-          <p className="symbol-kicker text-cyan-soft">Deine Spur zu diesem Symbol</p>
+          <p className="symbol-kicker text-cyan-soft">Auf deinem Weg</p>
           {contextLabel ? (
             <p className="codex-personal-trace__context">{contextLabel}</p>
           ) : null}
@@ -166,7 +166,7 @@ export function CodexPersonalTraceCard({
       {reflection ? (
         <div className="codex-personal-trace__actions">
           <Link href="/mein-pfad" className="symbol-archive-action">
-            In Mein Pfad ansehen
+            Den Weg ansehen
           </Link>
           {traceRoomHref ? (
             <Link href={traceRoomHref} className="symbol-archive-action symbol-archive-action--quiet">

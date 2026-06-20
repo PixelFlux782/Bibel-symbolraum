@@ -86,7 +86,7 @@ function WaterFirstEntryNotice({ symbolSlug }: { symbolSlug: string }) {
     <aside className="symbol-engine__first-entry" aria-label="Erster Eintritt">
       <p className="symbol-engine__first-entry-title">Erster Eintritt</p>
       <p className="symbol-engine__first-entry-copy">
-        Der Wasser-Raum oeffnet sich in der Tiefe. Wenn du antwortest, bewahrt dieser Raum deine erste Spur.
+        Der Wasser-Raum oeffnet sich in der Tiefe. Wenn du antwortest, bleibt hier dein erster Nachklang.
       </p>
     </aside>
   );
@@ -213,9 +213,9 @@ function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: 
 
   return (
     <div className="symbol-engine__onward">
-      <p>Was hier sichtbar wurde</p>
+      <p>Von hier aus</p>
       <div>
-        <Link href="/mein-pfad">In Mein Pfad ansehen</Link>
+        <Link href="/mein-pfad">Den Weg ansehen</Link>
         <Link href={codexHref}>{data.symbolLabel} im Codex lesen</Link>
         <Link href={symbolNetworkHref}>Zum Symbolnetz zurueckkehren</Link>
         {contextReturnLink ? <Link href={contextReturnLink.returnHref}>{contextReturnLink.returnLabel}</Link> : null}
@@ -244,7 +244,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
       <EngineNavigation states={data.states} activeIndex={engine.activeIndex} onSelect={engine.selectState} />
 
       <section className="symbol-engine__content" key={`${activeState.id}-content`}>
-        <nav className="mb-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-foreground-strong/45" aria-label="Raumpfad">
+        <nav className="mb-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-foreground-strong/45" aria-label="Raumweg">
           <span>Raeume</span>
           <span aria-hidden="true">-&gt;</span>
           <span>{data.symbolLabel}</span>

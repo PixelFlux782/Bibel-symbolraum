@@ -26,10 +26,10 @@ const requiredFiles = [
 ];
 
 const requiredLabels = [
-  "In Mein Pfad ansehen",
-  "Deine Spur",
-  "Deine Spur zu diesem Symbol",
-  "Wenn du zurueckkehrst",
+  "Den Weg ansehen",
+  "Dein Nachklang",
+  "Auf deinem Weg",
+  "Wegmarke",
 ];
 
 const forbiddenVisibleSnippets = [
