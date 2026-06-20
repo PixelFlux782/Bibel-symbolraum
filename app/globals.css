@@ -706,6 +706,114 @@ body {
   margin-top: 0.9rem;
 }
 
+.symbol-personal-way {
+  margin: 0 auto clamp(2.7rem, 6vw, 4.5rem);
+  border-top: 1px solid rgba(var(--gold-rgb), 0.11);
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.07);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--cyan-rgb), 0.04), transparent 42%),
+    linear-gradient(180deg, rgba(2, 5, 12, 0.36), rgba(2, 5, 12, 0.18));
+  padding: clamp(1.35rem, 3.4vw, 2.25rem) 0;
+}
+
+.symbol-personal-way__head {
+  display: grid;
+  gap: 0.85rem;
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.symbol-personal-way__head h2 {
+  color: rgba(var(--foreground-rgb), 0.95);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-style: italic;
+  line-height: 1.04;
+}
+
+.symbol-personal-way__head p:not(.symbol-kicker) {
+  color: rgba(216, 209, 194, 0.72);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: clamp(1.08rem, 2vw, 1.28rem);
+  font-style: italic;
+  line-height: 1.58;
+}
+
+.symbol-personal-way__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.7vw, 1rem);
+  margin-top: clamp(1.4rem, 4vw, 2.35rem);
+}
+
+.symbol-personal-way__area {
+  display: grid;
+  align-content: start;
+  min-height: 13.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.042), transparent 46%),
+    linear-gradient(180deg, rgba(4, 8, 14, 0.46), rgba(2, 5, 12, 0.64));
+  padding: 1rem;
+}
+
+.symbol-personal-way__area h3 {
+  color: rgba(var(--foreground-rgb), 0.94);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.45rem;
+  font-style: italic;
+  line-height: 1.12;
+}
+
+.symbol-personal-way__area ul {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.symbol-personal-way__area li,
+.symbol-personal-way__area p,
+.symbol-personal-way__opening small {
+  color: rgba(216, 209, 194, 0.66);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.98rem;
+  font-style: italic;
+  line-height: 1.52;
+}
+
+.symbol-personal-way__area p {
+  margin-top: 1rem;
+}
+
+.symbol-personal-way__openings {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.symbol-personal-way__opening {
+  display: grid;
+  gap: 0.35rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.08);
+  padding-top: 0.7rem;
+  text-decoration: none;
+}
+
+.symbol-personal-way__opening span {
+  color: rgba(var(--gold-rgb), 0.82);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  line-height: 1.55;
+  text-transform: uppercase;
+}
+
+.symbol-personal-way__opening:hover span,
+.symbol-personal-way__opening:focus-visible span {
+  color: rgba(var(--cyan-rgb), 0.84);
+}
+
 .symbol-journey-card {
   margin: 0 auto clamp(2.7rem, 6vw, 4.6rem);
   border-top: 1px solid rgba(var(--gold-rgb), 0.11);
@@ -6228,6 +6336,35 @@ body {
   .symbol-personal-track .symbol-archive-action {
     width: 100%;
     justify-self: stretch;
+  }
+
+  .symbol-personal-way {
+    margin-bottom: 2.35rem;
+    padding-top: 1.35rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .symbol-personal-way__head {
+    text-align: left;
+  }
+
+  .symbol-personal-way__head h2 {
+    font-size: 2.45rem;
+  }
+
+  .symbol-personal-way__grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .symbol-personal-way__area {
+    min-height: 0;
+    padding: 1.05rem;
+  }
+
+  .symbol-personal-way__opening span {
+    font-size: 0.52rem;
+    letter-spacing: 0.16em;
   }
 
   .symbol-journey-card {

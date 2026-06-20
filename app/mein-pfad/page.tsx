@@ -14,12 +14,15 @@ import {
 } from "@/lib/reflections";
 import {
   buildSymbolRoomHref,
+  getKnownSymbolPathLabel,
+  getSymbolPathConfig,
   getSymbolPathConfigFromReflectionLike,
   symbolPathConfigs,
   type ConfiguredSymbolId,
   type SymbolPathConfig,
 } from "@/lib/symbols/symbolPathConfig";
 import { symbolJourneys, type SymbolJourney } from "@/lib/symbols/symbolJourneys";
+import { derivePersonalWay, type PersonalWay, type PersonalWayOpening } from "@/lib/personalWay";
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -173,6 +176,9 @@ type PersonalSymbolTrack = {
 };
 
 const personalSymbolOrder = ["wasser", "licht", "feuer", "wueste", "brot"] as const satisfies ConfiguredSymbolId[];
+const MAX_WAY_MEMORY_ITEMS = 4;
+const MAX_WAY_FAMILIAR_ITEMS = 5;
+const MAX_WAY_OPENINGS = 3;
 
 const groupOrder: Array<{ key: ReflectionGroupKey; label: string }> = [
   { key: "rooms", label: "Spuren aus Raeumen" },
@@ -306,6 +312,52 @@ function filterReflectionsBySymbol(reflections: StoredReflection[], filter: Symb
   return reflections.filter((reflection) => getReflectionSymbolId(reflection) === filter);
 }
 
+function hasPersonalWay(personalWay: PersonalWay | null) {
+  return Boolean(
+    personalWay &&
+      (
+        personalWay.visitedRooms.length > 0 ||
+        personalWay.reflectedAnchors.length > 0 ||
+        personalWay.familiarSymbols.length > 0 ||
+        personalWay.nextOpenings.length > 0
+      )
+  );
+}
+
+function getWaySymbolLabel(symbolId: string) {
+  return getSymbolPathConfig(symbolId)?.label ?? getKnownSymbolPathLabel(symbolId);
+}
+
+function getWayRoomLabel(symbolId: string) {
+  return getSymbolPathConfig(symbolId)?.roomLabel ?? getWaySymbolLabel(symbolId);
+}
+
+function getWayAnchorLabel(anchorId: string) {
+  return getKnownSymbolPathLabel(anchorId) ?? getSymbolPathConfig(anchorId)?.label;
+}
+
+function buildWayMemoryItems(personalWay: PersonalWay) {
+  const roomItems = personalWay.visitedRooms
+    .map((symbolId) => getWayRoomLabel(symbolId))
+    .filter(Boolean)
+    .map((label) => `${label} liegt hinter dir und nimmt deine Spur auf.`);
+
+  const anchorItems = personalWay.reflectedAnchors
+    .map((anchorId) => getWayAnchorLabel(anchorId))
+    .filter(Boolean)
+    .map((label) => `${label} bleibt als beruehrter Anker nahe.`);
+
+  return [...roomItems, ...anchorItems].slice(0, MAX_WAY_MEMORY_ITEMS);
+}
+
+function buildWayFamiliarItems(personalWay: PersonalWay) {
+  return personalWay.familiarSymbols
+    .map((symbolId) => getWaySymbolLabel(symbolId))
+    .filter(Boolean)
+    .slice(0, MAX_WAY_FAMILIAR_ITEMS)
+    .map((label) => `${label} ist dir vertraut geworden.`);
+}
+
 export default function MeinPfadPage() {
   const [reflections, setReflections] = useState<StoredReflection[] | null>(null);
   const [activeSymbolFilter, setActiveSymbolFilter] = useState<SymbolFilterKey>("all");
@@ -321,6 +373,11 @@ export default function MeinPfadPage() {
     () => [...(reflections ?? [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
     [reflections]
   );
+  const personalWay = useMemo(
+    () => (reflections === null ? null : derivePersonalWay({ reflections: sortedReflections })),
+    [reflections, sortedReflections]
+  );
+  const hasWay = hasPersonalWay(personalWay);
   const symbolTracks = useMemo(() => buildPersonalSymbolTracks(sortedReflections), [sortedReflections]);
   const filteredReflections = useMemo(
     () => filterReflectionsBySymbol(sortedReflections, activeSymbolFilter),
@@ -370,10 +427,15 @@ export default function MeinPfadPage() {
           </div>
         ) : (
           <>
-            <PersonalSymbolMap tracks={symbolTracks} />
-            <PersonalJourneyCard journey={waterToBreadJourney} reflections={sortedReflections} />
+            {hasWay ? (
+              <>
+                <PersonalSymbolMap tracks={symbolTracks} />
+                {personalWay ? <PersonalWaySection personalWay={personalWay} /> : null}
+                <PersonalJourneyCard journey={waterToBreadJourney} reflections={sortedReflections} />
+              </>
+            ) : null}
 
-            {sortedReflections.length === 0 ? (
+            {!hasWay ? (
               <div className="symbol-path-empty mx-auto mt-12 max-w-3xl text-center">
                 <p className="symbol-kicker">Dein Pfad ist noch still</p>
                 <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
@@ -466,6 +528,89 @@ export default function MeinPfadPage() {
 
 function getJourneyStepCtaLabel(hasTrace: boolean) {
   return hasTrace ? "In diesen Raum zurueckkehren" : "Diesen Raum betreten";
+}
+
+function PersonalWaySection({ personalWay }: { personalWay: PersonalWay }) {
+  const memoryItems = buildWayMemoryItems(personalWay);
+  const familiarItems = buildWayFamiliarItems(personalWay);
+  const openings = personalWay.nextOpenings.slice(0, MAX_WAY_OPENINGS);
+  const hasWayContent = memoryItems.length > 0 || familiarItems.length > 0 || openings.length > 0;
+
+  if (!hasWayContent) {
+    return null;
+  }
+
+  return (
+    <section className="symbol-personal-way" aria-label="Der Weg">
+      <div className="symbol-personal-way__head">
+        <p className="symbol-kicker">Mein Pfad</p>
+        <h2>Der Weg</h2>
+        <p>
+          Nicht alles, was du beruehrt hast, ist Vergangenheit. Manche Zeichen bleiben nahe und oeffnen von hier aus
+          den naechsten Raum.
+        </p>
+      </div>
+
+      <div className="symbol-personal-way__grid">
+        <WayQuietArea
+          title="Was hinter dir liegt"
+          emptyText="Noch liegt der Weg still vor dir."
+          items={memoryItems}
+        />
+        <WayQuietArea
+          title="Was vertraut geworden ist"
+          emptyText="Manches Zeichen wartet noch darauf, vertraut zu werden."
+          items={familiarItems}
+        />
+        <WayOpeningsArea openings={openings} />
+      </div>
+    </section>
+  );
+}
+
+function WayQuietArea({
+  title,
+  emptyText,
+  items,
+}: {
+  title: string;
+  emptyText: string;
+  items: string[];
+}) {
+  return (
+    <article className="symbol-personal-way__area">
+      <h3>{title}</h3>
+      {items.length > 0 ? (
+        <ul>
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>{emptyText}</p>
+      )}
+    </article>
+  );
+}
+
+function WayOpeningsArea({ openings }: { openings: PersonalWayOpening[] }) {
+  return (
+    <article className="symbol-personal-way__area symbol-personal-way__area--openings">
+      <h3>Was sich oeffnet</h3>
+      {openings.length > 0 ? (
+        <div className="symbol-personal-way__openings">
+          {openings.map((opening) => (
+            <Link key={opening.id} href={opening.href} className="symbol-personal-way__opening">
+              <span>{opening.label}</span>
+              <small>{opening.reason}</small>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <p>Der naechste Raum muss sich nicht draengen. Deine Spur bleibt lesbar.</p>
+      )}
+    </article>
+  );
 }
 
 function PersonalJourneyCard({
