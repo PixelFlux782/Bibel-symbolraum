@@ -1,0 +1,651 @@
+[
+  {
+    "route": "/",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-home.png",
+    "title": "Bibel-Symbolraum",
+    "h1": "SYMBOLRAUM",
+    "headings": [
+      "SYMBOLRAUM",
+      "אות",
+      "Aus Zeichen werden Raeume. Aus Raeumen werden Spuren."
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. מ י ם א ARCHIV DER ZEICHEN SYMBOLRAUM Eine Spur oeffnet sich im Wasser. Der Wasser-Raum oeffnet die Tiefe. Was dort sichtbar wird, darf als Spur bleiben. WASSER-RAUM BETRETEN SYMBOLNETZ OEFFNEN MEIN PFAD ANSEHEN DEINE SPUR KLINGT NACH 5 bewahrte Spuren ??? BROT 20.06.2026 Gabe erschien schlicht und nahe. MEIN PFAD ÖFFNEN LEBENDIGE KARTE אות BEDEUTUNGSBEWEGUNG Aus Zeichen werden Raeume. Aus Raeumen werden Spuren. 01 Hebraeischer Buchstabe 02 Symbol 03 Raum 04 Spur 05 Mein Pfad AKTUELLE RAEUME IM NETZ Wasser / Licht / Feuer / Wueste / Brot SYMBOLNETZ OEFFNEN SYMBOLRAUM 2026 - BIBLISCHES ARCHIV FUER INNERE BILDER",
+    "consoleMessages": []
+  },
+  {
+    "route": "/mein-pfad",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-mein-pfad.png",
+    "title": "Bibel-Symbolraum",
+    "h1": "Dein Weg durch den SYMBOLRAUM",
+    "headings": [
+      "Dein Weg durch den SYMBOLRAUM",
+      "Die große Bewegung",
+      "Fuenf innere Zeichen",
+      "Wasser",
+      "Licht",
+      "Feuer",
+      "Wüste",
+      "Brot",
+      "Der Weg",
+      "Was hinter dir liegt",
+      "Was vertraut geworden ist",
+      "Was sich leise oeffnet",
+      "Vom Wasser zum Brot",
+      "Wasser",
+      "Licht",
+      "Feuer",
+      "Wüste",
+      "Brot",
+      "Spur aus dem Brotraum",
+      "Spur aus dem Wüstenraum",
+      "Spur aus dem Feuerraum",
+      "Spur aus dem Lichtraum",
+      "Spur aus dem Wasserraum"
+    ],
+    "visibleVisuals": [
+      "/Visuals/hebr_archiv_waende_background.png"
+    ],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. DER WEG Dein Weg durch den SYMBOLRAUM Hier bleiben die Orte lesbar, an denen ein Zeichen in dir nachgeklungen hat. Die große Bewegung Wasser - Die Tiefe wird betreten. NAHE Licht - Die Tiefe wird sichtbar. NAHE Feuer - Sichtbarkeit wird Ruf. NAHE Wüste - Der Ruf wird Pruefung. NAHE Brot - Die Pruefung wird Gabe. NAHE WEGZEICHEN Fuenf innere Zeichen מים AUF DEINEM WEG Wasser EINE WEGSTELLE Zuletzt nahe: Wasser-Spur IN DEN WASSERRAUM ZURUECKKEHREN אור AUF DEINEM WEG Licht EINE WEGSTELLE Zuletzt nahe: Licht-Spur IN DEN LICHTRAUM ZURUECKKEHREN אש AUF DEINEM WEG Feuer EINE WEGSTELLE Zuletzt nahe: Feuer-Spur IN DEN FEUERRAUM ZURUECKKEHREN מדבר AUF DEINEM WEG Wüste EINE WEGSTELLE Zuletzt nahe: Wüsten-Spur IN DEN WÜSTENRAUM ZURUECKKEHREN לחם AUF DEINEM WEG Brot EINE WEGSTELLE Zuletzt nahe: Brot-Spur IN DEN BROTRAUM ZURUECKKEHREN DER WEG Der Weg Nicht alles, was du beruehrt hast, liegt hinter dir. Manche Zeichen bleiben nahe und oeffnen von hier aus einen naechsten Raum. Was hinter dir liegt Brotraum liegt hinter",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/wasser",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-codex__wasser.png",
+    "title": "Wasser | Codex | Bibel-Symbolraum",
+    "h1": "Wasser",
+    "headings": [
+      "Wasser",
+      "Kuratierte Mitte",
+      "Teil einer Spur",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. ZURUECK ZUM CODEX SYMBOL Wasser Schöpfung / Reinigung / Übergang Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird. מים MAJIM KURATIERTE MITTE ESSENZ Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird. SYMBOLISCHE BEWEGUNG 01 Tiefe Wasser bewahrt das Verborgene unter dem Sichtbaren. 02 Ursprung Aus der Tiefe tritt Leben hervor, bevor es eine feste Gestalt hat. 03 Reinigung Wasser loest, klaert und laesst einen neuen Anfang moeglich werden. 04 Uebergang Es markiert die Schwelle zwischen altem Zustand und neuem Weg. 05 Leben Was in der Tiefe beginnt, wird zur Quelle und traegt Frucht. BEDEUTUNGSFELDER TIEFE UEBERGANG REINIGUNG GEBURT VERBORGENHEIT RESONANZRAUM Die Tiefe bereitet das Licht vor. Wasser kehrt im Brot als Gabe wieder. Der Durchgang durch das Wasser oeffnet die Wueste. BIBELSTELLEN GENESIS 1,2 EXODUS 14",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/licht",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-codex__licht.png",
+    "title": "Licht | Codex | Bibel-Symbolraum",
+    "h1": "Licht",
+    "headings": [
+      "Licht",
+      "Kuratierte Mitte",
+      "Teil einer Spur",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. ZURUECK ZUM CODEX SYMBOL Licht Schöpfung / Klarheit / Orientierung Klarheit, Offenbarung und Orientierung im dunklen Raum. אור OR KURATIERTE MITTE ESSENZ Licht ist nicht nur Helligkeit. Es ist das erste Sichtbarwerden von Ordnung: ein Ruf, durch den Kontur, Richtung und Erkenntnis hervortreten. BEWEGUNGSFOLGE 01 Finsternis Noch ist Wirklichkeit da, aber sie ist nicht lesbar. 02 Ruf Das Wort oeffnet einen ersten Spalt von Richtung. 03 Licht Was verborgen war, tritt in Sichtbarkeit. 04 Scheidung Licht macht Unterscheidung moeglich, ohne die Tiefe zu verwerfen. 05 Ordnung Konturen werden zu einer tragenden Gestalt. 06 Erkenntnis Sichtbarkeit wird innerlich wahrgenommen und deutbar. HEBRAEISCHER KOERPER אור OR / ALEPH - WAW - RESCH Or traegt den stillen Anfang des Aleph, eine verbindende Mitte und das Hervortreten in Sichtbarkeit. ZAHL / SYMBOLIK אור = 1 + 6 + 200 = 207 Die Zahl bleibt hier eine Resonanzspur: Anfang, Verbindung und sichtbarer Durchbruch. BEDEUTUNGSFELDER OFFENBARUNG ORDNUNG ERKENNTNIS GLANZ ",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/feuer",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-codex__feuer.png",
+    "title": "Feuer | Codex | Bibel-Symbolraum",
+    "h1": "Feuer",
+    "headings": [
+      "Feuer",
+      "Kuratierte Mitte",
+      "Teil einer Spur",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. ZURUECK ZUM CODEX SYMBOL Feuer Potential, Gegenwart, Führung, Läuterung und Verwandlung. Feuer ist im SYMBOLRAUM die brennende Grenze zwischen Sichtbarem und Unsichtbarem: Offenbarung, Ruf, Gegenwart und klaerende Wandlung. אש ESCH KURATIERTE MITTE ESSENZ Feuer ist im SYMBOLRAUM die brennende Grenze zwischen Sichtbarem und Unsichtbarem: Offenbarung, Ruf, Gegenwart und klaerende Wandlung. BEWEGUNGSFOLGE 01 Ruf Feuer zieht nicht in Aktion, sondern in Aufmerksamkeit. 02 Flamme Was sichtbar brennt, weist auf eine tiefere Gegenwart. 03 Grenze Das Feuer markiert den Ort, an dem Naehe und Abstand zugleich wahr werden. 04 Gegenwart Im Brennen wird etwas anwesend, ohne sich verfuegbar zu machen. 05 Laeuterung Feuer klaert, ohne das Wesentliche auszuloeschen. 06 Wandlung Was durch das Feuer geht, kehrt verwandelt in die Welt zurueck. HEBRAEISCHER KOERPER אש ESCH / ALEPH - SCHIN Esch verbindet den stillen Anfang des Aleph mit dem brennenden Zeichen des Schin. ZAHL / SYMBOLIK אש = 1 + 300 = 301 Die Zahl bleibt hier ",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/wueste",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-codex__wueste.png",
+    "title": "Wüste | Codex | Bibel-Symbolraum",
+    "h1": "Wüste",
+    "headings": [
+      "Wüste",
+      "Teil einer Spur",
+      "Sichtbar / Verborgen",
+      "Spuren, die sich hier oeffnen",
+      "Bedeutungsfelder",
+      "Resonanzraum",
+      "Symbolische Identitaet",
+      "Mitschwingende Beziehungen",
+      "Nahe Resonanz",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung",
+      "Nahe Resonanz"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. ZURUECK ZUM CODEX SYMBOL Wüste Mangel / Prüfung / Hören Stille, Prüfung, Leere und der Ort, an dem das Wort hörbar wird. מדבר MIDBAR TEIL EINER SPUR Dieses Symbol liegt in der Spur: Vom Wasser zum Brot. IN MEIN PFAD ANSEHEN DEN RAUM DIESER SPUR BETRETEN AUF DEINEM WEG Aus dem Wüste-Raum „Die Leere hatte eine klare Stimme.“ WEGMARKE Dieses Zeichen ist dir nicht mehr fremd. Es kehrt auf deinem Weg wieder. DEN WEG ANSEHEN IN DEN RAUM ZURUECKKEHREN SICHTBAR / VERBORGEN SICHTBAR Leere VERBORGEN Ort der Stimme SPUREN, DIE SICH HIER OEFFNEN Pruefung durch Entzug Ein Muster, in dem aeussere Sicherheiten weggenommen werden, damit innere Wahrheit sichtbar wird. GEWOHNTES -> MANGEL -> PRUEFUNG -> REIFUNG Gabe im Mangel Ein Muster, in dem Nahrung, Hilfe oder Leben gerade im Raum des Mangels erscheint. MANGEL -> SCHWELLE -> EMPFANGEN -> GABE Weg der Reifung Ein Muster, in dem Bewegung, Pruefung und Fuehrung zu innerer Verwandlung werden. RUF -> WEG -> PRUEFUNG -> GESTALT BEDEUTUNGSFELDER Pruefung Abhaengigkeit Ueberg",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/brot",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-codex__brot.png",
+    "title": "Brot | Codex | Bibel-Symbolraum",
+    "h1": "Brot",
+    "headings": [
+      "Brot",
+      "Teil einer Spur",
+      "Spuren, die sich hier oeffnen",
+      "Resonanzraum",
+      "Symbolische Identitaet",
+      "Mitschwingende Beziehungen",
+      "Einordnung",
+      "Nahe Resonanz"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. ZURUECK ZUM CODEX SYMBOL Brot Nahrung, Gabe, Teilung und Wort Brot deutet Nahrung, Gabe, Alltag, Teilung und Gemeinschaft. לחם LECHEM TEIL EINER SPUR Dieses Symbol liegt in der Spur: Vom Wasser zum Brot. IN MEIN PFAD ANSEHEN DEN RAUM DIESER SPUR BETRETEN AUF DEINEM WEG Aus dem Brot-Raum „Gabe erschien schlicht und nahe.“ WEGMARKE Dieses Zeichen ist dir nicht mehr fremd. Es kehrt auf deinem Weg wieder. DEN WEG ANSEHEN IN DEN RAUM ZURUECKKEHREN SPUREN, DIE SICH HIER OEFFNEN Gabe im Mangel Ein Muster, in dem Nahrung, Hilfe oder Leben gerade im Raum des Mangels erscheint. MANGEL -> SCHWELLE -> EMPFANGEN -> GABE RESONANZRAUM Brot kehrt aus der Wueste als Gabe wieder. Wasser kehrt im Brot als Gabe wieder. Das Brot spiegelt das Wort als Nahrung. SYMBOLISCHE IDENTITAET HEBRAEISCH לחם UMSCHRIFT LECHEM ZAHLKOERPER 78 ARCHETYPISCHE ROLLE Nahrung, Gabe, Teilung und Wort INNERE SPANNUNG Mangel und Gabe Nahrung / Abhaengigkeit und Vertrauen Brot zeigt Leben als empfangene Gabe. BILDSYMBOL einfaches Brot im warmen Lich",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/wasser",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-raeume__wasser.png",
+    "title": "Wasser-Raum | Bibel-Symbolraum",
+    "h1": "Noch ist nichts getrennt.",
+    "headings": [
+      "Noch ist nichts getrennt.",
+      "Offenes Mem"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. SYMBOLREISE VOR DER ORDNUNG TIEFE GRENZE EXODUS REINIGUNG TAUFE LEBENDIGES WASSER QUELLE RAEUME -> WASSER WASSER-RAUM AUF DEINEM WEG Aus dem Wasser-Raum „Die Tiefe wurde ruhig und tragend.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 08 · GENESIS 1,2 מים Noch ist nichts getrennt. Wasser erscheint vor jeder klaren Grenze. Die Tiefe ist dunkel, aber nicht leer: Ueber ihr schwebt bereits Bewegung. TIEFE / GEIST / MOEGLICHKEIT RESONANZRAUM Die Tiefe bereitet das Licht vor. Wasser kehrt im Brot als Gabe wieder. Der Durchgang durch das Wasser oeffnet die Wueste. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Wasser מים majim BUCHSTABEN מ ANFANG י MITTE ם ENDE Offenes Mem Tiefe, Ursprung, noch offene Moeglichkeit Das Wasser beginnt offen: empfangend, unruhig und noch nicht geordnet. ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER TIEFE TIEFE UEBERGANG REINIGUNG GEBURT VERBORGENHEIT BIBELSTELLEN GENESIS 1,2 GENESIS 1,2 EXODUS 14 VERBUNDE",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/licht",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-raeume__licht.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "h1": "Noch liegt alles in der Tiefe.",
+    "headings": [
+      "Noch liegt alles in der Tiefe.",
+      "Aleph"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. SYMBOLREISE VOR DEM LICHT ES WERDE LICHT LICHT AUF DEM WEG LICHT IN DIR RAEUME -> LICHT LICHT-RAUM AUF DEINEM WEG Aus dem Licht-Raum „Etwas wurde sichtbar, ohne laut zu werden.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · GENESIS 1,2 אור Noch liegt alles in der Tiefe. Dunkelheit liegt ueber dem Anfang. Der Raum ist still, tief und erwartend. DUNKELHEIT / TIEFE / ERWARTUNG RESONANZRAUM Das Licht bereitet das Feuer vor. Licht kehrt im Wort als Sichtbarkeit wieder. Licht spiegelt sich im Wasser als sichtbare Tiefe. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Licht אור or BUCHSTABEN א ANFANG ו MITTE ר ENDE Aleph Ursprung, Stille, verborgene Gegenwart Aleph steht am Anfang des Wortes: ein stiller Ursprung, bevor etwas sichtbar hervortritt. ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER GEGENWART LICHT OFFENBARUNG ORIENTIERUNG BEWUSSTSEIN BIBELSTELLEN GENESIS 1,2 GENESIS 1,3 EXODUS 13,21 VERBUNDENE SYMBOLE מים WASSER אש FEUER ",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/feuer",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-raeume__feuer.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "h1": "Verborgenes Feuer",
+    "headings": [
+      "Verborgenes Feuer",
+      "Aleph"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. SYMBOLREISE VERBORGENES FEUER DORNBUSCH FEUERSAEULE LAEUTERNDES FEUER RAEUME -> FEUER FEUER-RAUM AUF DEINEM WEG Aus dem Feuer-Raum „Der Ruf blieb warm, nicht bedraengend.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · אש / POTENTIAL אש Verborgenes Feuer Waerme wartet unter der Oberflaeche. Ein Funke genuegt, damit sichtbar wird, was bereits in Bewegung ist. POTENTIAL / GLUT / FUNKE RESONANZRAUM Das Feuer kehrt im Wort als Ruf wieder. Feuer spiegelt sich im Licht als Offenbarung. Das Feuer bereitet die Wueste als Ort der Stimme vor. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Feuer אש esch BUCHSTABEN א ANFANG ש ENDE Aleph Ursprung, Stille, verborgene Gegenwart Aleph steht am Anfang des Wortes: Feuer beginnt als Gegenwart, noch bevor eine Flamme sichtbar wird. ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER FEUER GEGENWART REINIGUNG FEUER VERWANDLUNG GEGENWART RUF BIBELSTELLEN EXODUS 3,2 EXODUS 13,21 MALEACHI 3,2-3 VERBUNDENE",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/wueste",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-raeume__wueste.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "h1": "Alles Vertraute faellt weg.",
+    "headings": [
+      "Alles Vertraute faellt weg.",
+      "Mem"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. SYMBOLREISE DIE LEERE DIE PRUEFUNG DIE FUEHRUNG DIE STIMME RAEUME -> WÜSTE WÜSTE-RAUM AUF DEINEM WEG Aus dem Wüste-Raum „Die Leere hatte eine klare Stimme.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · EXODUS / EINTRITT מדבר Alles Vertraute faellt weg. Kein Wasser. Keine Sicherheit. Die Wueste nimmt nicht nur etwas fort, sie macht sichtbar, worauf Vertrauen bisher geruht hat. LEERE / MANGEL / ABHAENGIGKEIT RESONANZRAUM Die Leere bereitet das Brot vor. Das Feuer ruft in der Wueste. Die Pruefung macht Versorgung sichtbar. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Wüste מדבר midbar BUCHSTABEN מ ANFANG ד ZWEITE STELLE ב DRITTE STELLE ר ENDE Mem Tiefe, Leere, offener Raum Mem oeffnet den Eintritt in einen Raum, in dem aeussere Sicherheiten fehlen und Tiefe spuerbar wird. ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER WUESTE REDUKTION UEBERGANG ORIENTIERUNG PRUEFUNG ABHAENGIGKEIT WUESTE STIMME WORT WEG BIBELSTELLEN EXODUS 16 ",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/brot",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-raeume__brot.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "h1": "Im Korn liegt verborgenes Leben.",
+    "headings": [
+      "Im Korn liegt verborgenes Leben.",
+      "Lamed"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. SYMBOLREISE KORN MANNA BRECHEN BROT DES LEBENS RAEUME -> BROT BROT-RAUM AUF DEINEM WEG Aus dem Brot-Raum „Gabe erschien schlicht und nahe.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · MARKUS 4,26-29 לחם Im Korn liegt verborgenes Leben. Brot beginnt unscheinbar. Wasser traegt das Wachstum, Licht laesst das Korn reifen, und lange bleibt verborgen, was einmal Nahrung werden kann. KORN / WACHSTUM / VERBORGENHEIT RESONANZRAUM Brot kehrt aus der Wueste als Gabe wieder. Wasser kehrt im Brot als Gabe wieder. Das Brot spiegelt das Wort als Nahrung. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Brot לחם lechem BUCHSTABEN ל ANFANG ח MITTE ם ENDE Lamed Lernen, Ausrichtung, Wachstum Lamed richtet den Blick auf das Werden: Korn waechst, reift und wird zur Nahrung, die empfangen werden kann. ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER NAHRUNG LEBEN LEBEN WORT NAHRUNG GABE GEMEINSCHAFT BRECHEN BIBELSTELLEN MARKUS 4,26-29 EXODUS 16,4 MA",
+    "consoleMessages": []
+  },
+  {
+    "route": "/symbolnetz",
+    "viewport": "desktop",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/desktop-symbolnetz.png",
+    "title": "Symbolnetz | Bibel-Symbolraum",
+    "h1": "",
+    "headings": [
+      "Beruehre ein Zeichen.",
+      "Wasser"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN TON AUS. KEINE SPUR BEGINNT VON SELBST. AKTIVIEREN, WENN EIN LEISER HINTERGRUNDTON DEN RAUM BEGLEITEN DARF. SYMBOLNETZ Beruehre ein Zeichen. Manche oeffnen einen Raum, andere eine Bedeutung. Wort suchen מים WASSER אור LICHT אש FEUER מדבר WUESTE לחם BROT Press enter or space to select a node.You can then use the arrow keys to move the node around. Press delete to remove it and escape to cancel. Press enter or space to select an edge. You can then press delete to remove it or escape to cancel. UEBERSICHT FOKUS DETAIL TIEFE ERSTER EINTRITT SICHTBARE TIEFE: UEBERSICHT DIE GROSSEN ZEICHEN BLEIBEN SICHTBAR. מים Wasser MAJIM Ein Raum unterhalb des unmittelbar Sichtbaren. ERSTER EINTRITT: WASSER In dieser Spur: Vom Wasser zum Brot DANACH LEUCHTET: LICHT SPUR IN MEIN PFAD OEFFNEN DEN RAUM DIESER SPUR BETRETEN BEDEUTUNG VERTIEFEN HEBRAEISCH ENTDECKEN ZAHL / GEMATRIA ANSEHEN ERZAEHLSPUR OEFFNEN UNTERRAEUME ANSEHEN IM CODEX LESEN RAUM BETRETEN WEGSPUR Schwelle durch Wasser CHAOS -> SCHWELLE -> DURCHGANG -> ORDNUNG Ein Muster, in dem Wasser Grenze, Durchgang, Reinigung und Neuwerdung zugleich ist. WEG IM CODEX LESEN SYMBOL",
+    "consoleMessages": [
+      "warning: [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+      "warning: [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+      "warning: Image with src \"/Visuals/symbolnetz_backround.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height."
+    ]
+  },
+  {
+    "route": "/",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-home.png",
+    "title": "Bibel-Symbolraum",
+    "h1": "SYMBOLRAUM",
+    "headings": [
+      "SYMBOLRAUM",
+      "אות",
+      "Aus Zeichen werden Raeume. Aus Raeumen werden Spuren."
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN ם ARCHIV DER ZEICHEN SYMBOLRAUM Eine Spur oeffnet sich im Wasser. Der Wasser-Raum oeffnet die Tiefe. Was dort sichtbar wird, darf als Spur bleiben. WASSER-RAUM BETRETEN SYMBOLNETZ OEFFNEN MEIN PFAD ANSEHEN DEINE SPUR KLINGT NACH 5 bewahrte Spuren ??? BROT 20.06.2026 Gabe erschien schlicht und nahe. MEIN PFAD ÖFFNEN LEBENDIGE KARTE אות BEDEUTUNGSBEWEGUNG Aus Zeichen werden Raeume. Aus Raeumen werden Spuren. 01 Hebraeischer Buchstabe 02 Symbol 03 Raum 04 Spur 05 Mein Pfad AKTUELLE RAEUME IM NETZ Wasser / Licht / Feuer / Wueste / Brot SYMBOLNETZ OEFFNEN SYMBOLRAUM 2026 - BIBLISCHES ARCHIV FUER INNERE BILDER",
+    "consoleMessages": [
+      "warning: Image with src \"/Visuals/symbolnetz_backround.png\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading"
+    ]
+  },
+  {
+    "route": "/mein-pfad",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-mein-pfad.png",
+    "title": "Bibel-Symbolraum",
+    "h1": "Dein Weg durch den SYMBOLRAUM",
+    "headings": [
+      "Dein Weg durch den SYMBOLRAUM",
+      "Die große Bewegung",
+      "Fuenf innere Zeichen",
+      "Wasser",
+      "Licht",
+      "Feuer",
+      "Wüste",
+      "Brot",
+      "Der Weg",
+      "Was hinter dir liegt",
+      "Was vertraut geworden ist",
+      "Was sich leise oeffnet",
+      "Vom Wasser zum Brot",
+      "Wasser",
+      "Licht",
+      "Feuer",
+      "Wüste",
+      "Brot",
+      "Spur aus dem Brotraum",
+      "Spur aus dem Wüstenraum",
+      "Spur aus dem Feuerraum",
+      "Spur aus dem Lichtraum",
+      "Spur aus dem Wasserraum"
+    ],
+    "visibleVisuals": [
+      "/Visuals/hebr_archiv_waende_background.png"
+    ],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN DER WEG Dein Weg durch den SYMBOLRAUM Hier bleiben die Orte lesbar, an denen ein Zeichen in dir nachgeklungen hat. Die große Bewegung Wasser - Die Tiefe wird betreten. NAHE Licht - Die Tiefe wird sichtbar. NAHE Feuer - Sichtbarkeit wird Ruf. NAHE Wüste - Der Ruf wird Pruefung. NAHE Brot - Die Pruefung wird Gabe. NAHE WEGZEICHEN Fuenf innere Zeichen מים AUF DEINEM WEG Wasser EINE WEGSTELLE Zuletzt nahe: Wasser-Spur IN DEN WASSERRAUM ZURUECKKEHREN אור AUF DEINEM WEG Licht EINE WEGSTELLE Zuletzt nahe: Licht-Spur IN DEN LICHTRAUM ZURUECKKEHREN אש AUF DEINEM WEG Feuer EINE WEGSTELLE Zuletzt nahe: Feuer-Spur IN DEN FEUERRAUM ZURUECKKEHREN מדבר AUF DEINEM WEG Wüste EINE WEGSTELLE Zuletzt nahe: Wüsten-Spur IN DEN WÜSTENRAUM ZURUECKKEHREN לחם AUF DEINEM WEG Brot EINE WEGSTELLE Zuletzt nahe: Brot-Spur IN DEN BROTRAUM ZURUECKKEHREN DER WEG Der Weg Nicht alles, was du beruehrt hast, liegt hinter dir. Manche Zeichen bleiben nahe und oeffnen von hier aus einen naechsten Raum. Was hinter dir liegt Brotraum liegt hinter dir und nimmt deine Spur auf. Wüstenraum liegt hinter dir und nimmt deine Spur auf. Feuerraum liegt hinter ",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/wasser",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-codex__wasser.png",
+    "title": "Wasser | Codex | Bibel-Symbolraum",
+    "h1": "Wasser",
+    "headings": [
+      "Wasser",
+      "Kuratierte Mitte",
+      "Teil einer Spur",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN ZURUECK ZUM CODEX SYMBOL Wasser Schöpfung / Reinigung / Übergang Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird. מים MAJIM KURATIERTE MITTE ESSENZ Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird. SYMBOLISCHE BEWEGUNG 01 Tiefe Wasser bewahrt das Verborgene unter dem Sichtbaren. 02 Ursprung Aus der Tiefe tritt Leben hervor, bevor es eine feste Gestalt hat. 03 Reinigung Wasser loest, klaert und laesst einen neuen Anfang moeglich werden. 04 Uebergang Es markiert die Schwelle zwischen altem Zustand und neuem Weg. 05 Leben Was in der Tiefe beginnt, wird zur Quelle und traegt Frucht. BEDEUTUNGSFELDER TIEFE UEBERGANG REINIGUNG GEBURT VERBORGENHEIT RESONANZRAUM Die Tiefe bereitet das Licht vor. Wasser kehrt im Brot als Gabe wieder. Der Durchgang durch das Wasser oeffnet die Wueste. BIBELSTELLEN GENESIS 1,2 EXODUS 14 HEBRAEISCHER KOERPER מים MAJIM / MEM - JOD - MEM Das Wort beginnt und endet mit Mem. In der Mitte steht Jod",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/licht",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-codex__licht.png",
+    "title": "Licht | Codex | Bibel-Symbolraum",
+    "h1": "Licht",
+    "headings": [
+      "Licht",
+      "Kuratierte Mitte",
+      "Teil einer Spur",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN ZURUECK ZUM CODEX SYMBOL Licht Schöpfung / Klarheit / Orientierung Klarheit, Offenbarung und Orientierung im dunklen Raum. אור OR KURATIERTE MITTE ESSENZ Licht ist nicht nur Helligkeit. Es ist das erste Sichtbarwerden von Ordnung: ein Ruf, durch den Kontur, Richtung und Erkenntnis hervortreten. BEWEGUNGSFOLGE 01 Finsternis Noch ist Wirklichkeit da, aber sie ist nicht lesbar. 02 Ruf Das Wort oeffnet einen ersten Spalt von Richtung. 03 Licht Was verborgen war, tritt in Sichtbarkeit. 04 Scheidung Licht macht Unterscheidung moeglich, ohne die Tiefe zu verwerfen. 05 Ordnung Konturen werden zu einer tragenden Gestalt. 06 Erkenntnis Sichtbarkeit wird innerlich wahrgenommen und deutbar. HEBRAEISCHER KOERPER אור OR / ALEPH - WAW - RESCH Or traegt den stillen Anfang des Aleph, eine verbindende Mitte und das Hervortreten in Sichtbarkeit. ZAHL / SYMBOLIK אור = 1 + 6 + 200 = 207 Die Zahl bleibt hier eine Resonanzspur: Anfang, Verbindung und sichtbarer Durchbruch. BEDEUTUNGSFELDER OFFENBARUNG ORDNUNG ERKENNTNIS GLANZ AUGE HIMMEL RESONANZRAUM Das Licht bereitet das Feuer vor. Licht kehrt im Wort als Sichtbarkeit wieder. Lich",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/feuer",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-codex__feuer.png",
+    "title": "Feuer | Codex | Bibel-Symbolraum",
+    "h1": "Feuer",
+    "headings": [
+      "Feuer",
+      "Kuratierte Mitte",
+      "Teil einer Spur",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN ZURUECK ZUM CODEX SYMBOL Feuer Potential, Gegenwart, Führung, Läuterung und Verwandlung. Feuer ist im SYMBOLRAUM die brennende Grenze zwischen Sichtbarem und Unsichtbarem: Offenbarung, Ruf, Gegenwart und klaerende Wandlung. אש ESCH KURATIERTE MITTE ESSENZ Feuer ist im SYMBOLRAUM die brennende Grenze zwischen Sichtbarem und Unsichtbarem: Offenbarung, Ruf, Gegenwart und klaerende Wandlung. BEWEGUNGSFOLGE 01 Ruf Feuer zieht nicht in Aktion, sondern in Aufmerksamkeit. 02 Flamme Was sichtbar brennt, weist auf eine tiefere Gegenwart. 03 Grenze Das Feuer markiert den Ort, an dem Naehe und Abstand zugleich wahr werden. 04 Gegenwart Im Brennen wird etwas anwesend, ohne sich verfuegbar zu machen. 05 Laeuterung Feuer klaert, ohne das Wesentliche auszuloeschen. 06 Wandlung Was durch das Feuer geht, kehrt verwandelt in die Welt zurueck. HEBRAEISCHER KOERPER אש ESCH / ALEPH - SCHIN Esch verbindet den stillen Anfang des Aleph mit dem brennenden Zeichen des Schin. ZAHL / SYMBOLIK אש = 1 + 300 = 301 Die Zahl bleibt hier eine Resonanzspur: Anfang und brennende Wandlung. BEDEUTUNGSFELDER OFFENBARUNG LAEUTERUNG WANDLUNG RUF GEGEN",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/wueste",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-codex__wueste.png",
+    "title": "Wüste | Codex | Bibel-Symbolraum",
+    "h1": "Wüste",
+    "headings": [
+      "Wüste",
+      "Teil einer Spur",
+      "Sichtbar / Verborgen",
+      "Spuren, die sich hier oeffnen",
+      "Bedeutungsfelder",
+      "Resonanzraum",
+      "Symbolische Identitaet",
+      "Mitschwingende Beziehungen",
+      "Nahe Resonanz",
+      "Welche Frage oeffnet sich dir hier?",
+      "Einordnung",
+      "Nahe Resonanz"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN ZURUECK ZUM CODEX SYMBOL Wüste Mangel / Prüfung / Hören Stille, Prüfung, Leere und der Ort, an dem das Wort hörbar wird. מדבר MIDBAR TEIL EINER SPUR Dieses Symbol liegt in der Spur: Vom Wasser zum Brot. IN MEIN PFAD ANSEHEN DEN RAUM DIESER SPUR BETRETEN AUF DEINEM WEG Aus dem Wüste-Raum „Die Leere hatte eine klare Stimme.“ WEGMARKE Dieses Zeichen ist dir nicht mehr fremd. Es kehrt auf deinem Weg wieder. DEN WEG ANSEHEN IN DEN RAUM ZURUECKKEHREN SICHTBAR / VERBORGEN SICHTBAR Leere VERBORGEN Ort der Stimme SPUREN, DIE SICH HIER OEFFNEN Pruefung durch Entzug Ein Muster, in dem aeussere Sicherheiten weggenommen werden, damit innere Wahrheit sichtbar wird. GEWOHNTES -> MANGEL -> PRUEFUNG -> REIFUNG Gabe im Mangel Ein Muster, in dem Nahrung, Hilfe oder Leben gerade im Raum des Mangels erscheint. MANGEL -> SCHWELLE -> EMPFANGEN -> GABE Weg der Reifung Ein Muster, in dem Bewegung, Pruefung und Fuehrung zu innerer Verwandlung werden. RUF -> WEG -> PRUEFUNG -> GESTALT BEDEUTUNGSFELDER Pruefung Abhaengigkeit Uebergang Orientierung RESONANZRAUM Die Leere bereitet das Brot vor. Das Feuer ruft in der Wueste. Die Pruefung ma",
+    "consoleMessages": []
+  },
+  {
+    "route": "/codex/brot",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-codex__brot.png",
+    "title": "Brot | Codex | Bibel-Symbolraum",
+    "h1": "Brot",
+    "headings": [
+      "Brot",
+      "Teil einer Spur",
+      "Spuren, die sich hier oeffnen",
+      "Resonanzraum",
+      "Symbolische Identitaet",
+      "Mitschwingende Beziehungen",
+      "Einordnung",
+      "Nahe Resonanz"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN ZURUECK ZUM CODEX SYMBOL Brot Nahrung, Gabe, Teilung und Wort Brot deutet Nahrung, Gabe, Alltag, Teilung und Gemeinschaft. לחם LECHEM TEIL EINER SPUR Dieses Symbol liegt in der Spur: Vom Wasser zum Brot. IN MEIN PFAD ANSEHEN DEN RAUM DIESER SPUR BETRETEN AUF DEINEM WEG Aus dem Brot-Raum „Gabe erschien schlicht und nahe.“ WEGMARKE Dieses Zeichen ist dir nicht mehr fremd. Es kehrt auf deinem Weg wieder. DEN WEG ANSEHEN IN DEN RAUM ZURUECKKEHREN SPUREN, DIE SICH HIER OEFFNEN Gabe im Mangel Ein Muster, in dem Nahrung, Hilfe oder Leben gerade im Raum des Mangels erscheint. MANGEL -> SCHWELLE -> EMPFANGEN -> GABE RESONANZRAUM Brot kehrt aus der Wueste als Gabe wieder. Wasser kehrt im Brot als Gabe wieder. Das Brot spiegelt das Wort als Nahrung. SYMBOLISCHE IDENTITAET HEBRAEISCH לחם UMSCHRIFT LECHEM ZAHLKOERPER 78 ARCHETYPISCHE ROLLE Nahrung, Gabe, Teilung und Wort INNERE SPANNUNG Mangel und Gabe Nahrung / Abhaengigkeit und Vertrauen Brot zeigt Leben als empfangene Gabe. BILDSYMBOL einfaches Brot im warmen Licht WEITERE NAMEN BROT LECHEM לחם NAHRUNG MITSCHWINGENDE BEZIEHUNGEN ERSCHEINT ALS AUSDRUCK 90 Manna ist Brot ",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/wasser",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-raeume__wasser.png",
+    "title": "Wasser-Raum | Bibel-Symbolraum",
+    "h1": "Noch ist nichts getrennt.",
+    "headings": [
+      "Noch ist nichts getrennt.",
+      "Offenes Mem"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN SYMBOLREISE VOR DER ORDNUNG TIEFE GRENZE EXODUS REINIGUNG TAUFE LEBENDIGES WASSER QUELLE RAEUME -> WASSER WASSER-RAUM AUF DEINEM WEG Aus dem Wasser-Raum „Die Tiefe wurde ruhig und tragend.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 08 · GENESIS 1,2 מים Noch ist nichts getrennt. Wasser erscheint vor jeder klaren Grenze. Die Tiefe ist dunkel, aber nicht leer: Ueber ihr schwebt bereits Bewegung. TIEFE / GEIST / MOEGLICHKEIT RESONANZRAUM Die Tiefe bereitet das Licht vor. Wasser kehrt im Brot als Gabe wieder. Der Durchgang durch das Wasser oeffnet die Wueste. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Wasser מים majim BUCHSTABEN מ ANFANG י MITTE ם ENDE ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER TIEFE TIEFE UEBERGANG REINIGUNG GEBURT VERBORGENHEIT BIBELSTELLEN GENESIS 1,2 GENESIS 1,2 EXODUS 14 VERBUNDENE SYMBOLE אור LICHT אש FEUER מדבר WUESTE לחם BROT EINE SPUR AUFNEHMEN Wo ist in deinem Leben etwas noch ungeordnet, aber bereits in Bewegung? Antworte leise. Die Spur bleibt in deinem Pfad. DIESE SPUR BEWAHREN DIESE SPUR WURDE BEWAH",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/licht",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-raeume__licht.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "h1": "Noch liegt alles in der Tiefe.",
+    "headings": [
+      "Noch liegt alles in der Tiefe.",
+      "Aleph"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN SYMBOLREISE VOR DEM LICHT ES WERDE LICHT LICHT AUF DEM WEG LICHT IN DIR RAEUME -> LICHT LICHT-RAUM AUF DEINEM WEG Aus dem Licht-Raum „Etwas wurde sichtbar, ohne laut zu werden.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · GENESIS 1,2 אור Noch liegt alles in der Tiefe. Dunkelheit liegt ueber dem Anfang. Der Raum ist still, tief und erwartend. DUNKELHEIT / TIEFE / ERWARTUNG RESONANZRAUM Das Licht bereitet das Feuer vor. Licht kehrt im Wort als Sichtbarkeit wieder. Licht spiegelt sich im Wasser als sichtbare Tiefe. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Licht אור or BUCHSTABEN א ANFANG ו MITTE ר ENDE ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER GEGENWART LICHT OFFENBARUNG ORIENTIERUNG BEWUSSTSEIN BIBELSTELLEN GENESIS 1,2 GENESIS 1,3 EXODUS 13,21 VERBUNDENE SYMBOLE מים WASSER אש FEUER מדבר WUESTE לחם BROT SPUR AUS DIESEM RAUM Wo fehlt dir gerade Klarheit? DIESE SPUR BEWAHREN DIESE SPUR WURDE BEWAHRT. SYMBOLRAUM 2026 - BIBLISCHES ARCHIV FUER INNERE BILDER",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/feuer",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-raeume__feuer.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "h1": "Verborgenes Feuer",
+    "headings": [
+      "Verborgenes Feuer",
+      "Aleph"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN SYMBOLREISE VERBORGENES FEUER DORNBUSCH FEUERSAEULE LAEUTERNDES FEUER RAEUME -> FEUER FEUER-RAUM AUF DEINEM WEG Aus dem Feuer-Raum „Der Ruf blieb warm, nicht bedraengend.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · אש / POTENTIAL אש Verborgenes Feuer Waerme wartet unter der Oberflaeche. Ein Funke genuegt, damit sichtbar wird, was bereits in Bewegung ist. POTENTIAL / GLUT / FUNKE RESONANZRAUM Das Feuer kehrt im Wort als Ruf wieder. Feuer spiegelt sich im Licht als Offenbarung. Das Feuer bereitet die Wueste als Ort der Stimme vor. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Feuer אש esch BUCHSTABEN א ANFANG ש ENDE ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER FEUER GEGENWART REINIGUNG FEUER VERWANDLUNG GEGENWART RUF BIBELSTELLEN EXODUS 3,2 EXODUS 13,21 MALEACHI 3,2-3 VERBUNDENE SYMBOLE מים WASSER אור LICHT מדבר WUESTE לחם BROT SPUR AUS DIESEM RAUM Was glimmt bereits in dir? DIESE SPUR BEWAHREN DIESE SPUR WURDE BEWAHRT. SYMBOLRAUM 2026 - BIBLISCHES ARCHIV FUER INNERE BILDER",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/wueste",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-raeume__wueste.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "h1": "Alles Vertraute faellt weg.",
+    "headings": [
+      "Alles Vertraute faellt weg.",
+      "Mem"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN SYMBOLREISE DIE LEERE DIE PRUEFUNG DIE FUEHRUNG DIE STIMME RAEUME -> WÜSTE WÜSTE-RAUM AUF DEINEM WEG Aus dem Wüste-Raum „Die Leere hatte eine klare Stimme.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · EXODUS / EINTRITT מדבר Alles Vertraute faellt weg. Kein Wasser. Keine Sicherheit. Die Wueste nimmt nicht nur etwas fort, sie macht sichtbar, worauf Vertrauen bisher geruht hat. LEERE / MANGEL / ABHAENGIGKEIT RESONANZRAUM Die Leere bereitet das Brot vor. Das Feuer ruft in der Wueste. Die Pruefung macht Versorgung sichtbar. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Wüste מדבר midbar BUCHSTABEN מ ANFANG ד ZWEITE STELLE ב DRITTE STELLE ר ENDE ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER WUESTE REDUKTION UEBERGANG ORIENTIERUNG PRUEFUNG ABHAENGIGKEIT WUESTE STIMME WORT WEG BIBELSTELLEN EXODUS 16 EXODUS 16 DEUTERONOMIUM 8 VERBUNDENE SYMBOLE מים WASSER אור LICHT אש FEUER לחם BROT SPUR AUS DIESEM RAUM Was fehlt dir gerade so sehr, dass du merkst, worauf du wirklich vertraust? DIESE SPUR BEWAHREN DIESE SPUR WURDE BEWAHRT. SYMBOLRAUM 20",
+    "consoleMessages": []
+  },
+  {
+    "route": "/raeume/brot",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-raeume__brot.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "h1": "Im Korn liegt verborgenes Leben.",
+    "headings": [
+      "Im Korn liegt verborgenes Leben.",
+      "Lamed"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [
+      "?"
+    ],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN SYMBOLREISE KORN MANNA BRECHEN BROT DES LEBENS RAEUME -> BROT BROT-RAUM AUF DEINEM WEG Aus dem Brot-Raum „Gabe erschien schlicht und nahe.“ Dieses Zeichen kehrt in deiner Spur wieder. DEN WEG ANSEHEN IM CODEX VERTIEFEN 01 / 04 · MARKUS 4,26-29 לחם Im Korn liegt verborgenes Leben. Brot beginnt unscheinbar. Wasser traegt das Wachstum, Licht laesst das Korn reifen, und lange bleibt verborgen, was einmal Nahrung werden kann. KORN / WACHSTUM / VERBORGENHEIT RESONANZRAUM Brot kehrt aus der Wueste als Gabe wieder. Wasser kehrt im Brot als Gabe wieder. Das Brot spiegelt das Wort als Nahrung. TIEFER LAUSCHEN BEDEUTUNGSEBENE HEBRAEISCH BIBELSTELLE SYMBOLNETZ LIVING CODEX SYMBOL Brot לחם lechem BUCHSTABEN ל ANFANG ח MITTE ם ENDE ALLE 22 BUCHSTABEN ERKUNDEN BEDEUTUNGSFELDER NAHRUNG LEBEN LEBEN WORT NAHRUNG GABE GEMEINSCHAFT BRECHEN BIBELSTELLEN MARKUS 4,26-29 EXODUS 16,4 MARKUS 4,26-29 VERBUNDENE SYMBOLE מים WASSER אור LICHT אש FEUER מדבר WUESTE SPUR AUS DIESEM RAUM Welches verborgene Leben braucht gerade Zeit zum Reifen? DIESE SPUR BEWAHREN DIESE SPUR WURDE BEWAHRT. SYMBOLRAUM 2026 - BIBLISCHES ARCHIV FUER INNERE BILDER",
+    "consoleMessages": []
+  },
+  {
+    "route": "/symbolnetz",
+    "viewport": "mobile",
+    "status": 200,
+    "screenshot": "reports/phase33e-live-audit/mobile-symbolnetz.png",
+    "title": "Symbolnetz | Bibel-Symbolraum",
+    "h1": "",
+    "headings": [
+      "Beruehre ein Zeichen.",
+      "Wasser"
+    ],
+    "visibleVisuals": [],
+    "duplicateVisuals": [],
+    "badTextMatches": [],
+    "mojibake": [],
+    "viewportOverflow": false,
+    "textExcerpt": "SYMBOLRAUM START SYMBOLNETZ CODEX MEIN PFAD ARCHIV HINTERGRUNDTON TON AN SYMBOLNETZ Beruehre ein Zeichen. Manche oeffnen einen Raum, andere eine Bedeutung. ERSTER EINTRITT Beruehre ein Zeichen. Manche oeffnen einen Raum, andere eine Bedeutung. Du musst nichts verstehen, du darfst schauen und eintreten. מים Wasser Ein Raum unterhalb des unmittelbar Sichtbaren. אור Licht Sichtbarkeit, die Konturen hervortreten und Unterscheidung moeglich werden laesst. אש Feuer Eine wirksame Energie, die glimmt, leuchtet und Gestalt veraendert. מדבר Wueste Eine Erfahrung, in der Verborgenes hervortritt und Vertrauen Gestalt gewinnen kann. UEBERSICHT SYMBOL RESONANZ INFO BEZIEHUNG ERSTER EINTRITT SICHTBARE TIEFE: UEBERSICHT DIE GROSSEN ZEICHEN BLEIBEN SICHTBAR. מים Wasser MAJIM Ein Raum unterhalb des unmittelbar Sichtbaren. ERSTER EINTRITT: WASSER In dieser Spur: Vom Wasser zum Brot DANACH LEUCHTET: LICHT SPUR IN MEIN PFAD OEFFNEN DEN RAUM DIESER SPUR BETRETEN BEDEUTUNG VERTIEFEN HEBRAEISCH ENTDECKEN ZAHL / GEMATRIA ANSEHEN ERZAEHLSPUR OEFFNEN UNTERRAEUME ANSEHEN IM CODEX LESEN RAUM BETRETEN WEGSPUR Schwelle durch Wasser CHAOS -> SCHWELLE -> DURCHGANG -> ORDNUNG Ein Muster, in dem Wasser Grenze, Durch",
+    "consoleMessages": [
+      "warning: [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+      "warning: [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002",
+      "warning: [React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#004",
+      "warning: Image with src \"/Visuals/symbolnetz_backround.png\" has \"fill\" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height.",
+      "warning: [React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#004",
+      "warning: [React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#004"
+    ]
+  }
+]

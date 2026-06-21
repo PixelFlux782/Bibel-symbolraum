@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-20T14:33:55.085Z",
+  "generatedAt": "2026-06-20T16:34:25.536Z",
   "bases": [
     {
       "name": "local",
-      "url": "http://localhost:3000"
+      "url": "http://127.0.0.1:3000"
     }
   ],
   "routes": [
@@ -34,7 +34,9 @@
     "/Visuals/wasser_szenenbild.png",
     "/Visuals/wasser_hebr_symbl.png"
   ],
-  "oldFallbacks": [],
+  "oldFallbacks": [
+    "/Visuals/cinem_lichtraum_backround.png"
+  ],
   "results": [
     {
       "base": "local",
@@ -63,7 +65,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -81,7 +83,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -99,7 +101,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -117,7 +119,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -135,7 +137,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover opacity-50",
           "rect": {
@@ -154,7 +156,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=glsLGA2HJFwC5Y3FpgOOp' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=glsLGA2HJFwC5Y3FpgOOp' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": {
         "x": 0,
         "y": 0,
@@ -188,7 +199,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -206,7 +217,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -224,7 +235,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -242,7 +253,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -261,7 +272,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=BSF73zoQDbkh4HlgDdlFN' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=BSF73zoQDbkh4HlgDdlFN' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": null,
       "h1Color": null
@@ -293,7 +313,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -311,7 +331,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -329,7 +349,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -347,7 +367,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -366,7 +386,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=8OUrP-sjSmaN5-lvO_9Rt' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=8OUrP-sjSmaN5-lvO_9Rt' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Entdeckter Hebrew Codex",
       "h1Color": "rgba(245, 241, 232, 0.96)"
@@ -400,7 +429,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -418,7 +447,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -436,7 +465,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -454,7 +483,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -473,9 +502,18 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=p3SyUeyUuwKcoBFNG5CHl' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=p3SyUeyUuwKcoBFNG5CHl' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
-      "h1Text": "Bewahrte Spuren",
+      "h1Text": "Dein Weg durch den SYMBOLRAUM",
       "h1Color": "rgba(245, 241, 232, 0.96)"
     },
     {
@@ -487,6 +525,7 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
+        "/Visuals/wasser_cinema_hero.png",
         "/Visuals/wasser_interface_backround.png",
         "/Visuals/wasser_tiefenbild.png"
       ],
@@ -494,6 +533,7 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
+        "/Visuals/wasser_cinema_hero.png",
         "/Visuals/wasser_interface_backround.png",
         "/Visuals/wasser_tiefenbild.png"
       ],
@@ -501,6 +541,7 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
+        "/Visuals/wasser_cinema_hero.png",
         "/Visuals/wasser_interface_backround.png",
         "/Visuals/wasser_tiefenbild.png"
       ],
@@ -508,7 +549,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -526,7 +567,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -544,7 +585,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -562,7 +603,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -579,33 +620,33 @@
           "normalized": "/Visuals/wasser_tiefenbild.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fwasser_cinema_hero.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_cinema_hero.png&w=1920&q=75",
           "alt": "Weiter dunkler Wasserraum vor der Ordnung",
           "className": "symbol-engine__image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1101
+            "height": 1102
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "1",
           "zIndex": "auto",
-          "normalized": "/Visuals/wasser_tiefenbild.png"
+          "normalized": "/Visuals/wasser_cinema_hero.png"
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=1920&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1101
+            "height": 1102
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -617,7 +658,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=SNaME2XTeOKuvbiDlxG3d' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=SNaME2XTeOKuvbiDlxG3d' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Noch ist nichts getrennt.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -628,16 +678,19 @@
       "viewport": "desktop",
       "status": 200,
       "loadedImages": [
+        "/Visuals/cinem_lichtraum_backround.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "visualAssetRequests": [
+        "/Visuals/cinem_lichtraum_backround.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "imgSources": [
+        "/Visuals/cinem_lichtraum_backround.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
@@ -646,7 +699,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -664,7 +717,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -682,7 +735,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -700,7 +753,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -717,27 +770,36 @@
           "normalized": "/Visuals/licht_raum_hero.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fcinem_lichtraum_backround.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fcinem_lichtraum_backround.png&w=1920&q=75",
           "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
           "className": "symbol-engine__image",
           "rect": {
-            "x": 0,
-            "y": 0,
-            "width": 1441,
-            "height": 1101
+            "x": -1,
+            "y": -1,
+            "width": 1443,
+            "height": 1102
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.76",
           "zIndex": "auto",
-          "normalized": "/Visuals/licht_raum_hero.png"
+          "normalized": "/Visuals/cinem_lichtraum_backround.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ih24T4S62usrm3IOdSpHv' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ih24T4S62usrm3IOdSpHv' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Noch liegt alles in der Tiefe.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -748,19 +810,25 @@
       "viewport": "desktop",
       "status": 200,
       "loadedImages": [
+        "/Visuals/feuer_asche_makro.png",
         "/Visuals/feuer_glut_raum.png",
+        "/Visuals/feuer_ritzen_glut.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "visualAssetRequests": [
+        "/Visuals/feuer_asche_makro.png",
         "/Visuals/feuer_glut_raum.png",
+        "/Visuals/feuer_ritzen_glut.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "imgSources": [
+        "/Visuals/feuer_asche_makro.png",
         "/Visuals/feuer_glut_raum.png",
+        "/Visuals/feuer_ritzen_glut.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
@@ -769,7 +837,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -787,7 +855,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -805,7 +873,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -823,7 +891,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -840,8 +908,8 @@
           "normalized": "/Visuals/feuer_glut_raum.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=1920&q=75",
           "alt": "Verborgene warme Glut in einem dunklen Raum",
           "className": "symbol-engine__image",
           "rect": {
@@ -855,11 +923,11 @@
           "objectPosition": "50% 50%",
           "opacity": "1",
           "zIndex": "auto",
-          "normalized": "/Visuals/feuer_glut_raum.png"
+          "normalized": "/Visuals/feuer_ritzen_glut.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=1920&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
@@ -873,12 +941,21 @@
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/feuer_glut_raum.png"
+          "normalized": "/Visuals/feuer_asche_makro.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=4JYhGX4Ot-W3Ws0VVuE2n' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=4JYhGX4Ot-W3Ws0VVuE2n' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Verborgenes Feuer",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -892,25 +969,28 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
-        "/Visuals/wueste_nacht_raum.png"
+        "/Visuals/wueste_nacht_raum.png",
+        "/Visuals/wueste_staubreise.png"
       ],
       "visualAssetRequests": [
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
-        "/Visuals/wueste_nacht_raum.png"
+        "/Visuals/wueste_nacht_raum.png",
+        "/Visuals/wueste_staubreise.png"
       ],
       "imgSources": [
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
-        "/Visuals/wueste_nacht_raum.png"
+        "/Visuals/wueste_nacht_raum.png",
+        "/Visuals/wueste_staubreise.png"
       ],
       "cssBackgrounds": [],
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -928,7 +1008,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -946,7 +1026,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -964,7 +1044,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -982,7 +1062,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=1920&q=75",
           "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
           "className": "symbol-engine__image",
           "rect": {
@@ -997,11 +1077,38 @@
           "opacity": "0.72",
           "zIndex": "auto",
           "normalized": "/Visuals/wueste_nacht_raum.png"
+        },
+        {
+          "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=1920&q=75",
+          "alt": "",
+          "className": "symbol-engine__background-image",
+          "rect": {
+            "x": -1,
+            "y": -1,
+            "width": 1442,
+            "height": 1102
+          },
+          "visibleInViewport": true,
+          "objectFit": "cover",
+          "objectPosition": "50% 50%",
+          "opacity": "0.18",
+          "zIndex": "auto",
+          "normalized": "/Visuals/wueste_staubreise.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=rfqxYKVK5DG8KHVuqgxGz' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=rfqxYKVK5DG8KHVuqgxGz' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Alles Vertraute faellt weg.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -1012,19 +1119,25 @@
       "viewport": "desktop",
       "status": 200,
       "loadedImages": [
+        "/Visuals/brot_korn_staub.png",
         "/Visuals/brot_manna_gabe.png",
+        "/Visuals/brot_tau_manna.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "visualAssetRequests": [
+        "/Visuals/brot_korn_staub.png",
         "/Visuals/brot_manna_gabe.png",
+        "/Visuals/brot_tau_manna.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "imgSources": [
+        "/Visuals/brot_korn_staub.png",
         "/Visuals/brot_manna_gabe.png",
+        "/Visuals/brot_tau_manna.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
@@ -1033,7 +1146,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1051,7 +1164,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1069,7 +1182,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=1920&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1087,7 +1200,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1104,45 +1217,54 @@
           "normalized": "/Visuals/brot_manna_gabe.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=1920&q=75",
           "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
           "className": "symbol-engine__image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1101
+            "height": 1102
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.72",
           "zIndex": "auto",
-          "normalized": "/Visuals/brot_manna_gabe.png"
+          "normalized": "/Visuals/brot_korn_staub.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=1920&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=1920&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": -1,
             "y": -1,
             "width": 1442,
-            "height": 1101
+            "height": 1102
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/brot_manna_gabe.png"
+          "normalized": "/Visuals/brot_tau_manna.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=u_m5hTZCW_kXnRz6sI0sC' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=u_m5hTZCW_kXnRz6sI0sC' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Im Korn liegt verborgenes Leben.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -1174,7 +1296,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1192,7 +1314,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1210,7 +1332,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1228,7 +1350,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1246,7 +1368,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fstart_symbolraum_hero.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover opacity-50",
           "rect": {
@@ -1265,7 +1387,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=vAL1K_EV2tXLKiV6Uj9KQ' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=vAL1K_EV2tXLKiV6Uj9KQ' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": {
         "x": 0,
         "y": 0,
@@ -1299,7 +1430,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1317,7 +1448,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1335,7 +1466,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1353,7 +1484,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1372,7 +1503,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=m5xPnGALfSOUChsBzLu8p' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=m5xPnGALfSOUChsBzLu8p' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": null,
       "h1Color": null
@@ -1404,7 +1544,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1422,7 +1562,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1440,7 +1580,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1458,7 +1598,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1477,7 +1617,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Y8CiGYb07-2zbZ9g3gUtv' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Y8CiGYb07-2zbZ9g3gUtv' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Entdeckter Hebrew Codex",
       "h1Color": "rgba(245, 241, 232, 0.96)"
@@ -1511,7 +1660,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1529,7 +1678,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1547,7 +1696,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1565,7 +1714,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fhebr_archiv_waende_background.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1584,9 +1733,18 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=8AeWBjIPCUP-RHkpKMVbI' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=8AeWBjIPCUP-RHkpKMVbI' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
-      "h1Text": "Bewahrte Spuren",
+      "h1Text": "Dein Weg durch den SYMBOLRAUM",
       "h1Color": "rgba(245, 241, 232, 0.96)"
     },
     {
@@ -1598,6 +1756,7 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
+        "/Visuals/wasser_cinema_hero.png",
         "/Visuals/wasser_interface_backround.png",
         "/Visuals/wasser_tiefenbild.png"
       ],
@@ -1605,6 +1764,7 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
+        "/Visuals/wasser_cinema_hero.png",
         "/Visuals/wasser_interface_backround.png",
         "/Visuals/wasser_tiefenbild.png"
       ],
@@ -1612,6 +1772,7 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
+        "/Visuals/wasser_cinema_hero.png",
         "/Visuals/wasser_interface_backround.png",
         "/Visuals/wasser_tiefenbild.png"
       ],
@@ -1619,7 +1780,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1637,7 +1798,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1655,7 +1816,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1673,7 +1834,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1690,33 +1851,33 @@
           "normalized": "/Visuals/wasser_tiefenbild.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_tiefenbild.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fwasser_cinema_hero.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_cinema_hero.png&w=640&q=75",
           "alt": "Weiter dunkler Wasserraum vor der Ordnung",
           "className": "symbol-engine__image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1140
+            "height": 1235
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "1",
           "zIndex": "auto",
-          "normalized": "/Visuals/wasser_tiefenbild.png"
+          "normalized": "/Visuals/wasser_cinema_hero.png"
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwasser_interface_backround.png&w=640&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1140
+            "height": 1235
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -1728,7 +1889,16 @@
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=2lk2uHtjIGYYYzAP-gQyP' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=2lk2uHtjIGYYYzAP-gQyP' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Noch ist nichts getrennt.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -1739,16 +1909,19 @@
       "viewport": "mobile",
       "status": 200,
       "loadedImages": [
+        "/Visuals/cinem_lichtraum_backround.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "visualAssetRequests": [
+        "/Visuals/cinem_lichtraum_backround.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "imgSources": [
+        "/Visuals/cinem_lichtraum_backround.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
@@ -1757,7 +1930,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1775,7 +1948,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1793,7 +1966,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1811,7 +1984,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1828,27 +2001,36 @@
           "normalized": "/Visuals/licht_raum_hero.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fcinem_lichtraum_backround.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fcinem_lichtraum_backround.png&w=640&q=75",
           "alt": "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
           "className": "symbol-engine__image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1019
+            "height": 1114
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.76",
           "zIndex": "auto",
-          "normalized": "/Visuals/licht_raum_hero.png"
+          "normalized": "/Visuals/cinem_lichtraum_backround.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=73awBFA4weaodpGIQ5XqU' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=73awBFA4weaodpGIQ5XqU' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Noch liegt alles in der Tiefe.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -1859,19 +2041,25 @@
       "viewport": "mobile",
       "status": 200,
       "loadedImages": [
+        "/Visuals/feuer_asche_makro.png",
         "/Visuals/feuer_glut_raum.png",
+        "/Visuals/feuer_ritzen_glut.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "visualAssetRequests": [
+        "/Visuals/feuer_asche_makro.png",
         "/Visuals/feuer_glut_raum.png",
+        "/Visuals/feuer_ritzen_glut.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "imgSources": [
+        "/Visuals/feuer_asche_makro.png",
         "/Visuals/feuer_glut_raum.png",
+        "/Visuals/feuer_ritzen_glut.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
@@ -1880,7 +2068,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -1898,7 +2086,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -1916,7 +2104,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -1934,7 +2122,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -1951,45 +2139,54 @@
           "normalized": "/Visuals/feuer_glut_raum.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_ritzen_glut.png&w=640&q=75",
           "alt": "Verborgene warme Glut in einem dunklen Raum",
           "className": "symbol-engine__image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1044
+            "height": 1139
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "1",
           "zIndex": "auto",
-          "normalized": "/Visuals/feuer_glut_raum.png"
+          "normalized": "/Visuals/feuer_ritzen_glut.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ffeuer_glut_raum.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ffeuer_asche_makro.png&w=640&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1044
+            "height": 1139
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/feuer_glut_raum.png"
+          "normalized": "/Visuals/feuer_asche_makro.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=_36b5ySgNYYP_-nlk0bLE' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=_36b5ySgNYYP_-nlk0bLE' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Verborgenes Feuer",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -2003,25 +2200,28 @@
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
-        "/Visuals/wueste_nacht_raum.png"
+        "/Visuals/wueste_nacht_raum.png",
+        "/Visuals/wueste_staubreise.png"
       ],
       "visualAssetRequests": [
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
-        "/Visuals/wueste_nacht_raum.png"
+        "/Visuals/wueste_nacht_raum.png",
+        "/Visuals/wueste_staubreise.png"
       ],
       "imgSources": [
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png",
-        "/Visuals/wueste_nacht_raum.png"
+        "/Visuals/wueste_nacht_raum.png",
+        "/Visuals/wueste_staubreise.png"
       ],
       "cssBackgrounds": [],
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -2039,7 +2239,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -2057,7 +2257,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -2075,7 +2275,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -2093,14 +2293,14 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_nacht_raum.png&w=640&q=75",
           "alt": "Weite dunkle Wueste in Nachtblau mit kaum sichtbarem Licht",
           "className": "symbol-engine__image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1044
+            "height": 1139
           },
           "visibleInViewport": true,
           "objectFit": "cover",
@@ -2108,11 +2308,38 @@
           "opacity": "0.72",
           "zIndex": "auto",
           "normalized": "/Visuals/wueste_nacht_raum.png"
+        },
+        {
+          "src": "/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fwueste_staubreise.png&w=640&q=75",
+          "alt": "",
+          "className": "symbol-engine__background-image",
+          "rect": {
+            "x": 0,
+            "y": -1,
+            "width": 391,
+            "height": 1139
+          },
+          "visibleInViewport": true,
+          "objectFit": "cover",
+          "objectPosition": "50% 50%",
+          "opacity": "0.18",
+          "zIndex": "auto",
+          "normalized": "/Visuals/wueste_staubreise.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=mfGyczSjUyeqDPFMFOUjo' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=mfGyczSjUyeqDPFMFOUjo' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Alles Vertraute faellt weg.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
@@ -2123,19 +2350,25 @@
       "viewport": "mobile",
       "status": 200,
       "loadedImages": [
+        "/Visuals/brot_korn_staub.png",
         "/Visuals/brot_manna_gabe.png",
+        "/Visuals/brot_tau_manna.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "visualAssetRequests": [
+        "/Visuals/brot_korn_staub.png",
         "/Visuals/brot_manna_gabe.png",
+        "/Visuals/brot_tau_manna.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
       ],
       "imgSources": [
+        "/Visuals/brot_korn_staub.png",
         "/Visuals/brot_manna_gabe.png",
+        "/Visuals/brot_tau_manna.png",
         "/Visuals/licht_raum_hero.png",
         "/Visuals/symbolnetz_backround.png",
         "/Visuals/tiefenraum_backround.png"
@@ -2144,7 +2377,7 @@
       "visibleImgs": [
         {
           "src": "/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Ftiefenraum_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-70",
           "rect": {
@@ -2162,7 +2395,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Flicht_raum_hero.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.24]",
           "rect": {
@@ -2180,7 +2413,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fsymbolnetz_backround.png&w=640&q=75",
           "alt": "",
           "className": "object-cover opacity-[0.12]",
           "rect": {
@@ -2198,7 +2431,7 @@
         },
         {
           "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
           "alt": "",
           "className": "sacred-drift object-cover",
           "rect": {
@@ -2215,45 +2448,54 @@
           "normalized": "/Visuals/brot_manna_gabe.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_korn_staub.png&w=640&q=75",
           "alt": "Nahaufnahme einer dunklen, organischen Struktur mit feinem Licht als Bild fuer verborgenes Korn",
           "className": "symbol-engine__image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1089
+            "height": 1184
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.72",
           "zIndex": "auto",
-          "normalized": "/Visuals/brot_manna_gabe.png"
+          "normalized": "/Visuals/brot_korn_staub.png"
         },
         {
-          "src": "/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=3840&q=75",
-          "currentSrc": "http://localhost:3000/_next/image?url=%2FVisuals%2Fbrot_manna_gabe.png&w=640&q=75",
+          "src": "/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=3840&q=75",
+          "currentSrc": "http://127.0.0.1:3000/_next/image?url=%2FVisuals%2Fbrot_tau_manna.png&w=640&q=75",
           "alt": "",
           "className": "symbol-engine__background-image",
           "rect": {
             "x": 0,
             "y": -1,
             "width": 391,
-            "height": 1089
+            "height": 1184
           },
           "visibleInViewport": true,
           "objectFit": "cover",
           "objectPosition": "50% 50%",
           "opacity": "0.18",
           "zIndex": "auto",
-          "normalized": "/Visuals/brot_manna_gabe.png"
+          "normalized": "/Visuals/brot_tau_manna.png"
         }
       ],
       "visibleBackgrounds": [],
       "failedRequests": [],
-      "consoleMessages": [],
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=CyzqwI7E8WiFnxn0NejeA' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=CyzqwI7E8WiFnxn0NejeA' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+        }
+      ],
       "heroRect": null,
       "h1Text": "Im Korn liegt verborgenes Leben.",
       "h1Color": "rgba(245, 241, 232, 0.94)"
