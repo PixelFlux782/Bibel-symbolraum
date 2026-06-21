@@ -27,7 +27,7 @@ export const hebrewMeaningLinks: HebrewMeaningLink[] = [
   },
   {
     id: "hebrew-esh",
-    hebrewWordId: "esh",
+    hebrewWordId: "esch",
     hebrew: "\u05d0\u05e9",
     transliteration: "esch",
     nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
@@ -45,6 +45,34 @@ export const hebrewMeaningLinks: HebrewMeaningLink[] = [
     hebrew: "\u05dc\u05d7\u05dd",
     transliteration: "lechem",
     nodeIds: ["nourishment", "gift", "community", "breaking", "life", "word"],
+  },
+  {
+    id: "hebrew-tehom",
+    hebrewWordId: "tehom",
+    hebrew: "\u05ea\u05d4\u05d5\u05dd",
+    transliteration: "tehom",
+    nodeIds: ["depth", "hiddenness", "chaos", "birth", "revelation"],
+  },
+  {
+    id: "hebrew-ruach",
+    hebrewWordId: "ruach",
+    hebrew: "\u05e8\u05d5\u05d7",
+    transliteration: "ruach",
+    nodeIds: ["presence", "life", "transition", "revelation", "voice", "word", "light"],
+  },
+  {
+    id: "hebrew-davar",
+    hebrewWordId: "davar",
+    hebrew: "\u05d3\u05d1\u05e8",
+    transliteration: "davar",
+    nodeIds: ["word", "revelation", "guidance", "calling", "presence", "light", "nourishment"],
+  },
+  {
+    id: "hebrew-qol",
+    hebrewWordId: "qol",
+    hebrew: "\u05e7\u05d5\u05dc",
+    transliteration: "qol",
+    nodeIds: ["voice", "word", "revelation", "calling", "guidance", "presence", "awareness", "path"],
   },
 ];
 

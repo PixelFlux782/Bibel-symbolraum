@@ -7,6 +7,7 @@ import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
 import { getSymbolCodexAnchorBridge, getSymbolCodexChipLinks, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
+import { breakdownHebrewWord } from "@/lib/hebrew/gematria";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import type { HebrewWord } from "@/types/hebrew";
@@ -88,9 +89,30 @@ function formatRelationType(type: CodexRelation["type"]) {
     "contains-letter": "traegt den Buchstaben",
     "continues-journey": "fuehrt weiter zu",
     contrasts: "steht im Gegenueber zu",
+    "carried-by": "getragen von",
+    "moves-over": "bewegt sich ueber",
+    "hovers-over": "schwebt ueber",
+    carries: "traegt",
+    "gives-voice-to": "gibt Stimme",
+    "opens-to": "oeffnet zu",
+    "breathes-into": "haucht Atem in",
+    "stirred-by": "bewegt durch",
+    "moves-through": "bewegt sich durch",
+    expresses: "drueckt aus",
+    "expressed-through": "ausgedrueckt durch",
+    "echoes-within": "hallt nach in",
+    "gives-rise-to": "bringt hervor",
+    "heard-within": "hoerbar in",
     "has-hebrew-word": "klingt hebraeisch mit",
+    "hidden-within": "verborgen in",
+    "leads-to": "fuehrt zu",
+    "nourishes-as": "naehrt als",
+    precedes: "geht voraus",
     related: "steht nahe bei",
+    "revealed-at": "offenbart an",
+    reveals: "offenbart",
     "shares-meaning": "teilt Bedeutung mit",
+    "source-of": "ist Ursprung von",
     symbolizes: "macht sichtbar",
     transforms: "wandelt sich zu",
   };
@@ -1782,6 +1804,25 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             ) : null}
+            {entry.type === "hebrew-word" ? (
+              <HebrewWordIdentitySection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : activeFocus === "gematria" ? "gematria" : undefined} />
+            ) : null}
+            {entry.id === "davar" ? <DavarMidbarResonanceSection /> : null}
+            {entry.id === "qol" ? (
+              <DetailSection title="Die Stimme in der Wueste">
+                <div className="grid gap-5">
+                  <div className="grid max-w-sm gap-3 border border-gold/15 bg-gold/[0.035] p-5 text-right font-serif text-5xl leading-none text-gold" lang="he" dir="rtl">
+                    <p>מדבר</p>
+                    <p>קול</p>
+                  </div>
+                  <div className="symbol-copy grid gap-3 text-base italic text-muted-soft">
+                    <p>Die Wueste erscheint aeusserlich leer.</p>
+                    <p>Gerade deshalb wird die Stimme hoerbar.</p>
+                    <p>Midbar ist nicht nur Ort des Mangels. Sie wird zum Raum des Hoerens.</p>
+                  </div>
+                </div>
+              </DetailSection>
+            ) : null}
             {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <OntologyResonanceSection
                 entry={entry}
@@ -2114,6 +2155,88 @@ function ResonanceLinkList({
         );
       })}
     </div>
+  );
+}
+
+function HebrewWordIdentitySection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
+  if (!entry.hebrew) {
+    return null;
+  }
+
+  const breakdown = breakdownHebrewWord(entry.hebrew);
+  const word = hebrewWords.find((candidate) => candidate.id === entry.id);
+
+  return (
+    <DetailSection title="Hebraeischer Koerper" activeContext={activeContext}>
+      <div className="grid gap-5">
+        <dl className="grid gap-4 sm:grid-cols-3">
+          <div className="border border-gold/15 bg-gold/[0.035] p-4">
+            <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeisch</dt>
+            <dd className="mt-3 font-serif text-4xl leading-none text-gold/90" lang="he" dir="rtl">
+              {entry.hebrew}
+            </dd>
+          </div>
+          <div className="border border-white/[0.06] bg-black/[0.12] p-4">
+            <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Umschrift</dt>
+            <dd className="mt-3 text-sm uppercase tracking-[0.18em] text-foreground-strong">
+              {entry.transliteration}
+            </dd>
+          </div>
+          <div className="border border-white/[0.06] bg-black/[0.12] p-4">
+            <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlkoerper</dt>
+            <dd className="mt-3 font-serif text-4xl italic leading-none text-gold/85">
+              {breakdown.value}
+            </dd>
+          </div>
+        </dl>
+
+        {breakdown.letters.length > 0 ? (
+          <div className="border-t border-white/[0.06] pt-5">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Buchstabenfolge</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3" dir="rtl">
+              {breakdown.letters.map((letterBreakdown, index) => {
+                const letterId = word?.letterIds[index];
+                const letter = letterId ? hebrewLetters.find((candidate) => candidate.id === letterId) : undefined;
+                const meanings = letter?.archetypalMeanings.length ? letter.archetypalMeanings : letter?.experienceFields ?? [];
+
+                return (
+                  <article key={`${entry.id}-${letterBreakdown.letter}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4" dir="ltr">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">{letter?.name ?? letterId ?? "Buchstabe"}</p>
+                        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-gold/70">{letterBreakdown.value}</p>
+                      </div>
+                      <p className="font-serif text-4xl leading-none text-gold" lang="he" dir="rtl">{letterBreakdown.letter}</p>
+                    </div>
+                    {meanings.length > 0 ? (
+                      <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{meanings.slice(0, 3).join(" / ")}</p>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </DetailSection>
+  );
+}
+
+function DavarMidbarResonanceSection() {
+  return (
+    <DetailSection title="Das Wort in der Wueste">
+      <div className="grid gap-5">
+        <div className="grid max-w-sm gap-3 border border-gold/15 bg-gold/[0.035] p-5 text-right font-serif text-5xl leading-none text-gold" lang="he" dir="rtl">
+          <p>מדבר</p>
+          <p>דבר</p>
+        </div>
+        <div className="symbol-copy grid gap-3 text-base italic text-muted-soft">
+          <p>Im hebräischen Wort Midbar (Wüste) erscheint Davar (Wort) fast vollständig.</p>
+          <p>Die Wüste ist deshalb nicht nur ein Ort der Leere.</p>
+          <p>Sie ist der Raum, in dem das Wort hörbar wird.</p>
+        </div>
+      </div>
+    </DetailSection>
   );
 }
 

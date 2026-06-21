@@ -16,8 +16,8 @@ export const symbolHebrewMappings: HebrewSymbolMapping[] = [
   {
     id: "symbol-feuer-esh",
     symbolSlug: "feuer",
-    hebrewWordIds: ["esh"],
-    primaryHebrewWordId: "esh",
+    hebrewWordIds: ["esch"],
+    primaryHebrewWordId: "esch",
   },
   {
     id: "symbol-brot-lechem",

@@ -30,6 +30,19 @@ function entryTerms(entry: CodexEntry): string[] {
   ].filter((term): term is string => Boolean(term?.trim()));
 }
 
+const CANONICAL_CODEX_LOOKUP_IDS: Record<string, string> = {
+  wasser: "majim",
+  licht: "or",
+  feuer: "esch",
+  esh: "esch",
+  wueste: "midbar",
+  wuste: "midbar",
+  brot: "lechem",
+  tiefe: "tehom",
+  wort: "davar",
+  stimme: "qol",
+};
+
 function uniqueEntries(entries: CodexEntry[]): CodexEntry[] {
   const seen = new Set<string>();
 
@@ -50,6 +63,13 @@ export function resolveCodexEntry(input: string): CodexEntry | undefined {
     return undefined;
   }
 
+  const canonicalId = CANONICAL_CODEX_LOOKUP_IDS[normalizedInput];
+  const canonicalMatch = canonicalId ? codexRegistry.find((entry) => entry.id === canonicalId) : undefined;
+
+  if (canonicalMatch) {
+    return canonicalMatch;
+  }
+
   const exactIdMatch = codexRegistry.find((entry) => normalizeCodexTerm(entry.id) === normalizedInput);
 
   if (exactIdMatch) {
@@ -68,14 +88,20 @@ export function searchCodexEntries(query: string): CodexEntry[] {
     return [];
   }
 
-  return uniqueEntries(
+  const canonicalId = CANONICAL_CODEX_LOOKUP_IDS[normalizedQuery];
+  const canonicalMatch = canonicalId ? codexRegistry.find((entry) => entry.id === canonicalId) : undefined;
+
+  return uniqueEntries([
+    canonicalMatch,
+    ...(
     codexRegistry.filter((entry) =>
       entryTerms(entry).some((term) => {
         const normalizedTerm = normalizeCodexTerm(term);
         return normalizedTerm === normalizedQuery || normalizedTerm.includes(normalizedQuery);
       }),
+    )
     ),
-  );
+  ].filter((entry): entry is CodexEntry => Boolean(entry)));
 }
 
 export function getCodexEntriesByType(type: CodexEntryType): CodexEntry[] {

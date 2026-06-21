@@ -7,7 +7,7 @@ export const fireEngineData: SymbolEngineData = {
   title: "Feuerraum",
   symbolLabel: "Feuer",
   hebrew: {
-    hebrewWordId: "esh",
+    hebrewWordId: "esch",
     hebrewLetterIds: ["aleph", "shin"],
     hebrewMeaningFieldIds: ["esh-fire", "esh-transformation", "esh-presence", "esh-purification", "esh-calling"],
     word: "\u05d0\u05e9",

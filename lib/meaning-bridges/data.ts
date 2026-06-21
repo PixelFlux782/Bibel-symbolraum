@@ -33,8 +33,8 @@ export const meaningBridgesData: MeaningBridge[] = [
 
   {
     id: "bridge-wasser-licht",
-    sourceId: "wasser",
-    targetId: "licht",
+    sourceId: "majim",
+    targetId: "or",
     title: "Von der Tiefe zur Offenbarung",
     summary: "Die Tiefe empfängt.\nDas Licht offenbart.",
     meaningFields: ["depth", "revelation"],
@@ -58,8 +58,8 @@ export const meaningBridgesData: MeaningBridge[] = [
 
   {
     id: "bridge-wueste-feuer",
-    sourceId: "wueste",
-    targetId: "feuer",
+    sourceId: "midbar",
+    targetId: "esch",
     title: "Von der Leere zur Verwandlung",
     summary:
       "In der Leere wird sichtbar,\nwas zuvor verborgen war.",
@@ -73,7 +73,7 @@ export const meaningBridgesData: MeaningBridge[] = [
         meaning: "Wüste - Leere",
       },
       {
-        hebrewWordId: "esh",
+        hebrewWordId: "esch",
         hebrew: "אש",
         transliteration: "esch",
         meaning: "Feuer - Verwandlung",
@@ -83,15 +83,15 @@ export const meaningBridgesData: MeaningBridge[] = [
 
   {
     id: "bridge-feuer-licht",
-    sourceId: "feuer",
-    targetId: "licht",
+    sourceId: "esch",
+    targetId: "or",
     title: "Vom Verzehren zum Sichtbarwerden",
     summary: "Das Feuer verwandelt.\nDas Licht macht sichtbar.",
     meaningFields: ["transformation", "revelation"],
     tags: ["fire", "light", "transformation"],
     hebrewConnections: [
       {
-        hebrewWordId: "esh",
+        hebrewWordId: "esch",
         hebrew: "אש",
         transliteration: "esch",
         meaning: "Feuer - Kraft",

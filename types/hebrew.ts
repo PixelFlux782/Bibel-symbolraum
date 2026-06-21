@@ -66,6 +66,8 @@ export interface HebrewWord {
   hebrew: string;
   transliteration: string;
   germanMeaning: string;
+  gematria?: number;
+  category?: "word";
   letterIds: string[];
   possibleRootIds: string[];
   rootNote?: string;

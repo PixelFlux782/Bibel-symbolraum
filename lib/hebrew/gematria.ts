@@ -10,33 +10,33 @@ export type HebrewWordBreakdown = {
 };
 
 const HEBREW_GEMATRIA_VALUES: Record<string, number> = {
-  א: 1,
-  ב: 2,
-  ג: 3,
-  ד: 4,
-  ה: 5,
-  ו: 6,
-  ז: 7,
-  ח: 8,
-  ט: 9,
-  י: 10,
-  כ: 20,
-  ך: 20,
-  ל: 30,
-  מ: 40,
-  ם: 40,
-  נ: 50,
-  ן: 50,
-  ס: 60,
-  ע: 70,
-  פ: 80,
-  ף: 80,
-  צ: 90,
-  ץ: 90,
-  ק: 100,
-  ר: 200,
-  ש: 300,
-  ת: 400,
+  "\u05d0": 1,
+  "\u05d1": 2,
+  "\u05d2": 3,
+  "\u05d3": 4,
+  "\u05d4": 5,
+  "\u05d5": 6,
+  "\u05d6": 7,
+  "\u05d7": 8,
+  "\u05d8": 9,
+  "\u05d9": 10,
+  "\u05db": 20,
+  "\u05da": 20,
+  "\u05dc": 30,
+  "\u05de": 40,
+  "\u05dd": 40,
+  "\u05e0": 50,
+  "\u05df": 50,
+  "\u05e1": 60,
+  "\u05e2": 70,
+  "\u05e4": 80,
+  "\u05e3": 80,
+  "\u05e6": 90,
+  "\u05e5": 90,
+  "\u05e7": 100,
+  "\u05e8": 200,
+  "\u05e9": 300,
+  "\u05ea": 400,
 };
 
 const HEBREW_MARKS = /[\u0591-\u05BD\u05BF-\u05C7]/u;
@@ -64,8 +64,13 @@ export function breakdownHebrewWord(word: string): HebrewWordBreakdown {
   };
 }
 
-const mayimGematria = calculateGematria('מים');
+const mayimGematria = calculateGematria("\u05de\u05d9\u05dd");
+const tehomGematria = calculateGematria("\u05ea\u05d4\u05d5\u05dd");
 
 if (mayimGematria !== 90) {
-  throw new Error(`Gematria validation failed for מים: expected 90, got ${mayimGematria}.`);
+  throw new Error(`Gematria validation failed for \u05de\u05d9\u05dd: expected 90, got ${mayimGematria}.`);
+}
+
+if (tehomGematria !== 451) {
+  throw new Error(`Gematria validation failed for \u05ea\u05d4\u05d5\u05dd: expected 451, got ${tehomGematria}.`);
 }

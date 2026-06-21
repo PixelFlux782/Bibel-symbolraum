@@ -15,15 +15,14 @@ export type MeaningBridgeId =
 
 export type BridgeSourceId =
   | "genesis-1-2"
-  | "wasser"
-  | "wueste"
-  | "feuer";
+  | "majim"
+  | "midbar"
+  | "esch";
 
 export type BridgeTargetId =
   | "genesis-1-3"
-  | "licht"
-  | "feuer"
-  | "licht";
+  | "or"
+  | "esch";
 
 export interface HebrewConnection {
   hebrewWordId?: string;

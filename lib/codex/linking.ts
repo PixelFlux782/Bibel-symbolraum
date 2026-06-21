@@ -91,7 +91,7 @@ export function resolveMeaningFieldHref(value: string, symbolId = "wasser") {
   const linkedEntry = resolveCodexEntry(curated?.id ?? value) ?? resolveCodexEntry(curated?.label ?? value);
   const curatedHref = curated && "href" in curated ? curated.href : undefined;
 
-  return linkedEntry ? `/codex/${linkedEntry.id}` : curatedHref ?? queryHref("meaning", curated?.id ?? normalizeCodexTerm(value));
+  return curatedHref ?? (linkedEntry ? `/codex/${linkedEntry.id}` : queryHref("meaning", curated?.id ?? normalizeCodexTerm(value)));
 }
 
 export function resolveScriptureAnchorHref(value: string, symbolId = "wasser") {

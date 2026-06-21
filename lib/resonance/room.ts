@@ -15,14 +15,27 @@ export type ResonanceRoom = {
 };
 
 const VISIBLE_RESONANCE_SYMBOLS = new Set(["wasser", "licht", "feuer", "wueste", "brot"]);
+const CANONICAL_RESONANCE_NODE_IDS: Record<string, string> = {
+  wasser: "majim",
+  licht: "or",
+  feuer: "esch",
+  wueste: "midbar",
+  brot: "lechem",
+  tiefe: "tehom",
+  wort: "davar",
+  stimme: "qol",
+};
 
 type StatementProjection = ResonanceStatement & {
   hasEvidence: (symbolId: string) => boolean;
 };
 
 function hasConnection(sourceId: string, targetId: string) {
-  return getResonanceConnectionsForNode(sourceId).some((connection) =>
-    connects(connection, sourceId, targetId),
+  const canonicalSourceId = CANONICAL_RESONANCE_NODE_IDS[sourceId] ?? sourceId;
+  const canonicalTargetId = CANONICAL_RESONANCE_NODE_IDS[targetId] ?? targetId;
+
+  return getResonanceConnectionsForNode(canonicalSourceId).some((connection) =>
+    connects(connection, canonicalSourceId, canonicalTargetId),
   );
 }
 

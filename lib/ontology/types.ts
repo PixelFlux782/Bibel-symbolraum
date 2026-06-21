@@ -81,6 +81,11 @@ export type OntologyRelationType =
   | "is_expression_of"
   | "is_threshold_to"
   | "opens_into"
+  | "source_of"
+  | "gives_rise_to"
+  | "echoes_within"
+  | "precedes"
+  | "expressed_through"
   | "contrasts_with"
   | "contains_pattern"
   | "fulfills_pattern_of"
@@ -104,6 +109,11 @@ export const ONTOLOGY_RELATION_TYPES = [
   "is_expression_of",
   "is_threshold_to",
   "opens_into",
+  "source_of",
+  "gives_rise_to",
+  "echoes_within",
+  "precedes",
+  "expressed_through",
   "contrasts_with",
   "contains_pattern",
   "fulfills_pattern_of",

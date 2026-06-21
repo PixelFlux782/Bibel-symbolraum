@@ -1,6 +1,7 @@
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
+import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { getAllBridges } from "./bridgeRegistry";
 import type { MeaningBridge } from "./types";
 
@@ -38,7 +39,10 @@ export function validateMeaningBridges(): ValidationResult {
 
   // Get valid symbol IDs from meaning links
   const validSymbolIds = new Set(
-    symbolMeaningLinks.map((link) => link.symbolId)
+    [
+      ...symbolMeaningLinks.map((link) => link.symbolId),
+      ...hebrewWords.map((word) => word.id),
+    ],
   );
 
   // Get valid biblical reference IDs

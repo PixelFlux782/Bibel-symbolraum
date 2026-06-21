@@ -41,6 +41,30 @@ export const meaningJourneys: MeaningJourney[] = [
     meaningNodePath: ["life", "revelation", "transformation", "lack", "gift", "nourishment"],
     biblicalReferences: ["mark-4-26-29", "exodus-16-4", "deuteronomy-8-3", "john-6-35"],
   },
+  {
+    id: "davar-qol-or",
+    title: "Vom Wort zum Licht",
+    description: "Das Wort wird Stimme. Die Stimme wird Licht.",
+    symbolPath: ["davar", "qol", "or"],
+    meaningNodePath: ["word", "voice", "light"],
+    biblicalReferences: ["genesis-1-3"],
+  },
+  {
+    id: "tehom-davar-qol-or",
+    title: "Von der Tiefe zum Licht",
+    description: "Die Tiefe birgt das Wort. Das Wort wird Stimme. Die Stimme wird Licht.",
+    symbolPath: ["tehom", "davar", "qol", "or"],
+    meaningNodePath: ["depth", "word", "voice", "light"],
+    biblicalReferences: ["genesis-1-2", "genesis-1-3"],
+  },
+  {
+    id: "tehom-ruach-davar-qol-or",
+    title: "Vom Ursprung zum Licht",
+    description: "Die Tiefe wird bewegt. Das Wort wird getragen. Die Stimme wird hoerbar. Das Licht erscheint.",
+    symbolPath: ["tehom", "ruach", "davar", "qol", "or"],
+    meaningNodePath: ["depth", "presence", "word", "voice", "light"],
+    biblicalReferences: ["genesis-1-2", "genesis-1-3"],
+  },
 ];
 
 export function getMeaningJourney(id: string): MeaningJourney | undefined {
