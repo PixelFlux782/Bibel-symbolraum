@@ -100,6 +100,18 @@ function debugAudio(message: string, details?: unknown) {
   console.log(`[symbolraum audio] ${message}`, details);
 }
 
+function getAudioSnapshot(audio: HTMLAudioElement) {
+  return {
+    src: audio.currentSrc || audio.src,
+    paused: audio.paused,
+    muted: audio.muted,
+    volume: audio.volume,
+    readyState: audio.readyState,
+    currentTime: audio.currentTime,
+    error: audio.error,
+  };
+}
+
 class SymbolraumAudioEngine {
   private elements = new Map<SymbolraumAudioLayer, HTMLAudioElement>();
   private audioContext: AudioContext | null = null;
@@ -125,25 +137,39 @@ class SymbolraumAudioEngine {
     this.active = true;
     this.applyComputedVolumes();
 
-    const playTasks = Array.from(this.elements.entries()).map(([layer, audio]) => {
+    const playTasks = Array.from(this.elements.entries()).map(async ([layer, audio]) => {
       if (!audio.paused) {
         debugAudio("layer play called", { layer, alreadyPlaying: true });
-        return Promise.resolve();
+        return;
       }
 
       debugAudio("layer play called", { layer, src: audio.currentSrc || audio.src });
-      return audio.play().catch((error: unknown) => {
-        debugAudio("layer play failed", { layer, error });
-      });
+      try {
+        await audio.play();
+      } catch (error) {
+        debugAudio("layer play failed", { layer, error, audio: getAudioSnapshot(audio) });
+      }
     });
 
     await Promise.all(playTasks);
 
+    let room: SymbolraumRoom | null = null;
     if (options?.pathname !== undefined) {
       debugAudio("current route", options.pathname);
-      this.setRoomFromPath(options.pathname, 0);
+      room = this.setRoomFromPath(options.pathname, 0);
     } else {
       this.setRoom(null, 0);
+    }
+
+    if (DEBUG_AUDIO && room === "wasser") {
+      await this.forceWaterRoomAudible();
+    }
+
+    this.logLayerDiagnostics("after activate");
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => {
+        this.logLayerFollowUpDiagnostics("2s after activate");
+      }, 2000);
     }
 
     return true;
@@ -278,7 +304,11 @@ class SymbolraumAudioEngine {
     const context = this.ensureAudioContext();
 
     if (context.state === "suspended") {
-      await context.resume();
+      try {
+        await context.resume();
+      } catch (error) {
+        debugAudio("audio context resume failed", error);
+      }
     }
 
     debugAudio("audio context state", context.state);
@@ -336,6 +366,59 @@ class SymbolraumAudioEngine {
     this.elements.forEach((audio, layer) => {
       audio.volume = this.muted ? 0 : clampVolume(this.layerLevels[layer] * this.globalVolume);
     });
+  }
+
+  private logLayerDiagnostics(label: string) {
+    this.elements.forEach((audio, layer) => {
+      debugAudio(`layer diagnostics ${label}`, {
+        layer,
+        ...getAudioSnapshot(audio),
+      });
+    });
+  }
+
+  private logLayerFollowUpDiagnostics(label: string) {
+    this.elements.forEach((audio, layer) => {
+      debugAudio(`layer diagnostics ${label}`, {
+        layer,
+        paused: audio.paused,
+        currentTime: audio.currentTime,
+        volume: audio.volume,
+      });
+    });
+  }
+
+  private async forceWaterRoomAudible() {
+    const base = this.elements.get("base");
+    const water = this.elements.get("water");
+    const forcedLayers: Array<[SymbolraumAudioLayer, HTMLAudioElement | undefined]> = [
+      ["base", base],
+      ["water", water],
+    ];
+
+    for (const [layer, audio] of forcedLayers) {
+      if (!audio) {
+        continue;
+      }
+
+      audio.volume = 1;
+      audio.muted = false;
+      audio.loop = true;
+
+      try {
+        await audio.play();
+        debugAudio("water room forced layer play", {
+          layer,
+          ...getAudioSnapshot(audio),
+        });
+      } catch (error) {
+        debugAudio("water room forced layer play failed", {
+          layer,
+          error,
+          audio: getAudioSnapshot(audio),
+        });
+      }
+    }
   }
 }
 

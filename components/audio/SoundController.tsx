@@ -9,12 +9,15 @@ import { useCallback, useEffect, useState } from "react";
 
 const MIN_ACTIVATION_VOLUME = 0.7;
 const DEBUG_AUDIO = process.env.NODE_ENV === "development";
+const DIRECT_BASE_AUDIO_SRC = "/audio/symbolraum/base_layer3.mp3";
 
 type SymbolraumAudioDebugWindow = Window & typeof globalThis & {
   symbolraumAudioDebug?: {
     playBaseOnly: () => Promise<boolean>;
     playTestTone: () => Promise<boolean>;
   };
+  symbolraumDirectBaseAudio?: HTMLAudioElement;
+  webkitAudioContext?: typeof AudioContext;
 };
 
 export default function SoundController() {
@@ -93,6 +96,81 @@ export default function SoundController() {
     setVolume(Number(event.target.value));
   }, [setVolume]);
 
+  const handleDevTestTone = useCallback(async () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      const audioWindow = window as SymbolraumAudioDebugWindow;
+      const AudioContextConstructor = audioWindow.AudioContext || audioWindow.webkitAudioContext;
+      if (!AudioContextConstructor) {
+        throw new Error("AudioContext is not available in this browser.");
+      }
+
+      const context = new AudioContextConstructor();
+      await context.resume();
+
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.frequency.value = 220;
+      gain.gain.value = 0.2;
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 1);
+      window.setTimeout(() => {
+        void context.close().catch((error: unknown) => {
+          console.error("[symbolraum audio] dev test tone context close failed", error);
+        });
+      }, 1200);
+      console.log("[symbolraum audio] dev test tone played", {
+        contextState: context.state,
+        duration: 1,
+        frequency: 220,
+        gain: 0.2,
+      });
+    } catch (error) {
+      console.error("[symbolraum audio] dev test tone failed", error);
+    }
+  }, []);
+
+  const handleDevBaseDirect = useCallback(async () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const audioWindow = window as SymbolraumAudioDebugWindow;
+    const audio = new Audio(DIRECT_BASE_AUDIO_SRC);
+    audioWindow.symbolraumDirectBaseAudio = audio;
+    audio.volume = 1;
+    audio.muted = false;
+
+    try {
+      await audio.play();
+      console.log("[symbolraum audio] dev base direct played", {
+        src: audio.currentSrc || audio.src,
+        paused: audio.paused,
+        muted: audio.muted,
+        volume: audio.volume,
+        readyState: audio.readyState,
+        currentTime: audio.currentTime,
+        error: audio.error,
+      });
+    } catch (error) {
+      console.error("[symbolraum audio] dev base direct play failed", {
+        src: audio.currentSrc || audio.src,
+        paused: audio.paused,
+        muted: audio.muted,
+        volume: audio.volume,
+        readyState: audio.readyState,
+        currentTime: audio.currentTime,
+        error: audio.error,
+        playError: error,
+      });
+    }
+  }, []);
+
   const isAudible = sessionActive && enabled && !muted;
   const status = isAudible ? "Klangraum aktiv" : "Klangraum stumm";
 
@@ -145,6 +223,24 @@ export default function SoundController() {
           className="h-1 w-14 accent-[#d6bc8a] opacity-70"
           aria-label="Klangraum Lautstaerke"
         />
+        {DEBUG_AUDIO ? (
+          <>
+            <button
+              type="button"
+              onClick={handleDevTestTone}
+              className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[#efe4d1]/80 transition-colors hover:bg-white/15 hover:text-[#f8f2e5]"
+            >
+              Testton
+            </button>
+            <button
+              type="button"
+              onClick={handleDevBaseDirect}
+              className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[#efe4d1]/80 transition-colors hover:bg-white/15 hover:text-[#f8f2e5]"
+            >
+              Base direkt
+            </button>
+          </>
+        ) : null}
       </div>
       <p
         id="symbolraum-sound-status"
