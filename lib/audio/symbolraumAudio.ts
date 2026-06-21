@@ -11,7 +11,6 @@ export type SymbolraumAudioDebugSnapshot = {
 
 const AUDIO_ROOT = "/audio/symbolraum";
 const DEFAULT_CROSSFADE_MS = 5600;
-const DEBUG_AUDIO = process.env.NODE_ENV === "development";
 
 const LAYERS: Record<SymbolraumAudioLayer, string> = {
   base: `${AUDIO_ROOT}/base_layer3.mp3`,
@@ -33,7 +32,7 @@ const SILENCE_MIX: SymbolraumMix = {
 
 const ROOM_MIXES: Record<SymbolraumRoom, SymbolraumMix> = {
   wasser: {
-    base: 1,
+    base: 0.6,
     water: 0.8,
     light: 0,
     fire: 0,
@@ -41,36 +40,36 @@ const ROOM_MIXES: Record<SymbolraumRoom, SymbolraumMix> = {
     bread: 0,
   },
   licht: {
-    base: 1,
-    water: 0.2,
-    light: 0.7,
+    base: 0.4,
+    water: 0.15,
+    light: 0.75,
     fire: 0,
     desert: 0,
     bread: 0,
   },
   feuer: {
-    base: 1,
+    base: 0.45,
     water: 0,
-    light: 0.2,
-    fire: 0.7,
+    light: 0.15,
+    fire: 0.75,
     desert: 0,
     bread: 0,
   },
   wueste: {
-    base: 1,
+    base: 0.25,
     water: 0,
     light: 0,
-    fire: 0.1,
+    fire: 0.08,
     desert: 0.6,
     bread: 0,
   },
   brot: {
-    base: 1,
+    base: 0.35,
     water: 0,
     light: 0,
     fire: 0,
-    desert: 0.1,
-    bread: 0.7,
+    desert: 0.08,
+    bread: 0.75,
   },
 };
 
@@ -92,7 +91,10 @@ type AudioContextWindow = Window & typeof globalThis & {
 };
 
 function debugAudio(message: string, details?: unknown) {
-  if (!DEBUG_AUDIO) {
+  if (
+    typeof window === "undefined" ||
+    new URLSearchParams(window.location.search).get("audioDebug") !== "1"
+  ) {
     return;
   }
 
@@ -159,16 +161,11 @@ class SymbolraumAudioEngine {
 
     await Promise.all(playTasks);
 
-    let room: SymbolraumRoom | null = null;
     if (options?.pathname !== undefined) {
       debugAudio("current route", options.pathname);
-      room = this.setRoomFromPath(options.pathname, 0);
+      this.setRoomFromPath(options.pathname, 0);
     } else {
       this.setRoom(null, 0);
-    }
-
-    if (DEBUG_AUDIO && room === "wasser") {
-      await this.forceWaterRoomAudible();
     }
 
     this.logLayerDiagnostics("after activate");
@@ -409,38 +406,6 @@ class SymbolraumAudioEngine {
     });
   }
 
-  private async forceWaterRoomAudible() {
-    const base = this.elements.get("base");
-    const water = this.elements.get("water");
-    const forcedLayers: Array<[SymbolraumAudioLayer, HTMLAudioElement | undefined]> = [
-      ["base", base],
-      ["water", water],
-    ];
-
-    for (const [layer, audio] of forcedLayers) {
-      if (!audio) {
-        continue;
-      }
-
-      audio.volume = 1;
-      audio.muted = false;
-      audio.loop = true;
-
-      try {
-        await audio.play();
-        debugAudio("water room forced layer play", {
-          layer,
-          ...getAudioSnapshot(audio),
-        });
-      } catch (error) {
-        debugAudio("water room forced layer play failed", {
-          layer,
-          error,
-          audio: getAudioSnapshot(audio),
-        });
-      }
-    }
-  }
 }
 
 const symbolraumAudioEngine = new SymbolraumAudioEngine();

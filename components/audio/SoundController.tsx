@@ -11,7 +11,6 @@ import type { ChangeEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 const MIN_ACTIVATION_VOLUME = 0.7;
-const DEBUG_AUDIO = process.env.NODE_ENV === "development";
 const NODE_ENV_LABEL = process.env.NODE_ENV ?? "unknown";
 const DIRECT_BASE_AUDIO_SRC = "/audio/symbolraum/base_layer3.mp3";
 
@@ -28,14 +27,13 @@ export default function SoundController() {
   const pathname = usePathname();
   const { enabled, loaded, muted, setEnabled, setMuted, setVolume, volume } = useSoundPreference();
   const [sessionActive, setSessionActive] = useState(false);
-  const [isLocalhost, setIsLocalhost] = useState(false);
   const [isAudioDebugQuery, setIsAudioDebugQuery] = useState(false);
   const [debugSnapshot, setDebugSnapshot] = useState<SymbolraumAudioDebugSnapshot>(() => (
     symbolraumAudioEngine.getDebugSnapshot()
   ));
   const [directBaseError, setDirectBaseError] = useState<string | null>(null);
 
-  const showAudioDebug = DEBUG_AUDIO || isLocalhost || isAudioDebugQuery;
+  const showAudioDebug = isAudioDebugQuery;
 
   useEffect(() => {
     symbolraumAudioEngine.setRoomFromPath(pathname);
@@ -47,7 +45,6 @@ export default function SoundController() {
     }
 
     const frameId = window.requestAnimationFrame(() => {
-      setIsLocalhost(window.location.hostname === "localhost");
       setIsAudioDebugQuery(new URLSearchParams(window.location.search).get("audioDebug") === "1");
     });
 
