@@ -4,6 +4,10 @@ export type SymbolraumAudioLayer = "base" | "water" | "light" | "fire" | "desert
 export type SymbolraumRoom = "wasser" | "licht" | "feuer" | "wueste" | "brot";
 
 export type SymbolraumMix = Record<SymbolraumAudioLayer, number>;
+export type SymbolraumAudioDebugSnapshot = {
+  currentRoom: SymbolraumRoom | null;
+  assetLoadErrors: Partial<Record<SymbolraumAudioLayer, string>>;
+};
 
 const AUDIO_ROOT = "/audio/symbolraum";
 const DEFAULT_CROSSFADE_MS = 5600;
@@ -122,6 +126,8 @@ class SymbolraumAudioEngine {
   private active = false;
   private initialized = false;
   private fadeFrame: number | null = null;
+  private currentRoom: SymbolraumRoom | null = null;
+  private assetLoadErrors: Partial<Record<SymbolraumAudioLayer, string>> = {};
 
   async activate(options?: { pathname?: string | null; volume?: number; muted?: boolean }) {
     if (typeof window === "undefined") {
@@ -212,6 +218,7 @@ class SymbolraumAudioEngine {
 
   setRoom(room: SymbolraumRoom | null, fadeMs = DEFAULT_CROSSFADE_MS) {
     const nextMix = room ? ROOM_MIXES[room] : SILENCE_MIX;
+    this.currentRoom = room;
     this.targetMix = { ...nextMix };
     debugAudio("applied mix", { room, mix: nextMix });
 
@@ -252,6 +259,13 @@ class SymbolraumAudioEngine {
     return true;
   }
 
+  getDebugSnapshot(): SymbolraumAudioDebugSnapshot {
+    return {
+      currentRoom: this.currentRoom,
+      assetLoadErrors: { ...this.assetLoadErrors },
+    };
+  }
+
   async playBaseOnly() {
     if (typeof window === "undefined") {
       return false;
@@ -279,6 +293,13 @@ class SymbolraumAudioEngine {
       audio.addEventListener("canplaythrough", () => {
         debugAudio("layer loaded", { layer, src });
       }, { once: true });
+      audio.addEventListener("error", () => {
+        const message = audio.error
+          ? `${audio.error.code}: ${audio.error.message || "audio load failed"}`
+          : "audio load failed";
+        this.assetLoadErrors[layer] = `${src} (${message})`;
+        debugAudio("layer load error", { layer, src, error: audio.error });
+      });
       this.elements.set(layer, audio);
     });
 

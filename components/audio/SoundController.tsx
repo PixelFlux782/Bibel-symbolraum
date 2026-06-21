@@ -1,7 +1,10 @@
 "use client";
 
 import { useSoundPreference } from "@/hooks/useSoundPreference";
-import { symbolraumAudioEngine } from "@/lib/audio/symbolraumAudio";
+import {
+  symbolraumAudioEngine,
+  type SymbolraumAudioDebugSnapshot,
+} from "@/lib/audio/symbolraumAudio";
 import { Volume2, VolumeX, Waves } from "lucide-react";
 import { usePathname } from "next/navigation";
 import type { ChangeEvent } from "react";
@@ -26,8 +29,13 @@ export default function SoundController() {
   const { enabled, loaded, muted, setEnabled, setMuted, setVolume, volume } = useSoundPreference();
   const [sessionActive, setSessionActive] = useState(false);
   const [isLocalhost, setIsLocalhost] = useState(false);
+  const [isAudioDebugQuery, setIsAudioDebugQuery] = useState(false);
+  const [debugSnapshot, setDebugSnapshot] = useState<SymbolraumAudioDebugSnapshot>(() => (
+    symbolraumAudioEngine.getDebugSnapshot()
+  ));
+  const [directBaseError, setDirectBaseError] = useState<string | null>(null);
 
-  const showAudioDebug = DEBUG_AUDIO || isLocalhost;
+  const showAudioDebug = DEBUG_AUDIO || isLocalhost || isAudioDebugQuery;
 
   useEffect(() => {
     symbolraumAudioEngine.setRoomFromPath(pathname);
@@ -40,12 +48,31 @@ export default function SoundController() {
 
     const frameId = window.requestAnimationFrame(() => {
       setIsLocalhost(window.location.hostname === "localhost");
+      setIsAudioDebugQuery(new URLSearchParams(window.location.search).get("audioDebug") === "1");
     });
 
     return () => {
       window.cancelAnimationFrame(frameId);
     };
   }, []);
+
+  useEffect(() => {
+    if (!showAudioDebug || typeof window === "undefined") {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      setDebugSnapshot(symbolraumAudioEngine.getDebugSnapshot());
+    });
+    const intervalId = window.setInterval(() => {
+      setDebugSnapshot(symbolraumAudioEngine.getDebugSnapshot());
+    }, 500);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearInterval(intervalId);
+    };
+  }, [showAudioDebug, pathname]);
 
   useEffect(() => {
     symbolraumAudioEngine.setGlobalVolume(volume);
@@ -163,9 +190,15 @@ export default function SoundController() {
     audioWindow.symbolraumDirectBaseAudio = audio;
     audio.volume = 1;
     audio.muted = false;
+    audio.addEventListener("error", () => {
+      setDirectBaseError(audio.error
+        ? `${DIRECT_BASE_AUDIO_SRC} (${audio.error.code}: ${audio.error.message || "audio load failed"})`
+        : `${DIRECT_BASE_AUDIO_SRC} (audio load failed)`);
+    }, { once: true });
 
     try {
       await audio.play();
+      setDirectBaseError(null);
       console.log("[symbolraum audio] dev base direct played", {
         src: audio.currentSrc || audio.src,
         paused: audio.paused,
@@ -176,6 +209,7 @@ export default function SoundController() {
         error: audio.error,
       });
     } catch (error) {
+      setDirectBaseError(error instanceof Error ? error.message : String(error));
       console.error("[symbolraum audio] dev base direct play failed", {
         src: audio.currentSrc || audio.src,
         paused: audio.paused,
@@ -191,6 +225,7 @@ export default function SoundController() {
 
   const isAudible = sessionActive && enabled && !muted;
   const status = isAudible ? "Klangraum aktiv" : "Klangraum stumm";
+  const assetLoadError = Object.values(debugSnapshot.assetLoadErrors).join(" | ") || directBaseError || "none";
 
   return (
     <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-1.5">
@@ -273,6 +308,10 @@ export default function SoundController() {
             <dd>{String(muted)}</dd>
             <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">volume</dt>
             <dd>{volume.toFixed(2)}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">current room</dt>
+            <dd>{debugSnapshot.currentRoom ?? "none"}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">asset load error</dt>
+            <dd className="break-all">{assetLoadError}</dd>
           </dl>
         </div>
       ) : null}
