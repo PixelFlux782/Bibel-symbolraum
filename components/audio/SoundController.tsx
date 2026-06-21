@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const MIN_ACTIVATION_VOLUME = 0.7;
 const DEBUG_AUDIO = process.env.NODE_ENV === "development";
+const NODE_ENV_LABEL = process.env.NODE_ENV ?? "unknown";
 const DIRECT_BASE_AUDIO_SRC = "/audio/symbolraum/base_layer3.mp3";
 
 type SymbolraumAudioDebugWindow = Window & typeof globalThis & {
@@ -24,10 +25,27 @@ export default function SoundController() {
   const pathname = usePathname();
   const { enabled, loaded, muted, setEnabled, setMuted, setVolume, volume } = useSoundPreference();
   const [sessionActive, setSessionActive] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
+
+  const showAudioDebug = DEBUG_AUDIO || isLocalhost;
 
   useEffect(() => {
     symbolraumAudioEngine.setRoomFromPath(pathname);
   }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      setIsLocalhost(window.location.hostname === "localhost");
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, []);
 
   useEffect(() => {
     symbolraumAudioEngine.setGlobalVolume(volume);
@@ -44,7 +62,7 @@ export default function SoundController() {
   }, []);
 
   useEffect(() => {
-    if (!DEBUG_AUDIO || typeof window === "undefined") {
+    if (!showAudioDebug || typeof window === "undefined") {
       return;
     }
 
@@ -57,7 +75,7 @@ export default function SoundController() {
     return () => {
       delete debugWindow.symbolraumAudioDebug;
     };
-  }, []);
+  }, [showAudioDebug]);
 
   const handleActivation = useCallback(async () => {
     if (sessionActive && enabled) {
@@ -68,7 +86,7 @@ export default function SoundController() {
     }
 
     const activationVolume = Math.max(volume, MIN_ACTIVATION_VOLUME);
-    if (DEBUG_AUDIO) {
+    if (showAudioDebug) {
       console.log("[symbolraum audio] audio unlock clicked");
     }
 
@@ -84,7 +102,7 @@ export default function SoundController() {
       volume: activationVolume,
     });
     setSessionActive(true);
-  }, [enabled, pathname, sessionActive, setEnabled, setMuted, setVolume, volume]);
+  }, [enabled, pathname, sessionActive, setEnabled, setMuted, setVolume, showAudioDebug, volume]);
 
   const handleMute = useCallback(() => {
     const nextMuted = !muted;
@@ -175,7 +193,7 @@ export default function SoundController() {
   const status = isAudible ? "Klangraum aktiv" : "Klangraum stumm";
 
   return (
-    <div className="pointer-events-auto shrink-0">
+    <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-1.5">
       <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-2 py-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.28)] backdrop-blur supports-[backdrop-filter]:bg-black/25">
         <span
           className={`inline-flex h-2.5 w-2.5 rounded-full transition-colors ${
@@ -223,25 +241,41 @@ export default function SoundController() {
           className="h-1 w-14 accent-[#d6bc8a] opacity-70"
           aria-label="Klangraum Lautstaerke"
         />
-        {DEBUG_AUDIO ? (
-          <>
+      </div>
+      {showAudioDebug ? (
+        <div className="flex w-full max-w-[18rem] flex-col items-end gap-1 rounded-md border border-amber-200/20 bg-black/65 px-2 py-1.5 text-right shadow-[0_10px_30px_rgba(0,0,0,0.24)] backdrop-blur">
+          <div className="flex flex-wrap justify-end gap-1.5">
             <button
               type="button"
               onClick={handleDevTestTone}
-              className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[#efe4d1]/80 transition-colors hover:bg-white/15 hover:text-[#f8f2e5]"
+              className="rounded-full bg-amber-200/16 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#f8f2e5] transition-colors hover:bg-amber-200/24"
             >
               Testton
             </button>
             <button
               type="button"
               onClick={handleDevBaseDirect}
-              className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[#efe4d1]/80 transition-colors hover:bg-white/15 hover:text-[#f8f2e5]"
+              className="rounded-full bg-amber-200/16 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#f8f2e5] transition-colors hover:bg-amber-200/24"
             >
               Base direkt
             </button>
-          </>
-        ) : null}
-      </div>
+          </div>
+          <dl className="grid w-full grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 text-[0.58rem] leading-tight text-[#f0e7da]/78">
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">pathname</dt>
+            <dd className="break-all">{pathname}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">NODE_ENV</dt>
+            <dd>{NODE_ENV_LABEL}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">showAudioDebug</dt>
+            <dd>{String(showAudioDebug)}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">enabled</dt>
+            <dd>{String(enabled)}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">muted</dt>
+            <dd>{String(muted)}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">volume</dt>
+            <dd>{volume.toFixed(2)}</dd>
+          </dl>
+        </div>
+      ) : null}
       <p
         id="symbolraum-sound-status"
         aria-live="polite"
