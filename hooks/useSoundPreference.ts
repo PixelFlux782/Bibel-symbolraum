@@ -2,10 +2,54 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const SOUND_PREFERENCE_KEY = "symbolraum-sound-enabled";
+export const SOUND_PREFERENCE_KEY = "symbolraum-audio-settings";
+
+export type SymbolraumAudioSettings = {
+  enabled: boolean;
+  muted: boolean;
+  volume: number;
+};
+
+const DEFAULT_AUDIO_SETTINGS: SymbolraumAudioSettings = {
+  enabled: false,
+  muted: false,
+  volume: 0.52,
+};
+
+function clampVolume(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function parseSettings(raw: string | null): SymbolraumAudioSettings {
+  if (!raw) {
+    return DEFAULT_AUDIO_SETTINGS;
+  }
+
+  if (raw === "true" || raw === "false") {
+    return {
+      ...DEFAULT_AUDIO_SETTINGS,
+      enabled: raw === "true",
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<SymbolraumAudioSettings>;
+
+    return {
+      enabled: Boolean(parsed.enabled),
+      muted: Boolean(parsed.muted),
+      volume: typeof parsed.volume === "number"
+        ? clampVolume(parsed.volume)
+        : DEFAULT_AUDIO_SETTINGS.volume,
+    };
+  } catch {
+    return DEFAULT_AUDIO_SETTINGS;
+  }
+}
 
 export function useSoundPreference() {
-  const [enabled, setEnabled] = useState(false);
+  const [settings, setSettings] = useState<SymbolraumAudioSettings>(DEFAULT_AUDIO_SETTINGS);
+  const [loaded, setLoaded] = useState(false);
   const hasLoadedPreferenceRef = useRef(false);
 
   useEffect(() => {
@@ -15,16 +59,10 @@ export function useSoundPreference() {
 
     const frameId = window.requestAnimationFrame(() => {
       try {
-        const stored = window.localStorage.getItem(SOUND_PREFERENCE_KEY);
-
+        setSettings(parseSettings(window.localStorage.getItem(SOUND_PREFERENCE_KEY)));
+      } finally {
         hasLoadedPreferenceRef.current = true;
-
-        if (stored === "true") {
-          setEnabled(true);
-        }
-      } catch {
-        hasLoadedPreferenceRef.current = true;
-        // Lokaler Speicher ist optional. Der Fall bleibt still.
+        setLoaded(true);
       }
     });
 
@@ -34,30 +72,44 @@ export function useSoundPreference() {
   }, []);
 
   useEffect(() => {
-    if (!hasLoadedPreferenceRef.current) {
-      return;
-    }
-
-    if (typeof window === "undefined") {
+    if (!hasLoadedPreferenceRef.current || typeof window === "undefined") {
       return;
     }
 
     try {
-      window.localStorage.setItem(SOUND_PREFERENCE_KEY, String(enabled));
+      window.localStorage.setItem(SOUND_PREFERENCE_KEY, JSON.stringify(settings));
     } catch {
-      // Lokaler Speicher ist optional. Der Fall bleibt still.
+      // Lokaler Speicher ist optional. Der Klangraum bleibt bedienbar.
     }
-  }, [enabled]);
+  }, [settings]);
+
+  const setEnabled = useCallback((enabled: boolean) => {
+    setSettings((current) => ({ ...current, enabled }));
+  }, []);
+
+  const setMuted = useCallback((muted: boolean) => {
+    setSettings((current) => ({ ...current, muted }));
+  }, []);
+
+  const setVolume = useCallback((volume: number) => {
+    setSettings((current) => ({ ...current, volume: clampVolume(volume) }));
+  }, []);
 
   const toggleSound = useCallback(() => {
-    setEnabled((current) => !current);
+    setSettings((current) => ({ ...current, enabled: !current.enabled }));
+  }, []);
+
+  const toggleMuted = useCallback(() => {
+    setSettings((current) => ({ ...current, muted: !current.muted }));
   }, []);
 
   return {
-    enabled,
+    ...settings,
+    loaded,
     setEnabled,
+    setMuted,
+    setVolume,
+    toggleMuted,
     toggleSound,
   };
 }
-
-export { SOUND_PREFERENCE_KEY };
