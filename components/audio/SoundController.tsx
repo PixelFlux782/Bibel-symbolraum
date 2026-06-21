@@ -7,6 +7,16 @@ import { usePathname } from "next/navigation";
 import type { ChangeEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
+const MIN_ACTIVATION_VOLUME = 0.7;
+const DEBUG_AUDIO = process.env.NODE_ENV === "development";
+
+type SymbolraumAudioDebugWindow = Window & typeof globalThis & {
+  symbolraumAudioDebug?: {
+    playBaseOnly: () => Promise<boolean>;
+    playTestTone: () => Promise<boolean>;
+  };
+};
+
 export default function SoundController() {
   const pathname = usePathname();
   const { enabled, loaded, muted, setEnabled, setMuted, setVolume, volume } = useSoundPreference();
@@ -30,6 +40,22 @@ export default function SoundController() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!DEBUG_AUDIO || typeof window === "undefined") {
+      return;
+    }
+
+    const debugWindow = window as SymbolraumAudioDebugWindow;
+    debugWindow.symbolraumAudioDebug = {
+      playBaseOnly: () => symbolraumAudioEngine.playBaseOnly(),
+      playTestTone: () => symbolraumAudioEngine.playTestTone(),
+    };
+
+    return () => {
+      delete debugWindow.symbolraumAudioDebug;
+    };
+  }, []);
+
   const handleActivation = useCallback(async () => {
     if (sessionActive && enabled) {
       setEnabled(false);
@@ -38,14 +64,24 @@ export default function SoundController() {
       return;
     }
 
+    const activationVolume = Math.max(volume, MIN_ACTIVATION_VOLUME);
+    if (DEBUG_AUDIO) {
+      console.log("[symbolraum audio] audio unlock clicked");
+    }
+
     setEnabled(true);
     setMuted(false);
-    symbolraumAudioEngine.setRoomFromPath(pathname);
-    symbolraumAudioEngine.setGlobalVolume(volume);
-    symbolraumAudioEngine.setMuted(false);
-    await symbolraumAudioEngine.activate();
+    if (activationVolume !== volume) {
+      setVolume(activationVolume);
+    }
+
+    await symbolraumAudioEngine.activate({
+      muted: false,
+      pathname,
+      volume: activationVolume,
+    });
     setSessionActive(true);
-  }, [enabled, pathname, sessionActive, setEnabled, setMuted, volume]);
+  }, [enabled, pathname, sessionActive, setEnabled, setMuted, setVolume, volume]);
 
   const handleMute = useCallback(() => {
     const nextMuted = !muted;

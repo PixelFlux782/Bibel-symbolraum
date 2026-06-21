@@ -13,7 +13,7 @@ export type SymbolraumAudioSettings = {
 const DEFAULT_AUDIO_SETTINGS: SymbolraumAudioSettings = {
   enabled: false,
   muted: false,
-  volume: 0.52,
+  volume: 0.7,
 };
 
 function clampVolume(value: number) {

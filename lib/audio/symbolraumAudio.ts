@@ -7,6 +7,7 @@ export type SymbolraumMix = Record<SymbolraumAudioLayer, number>;
 
 const AUDIO_ROOT = "/audio/symbolraum";
 const DEFAULT_CROSSFADE_MS = 5600;
+const DEBUG_AUDIO = process.env.NODE_ENV === "development";
 
 const LAYERS: Record<SymbolraumAudioLayer, string> = {
   base: `${AUDIO_ROOT}/base_layer3.mp3`,
@@ -29,7 +30,7 @@ const SILENCE_MIX: SymbolraumMix = {
 const ROOM_MIXES: Record<SymbolraumRoom, SymbolraumMix> = {
   wasser: {
     base: 1,
-    water: 0.7,
+    water: 0.8,
     light: 0,
     fire: 0,
     desert: 0,
@@ -82,34 +83,70 @@ function getRoomFromPath(pathname: string | null): SymbolraumRoom | null {
   return match ? match[1] as SymbolraumRoom : null;
 }
 
+type AudioContextWindow = Window & typeof globalThis & {
+  webkitAudioContext?: typeof AudioContext;
+};
+
+function debugAudio(message: string, details?: unknown) {
+  if (!DEBUG_AUDIO) {
+    return;
+  }
+
+  if (details === undefined) {
+    console.log(`[symbolraum audio] ${message}`);
+    return;
+  }
+
+  console.log(`[symbolraum audio] ${message}`, details);
+}
+
 class SymbolraumAudioEngine {
   private elements = new Map<SymbolraumAudioLayer, HTMLAudioElement>();
+  private audioContext: AudioContext | null = null;
   private layerLevels: SymbolraumMix = { ...SILENCE_MIX };
   private targetMix: SymbolraumMix = { ...SILENCE_MIX };
-  private globalVolume = 0.52;
+  private globalVolume = 0.7;
   private muted = false;
   private active = false;
   private initialized = false;
   private fadeFrame: number | null = null;
 
-  activate() {
+  async activate(options?: { pathname?: string | null; volume?: number; muted?: boolean }) {
     if (typeof window === "undefined") {
-      return Promise.resolve(false);
+      return false;
     }
 
+    this.cancelFade();
     this.ensureElements();
+    this.setGlobalVolume(options?.volume ?? this.globalVolume);
+    this.setMuted(Boolean(options?.muted));
+    await this.resumeAudioContext();
+
     this.active = true;
     this.applyComputedVolumes();
 
-    const playTasks = Array.from(this.elements.values()).map((audio) => {
+    const playTasks = Array.from(this.elements.entries()).map(([layer, audio]) => {
       if (!audio.paused) {
+        debugAudio("layer play called", { layer, alreadyPlaying: true });
         return Promise.resolve();
       }
 
-      return audio.play().catch(() => undefined);
+      debugAudio("layer play called", { layer, src: audio.currentSrc || audio.src });
+      return audio.play().catch((error: unknown) => {
+        debugAudio("layer play failed", { layer, error });
+      });
     });
 
-    return Promise.all(playTasks).then(() => true);
+    await Promise.all(playTasks);
+
+    if (options?.pathname !== undefined) {
+      debugAudio("current route", options.pathname);
+      this.setRoomFromPath(options.pathname, 0);
+    } else {
+      this.setRoom(null, 0);
+    }
+
+    return true;
   }
 
   deactivate() {
@@ -131,11 +168,13 @@ class SymbolraumAudioEngine {
 
   setMuted(muted: boolean) {
     this.muted = muted;
+    debugAudio("muted state", muted);
     this.applyComputedVolumes();
   }
 
   setGlobalVolume(volume: number) {
     this.globalVolume = clampVolume(volume);
+    debugAudio("master volume", this.globalVolume);
     this.applyComputedVolumes();
   }
 
@@ -148,6 +187,7 @@ class SymbolraumAudioEngine {
   setRoom(room: SymbolraumRoom | null, fadeMs = DEFAULT_CROSSFADE_MS) {
     const nextMix = room ? ROOM_MIXES[room] : SILENCE_MIX;
     this.targetMix = { ...nextMix };
+    debugAudio("applied mix", { room, mix: nextMix });
 
     if (!this.active) {
       this.layerLevels = { ...nextMix };
@@ -155,7 +195,48 @@ class SymbolraumAudioEngine {
       return;
     }
 
+    if (fadeMs <= 0) {
+      this.cancelFade();
+      this.layerLevels = { ...nextMix };
+      this.applyComputedVolumes();
+      return;
+    }
+
     this.fadeTo(nextMix, fadeMs);
+  }
+
+  async playTestTone() {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    const context = this.ensureAudioContext();
+    await this.resumeAudioContext();
+
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.value = 440;
+    gain.gain.value = this.muted ? 0 : Math.max(0.18, this.globalVolume * 0.25);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.18);
+    debugAudio("test tone played", { contextState: context.state });
+    return true;
+  }
+
+  async playBaseOnly() {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    await this.activate({ pathname: null, volume: Math.max(this.globalVolume, 0.7), muted: false });
+    this.setRoom(null, 0);
+    this.layerLevels = { ...SILENCE_MIX, base: 1 };
+    this.applyComputedVolumes();
+    debugAudio("base only played");
+    return true;
   }
 
   private ensureElements() {
@@ -169,10 +250,38 @@ class SymbolraumAudioEngine {
       audio.preload = "auto";
       audio.volume = 0;
       audio.crossOrigin = "anonymous";
+      audio.addEventListener("canplaythrough", () => {
+        debugAudio("layer loaded", { layer, src });
+      }, { once: true });
       this.elements.set(layer, audio);
     });
 
     this.initialized = true;
+  }
+
+  private ensureAudioContext() {
+    if (this.audioContext) {
+      return this.audioContext;
+    }
+
+    const audioWindow = window as AudioContextWindow;
+    const AudioContextConstructor = audioWindow.AudioContext || audioWindow.webkitAudioContext;
+    if (!AudioContextConstructor) {
+      throw new Error("AudioContext is not available in this browser.");
+    }
+
+    this.audioContext = new AudioContextConstructor();
+    return this.audioContext;
+  }
+
+  private async resumeAudioContext() {
+    const context = this.ensureAudioContext();
+
+    if (context.state === "suspended") {
+      await context.resume();
+    }
+
+    debugAudio("audio context state", context.state);
   }
 
   private fadeTo(nextMix: SymbolraumMix, durationMs: number) {
