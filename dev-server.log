@@ -11,3 +11,18 @@ Creating turbopack project {
   testMode: true
 }
 
+○ Compiling / ...
+ GET / 200 in 4.2s (next.js: 3.8s, application-code: 368ms)
+ GET / 200 in 131ms (next.js: 4ms, application-code: 127ms)
+ GET / 200 in 65ms (next.js: 3ms, application-code: 62ms)
+ GET /raeume/wasser 200 in 563ms (next.js: 392ms, application-code: 171ms)
+ GET / 200 in 70ms (next.js: 4ms, application-code: 66ms)
+ GET /raeume/wasser 200 in 34ms (next.js: 5ms, application-code: 28ms)
+ GET /symbolnetz 200 in 636ms (next.js: 607ms, application-code: 28ms)
+ GET /raeume/licht?from=symbolnetz&symbol=licht&lens=overview 200 in 364ms (next.js: 311ms, application-code: 53ms)
+ GET /raeume/wasser 200 in 31ms (next.js: 4ms, application-code: 27ms)
+ GET /raeume/feuer 200 in 314ms (next.js: 272ms, application-code: 42ms)
+ GET /raeume/wueste 200 in 311ms (next.js: 269ms, application-code: 42ms)
+ GET /raeume/brot 200 in 319ms (next.js: 277ms, application-code: 42ms)
+ GET /codex 200 in 326ms (next.js: 304ms, application-code: 22ms)
+ GET /symbolnetz 200 in 27ms (next.js: 4ms, application-code: 23ms)
