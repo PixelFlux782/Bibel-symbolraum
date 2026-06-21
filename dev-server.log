@@ -26,3 +26,5 @@ Creating turbopack project {
  GET /raeume/brot 200 in 319ms (next.js: 277ms, application-code: 42ms)
  GET /codex 200 in 326ms (next.js: 304ms, application-code: 22ms)
  GET /symbolnetz 200 in 27ms (next.js: 4ms, application-code: 23ms)
+ GET / 200 in 29ms (next.js: 4ms, application-code: 25ms)
+ GET /raeume/wasser 200 in 28ms (next.js: 3ms, application-code: 25ms)
