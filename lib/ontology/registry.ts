@@ -5,6 +5,7 @@ import type {
   OntologyRelation,
   OntologyRelationType,
 } from "./types";
+import { phase36AOntologyEntities, phase36AOntologyRelations } from "./phase36AHebrewResonance";
 
 export const ONTOLOGY_RELATION_LABELS: Record<OntologyRelationType, string> = {
   belongs_to: "gehoert zu",
@@ -941,6 +942,7 @@ export const ontologyEntities: OntologyEntity[] = [
     clusterId: "cluster-wueste-pruefung",
     tags: ["pattern", "weg", "wueste", "pruefung", "verwandlung"],
   },
+  ...phase36AOntologyEntities,
 ];
 
 export const ontologyRelations: OntologyRelation[] = [
@@ -1749,6 +1751,7 @@ export const ontologyRelations: OntologyRelation[] = [
     explanation: "Sehen wird zur Erkenntnis, wenn Licht nicht nur Dinge zeigt, sondern Bedeutung oeffnet.",
     strength: 0.84,
   },
+  ...phase36AOntologyRelations,
 ];
 
 let registry: OntologyRegistry | null = null;

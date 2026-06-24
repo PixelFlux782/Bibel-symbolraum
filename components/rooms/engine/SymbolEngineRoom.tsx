@@ -15,6 +15,7 @@ import { getResonanceRoom } from "@/lib/resonance";
 import type { RoomContext } from "@/lib/rooms/roomContext";
 import { getCodexHref, getSymbolNetworkHref, getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import { getNextJourneyStep, getSymbolJourneyForSymbol } from "@/lib/symbols/symbolJourneys";
+import { getRoomTransition, getRoomTransitionLabels } from "@/lib/symbols/roomTransitions";
 import { BiblicalSceneLayer } from "./BiblicalSceneLayer";
 import { EngineNavigation } from "./EngineNavigation";
 import { EngineStage } from "./EngineStage";
@@ -89,6 +90,24 @@ function WaterFirstEntryNotice({ symbolSlug }: { symbolSlug: string }) {
       <p className="symbol-engine__first-entry-copy">
         Der Wasser-Raum oeffnet sich in der Tiefe. Wenn du antwortest, bleibt hier dein erster Nachklang.
       </p>
+    </aside>
+  );
+}
+
+function RoomPreparationBlock({ symbolSlug }: { symbolSlug: string }) {
+  const transition = getRoomTransition(symbolSlug);
+
+  if (!transition) {
+    return null;
+  }
+
+  const labels = getRoomTransitionLabels(transition);
+
+  return (
+    <aside className="symbol-engine__prepares-room" aria-label="Was dieser Raum vorbereitet">
+      <p className="symbol-engine__prepares-room-title">Was dieser Raum vorbereitet</p>
+      <p className="symbol-engine__prepares-room-target">-&gt; {labels.target}</p>
+      <p className="symbol-engine__prepares-room-copy">{transition.title}.</p>
     </aside>
   );
 }
@@ -273,6 +292,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         {roomContext ? <RoomEntryTrace context={roomContext} /> : null}
         {!roomContext ? <WaterFirstEntryNotice symbolSlug={data.slug} /> : null}
         <RoomPersonalTraceCard symbolSlug={data.slug} roomContext={roomContext} />
+        <RoomPreparationBlock symbolSlug={data.slug} />
         <NextRoomNotice symbolSlug={data.slug} />
         <p className="symbol-engine__eyebrow">
           {String(engine.activeIndex + 1).padStart(2, "0")} / {String(data.states.length).padStart(2, "0")} ·{" "}

@@ -1,5 +1,6 @@
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
+import { symbolHebrewMappings } from "@/lib/hebrew/symbolHebrewMappings";
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import { biblicalMeaningLinks, hebrewMeaningLinks, symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
 import { meaningJourneys } from "@/lib/meaning/meaningJourneys";
@@ -23,6 +24,7 @@ const CODEX_ENTRY_IDS = [
   "licht",
   "feuer",
   "wueste",
+  "brot",
   "tiefe",
   "geist",
   "ruach",
@@ -74,6 +76,7 @@ const CODEX_ALIASES = {
   wasser: ["Wasser", "majim", "mayim"],
   licht: ["Licht", "or"],
   feuer: ["Feuer", "esch"],
+  brot: ["Brot", "lechem"],
   wueste: ["Wüste", "midbar"],
   tiefe: ["Tiefe", "Urtiefe", "Tehom"],
   geist: ["Geistfeld", "Atemfeld", "bewegte Gegenwart"],
@@ -287,9 +290,14 @@ function symbolRelations(symbolId: string): CodexRelation[] {
   ];
 }
 
-function symbolEntry(symbolId: "wasser" | "licht" | "feuer" | "wueste", hebrewWordId: string): CodexEntry {
+function symbolEntry(symbolId: "wasser" | "licht" | "feuer" | "wueste" | "brot", hebrewWordId: string): CodexEntry {
   const symbol = findSymbol(symbolId);
   const word = hebrewWords.find((entry) => entry.id === hebrewWordId);
+  const mappedHebrewWordIds = symbolHebrewMappings
+    .find((mapping) => mapping.symbolSlug === symbolId)
+    ?.hebrewWordIds
+    .filter((wordId) => wordId !== hebrewWordId)
+    .slice(0, 6) ?? [];
   const sources: CodexSourceKind[] = [
     ...(symbol.network ? (["symbol-network"] as const) : []),
     ...(symbol.legacy ? (["symbol-list"] as const) : []),
@@ -329,6 +337,12 @@ function symbolEntry(symbolId: "wasser" | "licht" | "feuer" | "wueste", hebrewWo
             } satisfies CodexRelation,
           ]
         : []),
+      ...mappedHebrewWordIds.map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "related",
+        label: "Wort im selben Bedeutungsfeld.",
+        source: "hebrew-word",
+      })),
     ],
     scriptureAnchors: scriptureAnchorsForSymbol(symbolId),
     symbolRoomSlug: symbolId,
@@ -806,7 +820,71 @@ function numberEntry({
   };
 }
 
-export const codexRegistry = [
+function generatedHebrewWordEntry(word: (typeof hebrewWords)[number]): CodexEntry {
+  const symbolSlug = word.relatedSymbolSlugs.find((slug) => ["wasser", "licht", "feuer", "wueste", "brot"].includes(slug)) ?? null;
+
+  return {
+    id: word.id,
+    type: "hebrew-word",
+    title: word.germanMeaning,
+    subtitle: `${word.hebrew} / ${word.transliteration}`,
+    hebrew: word.hebrew,
+    transliteration: word.transliteration,
+    aliases: [word.germanMeaning, word.transliteration, word.hebrew, word.slug],
+    searchTerms: [
+      word.id,
+      word.slug,
+      ...word.relatedSymbolSlugs,
+      ...word.meaningFields.flatMap((field) => [field.label, ...field.experienceFields]),
+    ],
+    summary: word.meaningFields.map((field) => field.description).join(" "),
+    meaningFields: uniqueMeaningFields(hebrewMeaningFields(word.id)),
+    relations: uniqueRelations([
+      ...(symbolSlug
+        ? [{
+            targetId: symbolSlug,
+            type: "symbolizes" as const,
+            label: `Nahe hebraeische Resonanz im Raum ${findSymbolTitle(symbolSlug)}.`,
+            source: "hebrew-word" as const,
+          }]
+        : []),
+      ...word.relatedSymbolSlugs
+        .filter((slug) => slug !== symbolSlug)
+        .map<CodexRelation>((slug) => ({
+          targetId: slug,
+          type: "related",
+          label: `Wort im selben Bedeutungsfeld: ${findSymbolTitle(slug)}.`,
+          source: "hebrew-word",
+        })),
+      ...word.letterIds.map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "contains-letter",
+        label: `Buchstabe ${targetId}`,
+        source: "hebrew-letter",
+      })),
+    ]),
+    scriptureAnchors: word.biblicalReferences.map((reference) => ({
+      id: reference.id,
+      reference: reference.reference,
+      label: reference.relation,
+      note: reference.context,
+      source: "hebrew-word",
+    })),
+    symbolRoomSlug: symbolSlug,
+    journeyIds: [
+      ...journeyIdsForSymbol(word.id),
+      ...(symbolSlug ? journeyIdsForSymbol(symbolSlug) : []),
+    ],
+    meta: {
+      status: "seed",
+      source: ["hebrew-word", "meaning-graph"],
+      sourceIds: [word.id, ...(symbolSlug ? [symbolSlug] : [])],
+      tags: ["codex-seed", "hebrew-word", "phase-36a", word.id, ...(symbolSlug ? [symbolSlug] : [])],
+    },
+  };
+}
+
+const seededCodexRegistry = [
   minimalMeaningEntry({
     id: "anfang",
     title: "Anfang",
@@ -889,6 +967,7 @@ export const codexRegistry = [
   symbolEntry("licht", "or"),
   symbolEntry("feuer", "esch"),
   symbolEntry("wueste", "midbar"),
+  symbolEntry("brot", "lechem"),
   meaningEntry({
     id: "tiefe",
     title: "Tiefe",
@@ -1573,6 +1652,15 @@ export const codexRegistry = [
     sourceIds: ["majim", "wasser", "manna", "mem", "genesis-1-2"],
     tags: ["majim-zahl", "wasser", "manna", "anfangswasser", "mem-jod-mem"],
   }),
+] satisfies CodexEntry[];
+
+const seededCodexEntryIds = new Set(seededCodexRegistry.map((entry) => entry.id));
+
+export const codexRegistry = [
+  ...seededCodexRegistry,
+  ...hebrewWords
+    .filter((word) => !seededCodexEntryIds.has(word.id))
+    .map(generatedHebrewWordEntry),
 ] satisfies CodexEntry[];
 
 export const codexEntryIds = CODEX_ENTRY_IDS;

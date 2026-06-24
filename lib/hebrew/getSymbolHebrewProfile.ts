@@ -11,14 +11,44 @@ import { symbolHebrewMappings } from "./symbolHebrewMappings";
 
 export interface SymbolHebrewProfile {
   hebrewWord?: HebrewWord;
+  relatedHebrewWords: HebrewWord[];
   letters: HebrewLetter[];
   meaningFields: HebrewMeaningField[];
   relatedSymbolSlugs: string[];
   warnings: string[];
 }
 
+const ROOM_HEBREW_PRIORITIES: Record<string, string[]> = {
+  wasser: ["majim", "mem", "tehom", "ruach", "mikwe", "jordan", "jam"],
+  licht: ["or", "aleph", "panim", "kavod", "chokma", "bina", "schamajim"],
+  feuer: ["esch", "aleph", "mizbeach", "korban", "ruach"],
+  wueste: ["midbar", "mem", "derech", "nes", "sinai", "manna"],
+  brot: ["lechem", "mem", "manna", "dagan", "shever", "seudah"],
+};
+
 function unique<T>(items: T[]): T[] {
   return Array.from(new Set(items));
+}
+
+function sortMappedHebrewWordIds(symbolSlug: string, mapping?: { hebrewWordIds: string[]; primaryHebrewWordId: string }) {
+  const priority = ROOM_HEBREW_PRIORITIES[symbolSlug] ?? [];
+  const priorityIndex = new Map(priority.map((id, index) => [id, index]));
+  const mappedIds = mapping?.hebrewWordIds ?? [];
+
+  return unique([
+    ...(mapping?.primaryHebrewWordId ? [mapping.primaryHebrewWordId] : []),
+    ...priority.filter((id) => id !== "mem" && id !== "aleph"),
+    ...mappedIds,
+  ]).sort((left, right) => {
+    const leftPriority = priorityIndex.get(left) ?? 100;
+    const rightPriority = priorityIndex.get(right) ?? 100;
+
+    if (leftPriority !== rightPriority) {
+      return leftPriority - rightPriority;
+    }
+
+    return mappedIds.indexOf(left) - mappedIds.indexOf(right);
+  });
 }
 
 export function getSymbolHebrewProfile(
@@ -42,6 +72,18 @@ export function getSymbolHebrewProfile(
   }
 
   const hebrewWord = hebrewWords.find((word) => word.id === hebrewWordId);
+  const relatedHebrewWords = sortMappedHebrewWordIds(symbolSlug, mapping)
+    .flatMap((wordId) => {
+      const word = hebrewWords.find((candidate) => candidate.id === wordId);
+
+      if (!word) {
+        warnings.push(`HebrewWord "${wordId}" aus Mapping "${symbolSlug}" fehlt.`);
+        return [];
+      }
+
+      return [word];
+    })
+    .slice(0, 7);
 
   if (hebrewWordId && !hebrewWord) {
     warnings.push(`HebrewWord "${hebrewWordId}" fuer Symbol-Slug "${symbolSlug}" fehlt.`);
@@ -80,6 +122,7 @@ export function getSymbolHebrewProfile(
 
   return {
     hebrewWord,
+    relatedHebrewWords,
     letters,
     meaningFields,
     relatedSymbolSlugs: unique([

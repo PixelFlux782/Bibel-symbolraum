@@ -5,6 +5,8 @@ import type {
   HebrewWord,
 } from "@/types/hebrew";
 
+import { phase36AHebrewWords } from "./phase36AHebrewWords";
+
 const meaningField = (
   id: string,
   label: string,
@@ -278,4 +280,5 @@ export const hebrewWords: HebrewWord[] = [
       reference("midbar-exodus-3", "Exodus 3,1", "Mose hütet die Herde jenseits der Wüste.", "Stille, Schwelle und Ruf"),
     ],
   },
+  ...phase36AHebrewWords,
 ];

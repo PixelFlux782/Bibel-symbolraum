@@ -24,6 +24,7 @@ import type { CodexEntry } from "@/lib/codex/types";
 import { calculateGematria } from "@/lib/hebrew/gematria";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
+import { getRoomHebrewMovement, type RoomHebrewMovement } from "@/lib/hebrew/roomHebrewMovements";
 import { visualAssets } from "@/lib/visualAssets";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import type { MeaningBridge } from "@/lib/meaning-bridges";
@@ -79,6 +80,7 @@ import {
   SYMBOL_JOURNEY_OVERVIEW_HREF,
 } from "@/lib/symbols/symbolJourneys";
 import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+import { getRoomTransition, getRoomTransitionInto, getRoomTransitionLabels } from "@/lib/symbols/roomTransitions";
 import type { MeaningNodeId } from "@/types/meaningGraph";
 
 type SymbolNodeData = SymbolMeaningNetworkNode & {
@@ -1392,6 +1394,51 @@ function InspectorCtaList({ ctas }: { ctas: SymbolInspectorCta[] }) {
   );
 }
 
+function HebrewResonanceLinks({
+  symbolId,
+  excludeWordId,
+}: {
+  symbolId: string;
+  excludeWordId?: string;
+}) {
+  const words = getSymbolHebrewProfile(symbolId).relatedHebrewWords
+    .filter((word) => word.id !== excludeWordId)
+    .slice(0, 6);
+
+  if (words.length === 0) return null;
+
+  return (
+    <div className="symbol-inspector-ctas" aria-label="Nahe hebraeische Resonanz">
+      {words.map((word) => (
+        <Link key={word.id} href={`/codex/${word.id}?from=symbolnetz&symbol=${symbolId}&focus=hebrew&lens=hebrew`} className="symbol-archive-action">
+          <span lang="he" dir="rtl">{word.hebrew}</span> {word.transliteration}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function InspectorHebrewMovement({ movement }: { movement: RoomHebrewMovement }) {
+  return (
+    <div className="symbol-hebrew-movement" aria-label={movement.title}>
+      <p className="symbol-kicker text-cyan-soft">{movement.title}</p>
+      <p className="symbol-hebrew-movement__summary">{movement.summary}</p>
+      <div className="symbol-hebrew-movement__stations">
+        {movement.stations.map((station, index) => (
+          <Fragment key={station.id}>
+            {index > 0 ? <span className="symbol-hebrew-movement__arrow" aria-hidden="true">-&gt;</span> : null}
+            <Link href={`/codex/${station.codexId}?from=symbolnetz&symbol=${movement.symbolId}&focus=hebrew&lens=hebrew`}>
+              <span lang="he" dir="rtl">{station.hebrew}</span>
+              <strong>{station.label}</strong>
+              <i>{station.meaning}</i>
+            </Link>
+          </Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function getSymbolWayMemoryNotice(personalWay: PersonalWay | null, symbolId: string) {
   if (personalWay?.familiarSymbols.includes(symbolId)) {
     return "Dieses Zeichen kehrt auf deinem Weg wieder.";
@@ -1646,6 +1693,11 @@ function OntologyResonanceRows({
 function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
   const journey = getJourneysForSymbol(symbolId)[0];
   const step = journey ? getJourneyStepForSymbol(journey.id, symbolId) : undefined;
+  const hebrewMovement = getRoomHebrewMovement(symbolId);
+  const preparesTransition = getRoomTransition(symbolId);
+  const remembersTransition = getRoomTransitionInto(symbolId);
+  const preparesLabels = preparesTransition ? getRoomTransitionLabels(preparesTransition) : undefined;
+  const remembersLabels = remembersTransition ? getRoomTransitionLabels(remembersTransition) : undefined;
 
   if (!journey || !step) {
     return null;
@@ -1663,10 +1715,17 @@ function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
           {nextStep ? <span>Danach leuchtet: {nextStep.label}</span> : null}
         </div>
       ) : null}
+      {preparesLabels || remembersLabels ? (
+        <div className="symbol-inspector-room-movement">
+          {preparesLabels ? <span>Bereitet vor: {preparesLabels.target}</span> : null}
+          {remembersLabels ? <span>Erinnert an: {remembersLabels.source}</span> : null}
+        </div>
+      ) : null}
       <div>
         <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF}>Spur in Mein Pfad oeffnen</Link>
         <Link href={step.roomHref}>Den Raum dieser Spur betreten</Link>
       </div>
+      {hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
     </div>
   );
 }
@@ -1746,6 +1805,7 @@ function SymbolLensFocusDetail({
   const subspaceEntries = detailHierarchyChildren.slice(0, 5);
   const storyAnchor = storyDeepHierarchyAnchors[0] ?? verseDeepHierarchyAnchors[0];
   const ontologyRows = useMemo(() => getInspectorOntologyRows(activeSymbol.id), [activeSymbol.id]);
+  const hebrewMovement = getRoomHebrewMovement(activeSymbol.id);
   const isWater = activeSymbol.id === "wasser";
   const waterBridge = getSymbolPathConfig("wasser");
   const memCodexHref = "/codex/mem?from=symbolnetz&symbol=wasser&focus=hebrew&lens=hebrew";
@@ -1833,6 +1893,9 @@ function SymbolLensFocusDetail({
                   <p>Mem - Jod - Mem</p>
                   <p>Wasser beginnt und endet mit Mem. In der Mitte steht Jod - ein kleiner Punkt von Richtung, Same oder Ursprung.</p>
                   <InspectorStationList stations={WATER_HEBREW_STATIONS} />
+                  <p className="symbol-kicker text-cyan-soft">Nahe hebr&auml;ische Resonanz</p>
+                  <HebrewResonanceLinks symbolId={activeSymbol.id} excludeWordId={hebrewWord?.id} />
+                  {hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
                   <InspectorCtaList ctas={[
                     { label: "Mem im Codex lesen", href: memCodexHref },
                     { label: waterBridge?.ctaLabels.codex ?? "Wasser im Codex lesen", href: waterCodexHref },
@@ -1844,6 +1907,9 @@ function SymbolLensFocusDetail({
                   <p lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</p>
                   <p>{hebrewWord?.transliteration ?? activeSymbol.transliteration}</p>
                   <p>{hebrewLettersText || uniqueLetters.map((letter) => letter.name).join(" - ") || "Buchstaben noch nicht hinterlegt"}</p>
+                  <p className="symbol-kicker text-cyan-soft">W&ouml;rter im selben Bedeutungsfeld</p>
+                  <HebrewResonanceLinks symbolId={activeSymbol.id} excludeWordId={hebrewWord?.id} />
+                  {hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
                 </>
               )}
             </div>

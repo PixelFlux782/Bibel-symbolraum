@@ -27,6 +27,8 @@ import {
   type SymbolicGreatMovementStep,
   type SymbolJourney,
 } from "@/lib/symbols/symbolJourneys";
+import { getRoomTransition, getRoomTransitionHref, getRoomTransitionLabels, roomTransitions } from "@/lib/symbols/roomTransitions";
+import { getRoomHebrewMovement } from "@/lib/hebrew/roomHebrewMovements";
 import { derivePersonalWay, type PersonalWay, type PersonalWayOpening } from "@/lib/personalWay";
 
 function formatDate(value: string) {
@@ -552,12 +554,13 @@ function GreatMovementSection({ movement }: { movement: SymbolicGreatMovementSte
       <div className="symbol-great-movement__lines">
         {movement.map((step) => (
           <Link
-            key={step.symbol}
+            key={`${step.symbol}-${step.targetSymbol ?? "room"}`}
             href={step.href}
             className={`symbol-great-movement__line${step.isNear ? " is-near" : ""}`}
           >
             <span className="symbol-great-movement__symbol">{step.label}</span>
-            <span aria-hidden="true" className="symbol-great-movement__dash">-</span>
+            <span aria-hidden="true" className="symbol-great-movement__dash">-&gt;</span>
+            <span className="symbol-great-movement__symbol">{step.targetLabel}</span>
             <span className="symbol-great-movement__text">{step.text}</span>
             {step.isNear ? <span className="symbol-great-movement__near">nahe</span> : null}
           </Link>
@@ -671,10 +674,10 @@ function PersonalJourneyCard({
       <div className="symbol-journey-card__head">
         <p className="symbol-kicker">Verbundener Weg</p>
         <h2>{journey.title}</h2>
-        <p className="symbol-journey-card__subtitle">Fuenf Zeichen in Resonanz</p>
+        <p className="symbol-journey-card__subtitle">Geschlossene symbolische Bewegung</p>
         <p className="symbol-copy">
           Wasser, Licht, Feuer, Wueste und Brot bilden zusammen eine Bewegung: Ursprung, Offenbarung, Wandlung,
-          Laeuterung und Gabe.
+          Laeuterung und Gabe. Das Brot erinnert wieder an Wasser.
         </p>
       </div>
 
@@ -700,6 +703,9 @@ function PersonalJourneyCard({
           const reflection = reflectionByStep.get(step.symbol);
           const hasTrace = Boolean(reflection);
           const reflectionContext = reflection ? getReflectionContextLabel(reflection) : undefined;
+          const hebrewMovement = getRoomHebrewMovement(step.symbol);
+          const transition = getRoomTransition(step.symbol);
+          const transitionLabels = transition ? getRoomTransitionLabels(transition) : undefined;
 
           return (
             <li key={step.symbol} className="symbol-journey-step">
@@ -710,6 +716,20 @@ function PersonalJourneyCard({
                   {hasTrace ? "Auf deinem Weg" : "Noch still"}
                 </p>
                 <p>{step.text}</p>
+                {transition && transitionLabels ? (
+                  <div className="symbol-journey-step__transition">
+                    <p>{transitionLabels.source} -&gt; {transitionLabels.target}</p>
+                    <span>{transition.title}</span>
+                  </div>
+                ) : null}
+                {hebrewMovement ? (
+                  <div className="symbol-journey-step__hebrew-flow" aria-label={hebrewMovement.title}>
+                    <p>{hebrewMovement.summary}</p>
+                    <span>
+                      {hebrewMovement.stations.map((station) => station.label).join(" -> ")}
+                    </span>
+                  </div>
+                ) : null}
                 {reflection ? (
                   <div className="symbol-journey-step__reflection">
                     <p className="symbol-journey-step__reflection-title">Dein Nachklang</p>
@@ -736,6 +756,18 @@ function PersonalJourneyCard({
           );
         })}
       </ol>
+      <div className="symbol-journey-cycle" aria-label="Geschlossene Bewegung">
+        {roomTransitions.map((transition) => {
+          const labels = getRoomTransitionLabels(transition);
+
+          return (
+            <Link key={`${transition.sourceRoom}-${transition.targetRoom}`} href={getRoomTransitionHref(transition)}>
+              <span>{labels.source} -&gt; {labels.target}</span>
+              <small>{transition.title}</small>
+            </Link>
+          );
+        })}
+      </div>
     </section>
   );
 }

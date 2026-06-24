@@ -10,6 +10,7 @@ import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/type
 import { breakdownHebrewWord } from "@/lib/hebrew/gematria";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
+import { getRoomHebrewMovement, type RoomHebrewMovement } from "@/lib/hebrew/roomHebrewMovements";
 import type { HebrewWord } from "@/types/hebrew";
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
@@ -1481,64 +1482,99 @@ function FireCodexReferenceSection() {
 
 function ResonanceRoomInline({ symbolId }: { symbolId: string }) {
   const resonanceRoom = getResonanceRoom(symbolId);
+  const hebrewMovement = getRoomHebrewMovement(symbolId);
 
-  if (resonanceRoom.statements.length === 0) {
+  if (resonanceRoom.statements.length === 0 && !hebrewMovement) {
     return null;
   }
 
   return (
     <section className="border-t border-white/[0.06] pt-6">
-      <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Resonanzraum</p>
-      <ul className="mt-4 grid gap-3">
-        {resonanceRoom.statements.map((statement) => (
-          <li key={`${statement.type}-${statement.text}`}>
-            {statement.href ? (
-              <Link
-                href={statement.href}
-                className="symbol-copy block border-l border-gold/25 pl-4 text-base italic text-foreground-strong transition-colors duration-500 hover:border-gold/45 hover:text-gold"
-              >
-                {statement.text}
-              </Link>
-            ) : (
-              <p className="symbol-copy border-l border-gold/25 pl-4 text-base italic text-foreground-strong">
-                {statement.text}
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
+      {hebrewMovement ? <CodexHebrewMovement movement={hebrewMovement} /> : null}
+      {resonanceRoom.statements.length > 0 ? (
+        <>
+          <p className={hebrewMovement ? "mt-6 text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft" : "text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft"}>Resonanzraum</p>
+          <ul className="mt-4 grid gap-3">
+            {resonanceRoom.statements.map((statement) => (
+              <li key={`${statement.type}-${statement.text}`}>
+                {statement.href ? (
+                  <Link
+                    href={statement.href}
+                    className="symbol-copy block border-l border-gold/25 pl-4 text-base italic text-foreground-strong transition-colors duration-500 hover:border-gold/45 hover:text-gold"
+                  >
+                    {statement.text}
+                  </Link>
+                ) : (
+                  <p className="symbol-copy border-l border-gold/25 pl-4 text-base italic text-foreground-strong">
+                    {statement.text}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </section>
   );
 }
 
 function ResonanceRoomSection({ symbolId }: { symbolId: string }) {
   const resonanceRoom = getResonanceRoom(symbolId);
+  const hebrewMovement = getRoomHebrewMovement(symbolId);
 
-  if (resonanceRoom.statements.length === 0) {
+  if (resonanceRoom.statements.length === 0 && !hebrewMovement) {
     return null;
   }
 
   return (
     <DetailSection title="Resonanzraum">
-      <ul className="grid gap-3">
-        {resonanceRoom.statements.map((statement) => (
-          <li key={`${statement.type}-${statement.text}`}>
-            {statement.href ? (
-              <Link
-                href={statement.href}
-                className="symbol-copy block border-l border-gold/25 pl-4 text-base italic text-foreground-strong transition-colors duration-500 hover:border-gold/45 hover:text-gold"
-              >
-                {statement.text}
-              </Link>
-            ) : (
-              <p className="symbol-copy border-l border-gold/25 pl-4 text-base italic text-foreground-strong">
-                {statement.text}
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
+      {hebrewMovement ? <CodexHebrewMovement movement={hebrewMovement} /> : null}
+      {resonanceRoom.statements.length > 0 ? (
+        <ul className={hebrewMovement ? "mt-6 grid gap-3" : "grid gap-3"}>
+          {resonanceRoom.statements.map((statement) => (
+            <li key={`${statement.type}-${statement.text}`}>
+              {statement.href ? (
+                <Link
+                  href={statement.href}
+                  className="symbol-copy block border-l border-gold/25 pl-4 text-base italic text-foreground-strong transition-colors duration-500 hover:border-gold/45 hover:text-gold"
+                >
+                  {statement.text}
+                </Link>
+              ) : (
+                <p className="symbol-copy border-l border-gold/25 pl-4 text-base italic text-foreground-strong">
+                  {statement.text}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </DetailSection>
+  );
+}
+
+function CodexHebrewMovement({ movement }: { movement: RoomHebrewMovement }) {
+  return (
+    <div className="grid gap-4">
+      <div>
+        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">{movement.title}</p>
+        <p className="symbol-copy mt-3 max-w-3xl font-serif text-lg italic text-gold/80">{movement.summary}</p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-5">
+        {movement.stations.map((station, index) => (
+          <Link
+            key={station.id}
+            href={`/codex/${station.codexId}`}
+            className="group border-l border-gold/20 bg-white/[0.018] px-3 py-3 transition-colors duration-500 hover:border-gold/45 hover:bg-gold/[0.04]"
+          >
+            <span className="block text-[0.54rem] uppercase tracking-[0.2em] text-cyan-soft/65">{String(index + 1).padStart(2, "0")}</span>
+            <span className="mt-2 block font-serif text-3xl leading-none text-gold/85" lang="he" dir="rtl">{station.hebrew}</span>
+            <strong className="mt-2 block font-serif text-lg italic text-foreground-strong transition-colors duration-500 group-hover:text-gold">{station.label}</strong>
+            <span className="symbol-copy mt-2 block text-sm italic text-muted-soft">{station.meaning}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 

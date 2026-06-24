@@ -1,4 +1,5 @@
 import type { ResonanceConnection, ResonanceRegistry } from "./types";
+import { phase36AResonanceConnections } from "./phase36AConnections";
 
 export const resonanceConnections: ResonanceConnection[] = [
   {
@@ -229,6 +230,7 @@ export const resonanceConnections: ResonanceConnection[] = [
     scriptureAnchors: [],
     hebrewAnchors: ["\u05de\u05d3\u05d1\u05e8", "\u05d3\u05d1\u05e8"],
   },
+  ...phase36AResonanceConnections,
 ];
 
 let registry: ResonanceRegistry | null = null;

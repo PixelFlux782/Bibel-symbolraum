@@ -14,6 +14,7 @@ import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { getCodexEntriesByType, resolveCodexEntry, searchCodexEntries } from "@/lib/codex/getCodexEntry";
 import type { CodexEntry, CodexEntryType } from "@/lib/codex/types";
+import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { CORE_CONCEPT_IDS, getOntologyEntity, isCoreConceptId, ontologyEntities } from "@/lib/ontology";
@@ -538,6 +539,18 @@ function getHebrewWordEntries(entries: CodexEntry[]) {
   return entries.filter((entry) => Boolean(entry.hebrew) && entry.type !== "hebrew-letter");
 }
 
+function getEntryHebrewResonanceWords(entry: CodexEntry) {
+  const symbolSlug = entry.type === "symbol" ? entry.id : entry.symbolRoomSlug;
+
+  if (!symbolSlug) {
+    return [];
+  }
+
+  return getSymbolHebrewProfile(symbolSlug).relatedHebrewWords
+    .filter((word) => word.id !== entry.id)
+    .slice(0, 6);
+}
+
 function HebrewLetterChip({
   glyph,
   letterId,
@@ -805,6 +818,7 @@ function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { ent
 function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: CodexEntry } & CodexCardFocusProps) {
   const isActive = activeCodexId === entry.id;
   const isCoreConcept = isCoreConceptId(entry.id);
+  const hebrewResonanceWords = getEntryHebrewResonanceWords(entry);
 
   return (
     <Link
@@ -852,6 +866,23 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
         <p className="symbol-copy mt-5 text-base italic">
           {entry.summary}
         </p>
+
+        {hebrewResonanceWords.length > 0 ? (
+          <div className="mt-5">
+            <p className="text-[0.56rem] uppercase tracking-[0.22em] text-cyan-soft/75">Nahe hebr&auml;ische Resonanz</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {hebrewResonanceWords.map((word) => (
+                <span
+                  key={word.id}
+                  className="inline-flex items-center gap-2 border border-gold/[0.14] bg-gold/[0.035] px-2.5 py-1.5 text-[0.62rem] uppercase tracking-[0.16em] text-gold/75"
+                >
+                  <span lang="he" dir="rtl" className="font-serif text-base normal-case tracking-normal">{word.hebrew}</span>
+                  {word.transliteration}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {entry.steps?.length ? (
           <ol className="mt-6 grid gap-2">

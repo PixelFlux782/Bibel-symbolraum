@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { BiblicalScene, HebrewLetterMeaning, SymbolEngineData, SymbolJourneyState } from "@/types/engine";
 import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
+import { getRoomHebrewMovement } from "@/lib/hebrew/roomHebrewMovements";
 import { buildSymbolMeaningNetwork } from "@/lib/meaning/buildSymbolMeaningNetwork";
 import { getMeaningProfile } from "@/lib/meaning/meaningMappings";
 import { recordActivatedLetter } from "@/lib/pathActivity";
@@ -22,6 +23,7 @@ function uniqueById<T extends { id: string }>(items: T[]): T[] {
 export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: HebrewLayerProps) {
   const [overlayLetterId, setOverlayLetterId] = useState<string>();
   const codex = useMemo(() => getSymbolHebrewProfile(data), [data]);
+  const hebrewMovement = useMemo(() => getRoomHebrewMovement(data.slug), [data.slug]);
   const network = useMemo(() => buildSymbolMeaningNetwork(), []);
   const graphNodes = useMemo(() => {
     const symbolNodes = getMeaningProfile(data.slug).nodes;
@@ -75,6 +77,39 @@ export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: Heb
         <span lang="he" dir="rtl">{codex.hebrewWord?.hebrew ?? data.hebrew.word}</span>
         <i>{codex.hebrewWord?.transliteration ?? data.hebrew.transliteration}</i>
       </div>
+
+      {codex.relatedHebrewWords.length > 1 ? (
+        <div className="symbol-engine__codex-stage">
+          <p>Nahe hebr&auml;ische Resonanz</p>
+          <div className="symbol-engine__codex-cluster">
+            {codex.relatedHebrewWords
+              .filter((word) => word.id !== codex.hebrewWord?.id)
+              .slice(0, 6)
+              .map((word) => (
+                <Link key={word.id} href={`/codex/${word.id}`}>
+                  <span lang="he" dir="rtl">{word.hebrew}</span>
+                  {word.transliteration}
+                </Link>
+              ))}
+          </div>
+        </div>
+      ) : null}
+
+      {hebrewMovement ? (
+        <div className="symbol-engine__codex-stage symbol-engine__hebrew-movement">
+          <p>{hebrewMovement.title}</p>
+          <strong>{hebrewMovement.summary}</strong>
+          <div className="symbol-engine__hebrew-movement-track">
+            {hebrewMovement.stations.map((station) => (
+              <Link key={station.id} href={`/codex/${station.codexId}`}>
+                <span lang="he" dir="rtl">{station.hebrew}</span>
+                <i>{station.label}</i>
+                <small>{station.meaning}</small>
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="symbol-engine__codex-stage">
         <p>Buchstaben</p>
