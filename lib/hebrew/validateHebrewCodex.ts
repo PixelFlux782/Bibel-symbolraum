@@ -26,6 +26,23 @@ function validateWord(
 ): string[] {
   const errors: string[] = [];
 
+  if (word.germanMeaning.trim() === "") {
+    errors.push(`HebrewWord "${word.id}" benoetigt eine deutsche Grundbedeutung.`);
+  }
+
+  if (word.meaningThreshold.trim() === "") {
+    errors.push(`HebrewWord "${word.id}" benoetigt eine kurze Bedeutungsschwelle.`);
+  }
+
+  const sentenceCount = word.meaningThreshold
+    .split(/[.!?]+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean).length;
+
+  if (sentenceCount > 2) {
+    errors.push(`HebrewWord "${word.id}" darf hoechstens zwei Saetze als Bedeutungsschwelle fuehren.`);
+  }
+
   for (const letterId of word.letterIds) {
     if (!letterIds.has(letterId)) {
       errors.push(`HebrewWord "${word.id}" referenziert den unbekannten Buchstaben "${letterId}".`);

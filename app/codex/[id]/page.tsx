@@ -970,6 +970,11 @@ function getSymbolicTrail(entry: CodexEntry) {
 }
 
 function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
+  if (entry.type === "hebrew-word") {
+    return hebrewWords.find((word) => word.id === entry.id)?.meaningThreshold
+      ?? "Dieses hebraeische Wort oeffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenfuehrt.";
+  }
+
   if (entity?.domain === "pattern") {
     return "Dieses Muster lohnt sich, weil es Bedeutung nicht als Begriff zeigt, sondern als Bewegung. Wer eintritt, sieht, wodurch ein Raum zum naechsten Raum wird.";
   }
@@ -980,7 +985,7 @@ function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
 
   const texts: Record<CodexEntryType, string> = {
     "hebrew-letter": "Dieser Buchstabe ist klein, aber nicht schmal. Wer ihn betritt, begegnet einem Zeichenkoerper, in dem Zahl, Wort und Symbol leise zusammenklingen.",
-    "hebrew-word": "Dieses Wort ist mehr als eine Uebersetzung. Wer es betritt, folgt Buchstaben, Zahl und Klang bis in den Raum, den sie oeffnen.",
+    "hebrew-word": "Dieses hebraeische Wort oeffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenfuehrt.",
     journey: "Diese Spur will nicht erklaeren, sondern fuehren. Wer eintritt, geht von Station zu Station und merkt, welche Bedeutung unterwegs Gestalt gewinnt.",
     meaning: "Dieses Bedeutungsfeld ist ein stiller Sammlungsraum. Wer eintritt, sieht, welche Symbole, Worte und Stellen hier aufeinander antworten.",
     "meaning-field": "Dieses Bedeutungsfeld ist ein stiller Sammlungsraum. Wer eintritt, sieht, welche Symbole, Worte und Stellen hier aufeinander antworten.",
@@ -1715,6 +1720,9 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   }
 
   const ontologyEntity = getOntologyEntity(entry.id);
+  const activeHebrewWord = entry.type === "hebrew-word"
+    ? hebrewWords.find((word) => word.id === entry.id)
+    : undefined;
   const isWaterEntry = entry.id === "wasser";
   const isLightEntry = entry.id === "licht";
   const isFireEntry = entry.id === "feuer";
@@ -1779,22 +1787,40 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           </p>
         ) : null}
 
-        <header className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
+        <header className={`mt-10 grid gap-10 ${entry.type === "hebrew-word" ? "" : "lg:grid-cols-[1fr_auto] lg:items-start"}`}>
           <div>
             <p className="symbol-kicker text-cyan-soft">
               {isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)}
             </p>
-            <h1 className="mt-6 font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
-              {entry.title}
-            </h1>
-            {entry.subtitle ? (
-              <p className="symbol-copy mt-6 max-w-3xl text-2xl italic text-gold/80 md:text-3xl">
-                {entry.subtitle}
-              </p>
-            ) : null}
+            {entry.type === "hebrew-word" && entry.hebrew ? (
+              <>
+                <h1 className="mt-6 font-serif text-6xl leading-none text-gold/90 md:text-8xl" lang="he" dir="rtl">
+                  {entry.hebrew}
+                </h1>
+                {entry.transliteration ? (
+                  <p className="mt-5 text-[0.68rem] uppercase tracking-[0.28em] text-gold/70">
+                    {entry.transliteration}
+                  </p>
+                ) : null}
+                <p className="symbol-copy mt-4 max-w-3xl font-serif text-2xl italic leading-snug text-foreground-strong md:text-3xl">
+                  {activeHebrewWord?.germanMeaning ?? entry.title}
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="mt-6 font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
+                  {entry.title}
+                </h1>
+                {entry.subtitle ? (
+                  <p className="symbol-copy mt-6 max-w-3xl text-2xl italic text-gold/80 md:text-3xl">
+                    {entry.subtitle}
+                  </p>
+                ) : null}
+              </>
+            )}
           </div>
 
-          {entry.hebrew ? (
+          {entry.hebrew && entry.type !== "hebrew-word" ? (
             <div
               data-active-context={activeFocus === "hebrew" ? "hebrew" : undefined}
               className={`border bg-white/[0.025] px-8 py-7 text-left backdrop-blur-md lg:min-w-64 ${
