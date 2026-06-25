@@ -2775,6 +2775,22 @@ body {
   }
 }
 
+@keyframes symbol-transition-breath {
+  0%,
+  100% {
+    opacity: 0.64;
+    filter:
+      drop-shadow(0 0 8px rgba(224, 194, 128, 0.16))
+      drop-shadow(0 0 22px rgba(127, 184, 201, 0.05));
+  }
+  48% {
+    opacity: 0.86;
+    filter:
+      drop-shadow(0 0 12px rgba(224, 194, 128, 0.24))
+      drop-shadow(0 0 34px rgba(127, 184, 201, 0.08));
+  }
+}
+
 @keyframes symbol-arrival-rise {
   from {
     opacity: 0;
@@ -3623,6 +3639,34 @@ body {
 
 .symbol-constellation-node.is-active p:last-child {
   color: rgba(var(--foreground-rgb), 0.72);
+}
+
+.symbol-constellation-node.is-transition-horizon,
+.symbol-constellation-node.is-transition-cycle-horizon {
+  border-color: rgba(var(--gold-rgb), 0.28);
+  background:
+    radial-gradient(circle at 50% 20%, rgba(var(--gold-rgb), 0.12), transparent 52%),
+    rgba(255, 255, 255, 0.024);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--gold-rgb), 0.07),
+    0 0 3.6rem rgba(var(--gold-rgb), 0.08);
+}
+
+.symbol-constellation-node.is-transition-cycle-horizon {
+  border-color: rgba(var(--cyan-rgb), 0.28);
+  background:
+    radial-gradient(circle at 50% 20%, rgba(var(--cyan-rgb), 0.1), transparent 52%),
+    rgba(255, 255, 255, 0.022);
+}
+
+.symbol-constellation-node.is-transition-horizon p:first-child,
+.symbol-constellation-node.is-transition-cycle-horizon p:first-child {
+  color: rgba(var(--gold-rgb), 0.9);
+  text-shadow: 0 0 2.6rem rgba(var(--gold-rgb), 0.16);
+}
+
+.symbol-constellation-node.is-transition-cycle-horizon p:first-child {
+  color: rgba(var(--cyan-rgb), 0.9);
 }
 
 .symbol-constellation-node.is-first-entry:not(.is-active):not(.is-previewed) {
@@ -4494,6 +4538,15 @@ body {
     drop-shadow(0 0 28px rgba(189, 160, 109, 0.09));
 }
 
+.symbol-network-flow .react-flow__edge.is-room-transition-path .react-flow__edge-path {
+  opacity: 0.78;
+  stroke-dasharray: none;
+  filter:
+    drop-shadow(0 0 10px rgba(224, 194, 128, 0.22))
+    drop-shadow(0 0 30px rgba(127, 184, 201, 0.08));
+  animation: symbol-transition-breath 5.6s ease-in-out infinite;
+}
+
 .symbol-network-flow .react-flow__edge-text,
 .symbol-network-flow .react-flow__edgeupdater {
   pointer-events: none;
@@ -4514,6 +4567,10 @@ body {
 
 .symbol-network-flow .react-flow__edge.is-journey-path.is-selected-path .react-flow__edge-path {
   opacity: 0.66;
+}
+
+.symbol-network-flow .react-flow__edge.is-room-transition-path.is-selected-path .react-flow__edge-path {
+  opacity: 0.82;
 }
 
 .symbol-network-flow .react-flow__edge.is-traveling-path .react-flow__edge-path {
@@ -4545,6 +4602,19 @@ body {
     0 0 26px rgba(var(--gold-rgb), 0.14),
     0 1px 14px rgba(0, 0, 0, 0.72);
   animation: connection-resonance-in 680ms ease-out both;
+}
+
+.symbol-connection-resonance--room-transition {
+  max-width: min(24rem, 66vw);
+  color: rgba(var(--gold-rgb), 0.78);
+  font-size: clamp(0.98rem, 1.45vw, 1.28rem);
+  text-shadow:
+    0 0 12px rgba(var(--gold-rgb), 0.16),
+    0 1px 14px rgba(0, 0, 0, 0.76);
+}
+
+.symbol-connection-resonance--cycle {
+  color: rgba(var(--cyan-rgb), 0.78);
 }
 
 .letter-bridge {
@@ -5168,6 +5238,11 @@ body {
   line-height: 1.45;
 }
 
+.symbol-inspector-journey-note p strong {
+  color: rgba(var(--gold-rgb), 0.86);
+  font-weight: normal;
+}
+
 .symbol-inspector-journey-note div {
   display: flex;
   flex-wrap: wrap;
@@ -5197,6 +5272,67 @@ body {
   border-bottom: 1px solid rgba(var(--gold-rgb), 0.12);
   color: rgba(var(--gold-rgb), 0.7);
   transition: border-color 500ms ease, color 500ms ease;
+}
+
+.symbol-room-transition-way {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.3rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.08);
+  padding-top: 0.68rem;
+}
+
+.symbol-room-transition-way__title {
+  color: rgba(var(--gold-rgb), 0.78);
+}
+
+.symbol-room-transition-way__stations {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.38rem;
+}
+
+.symbol-room-transition-way__station {
+  display: grid;
+  min-width: 5.1rem;
+  flex: 1 1 5.6rem;
+  gap: 0.18rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.15);
+  background: rgba(255, 255, 255, 0.014);
+  padding: 0.48rem 0.58rem;
+}
+
+.symbol-room-transition-way__station--room {
+  border-left-color: rgba(var(--cyan-rgb), 0.18);
+}
+
+.symbol-room-transition-way__station strong {
+  color: rgba(var(--foreground-rgb), 0.82);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.2;
+}
+
+.symbol-room-transition-way__station i {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: rgba(216, 209, 194, 0.5);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.72rem;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.symbol-room-transition-way__arrow {
+  align-self: center;
+  color: rgba(var(--gold-rgb), 0.44);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.88rem;
 }
 
   .symbol-inspector-journey-note a:hover,
@@ -6410,6 +6546,73 @@ body {
 
 .symbol-mobile-movement span {
   color: rgba(var(--gold-rgb), 0.42);
+}
+
+.symbol-mobile-transition-way {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+  padding-block: 0.15rem 0.25rem;
+  text-align: center;
+}
+
+.symbol-mobile-transition-way__station {
+  display: grid;
+  min-width: min(100%, 13.5rem);
+  justify-items: center;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.1);
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.075);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.075), transparent 48%),
+    rgba(255, 255, 255, 0.018);
+  padding: 0.72rem 0.9rem;
+}
+
+.symbol-mobile-transition-way__station--room {
+  border-color: rgba(var(--gold-rgb), 0.18);
+}
+
+.symbol-mobile-transition-way--cycle .symbol-mobile-transition-way__station--room:last-child {
+  border-color: rgba(var(--cyan-rgb), 0.22);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--cyan-rgb), 0.08), transparent 48%),
+    rgba(255, 255, 255, 0.016);
+}
+
+.symbol-mobile-transition-way__station strong {
+  color: rgba(var(--foreground-rgb), 0.9);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.18;
+}
+
+.symbol-mobile-transition-way__station i {
+  margin-top: 0.22rem;
+  color: rgba(216, 209, 194, 0.52);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 0.78rem;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.symbol-mobile-transition-way__title {
+  max-width: 16rem;
+  color: rgba(var(--gold-rgb), 0.82);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.symbol-mobile-transition-way__arrow {
+  display: grid;
+  height: 1.35rem;
+  place-items: center;
+  color: rgba(var(--gold-rgb), 0.42);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
 }
 
 .symbol-mobile-relations {

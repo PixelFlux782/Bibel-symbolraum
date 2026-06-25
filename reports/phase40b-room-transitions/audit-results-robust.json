@@ -1,0 +1,86 @@
+[
+  {
+    "device": "desktop",
+    "route": "/symbolnetz",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 0
+  },
+  {
+    "device": "desktop",
+    "route": "/symbolnetz?symbol=wasser",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "desktop",
+    "route": "/symbolnetz?symbol=licht",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "desktop",
+    "route": "/symbolnetz?symbol=feuer",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "desktop",
+    "route": "/symbolnetz?symbol=wueste",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "desktop",
+    "route": "/symbolnetz?symbol=brot",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "mobile",
+    "route": "/symbolnetz",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 0
+  },
+  {
+    "device": "mobile",
+    "route": "/symbolnetz?symbol=wasser",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "mobile",
+    "route": "/symbolnetz?symbol=licht",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "mobile",
+    "route": "/symbolnetz?symbol=feuer",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "mobile",
+    "route": "/symbolnetz?symbol=wueste",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  },
+  {
+    "device": "mobile",
+    "route": "/symbolnetz?symbol=brot",
+    "hasFlow": true,
+    "hasVisibleTransitionTitle": true,
+    "hasRoomTransitionPath": 1
+  }
+]

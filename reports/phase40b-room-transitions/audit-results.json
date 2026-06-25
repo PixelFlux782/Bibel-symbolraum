@@ -1,0 +1,223 @@
+{
+  "results": [
+    {
+      "device": "desktop",
+      "route": "/symbolnetz",
+      "hasFlow": true,
+      "hasTitle": true,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "/symbolnetz?symbol=wasser",
+      "hasFlow": true,
+      "hasTitle": false,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "/symbolnetz?symbol=licht",
+      "hasFlow": true,
+      "hasTitle": false,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "/symbolnetz?symbol=feuer",
+      "hasFlow": true,
+      "hasTitle": false,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "/symbolnetz?symbol=wueste",
+      "hasFlow": true,
+      "hasTitle": false,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "/symbolnetz?symbol=brot",
+      "hasFlow": true,
+      "hasTitle": false,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/symbolnetz",
+      "hasFlow": true,
+      "hasTitle": true,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/symbolnetz?symbol=wasser",
+      "hasFlow": true,
+      "hasTitle": true,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/symbolnetz?symbol=licht",
+      "hasFlow": true,
+      "hasTitle": true,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/symbolnetz?symbol=feuer",
+      "hasFlow": true,
+      "hasTitle": true,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/symbolnetz?symbol=wueste",
+      "hasFlow": true,
+      "hasTitle": true,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/symbolnetz?symbol=brot",
+      "hasFlow": true,
+      "hasTitle": true,
+      "messages": [
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        },
+        {
+          "type": "warning",
+          "text": "[React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002"
+        }
+      ]
+    }
+  ],
+  "nav": [
+    {
+      "route": "/symbolnetz?symbol=wasser",
+      "title": "Symbolnetz | Bibel-Symbolraum",
+      "ok": true
+    },
+    {
+      "route": "/codex/wasser?from=symbolnetz&symbol=wasser&focus=overview",
+      "title": "Wasser | Codex | Bibel-Symbolraum",
+      "ok": true
+    },
+    {
+      "route": "/raeume/wasser?from=symbolnetz&symbol=wasser&lens=overview",
+      "title": "Wasser-Raum | Bibel-Symbolraum",
+      "ok": true
+    },
+    {
+      "route": "/mein-pfad",
+      "title": "Bibel-Symbolraum",
+      "ok": true
+    },
+    {
+      "route": "/symbolnetz?symbol=brot",
+      "title": "Symbolnetz | Bibel-Symbolraum",
+      "ok": true
+    }
+  ]
+}

@@ -95,6 +95,7 @@ type SymbolNodeData = SymbolMeaningNetworkNode & {
   lensNote?: string;
   emergenceIndex?: number;
   arrivalPresence?: SymbolArrivalPresence;
+  transitionRole?: "source" | "horizon" | "cycle-horizon";
   isTouchedOnWay: boolean;
   isFamiliarOnWay: boolean;
 };
@@ -133,6 +134,7 @@ type LivingConnectionData = {
   isTraveling: boolean;
   relationType: "symbol" | "letter" | "meaning" | "journey";
   resonanceType?: ResonanceType;
+  isTransitionPath?: boolean;
   routeIndex: number;
   routeOffset: number;
 };
@@ -207,6 +209,23 @@ type SymbolInspectorCta = {
   label: string;
   href?: string;
   onClick?: () => void;
+};
+
+type RoomTransitionWayStation = {
+  id: string;
+  label: string;
+  detail?: string;
+  href?: string;
+  kind: "room" | "hebrew" | "verse";
+};
+
+type RoomTransitionWay = {
+  sourceLabel: string;
+  targetLabel: string;
+  title: string;
+  shortMeaning: string;
+  isCycleReturn: boolean;
+  stations: RoomTransitionWayStation[];
 };
 
 type LandscapeDisclosureLevel = 1 | 2 | 3 | 4;
@@ -448,25 +467,38 @@ const ONTOLOGY_RESONANCE_LIMIT = 5;
 const MOBILE_SYMBOL_RELATION_LIMIT = 3;
 const LANDSCAPE_DISCLOSURE_PROFILES: Record<string, LandscapeDisclosureProfile> = {
   wasser: {
-    response: "Aus der Tiefe beginnt Ordnung.",
-    movement: ["Tehom", "Ruach", "Majim", "Genesis 1,2", "Licht"],
+    response: "Aus der Tiefe hebt sich Licht.",
+    movement: ["Majim", "Tehom", "Ruach", "Genesis 1,2", "Licht"],
   },
   licht: {
-    response: "Was verborgen war, beginnt sichtbar zu werden.",
-    movement: ["Davar", "Qol", "Or", "Genesis 1,3", "Orientierung"],
+    response: "Was sichtbar wird, will verwandelt werden.",
+    movement: ["Or", "Panim", "Kavod", "Genesis 1,3", "Feuer"],
   },
   feuer: {
-    response: "Was sichtbar wird, will verwandelt werden.",
-    movement: ["Esch", "Dornbusch", "Stimme", "Gegenwart", "Wandlung"],
+    response: "Nach der Glut bleibt die Weite.",
+    movement: ["Esch", "Mizbeach", "Korban", "Ruach", "Wueste"],
   },
   wueste: {
-    response: "Nicht Leere. Sondern Vorbereitung.",
-    movement: ["Midbar", "Leere", "Stimme", "Weg", "Brot"],
+    response: "Im Mangel erscheint die Gabe.",
+    movement: ["Midbar", "Derech", "Qol", "Manna", "Brot"],
   },
   brot: {
-    response: "Was empfangen wird, will geteilt werden.",
-    movement: ["Mangel", "Manna", "Gabe", "Tisch", "Gemeinschaft"],
+    response: "Die Gabe erinnert an ihren Ursprung.",
+    movement: ["Manna", "Lechem", "Shever", "Seudah", "Wasser"],
   },
+};
+
+const ROOM_TRANSITION_STATION_ORDER: Record<string, string[]> = {
+  wasser: ["majim", "tehom", "ruach", "genesis-1-2"],
+  licht: ["or", "panim", "kavod", "genesis-1-3"],
+  feuer: ["esch", "mizbeach", "korban", "ruach"],
+  wueste: ["midbar", "derech", "qol", "manna"],
+  brot: ["manna", "lechem", "shever", "seudah"],
+};
+
+const ROOM_TRANSITION_VERSE_LABELS: Record<string, string> = {
+  "genesis-1-2": "Genesis 1,2",
+  "genesis-1-3": "Genesis 1,3",
 };
 const PRIMARY_FOCUS_PATH_IDS: Record<string, string[]> = {
   wasser: ["creation"],
@@ -1122,6 +1154,66 @@ function getPathKey(from: string, to: string) {
   return [from, to].sort().join(":");
 }
 
+function getRoomTransitionWay(symbolId: string): RoomTransitionWay | null {
+  const transition = getRoomTransition(symbolId);
+  if (!transition) return null;
+
+  const labels = getRoomTransitionLabels(transition);
+  const movement = getRoomHebrewMovement(symbolId);
+  const orderedStationIds = ROOM_TRANSITION_STATION_ORDER[symbolId] ?? [];
+  const hebrewStations = movement?.stations ?? [];
+  const stations: RoomTransitionWayStation[] = [
+    {
+      id: transition.sourceRoom,
+      label: labels.source,
+      detail: "aktiver Raum",
+      href: getSymbolPathConfig(transition.sourceRoom)?.roomHref,
+      kind: "room",
+    },
+    ...orderedStationIds.flatMap<RoomTransitionWayStation>((stationId) => {
+      const hebrewStation = hebrewStations.find((station) => station.codexId === stationId || station.label === stationId);
+      if (hebrewStation) {
+        return [{
+          id: hebrewStation.id,
+          label: hebrewStation.label,
+          detail: hebrewStation.meaning,
+          href: `/codex/${hebrewStation.codexId}?from=symbolnetz&symbol=${symbolId}&focus=hebrew&lens=hebrew`,
+          kind: "hebrew" as const,
+        }];
+      }
+
+      const hierarchyEntry = getHierarchyEntry(stationId);
+      if (hierarchyEntry || ROOM_TRANSITION_VERSE_LABELS[stationId]) {
+        return [{
+          id: stationId,
+          label: ROOM_TRANSITION_VERSE_LABELS[stationId] ?? hierarchyEntry?.title ?? stationId,
+          detail: hierarchyEntry?.summary,
+          href: getCodexEntry(stationId) ? `/codex/${stationId}?from=symbolnetz&symbol=${symbolId}&focus=story` : undefined,
+          kind: "verse" as const,
+        }];
+      }
+
+      return [];
+    }),
+    {
+      id: transition.targetRoom,
+      label: labels.target,
+      detail: transition.targetRoom === "wasser" ? "Erinnerung an Ursprung" : "Horizont",
+      href: getSymbolPathConfig(transition.targetRoom)?.roomHref,
+      kind: "room" as const,
+    },
+  ];
+
+  return {
+    sourceLabel: labels.source,
+    targetLabel: labels.target,
+    title: transition.title,
+    shortMeaning: transition.shortMeaning,
+    isCycleReturn: transition.sourceRoom === "brot" && transition.targetRoom === "wasser",
+    stations,
+  };
+}
+
 function normalizeResonanceDisplayText(value: string) {
   return value
     .replace(/\s+/g, " ")
@@ -1449,6 +1541,56 @@ function JourneySequence({ items }: { items: string[] }) {
   );
 }
 
+function RoomTransitionWayInline({ way }: { way: RoomTransitionWay }) {
+  return (
+    <div className={`symbol-room-transition-way ${way.isCycleReturn ? "symbol-room-transition-way--cycle" : ""}`}>
+      <p className="symbol-room-transition-way__title">{way.title}</p>
+      <div className="symbol-room-transition-way__stations">
+        {way.stations.map((station, index) => (
+          <Fragment key={station.id}>
+            {index > 0 ? <span className="symbol-room-transition-way__arrow" aria-hidden="true">-&gt;</span> : null}
+            {station.href ? (
+              <Link href={station.href} className={`symbol-room-transition-way__station symbol-room-transition-way__station--${station.kind}`}>
+                <strong>{station.label}</strong>
+                {station.detail ? <i>{station.detail}</i> : null}
+              </Link>
+            ) : (
+              <span className={`symbol-room-transition-way__station symbol-room-transition-way__station--${station.kind}`}>
+                <strong>{station.label}</strong>
+                {station.detail ? <i>{station.detail}</i> : null}
+              </span>
+            )}
+          </Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MobileRoomTransitionWay({ way }: { way: RoomTransitionWay }) {
+  return (
+    <div className={`symbol-mobile-transition-way ${way.isCycleReturn ? "symbol-mobile-transition-way--cycle" : ""}`}>
+      {way.stations.map((station, index) => (
+        <Fragment key={station.id}>
+          {index === 1 ? (
+            <>
+              <span className="symbol-mobile-transition-way__arrow" aria-hidden="true">&darr;</span>
+              <p className="symbol-mobile-transition-way__title">{way.title}</p>
+              <span className="symbol-mobile-transition-way__arrow" aria-hidden="true">&darr;</span>
+            </>
+          ) : index > 1 ? (
+            <span className="symbol-mobile-transition-way__arrow" aria-hidden="true">&darr;</span>
+          ) : null}
+          <div className={`symbol-mobile-transition-way__station symbol-mobile-transition-way__station--${station.kind}`}>
+            <strong>{station.label}</strong>
+            {station.detail && (index === 0 || index === way.stations.length - 1) ? <i>{station.detail}</i> : null}
+          </div>
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
 function InspectorLeitsatz({ children }: { children: string }) {
   return <p className="symbol-inspector-leitsatz">{children}</p>;
 }
@@ -1557,7 +1699,7 @@ function getSymbolWayMemoryNotice(personalWay: PersonalWay | null, symbolId: str
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
   return (
     <div
-      className={`group relative cursor-pointer transition-opacity duration-700 ${data.arrivalPresence ? `symbol-arrival-node symbol-arrival-node--${data.arrivalPresence}` : ""} ${data.emergenceIndex !== undefined ? "letter-emergence-symbol" : ""} ${data.isDimmed ? "opacity-[0.24]" : "opacity-100"}`}
+      className={`group relative cursor-pointer transition-opacity duration-700 ${data.transitionRole ? `symbol-transition-node symbol-transition-node--${data.transitionRole}` : ""} ${data.arrivalPresence ? `symbol-arrival-node symbol-arrival-node--${data.arrivalPresence}` : ""} ${data.emergenceIndex !== undefined ? "letter-emergence-symbol" : ""} ${data.isDimmed ? "opacity-[0.24]" : "opacity-100"}`}
       style={data.emergenceIndex !== undefined ? { animationDelay: `${data.emergenceIndex * 220}ms` } : undefined}
     >
       {SYMBOL_PORTS.map((port) => (
@@ -1569,7 +1711,7 @@ function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
       <div
         className={`symbol-constellation-node relative grid h-44 w-44 place-items-center px-5 py-5 text-center transition-colors duration-700 ${
           data.isActive ? "is-active" : data.isPreviewed ? "is-previewed" : data.isRelated ? "is-related" : ""
-        } ${data.arrivalPresence ? `is-arrival-${data.arrivalPresence}` : ""} ${data.id === "wasser" ? "is-first-entry" : ""} ${data.isTouchedOnWay ? "is-touched-on-way" : ""} ${data.isFamiliarOnWay ? "is-familiar-on-way" : ""} ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
+        } ${data.transitionRole ? `is-transition-${data.transitionRole}` : ""} ${data.arrivalPresence ? `is-arrival-${data.arrivalPresence}` : ""} ${data.id === "wasser" ? "is-first-entry" : ""} ${data.isTouchedOnWay ? "is-touched-on-way" : ""} ${data.isFamiliarOnWay ? "is-familiar-on-way" : ""} ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
       >
         <div>
           <p className="symbol-breathe font-serif text-5xl leading-none" lang="he" dir="rtl">
@@ -1675,7 +1817,8 @@ function LivingConnectionEdge({
   const midpointY = (sourceY + targetY) / 2;
   const routeOffset = data?.routeOffset ?? 0;
   const relationType = data?.relationType ?? "symbol";
-  const outwardLift = relationType === "journey" ? 30 : relationType === "letter" ? 18 : 8;
+  const isTransitionPath = Boolean(data?.isTransitionPath);
+  const outwardLift = isTransitionPath ? 42 : relationType === "journey" ? 30 : relationType === "letter" ? 18 : 8;
   const curveX = midpointX + normalX * (routeOffset + outwardLift);
   const curveY = midpointY + normalY * (routeOffset + outwardLift);
   const edgePath = `M ${sourceX},${sourceY} Q ${curveX},${curveY} ${targetX},${targetY}`;
@@ -1683,16 +1826,16 @@ function LivingConnectionEdge({
     ? { ...style, strokeDasharray: "8 7" }
     : style;
 
-  if (relationType === "journey") {
+  if (relationType === "journey" || isTransitionPath) {
     return (
       <>
         <BaseEdge
           id={`${id}-journey-halo`}
           path={edgePath}
           style={{
-            stroke: "rgba(189,160,109,0.18)",
-            strokeWidth: 9,
-            filter: "blur(3px)",
+            stroke: isTransitionPath ? "rgba(224,194,128,0.24)" : "rgba(189,160,109,0.18)",
+            strokeWidth: isTransitionPath ? 12 : 9,
+            filter: isTransitionPath ? "blur(4px)" : "blur(3px)",
           }}
         />
         <BaseEdge id={id} path={edgePath} style={edgeStyle} />
@@ -1803,6 +1946,7 @@ function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
   const remembersTransition = getRoomTransitionInto(symbolId);
   const preparesLabels = preparesTransition ? getRoomTransitionLabels(preparesTransition) : undefined;
   const remembersLabels = remembersTransition ? getRoomTransitionLabels(remembersTransition) : undefined;
+  const transitionWay = getRoomTransitionWay(symbolId);
 
   if (!journey || !step) {
     return null;
@@ -1813,24 +1957,38 @@ function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
 
   return (
     <div className="symbol-inspector-journey-note">
-      <p>In dieser Spur: {journey.title}</p>
-      {previousStep || nextStep ? (
-        <div>
-          {previousStep ? <span>Vorher sichtbar: {previousStep.label}</span> : null}
-          {nextStep ? <span>Danach leuchtet: {nextStep.label}</span> : null}
-        </div>
-      ) : null}
-      {preparesLabels || remembersLabels ? (
-        <div className="symbol-inspector-room-movement">
-          {preparesLabels ? <span>Bereitet vor: {preparesLabels.target}</span> : null}
-          {remembersLabels ? <span>Erinnert an: {remembersLabels.source}</span> : null}
-        </div>
-      ) : null}
+      {transitionWay ? (
+        <>
+          <p><strong>{transitionWay.title}</strong> {transitionWay.shortMeaning}</p>
+          <div className="symbol-inspector-room-movement">
+            <span>Bereitet vor: {transitionWay.targetLabel}</span>
+            <span>{transitionWay.isCycleReturn ? "Kein Neustart, sondern Rueckbindung an den Ursprung." : `Aus ${transitionWay.sourceLabel} geht ${transitionWay.targetLabel} hervor.`}</span>
+          </div>
+          <p>Getragen von: {transitionWay.stations.slice(1, -1).map((station) => station.label).join(" - ")}</p>
+          <RoomTransitionWayInline way={transitionWay} />
+        </>
+      ) : (
+        <>
+          <p>In dieser Spur: {journey.title}</p>
+          {previousStep || nextStep ? (
+            <div>
+              {previousStep ? <span>Vorher sichtbar: {previousStep.label}</span> : null}
+              {nextStep ? <span>Danach leuchtet: {nextStep.label}</span> : null}
+            </div>
+          ) : null}
+          {preparesLabels || remembersLabels ? (
+            <div className="symbol-inspector-room-movement">
+              {preparesLabels ? <span>Bereitet vor: {preparesLabels.target}</span> : null}
+              {remembersLabels ? <span>Erinnert an: {remembersLabels.source}</span> : null}
+            </div>
+          ) : null}
+        </>
+      )}
       <div>
         <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF}>Spur in Mein Pfad oeffnen</Link>
         <Link href={step.roomHref}>Den Raum dieser Spur betreten</Link>
       </div>
-      {hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
+      {!transitionWay && hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
     </div>
   );
 }
@@ -2413,6 +2571,7 @@ function MobileSymbolJourney({
   activeCodexEntry,
   codexHref,
   roomHref,
+  transitionWay,
   disclosureLevel,
   onFocusSymbol,
 }: {
@@ -2422,6 +2581,7 @@ function MobileSymbolJourney({
   activeCodexEntry?: CodexEntry;
   codexHref?: string;
   roomHref: string;
+  transitionWay: RoomTransitionWay | null;
   disclosureLevel: LandscapeDisclosureLevel;
   onFocusSymbol: (symbolId: string) => void;
 }) {
@@ -2478,15 +2638,19 @@ function MobileSymbolJourney({
 
       {disclosureLevel >= 2 ? (
         <div className="symbol-mobile-movement">
-          <p>Welche Bewegung beginnt hier?</p>
-          <div>
-            {disclosure.movement.map((item, index) => (
-              <Fragment key={`${item}-${index}`}>
-                {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
-                <strong>{item}</strong>
-              </Fragment>
-            ))}
-          </div>
+          <p>{transitionWay ? "Welcher Weg beginnt hier?" : "Welche Bewegung beginnt hier?"}</p>
+          {transitionWay ? (
+            <MobileRoomTransitionWay way={transitionWay} />
+          ) : (
+            <div>
+              {disclosure.movement.map((item, index) => (
+                <Fragment key={`${item}-${index}`}>
+                  {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
+                  <strong>{item}</strong>
+                </Fragment>
+              ))}
+            </div>
+          )}
         </div>
       ) : null}
 
@@ -2552,6 +2716,11 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const hasSearchInput = normalizeSymbolSearchTerm(searchQuery).length > 0;
   const showSearchSuggestions = isSearchSuggestionsOpen && hasSearchInput;
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
+  const activeRoomTransition = hasSymbolFocus ? getRoomTransition(activeSymbolId) : undefined;
+  const activeRoomTransitionWay = hasSymbolFocus ? getRoomTransitionWay(activeSymbolId) : null;
+  const activeRoomTransitionPathKey = activeRoomTransition
+    ? getPathKey(activeRoomTransition.sourceRoom, activeRoomTransition.targetRoom)
+    : null;
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
   const activeCodexHref = activeCodexEntry
     ? buildSymbolNetworkCodexHref({
@@ -2672,6 +2841,17 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       y: ((average.y / centers.length) - 92) * flowViewport.zoom + flowViewport.y,
     };
   }, [activeResonanceJourneyNodePathKey, flowViewport.x, flowViewport.y, flowViewport.zoom]);
+  const activeRoomTransitionInscriptionPosition = useMemo(() => {
+    if (!activeRoomTransition || activePath || activeJourney || activeResonanceJourney || activeLetterId || activeResonanceLens) return null;
+
+    const sourceCenter = getNodeCenter(activeRoomTransition.sourceRoom);
+    const targetCenter = getNodeCenter(activeRoomTransition.targetRoom);
+
+    return {
+      x: ((sourceCenter.x + targetCenter.x) / 2) * flowViewport.zoom + flowViewport.x,
+      y: (((sourceCenter.y + targetCenter.y) / 2) - 54) * flowViewport.zoom + flowViewport.y,
+    };
+  }, [activeJourney, activeLetterId, activePath, activeResonanceJourney, activeResonanceLens, activeRoomTransition, flowViewport.x, flowViewport.y, flowViewport.zoom]);
   const connectedPaths = useMemo(
     () => network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId),
     [activeSymbolId],
@@ -3084,6 +3264,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     if (mode === "focus" && activeSymbolId) {
       const focusIds = new Set([
         activeSymbolId,
+        ...(activeRoomTransition ? [activeRoomTransition.targetRoom] : []),
         ...connectedPaths.flatMap((path) => [path.from, path.to]),
         ...Array.from(activeLensMeaningIds),
       ]);
@@ -3113,7 +3294,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
     const center = getNodeCenter(activeSymbolId);
     instance.setCenter(center.x, center.y, { zoom: mode === "deep" ? 1.18 : isSymbolLensVisible ? 1.12 : 0.98, duration });
-  }, [activeLensMeaningIds, activeLetterId, activeLetterNodeId, activePathFrom, activePathTo, activeSymbolId, connectedPaths, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, journeyStepId, letterSymbolIds]);
+  }, [activeLensMeaningIds, activeLetterId, activeLetterNodeId, activePathFrom, activePathTo, activeRoomTransition, activeSymbolId, connectedPaths, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, journeyStepId, letterSymbolIds]);
 
   useEffect(() => {
     if (!isJourneyFocus || !initialJourneyStepId) return;
@@ -3277,6 +3458,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         .map((node) => node.id);
       const focusSymbolIds = new Set([
         activeSymbolId,
+        ...(activeRoomTransition ? [activeRoomTransition.targetRoom] : []),
         ...connectedPaths.flatMap((path) => [path.from, path.to]),
         ...Array.from(activeLensSymbolIds),
       ]);
@@ -3314,6 +3496,15 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 : activePathId
                 ? relationSymbolIds.has(node.id)
                 : hasSymbolFocus && node.id === activeSymbolId;
+          const transitionRole: SymbolNodeData["transitionRole"] = activeRoomTransition && !activePathId && !activeJourney && !activeResonanceJourney && !activeLetterId
+            ? node.id === activeRoomTransition.sourceRoom
+              ? "source"
+              : node.id === activeRoomTransition.targetRoom
+                ? activeRoomTransition.sourceRoom === "brot" && activeRoomTransition.targetRoom === "wasser"
+                  ? "cycle-horizon"
+                  : "horizon"
+                : undefined
+            : undefined;
           const isPreviewedSymbol = false;
           const lensLabel = activeResonanceLens && node.id === activeSymbolId
             ? activeSymbolLensData?.labels[activeResonanceLens]
@@ -3334,7 +3525,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 ? letterSymbolIds.has(node.id)
                 : isSymbolLensVisible
                   ? activeLensSymbolIds.has(node.id)
-                  : relatedIds.has(node.id),
+                  : Boolean(transitionRole) || relatedIds.has(node.id),
               isDimmed: activeLetterId
                 ? !letterSymbolIds.has(node.id)
                 : isJourneyFocus
@@ -3343,13 +3534,14 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                     ? !relationSymbolIds.has(node.id)
                   : isSymbolLensVisible
                     ? !activeLensSymbolIds.has(node.id)
-                    : hasGraphDisclosure && node.id !== disclosureSymbolId && !relatedIds.has(node.id),
+                    : hasGraphDisclosure && node.id !== disclosureSymbolId && !transitionRole && !relatedIds.has(node.id),
               showActions: (isActiveSymbol || isPreviewedSymbol) && !isSymbolLensVisible,
               activeLens: isSymbolLensVisible && node.id === activeSymbolId ? activeResonanceLens : null,
               lensLabel,
               lensNote: undefined,
               emergenceIndex: activeLetterId && letterSymbolIds.has(node.id) ? letterSymbols.findIndex((symbol) => symbol.id === node.id) : undefined,
               arrivalPresence: shouldStageArrival ? SYMBOL_ARRIVAL_PRESENCE[node.id] : undefined,
+              transitionRole,
               isTouchedOnWay: touchedSymbolIds.has(node.id),
               isFamiliarOnWay: familiarSymbolIds.has(node.id),
             },
@@ -3415,7 +3607,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         })) : []),
       ];
     },
-    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceLens, activeLetterId, activeLetterNodeId, activePathId, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, familiarSymbolIds, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode, touchedSymbolIds]
+    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceJourney, activeResonanceLens, activeLetterId, activeLetterNodeId, activeJourney, activePathId, activeRoomTransition, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, familiarSymbolIds, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode, touchedSymbolIds]
   );
 
   useEffect(() => {
@@ -3512,11 +3704,21 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           && letterSymbolIds.has(path.to);
         const isPrimaryFocusPath = isFocused && !activeResonanceLens && primaryFocusPathIds.has(path.id);
         const isSecondaryFocusPath = isFocused && !activeResonanceLens && !primaryFocusPathIds.has(path.id);
+        const isActiveRoomTransitionPath = Boolean(
+          activeRoomTransitionPathKey
+          && pathKey === activeRoomTransitionPathKey
+          && hasSymbolFocus
+          && !activePath
+          && !activeJourney
+          && !activeResonanceJourney
+          && !activeLetterId
+          && !activeResonanceLens,
+        );
 
         if (isSymbolLensVisible && !isLensMeaningPath && !isLensStoryPath && !isLensJourneyPath) return [];
         if (hasSymbolFocus && !activeResonanceLens && !activePath && !isJourneyFocus && !isFocused) return [];
 
-        const relationType: LivingConnectionData["relationType"] = isJourneyPath || isLensStoryPath ? "journey" : isLetterPath ? "letter" : "symbol";
+        const relationType: LivingConnectionData["relationType"] = isActiveRoomTransitionPath || isJourneyPath || isLensStoryPath ? "journey" : isLetterPath ? "letter" : "symbol";
         const ports = getConnectionPorts(path.from, path.to);
 
         return [{
@@ -3526,22 +3728,25 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           sourceHandle: ports.sourceHandle,
           targetHandle: ports.targetHandle,
           type: "living",
-          className: `${isJourneyPath || isLensStoryPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isJourneyPath || isLensStoryPath || isSelected || isLetterPath || isPrimaryFocusPath ? "is-selected-path" : isSecondaryFocusPath ? "is-dormant" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
+          className: `${isActiveRoomTransitionPath ? "is-room-transition-path" : isJourneyPath || isLensStoryPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isActiveRoomTransitionPath || isJourneyPath || isLensStoryPath || isSelected || isLetterPath || isPrimaryFocusPath ? "is-selected-path" : isSecondaryFocusPath ? "is-dormant" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
           style: {
-            stroke: isJourneyPath || isLensStoryPath
-              ? "rgba(189,160,109,0.68)"
+            stroke: isActiveRoomTransitionPath
+              ? "rgba(224,194,128,0.86)"
+              : isJourneyPath || isLensStoryPath
+                ? "rgba(189,160,109,0.68)"
               : isLetterPath
                 ? "rgba(189,160,109,0.82)"
                 : getResonanceStroke(
                   resonanceConnection?.resonanceType,
-                  isSelected || isPrimaryFocusPath ? "selected" : isSecondaryFocusPath ? "dormant" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "focused" : "dormant",
+                  isSelected || isPrimaryFocusPath || isActiveRoomTransitionPath ? "selected" : isSecondaryFocusPath ? "dormant" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "focused" : "dormant",
                 ),
-            strokeWidth: isJourneyPath || isLensStoryPath ? 4.6 : isSelected || isLetterPath || isPrimaryFocusPath ? 2.4 : isSecondaryFocusPath ? 0.45 : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? 1.6 : 0.7,
+            strokeWidth: isActiveRoomTransitionPath ? 5.2 : isJourneyPath || isLensStoryPath ? 4.6 : isSelected || isLetterPath || isPrimaryFocusPath ? 2.4 : isSecondaryFocusPath ? 0.45 : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? 1.6 : 0.7,
           },
           data: {
             isTraveling,
             relationType,
             resonanceType: resonanceConnection?.resonanceType,
+            isTransitionPath: isActiveRoomTransitionPath,
             routeIndex: index,
             routeOffset: getRouteOffset(index, relationType),
           },
@@ -4085,6 +4290,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             activeCodexEntry={activeCodexEntry}
             codexHref={activeCodexHref}
             roomHref={activeRoomHref}
+            transitionWay={activeRoomTransitionWay}
             disclosureLevel={landscapeDisclosureLevel}
             onFocusSymbol={focusSymbol}
           />
@@ -4271,6 +4477,18 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 }}
               >
                 {CURATED_RESONANCE_INSCRIPTION}
+              </p>
+            ) : null}
+            {activeRoomTransitionWay && activeRoomTransitionInscriptionPosition ? (
+              <p
+                key={`${activeSymbolId}-room-transition`}
+                className={`symbol-connection-resonance symbol-connection-resonance--room-transition ${activeRoomTransitionWay.isCycleReturn ? "symbol-connection-resonance--cycle" : ""}`}
+                style={{
+                  left: `${activeRoomTransitionInscriptionPosition.x}px`,
+                  top: `${activeRoomTransitionInscriptionPosition.y}px`,
+                }}
+              >
+                {activeRoomTransitionWay.title}
               </p>
             ) : null}
             <div className="symbol-viewport-controls" aria-label="Kartentiefe waehlen">
