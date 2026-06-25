@@ -15,7 +15,7 @@ import type { HebrewWord } from "@/types/hebrew";
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import { meaningJourneys } from "@/lib/meaning/meaningJourneys";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
-import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
+import { getAllBridges, getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import {
   getOntologyDisplayText,
   getOntologyEntity,
@@ -37,6 +37,7 @@ import { getJourneysForNode, getResonanceJourney, getResonanceRoom } from "@/lib
 import { buildRoomHref, getPatternRoomStation, hasSymbolRoom } from "@/lib/rooms/roomContext";
 import {
   getJourneysForSymbol,
+  getSymbolJourney,
   SYMBOL_JOURNEY_OVERVIEW_HREF,
   type SymbolJourney,
   type SymbolJourneyStep,
@@ -182,6 +183,12 @@ function normalizeRouteTerm(value: string) {
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+const CANONICAL_CODEX_ROUTE_IDS: Record<string, string> = {
+  "chaos-ordnung": "journey-chaos-ordnung",
+  "wasser-brot": "journey-wasser-zum-brot",
+  "wasser-licht": "bridge-wasser-licht",
+};
 
 function getDefaultSymbolRoomPath(entry: CodexEntry) {
   if (entry.type === "scripture") {
@@ -371,24 +378,123 @@ function codexEntryFromKnownPathLabel(id: string, label: string): CodexEntry {
   };
 }
 
+function codexEntryFromMeaningBridge(id: string): CodexEntry | undefined {
+  const bridge = getAllBridges().find((item) => item.id === id);
+
+  if (!bridge) {
+    return undefined;
+  }
+
+  return {
+    id: bridge.id,
+    type: "journey",
+    title: bridge.title,
+    subtitle: "Bedeutungsbruecke",
+    hebrew: null,
+    transliteration: null,
+    aliases: [bridge.title, bridge.sourceId, bridge.targetId, ...(bridge.tags ?? [])],
+    searchTerms: [bridge.id, bridge.title, bridge.summary, bridge.sourceId, bridge.targetId, ...(bridge.tags ?? [])],
+    summary: bridge.summary,
+    meaningFields: bridge.meaningFields,
+    relations: [
+      { targetId: bridge.sourceId, type: "shares-meaning", label: "Ausgangspunkt der Bruecke.", source: "meaning-graph" },
+      { targetId: bridge.targetId, type: "continues-journey", label: "Zielpunkt der Bruecke.", source: "meaning-graph" },
+      ...(bridge.hebrewConnections ?? []).flatMap((connection) => connection.hebrewWordId ? [{
+        targetId: connection.hebrewWordId,
+        type: "has-hebrew-word" as const,
+        label: connection.meaning,
+        source: "hebrew-word" as const,
+      }] : []),
+    ],
+    scriptureAnchors: (bridge.scriptureAnchors ?? []).map((anchorId) => ({
+      id: anchorId,
+      reference: getKnownSymbolPathLabel(anchorId) ?? anchorId,
+      label: "Bibelanker",
+      source: "scripture-reference",
+    })),
+    symbolRoomSlug: null,
+    journeyIds: [],
+    meta: {
+      status: "seed",
+      source: ["meaning-graph"],
+      sourceIds: [bridge.id],
+      tags: bridge.tags,
+    },
+  };
+}
+
+function codexEntryFromSymbolJourney(id: string): CodexEntry | undefined {
+  const journey = getSymbolJourney(id);
+
+  if (!journey) {
+    return undefined;
+  }
+
+  return {
+    id: journey.id,
+    type: "journey",
+    title: journey.title,
+    subtitle: journey.subtitle,
+    hebrew: null,
+    transliteration: null,
+    aliases: [journey.title, journey.subtitle, ...journey.steps.map((step) => step.label)],
+    searchTerms: [journey.id, journey.title, journey.summary, ...journey.steps.flatMap((step) => [step.symbol, step.label, step.path ?? ""])],
+    summary: journey.summary,
+    meaningFields: [],
+    relations: journey.steps.map((step) => ({
+      targetId: step.symbol,
+      type: "continues-journey" as const,
+      label: step.text,
+      source: "journey" as const,
+    })),
+    steps: journey.steps.map((step, index) => ({
+      id: `${journey.id}-${index + 1}`,
+      label: step.label,
+      codexId: step.symbol,
+      description: step.text,
+    })),
+    scriptureAnchors: journey.steps
+      .filter((step) => step.path)
+      .map((step) => ({
+        id: step.path,
+        reference: getKnownSymbolPathLabel(step.path) ?? step.path ?? "",
+        label: step.label,
+        source: "journey" as const,
+      })),
+    symbolRoomSlug: null,
+    journeyIds: [],
+    meta: {
+      status: "seed",
+      source: ["journey"],
+      sourceIds: [journey.id],
+      tags: journey.steps.map((step) => step.symbol),
+    },
+  };
+}
+
 function resolveCodexRouteEntry(id: string) {
-  const codexEntry = codexRegistry.find((entry) => entry.id === id);
-  const ontologyEntity = codexEntry ? undefined : getOntologyEntity(id);
-  const hebrewWord = codexEntry || ontologyEntity ? undefined : hebrewWords.find((word) => word.id === id || word.slug === id);
   const normalizedId = normalizeRouteTerm(id);
+  const canonicalId = CANONICAL_CODEX_ROUTE_IDS[normalizedId] ?? id;
+  const codexEntry = codexRegistry.find((entry) => entry.id === canonicalId);
+  const ontologyEntity = codexEntry ? undefined : getOntologyEntity(canonicalId);
+  const hebrewWord = codexEntry || ontologyEntity ? undefined : hebrewWords.find((word) => word.id === canonicalId || word.slug === canonicalId);
   const biblicalReference = codexEntry || ontologyEntity || hebrewWord
     ? undefined
     : biblicalReferences.find((reference) =>
       [reference.id, reference.reference, reference.label, ...(reference.aliases ?? [])].some((term) => normalizeRouteTerm(term) === normalizedId),
     );
-  const knownPathLabel = codexEntry || ontologyEntity || hebrewWord || biblicalReference ? undefined : getKnownSymbolPathLabel(id);
-  const looseCodexEntry = codexEntry || ontologyEntity || hebrewWord || biblicalReference || knownPathLabel ? undefined : resolveCodexEntry(id);
+  const knownPathLabel = codexEntry || ontologyEntity || hebrewWord || biblicalReference ? undefined : getKnownSymbolPathLabel(canonicalId);
+  const meaningBridge = codexEntry || ontologyEntity || hebrewWord || biblicalReference || knownPathLabel ? undefined : codexEntryFromMeaningBridge(canonicalId);
+  const symbolJourney = codexEntry || ontologyEntity || hebrewWord || biblicalReference || knownPathLabel || meaningBridge ? undefined : codexEntryFromSymbolJourney(canonicalId);
+  const looseCodexEntry = codexEntry || ontologyEntity || hebrewWord || biblicalReference || knownPathLabel || meaningBridge || symbolJourney ? undefined : resolveCodexEntry(canonicalId);
 
   return codexEntry
     ?? (ontologyEntity ? codexEntryFromOntologyEntity(ontologyEntity) : undefined)
     ?? (hebrewWord ? codexEntryFromHebrewWord(hebrewWord) : undefined)
     ?? (biblicalReference ? codexEntryFromBiblicalReference(biblicalReference, id) : undefined)
-    ?? (knownPathLabel ? codexEntryFromKnownPathLabel(id, knownPathLabel) : undefined)
+    ?? (knownPathLabel ? codexEntryFromKnownPathLabel(canonicalId, knownPathLabel) : undefined)
+    ?? meaningBridge
+    ?? symbolJourney
     ?? looseCodexEntry;
 }
 

@@ -317,6 +317,44 @@ const CURATED_RESONANCE_JOURNEY_ID = "journey-wasser-wueste-brot";
 const CURATED_RESONANCE_PRIMARY_CONNECTION_IDS = ["resonance-wasser-wueste", "resonance-wueste-brot"];
 const CURATED_RESONANCE_SECONDARY_CONNECTION_IDS = ["resonance-wasser-brot"];
 const CURATED_RESONANCE_INSCRIPTION = "Wasser ist Ursprung. Die Wueste ist der Weg. Das Brot ist die Erfuellung.";
+const CURATED_RESONANCE_VISUAL_CONNECTIONS: ResonanceConnection[] = [
+  {
+    id: "resonance-wasser-wueste",
+    sourceId: "wasser",
+    targetId: "wueste",
+    resonanceType: "story",
+    title: "Weg der Pruefung",
+    shortResonance: "Erst die Leere zeigt, wonach die Tiefe sucht.",
+    explanation: "",
+    strength: 1,
+    scriptureAnchors: [],
+    hebrewAnchors: [],
+  },
+  {
+    id: "resonance-wasser-brot",
+    sourceId: "wasser",
+    targetId: "brot",
+    resonanceType: "meaning",
+    title: "Von der Quelle zur Nahrung",
+    shortResonance: "Was aus der Tiefe kommt, wird zur Gabe.",
+    explanation: "",
+    strength: 1,
+    scriptureAnchors: [],
+    hebrewAnchors: [],
+  },
+  {
+    id: "resonance-wueste-brot",
+    sourceId: "wueste",
+    targetId: "brot",
+    resonanceType: "story",
+    title: "Manna",
+    shortResonance: "Im Mangel wird Versorgung als Gabe sichtbar.",
+    explanation: "",
+    strength: 1,
+    scriptureAnchors: [],
+    hebrewAnchors: [],
+  },
+];
 const SYMBOL_LENS_MODE_LABELS: Record<SymbolLensMode, string> = {
   meaning: "Bedeutung",
   story: "Erzaehlung",
@@ -1658,6 +1696,8 @@ function LivingConnectionEdge({
 
 const nodeTypes = { symbol: SymbolGraphNode, meaning: MeaningGraphNode, letter: LetterGraphNode, number: NumberGraphNode, hierarchy: HierarchySatelliteNode };
 const edgeTypes = { living: LivingConnectionEdge };
+const reactFlowProOptions = { hideAttribution: true };
+const reactFlowFitViewOptions = { padding: 0.2 };
 function SymbolLensOrbit({
   lensData,
   activeResonanceLens,
@@ -2565,7 +2605,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   );
   const activeResonanceJourneyConnections = activeResonanceJourney
     ? activeResonanceJourney.connectionIds.flatMap((connectionId) => {
-      const connection = resonanceConnections.find((item) => item.id === connectionId);
+      const connection = CURATED_RESONANCE_VISUAL_CONNECTIONS.find((item) => item.id === connectionId)
+        ?? resonanceConnections.find((item) => item.id === connectionId);
       return connection ? [connection] : [];
     })
     : [];
@@ -4012,7 +4053,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
   return (
     <section className="symbol-page symbol-section symbol-network-page relative min-h-[100svh]">
-      <div className="absolute inset-0">
+      <div className="fixed inset-0 h-screen min-h-[100svh]">
         <Image src={visualAssets.symbolnetzHero} alt="" fill priority sizes="100vw" className="sacred-drift object-cover opacity-[0.18]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.78)_78%,rgba(0,0,0,0.95)_100%)]" />
       </div>
@@ -4070,7 +4111,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           ) : null}
 
           <div
-            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden max-md:hidden ${isSymbolLensVisible ? "is-symbol-lens-focused" : ""} ${isJourneyFocus ? "is-journey-focused" : ""}`}
+            className={`symbol-constellation-field symbol-constellation-field--${graphViewMode.toLowerCase().replace("_", "-")} relative mt-3 overflow-hidden ${isSymbolLensVisible ? "is-symbol-lens-focused" : ""} ${isJourneyFocus ? "is-journey-focused" : ""}`}
           >
             <form
               className="symbol-network-search"
@@ -4153,9 +4194,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               edges={edges}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
-              proOptions={{ hideAttribution: true }}
+              proOptions={reactFlowProOptions}
               fitView
-              fitViewOptions={{ padding: 0.2 }}
+              fitViewOptions={reactFlowFitViewOptions}
               onInit={(instance) => {
                 reactFlowRef.current = instance;
                 setFlowViewport(instance.getViewport());

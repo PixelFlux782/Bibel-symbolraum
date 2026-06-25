@@ -41,6 +41,9 @@ const CANONICAL_CODEX_LOOKUP_IDS: Record<string, string> = {
   tiefe: "tehom",
   wort: "davar",
   stimme: "qol",
+  "chaos-ordnung": "journey-chaos-ordnung",
+  "wasser-brot": "journey-wasser-zum-brot",
+  "wasser-licht": "bridge-wasser-licht",
 };
 
 function uniqueEntries(entries: CodexEntry[]): CodexEntry[] {
