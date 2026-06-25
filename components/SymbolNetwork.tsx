@@ -207,6 +207,13 @@ type SymbolInspectorCta = {
   onClick?: () => void;
 };
 
+type LandscapeDisclosureLevel = 1 | 2 | 3 | 4;
+
+type LandscapeDisclosureProfile = {
+  response: string;
+  movement: string[];
+};
+
 type SymbolNetworkInitialUrlState = {
   symbol?: string;
   lens?: string;
@@ -392,6 +399,35 @@ const INSPECTOR_ONTOLOGY_RELATION_TYPES = new Set<OntologyRelationType>([
 ]);
 const ONTOLOGY_RESONANCE_LIMIT = 5;
 const MOBILE_SYMBOL_RELATION_LIMIT = 3;
+const LANDSCAPE_DISCLOSURE_PROFILES: Record<string, LandscapeDisclosureProfile> = {
+  wasser: {
+    response: "Aus der Tiefe beginnt Ordnung.",
+    movement: ["Tehom", "Ruach", "Majim", "Genesis 1,2", "Licht"],
+  },
+  licht: {
+    response: "Was verborgen war, beginnt sichtbar zu werden.",
+    movement: ["Davar", "Qol", "Or", "Genesis 1,3", "Orientierung"],
+  },
+  feuer: {
+    response: "Was sichtbar wird, will verwandelt werden.",
+    movement: ["Esch", "Dornbusch", "Stimme", "Gegenwart", "Wandlung"],
+  },
+  wueste: {
+    response: "Nicht Leere. Sondern Vorbereitung.",
+    movement: ["Midbar", "Leere", "Stimme", "Weg", "Brot"],
+  },
+  brot: {
+    response: "Was empfangen wird, will geteilt werden.",
+    movement: ["Mangel", "Manna", "Gabe", "Tisch", "Gemeinschaft"],
+  },
+};
+const PRIMARY_FOCUS_PATH_IDS: Record<string, string[]> = {
+  wasser: ["creation"],
+  licht: ["creation"],
+  feuer: ["revelation"],
+  wueste: ["desert-bread"],
+  brot: ["desert-bread"],
+};
 const PATH_RESONANCE_FALLBACKS: Record<string, string> = {
   "wasser:licht": "Licht macht sichtbar,\nwas im Wasser verborgen ruht.",
   "feuer:licht": "Feuer verwandelt,\nLicht offenbart.",
@@ -1151,6 +1187,24 @@ function getSearchResonanceGroup(symbolId: string): SearchResonanceGroupItem[] {
     });
 }
 
+function getLandscapeDisclosureProfile(symbol: SymbolMeaningNetworkNode): LandscapeDisclosureProfile {
+  return LANDSCAPE_DISCLOSURE_PROFILES[symbol.id] ?? {
+    response: symbol.shortMeaning,
+    movement: network.paths
+      .filter((path) => path.from === symbol.id || path.to === symbol.id)
+      .slice(0, 4)
+      .map((path) => getSymbolLabel(getOtherSymbolId(path, symbol.id))),
+  };
+}
+
+function getPrimaryFocusPathIds(symbolId: string, connectedPaths: SymbolMeaningPath[]) {
+  const configuredIds = PRIMARY_FOCUS_PATH_IDS[symbolId] ?? [];
+  const configured = configuredIds.filter((pathId) => connectedPaths.some((path) => path.id === pathId));
+
+  if (configured.length > 0) return new Set(configured);
+  return new Set(connectedPaths[0] ? [connectedPaths[0].id] : []);
+}
+
 function getResonanceStroke(
   resonanceType: ResonanceType | undefined,
   state: "selected" | "focused" | "dormant",
@@ -1244,6 +1298,7 @@ function getVerseDeepHierarchyAnchors(symbolId: string) {
   return getExistingDeepHierarchyAnchors(symbolId).filter((entry) => entry.level === "verse_anchor");
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getSubspacesTitle(symbolLabel: string) {
   return `Unterräume von ${symbolLabel}`;
 }
@@ -1439,6 +1494,7 @@ function InspectorHebrewMovement({ movement }: { movement: RoomHebrewMovement })
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getSymbolWayMemoryNotice(personalWay: PersonalWay | null, symbolId: string) {
   if (personalWay?.familiarSymbols.includes(symbolId)) {
     return "Dieses Zeichen kehrt auf deinem Weg wieder.";
@@ -2115,6 +2171,7 @@ function SymbolWayTrace({
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function HierarchyChildrenDetail({
   entries,
   title,
@@ -2177,6 +2234,129 @@ function SearchResonanceGroup({
   );
 }
 
+function LandscapeDisclosureDetail({
+  activeSymbol,
+  connectedPaths,
+  activeCodexEntry,
+  codexHref,
+  roomHref,
+  searchResonanceGroup,
+  disclosureLevel,
+  onPreviewPath,
+  onSelectFocus,
+  onActivateResonanceJourney,
+  showResonanceJourneyOption,
+  discoverableResonanceJourney,
+}: {
+  activeSymbol: SymbolMeaningNetworkNode;
+  connectedPaths: SymbolMeaningPath[];
+  activeCodexEntry?: CodexEntry;
+  codexHref?: string;
+  roomHref: string;
+  searchResonanceGroup: SearchResonanceGroupItem[];
+  disclosureLevel: LandscapeDisclosureLevel;
+  onPreviewPath: (path: SymbolMeaningPath) => void;
+  onSelectFocus: (focus: SymbolInspectorFocus) => void;
+  onActivateResonanceJourney: (journeyId: string) => void;
+  showResonanceJourneyOption: boolean;
+  discoverableResonanceJourney?: ResonanceJourney;
+}) {
+  const profile = getLandscapeDisclosureProfile(activeSymbol);
+  const primaryPathIds = getPrimaryFocusPathIds(activeSymbol.id, connectedPaths);
+  const primaryPath = connectedPaths.find((path) => primaryPathIds.has(path.id)) ?? connectedPaths[0];
+  const supportingPaths = connectedPaths
+    .filter((path) => path.id !== primaryPath?.id)
+    .slice(0, 3);
+  const symbolBridge = getSymbolPathConfig(activeSymbol.id);
+  const visibleSearchResonances = searchResonanceGroup.slice(0, 3);
+
+  return (
+    <div className="symbol-disclosure" aria-label={`${activeSymbol.label} entfaltet sich`}>
+      <div className="symbol-disclosure__voice">
+        <p className="symbol-kicker text-cyan-soft">Warum ist dieses Zeichen bedeutsam?</p>
+        <p className="symbol-breathe symbol-disclosure__glyph" lang="he" dir="rtl">{activeSymbol.hebrew}</p>
+        <h2>{activeSymbol.label}</h2>
+        <p className="symbol-disclosure__response">{profile.response}</p>
+      </div>
+
+      {disclosureLevel >= 2 ? (
+        <div className="symbol-disclosure__layer symbol-disclosure__movement">
+          <p className="symbol-kicker text-cyan-soft">Welche Bewegung beginnt hier?</p>
+          <div>
+            {profile.movement.map((item, index) => (
+              <Fragment key={`${item}-${index}`}>
+                {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
+                <strong>{item}</strong>
+              </Fragment>
+            ))}
+          </div>
+          {primaryPath ? (
+            <button type="button" onClick={() => onPreviewPath(primaryPath)} className="symbol-focus-path">
+              <span>{getSymbolLabel(primaryPath.from)} - {getSymbolLabel(primaryPath.to)}</span>
+              <i>{getPathResonanceText(primaryPath, getBridgeForPath(primaryPath), getResonanceConnectionForPath(primaryPath.from, primaryPath.to))}</i>
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {disclosureLevel >= 3 ? (
+        <div className="symbol-disclosure__layer">
+          <p className="symbol-kicker text-cyan-soft">Welche drei Beziehungen tragen diese Bedeutung?</p>
+          <div className="symbol-disclosure__relations">
+            {(supportingPaths.length > 0 ? supportingPaths : connectedPaths.slice(0, 3)).map((path) => {
+              const neighborId = getOtherSymbolId(path, activeSymbol.id);
+              const resonanceConnection = getResonanceConnectionForPath(path.from, path.to);
+
+              return (
+                <button key={path.id} type="button" onClick={() => onPreviewPath(path)}>
+                  <span>{getSymbolLabel(neighborId)}</span>
+                  <i>{getPathResonanceText(path, getBridgeForPath(path), resonanceConnection)}</i>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      {disclosureLevel >= 4 ? (
+        <div className="symbol-disclosure__layer">
+          <p className="symbol-kicker text-cyan-soft">Welche Tueren oeffnen sich?</p>
+          <div className="symbol-disclosure__doors">
+            <RoomTransitionButton href={roomHref} className="symbol-cta w-full">
+              {symbolBridge?.ctaLabels.room ?? `${activeSymbol.label}-Raum betreten`}
+            </RoomTransitionButton>
+            {activeCodexEntry ? (
+              <Link href={codexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`} className="symbol-cta symbol-cta-secondary">
+                {symbolBridge?.ctaLabels.codex ?? `${activeCodexEntry.title} im Codex lesen`}
+              </Link>
+            ) : null}
+            <button type="button" onClick={() => onSelectFocus("story")} className="symbol-archive-action">
+              Journey oeffnen
+            </button>
+            <button type="button" onClick={() => onSelectFocus("subspaces")} className="symbol-archive-action">
+              Unterraeume ansehen
+            </button>
+            <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF} className="symbol-archive-action">
+              Mein Pfad
+            </Link>
+            {showResonanceJourneyOption && discoverableResonanceJourney ? (
+              <button type="button" onClick={() => onActivateResonanceJourney(discoverableResonanceJourney.id)} className="symbol-archive-action">
+                Weitere Resonanzen
+              </button>
+            ) : visibleSearchResonances.length > 0 ? (
+              <SearchResonanceGroup
+                centerId={activeSymbol.id}
+                centerLabel={activeSymbol.label}
+                items={visibleSearchResonances}
+              />
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function MobileSymbolJourney({
   activeSymbol,
   hasSymbolFocus,
@@ -2184,6 +2364,7 @@ function MobileSymbolJourney({
   activeCodexEntry,
   codexHref,
   roomHref,
+  disclosureLevel,
   onFocusSymbol,
 }: {
   activeSymbol: SymbolMeaningNetworkNode;
@@ -2192,13 +2373,18 @@ function MobileSymbolJourney({
   activeCodexEntry?: CodexEntry;
   codexHref?: string;
   roomHref: string;
+  disclosureLevel: LandscapeDisclosureLevel;
   onFocusSymbol: (symbolId: string) => void;
 }) {
   const profile = getSymbolHebrewProfile(activeSymbol.id);
+  const disclosure = getLandscapeDisclosureProfile(activeSymbol);
   const hebrew = profile.hebrewWord?.hebrew ?? activeSymbol.hebrew;
   const transliteration = profile.hebrewWord?.transliteration ?? activeSymbol.transliteration;
   const gematria = hebrew ? calculateGematria(hebrew) : 0;
-  const closeRelations = connectedPaths.slice(0, MOBILE_SYMBOL_RELATION_LIMIT);
+  const primaryPathIds = getPrimaryFocusPathIds(activeSymbol.id, connectedPaths);
+  const closeRelations = connectedPaths
+    .filter((path) => !primaryPathIds.has(path.id))
+    .slice(0, MOBILE_SYMBOL_RELATION_LIMIT);
   const symbolBridge = getSymbolPathConfig(activeSymbol.id);
   const gateSymbols = MOBILE_GATE_SYMBOL_IDS.flatMap((symbolId) => {
     const node = network.nodes.find((candidate) => candidate.id === symbolId);
@@ -2239,11 +2425,25 @@ function MobileSymbolJourney({
           <p>{[transliteration, gematria > 0 ? `${gematria}` : null].filter(Boolean).join(" · ")}</p>
         </div>
       </div>
-      <p className="symbol-mobile-focus__essence">{activeSymbol.shortMeaning}</p>
+      <p className="symbol-mobile-focus__essence">{disclosure.response}</p>
 
-      {closeRelations.length > 0 ? (
+      {disclosureLevel >= 2 ? (
+        <div className="symbol-mobile-movement">
+          <p>Welche Bewegung beginnt hier?</p>
+          <div>
+            {disclosure.movement.map((item, index) => (
+              <Fragment key={`${item}-${index}`}>
+                {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
+                <strong>{item}</strong>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {disclosureLevel >= 3 && closeRelations.length > 0 ? (
         <div className="symbol-mobile-relations">
-          <p>Nahe Resonanzen</p>
+          <p>Drei tragende Beziehungen</p>
           <ul>
             {closeRelations.map((path) => {
               const neighborId = getOtherSymbolId(path, activeSymbol.id);
@@ -2259,7 +2459,7 @@ function MobileSymbolJourney({
         </div>
       ) : null}
 
-      <div className="symbol-mobile-actions">
+      {disclosureLevel >= 4 ? <div className="symbol-mobile-actions">
         <RoomTransitionButton href={roomHref} className="symbol-cta">
           {symbolBridge?.ctaLabels.room ?? `${activeSymbol.label}-Raum betreten`}
         </RoomTransitionButton>
@@ -2268,7 +2468,7 @@ function MobileSymbolJourney({
             Im Codex vertiefen
           </Link>
         ) : null}
-      </div>
+      </div> : null}
     </section>
   );
 }
@@ -2290,6 +2490,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const [activeLetterSourcePathId, setActiveLetterSourcePathId] = useState<string | null>(null);
   const [activeResonanceLens, setActiveResonanceLens] = useState<SymbolLensMode | null>(initialSymbolNetworkState.activeResonanceLens);
   const [activeInspectorFocus, setActiveInspectorFocus] = useState<SymbolInspectorFocus | null>(null);
+  const [landscapeDisclosureLevel, setLandscapeDisclosureLevel] = useState<LandscapeDisclosureLevel>(initialSymbolNetworkState.hasSymbolFocus ? 4 : 1);
   const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(initialSymbolNetworkState.activeJourneyStepId);
   const [activeResonanceJourneyId, setActiveResonanceJourneyId] = useState<string | null>(initialSymbolNetworkState.activeResonanceJourneyId);
   const [activeSubspaceId, setActiveSubspaceId] = useState<string | null>(null);
@@ -2302,9 +2503,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const hasSearchInput = normalizeSymbolSearchTerm(searchQuery).length > 0;
   const showSearchSuggestions = isSearchSuggestionsOpen && hasSearchInput;
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
-  const activeSymbolBridge = getSymbolPathConfig(activeSymbol.id);
   const activeCodexEntry = getCodexEntry(activeSymbol.id);
-  const activeSymbolWayMemoryNotice = getSymbolWayMemoryNotice(personalWay, activeSymbol.id);
   const activeCodexHref = activeCodexEntry
     ? buildSymbolNetworkCodexHref({
         entryId: activeCodexEntry.id,
@@ -2427,6 +2626,10 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     () => network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId),
     [activeSymbolId],
   );
+  const primaryFocusPathIds = useMemo(
+    () => getPrimaryFocusPathIds(activeSymbolId, connectedPaths),
+    [activeSymbolId, connectedPaths],
+  );
   const visibleOntologyResonanceConnections = useMemo(
     () => symbolViewportMode === "overview" ? [] : getVisibleOntologyConnectionsForActiveEntity(activeSymbolId),
     [activeSymbolId, symbolViewportMode],
@@ -2435,6 +2638,22 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     () => searchFocusSymbolId === activeSymbolId ? getSearchResonanceGroup(activeSymbolId) : [],
     [activeSymbolId, searchFocusSymbolId],
   );
+
+  useEffect(() => {
+    if (!hasSymbolFocus || activePathId || activeJourneyId || activeResonanceJourneyId || activeLetterId || activeResonanceLens || activeInspectorFocus) {
+      const timer = window.setTimeout(() => setLandscapeDisclosureLevel(4), 0);
+      return () => window.clearTimeout(timer);
+    }
+
+    const timers = [
+      window.setTimeout(() => setLandscapeDisclosureLevel(2), 620),
+      window.setTimeout(() => setLandscapeDisclosureLevel(3), 1320),
+      window.setTimeout(() => setLandscapeDisclosureLevel(4), 2140),
+    ];
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [activeInspectorFocus, activeJourneyId, activeLetterId, activePathId, activeResonanceJourneyId, activeResonanceLens, activeSymbolId, hasSymbolFocus]);
+
   const activeCodexLetter = activeLetterId ? hebrewLetters.find((letter) => letter.id === activeLetterId) : undefined;
   const activeLetterNodeId = activeLetterId ? `${LETTER_NODE_PREFIX}${activeLetterId}` : null;
   const relationSymbolIds = useMemo(
@@ -3237,10 +3456,11 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         const isLetterPath = Boolean(activeLetterId)
           && letterSymbolIds.has(path.from)
           && letterSymbolIds.has(path.to);
-        const isDirectFocusPath = isFocused && !activeResonanceLens;
+        const isPrimaryFocusPath = isFocused && !activeResonanceLens && primaryFocusPathIds.has(path.id);
+        const isSecondaryFocusPath = isFocused && !activeResonanceLens && !primaryFocusPathIds.has(path.id);
 
         if (isSymbolLensVisible && !isLensMeaningPath && !isLensStoryPath && !isLensJourneyPath) return [];
-        if (hasSymbolFocus && !activeResonanceLens && !activePath && !isJourneyFocus && !isDirectFocusPath) return [];
+        if (hasSymbolFocus && !activeResonanceLens && !activePath && !isJourneyFocus && !isFocused) return [];
 
         const relationType: LivingConnectionData["relationType"] = isJourneyPath || isLensStoryPath ? "journey" : isLetterPath ? "letter" : "symbol";
         const ports = getConnectionPorts(path.from, path.to);
@@ -3252,7 +3472,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           sourceHandle: ports.sourceHandle,
           targetHandle: ports.targetHandle,
           type: "living",
-          className: `${isJourneyPath || isLensStoryPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isJourneyPath || isLensStoryPath || isSelected || isLetterPath ? "is-selected-path" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
+          className: `${isJourneyPath || isLensStoryPath ? "is-journey-path" : isLetterPath ? "is-letter-path" : "is-symbol-path"} ${isJourneyPath || isLensStoryPath || isSelected || isLetterPath || isPrimaryFocusPath ? "is-selected-path" : isSecondaryFocusPath ? "is-dormant" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "is-awake" : "is-dormant"} ${isTraveling ? "is-traveling-path" : ""}`,
           style: {
             stroke: isJourneyPath || isLensStoryPath
               ? "rgba(189,160,109,0.68)"
@@ -3260,9 +3480,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 ? "rgba(189,160,109,0.82)"
                 : getResonanceStroke(
                   resonanceConnection?.resonanceType,
-                  isSelected ? "selected" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "focused" : "dormant",
+                  isSelected || isPrimaryFocusPath ? "selected" : isSecondaryFocusPath ? "dormant" : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? "focused" : "dormant",
                 ),
-            strokeWidth: isJourneyPath || isLensStoryPath ? 4.6 : isSelected || isLetterPath ? 2.4 : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? 1.6 : 0.7,
+            strokeWidth: isJourneyPath || isLensStoryPath ? 4.6 : isSelected || isLetterPath || isPrimaryFocusPath ? 2.4 : isSecondaryFocusPath ? 0.45 : isFocused && !activePath && !isJourneyFocus && !activeLetterId ? 1.6 : 0.7,
           },
           data: {
             isTraveling,
@@ -3538,6 +3758,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     setActiveLetterSourcePathId(null);
     setActiveResonanceLens(null);
     setActiveInspectorFocus(null);
+    setLandscapeDisclosureLevel(1);
   }
 
   function focusSearchMatch(value: string, allowPartial = true) {
@@ -3577,6 +3798,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     setActiveSubspaceId(null);
     setActiveResonanceLens(nextLens);
     setActiveInspectorFocus(nextLens);
+    setLandscapeDisclosureLevel(4);
     setActiveJourneyStepId(nextLens === "story" ? activeSymbolId : null);
     setHasSymbolFocus(true);
     setActivePathId(null);
@@ -3596,6 +3818,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       setActiveSubspaceId(null);
     }
     setActiveInspectorFocus(nextFocus);
+    setLandscapeDisclosureLevel(4);
     setHasSymbolFocus(true);
     setActivePathId(null);
     setPendingPathId(null);
@@ -3808,6 +4031,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             activeCodexEntry={activeCodexEntry}
             codexHref={activeCodexHref}
             roomHref={activeRoomHref}
+            disclosureLevel={landscapeDisclosureLevel}
             onFocusSymbol={focusSymbol}
           />
 
@@ -4091,7 +4315,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             <p>Sichtbare Tiefe: {SYMBOL_VIEWPORT_LABELS[symbolViewportMode]}</p>
             <p className="mt-1 text-gold/60">{SYMBOL_VIEWPORT_HINTS[symbolViewportMode]}</p>
           </div>
-          {!hasSymbolFocus && !activeResonanceJourney && !activeJourney && !activePath && !activeCodexLetter && !inspectorSymbolLensData ? (
+          {!hasSymbolFocus && !activeResonanceJourney && !activeJourney && !activePath && !activeCodexLetter ? (
             <div className="symbol-inspector-empty mt-6">
               <p>Waehle ein Zeichen.</p>
               <span>Seine Spur, seine Sprache und seine Beziehungen werden hier sichtbar. Wasser ist der erste stille Eintritt.</span>
@@ -4172,7 +4396,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 </details>
               </div>
             </>
-          ) : inspectorSymbolLensData ? (
+          ) : inspectorSymbolLensData && (activeResonanceLens || activeInspectorFocus) ? (
             <SymbolLensFocusDetail
               activeSymbol={activeSymbol}
               connectedPaths={connectedPaths}
@@ -4193,66 +4417,22 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               onActivateResonanceJourney={activateResonanceJourney}
               onFocusSubspace={focusSubspace}
             />
-          ) : (
-            <>
-              <p className="symbol-breathe mt-8 font-serif text-7xl leading-none text-gold/90" lang="he" dir="rtl">{activeSymbol.hebrew}</p>
-              <h2 className="mt-7 font-serif text-4xl italic text-foreground-strong">{activeSymbol.label}</h2>
-              <p className="mt-3 text-[11px] uppercase tracking-[0.32em] text-[#d8d1c2]/50">{activeSymbol.transliteration}</p>
-              <p className="symbol-copy mt-6 text-lg">{activeSymbol.shortMeaning}</p>
-              {activeSymbolWayMemoryNotice ? (
-                <p className="symbol-way-memory-note mt-5">{activeSymbolWayMemoryNotice}</p>
-              ) : null}
-              {activeSymbol.id === "wasser" ? (
-                <p className="symbol-first-entry-note mt-5">Erster Eintritt: Wasser</p>
-              ) : null}
-              <SymbolJourneyInspectorNotice symbolId={activeSymbol.id} />
-              {symbolViewportMode === "detail" || symbolViewportMode === "deep" ? (
-                <HierarchyChildrenDetail entries={activeDetailHierarchyChildren} title={getSubspacesTitle(activeSymbol.label)} />
-              ) : null}
-              {symbolViewportMode === "deep" ? (
-                <>
-                  <HierarchyChildrenDetail
-                    entries={activeStoryDeepHierarchyAnchors}
-                    title="Biblische Tiefenpunkte"
-                    className="symbol-subspaces--deep"
-                  />
-                  <HierarchyChildrenDetail
-                    entries={activeVerseDeepHierarchyAnchors}
-                    title="Versanker"
-                    className="symbol-subspaces--verse"
-                  />
-                </>
-              ) : null}
-              <div className="symbol-detail-panel__cta">
-                <RoomTransitionButton href={activeRoomHref} className="symbol-cta w-full">
-                  {activeSymbolBridge?.ctaLabels.room ?? `${activeSymbol.label}-Raum betreten`}
-                </RoomTransitionButton>
-                {showResonanceJourneyOption && discoverableResonanceJourney ? (
-                  <button
-                    type="button"
-                    onClick={() => activateResonanceJourney(discoverableResonanceJourney.id)}
-                    className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
-                  >
-                    Resonanzspur oeffnen
-                  </button>
-                ) : null}
-                {activeCodexEntry ? (
-                  <Link
-                    href={activeCodexHref ?? `/codex/${activeCodexEntry.id}?from=symbolnetz&focus=overview`}
-                    className="mt-3 inline-flex w-full justify-center border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
-                  >
-                    {activeSymbolBridge?.ctaLabels.codex ?? `${activeCodexEntry.title} im Codex lesen`}
-                  </Link>
-                ) : null}
-              </div>
-              <SearchResonanceGroup
-                centerId={activeSymbol.id}
-                centerLabel={activeSymbol.label}
-                items={searchResonanceGroup}
-              />
-              <SymbolWayTrace symbolId={activeSymbol.id} />
-            </>
-          )}
+          ) : hasSymbolFocus ? (
+            <LandscapeDisclosureDetail
+              activeSymbol={activeSymbol}
+              connectedPaths={connectedPaths}
+              activeCodexEntry={activeCodexEntry}
+              codexHref={activeCodexHref}
+              roomHref={activeRoomHref}
+              searchResonanceGroup={searchResonanceGroup}
+              disclosureLevel={landscapeDisclosureLevel}
+              showResonanceJourneyOption={showResonanceJourneyOption}
+              discoverableResonanceJourney={discoverableResonanceJourney}
+              onPreviewPath={previewPath}
+              onSelectFocus={selectInspectorFocus}
+              onActivateResonanceJourney={activateResonanceJourney}
+            />
+          ) : null}
 
           {!activeJourney && activePath ? (
             <>

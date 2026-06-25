@@ -46,6 +46,15 @@ const SILENCE_MIX: SymbolraumMix = {
   bread: 0,
 };
 
+const DEFAULT_AMBIENT_MIX: SymbolraumMix = {
+  base: 0.2,
+  water: 0,
+  light: 0,
+  fire: 0,
+  desert: 0,
+  bread: 0,
+};
+
 const ROOM_MIXES: Record<SymbolraumRoom, SymbolraumMix> = {
   wasser: {
     base: 0.6,
@@ -249,7 +258,7 @@ class SymbolraumAudioEngine {
   }
 
   setRoom(room: SymbolraumRoom | null, fadeMs = DEFAULT_CROSSFADE_MS) {
-    const nextMix = room ? ROOM_MIXES[room] : SILENCE_MIX;
+    const nextMix = room ? ROOM_MIXES[room] : DEFAULT_AMBIENT_MIX;
     this.currentRoom = room;
     this.targetMix = { ...nextMix };
     debugAudio("applied mix", { room, mix: nextMix });
@@ -552,6 +561,7 @@ class SymbolraumAudioEngine {
 const symbolraumAudioEngine = new SymbolraumAudioEngine();
 
 export {
+  DEFAULT_AMBIENT_MIX,
   DEFAULT_CROSSFADE_MS,
   ROOM_MIXES,
   getRoomFromPath,
