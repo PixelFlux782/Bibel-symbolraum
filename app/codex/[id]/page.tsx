@@ -13,6 +13,7 @@ import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { getRoomHebrewMovement, type RoomHebrewMovement } from "@/lib/hebrew/roomHebrewMovements";
 import type { HebrewWord } from "@/types/hebrew";
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
+import { meaningJourneys } from "@/lib/meaning/meaningJourneys";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import {
@@ -32,7 +33,7 @@ import {
   sortOntologyRelations,
 } from "@/lib/ontology";
 import type { OntologyEntity, OntologyRelation, OntologyWayProjection } from "@/lib/ontology";
-import { getResonanceJourney, getResonanceRoom } from "@/lib/resonance";
+import { getJourneysForNode, getResonanceJourney, getResonanceRoom } from "@/lib/resonance";
 import { buildRoomHref, getPatternRoomStation, hasSymbolRoom } from "@/lib/rooms/roomContext";
 import {
   getJourneysForSymbol,
@@ -87,9 +88,9 @@ function formatType(type: CodexEntryType) {
 function formatRelationType(type: CodexRelation["type"]) {
   const labels: Record<CodexRelation["type"], string> = {
     "anchors-scripture": "Bibelanker",
-    "contains-letter": "traegt den Buchstaben",
-    "continues-journey": "fuehrt weiter zu",
-    contrasts: "steht im Gegenueber zu",
+    "contains-letter": "Traegt den Buchstaben",
+    "continues-journey": "Fuehrt weiter zu",
+    contrasts: "Steht im Gegenueber zu",
     "carried-by": "getragen von",
     "moves-over": "bewegt sich ueber",
     "hovers-over": "schwebt ueber",
@@ -99,23 +100,23 @@ function formatRelationType(type: CodexRelation["type"]) {
     "breathes-into": "haucht Atem in",
     "stirred-by": "bewegt durch",
     "moves-through": "bewegt sich durch",
-    expresses: "drueckt aus",
+    expresses: "Drueckt aus",
     "expressed-through": "ausgedrueckt durch",
-    "echoes-within": "hallt nach in",
-    "gives-rise-to": "bringt hervor",
+    "echoes-within": "Erinnert an",
+    "gives-rise-to": "Entspringt",
     "heard-within": "hoerbar in",
-    "has-hebrew-word": "klingt hebraeisch mit",
+    "has-hebrew-word": "Klingt hebraeisch mit",
     "hidden-within": "verborgen in",
-    "leads-to": "fuehrt zu",
+    "leads-to": "Fuehrt weiter zu",
     "nourishes-as": "naehrt als",
-    precedes: "geht voraus",
-    related: "steht nahe bei",
+    precedes: "Bereitet vor",
+    related: "Gehoert zusammen",
     "revealed-at": "offenbart an",
-    reveals: "offenbart",
-    "shares-meaning": "teilt Bedeutung mit",
-    "source-of": "ist Ursprung von",
-    symbolizes: "macht sichtbar",
-    transforms: "wandelt sich zu",
+    reveals: "Oeffnet",
+    "shares-meaning": "Gehoert zusammen",
+    "source-of": "Entspringt aus",
+    symbolizes: "Macht sichtbar",
+    transforms: "Fuehrt weiter zu",
   };
 
   return labels[type];
@@ -641,6 +642,48 @@ function resolveOntologyEndpoint(id: string) {
   };
 }
 
+type OntologyRelationItem = ReturnType<typeof buildOntologyRelationItems>[number];
+
+type CuratedRelationItem =
+  | {
+      kind: "ontology";
+      key: string;
+      endpointId: string;
+      endpointLabel: string;
+      endpointHref?: string;
+      relationLabel: string;
+      markerLabel: string;
+      sentence: string;
+      explanation: string;
+      journeyHint?: string;
+      score: number;
+      relation: OntologyRelation;
+    }
+  | {
+      kind: "codex";
+      key: string;
+      endpointId: string;
+      endpointLabel: string;
+      endpointHref?: string;
+      relationLabel: string;
+      markerLabel: string;
+      sentence: string;
+      explanation: string;
+      journeyHint?: string;
+      score: number;
+      relation: CodexRelation;
+    };
+
+type ScriptureSceneModel = {
+  sceneSentences: string[];
+  hebrewKeys: HebrewWord[];
+  movementSteps: { id: string; label: string; href?: string }[];
+  journeyTitle?: string;
+  symbols: { id: string; label: string; href?: string }[];
+  rooms: { id: string; label: string; href?: string; note: string }[];
+  relations: CuratedRelationItem[];
+};
+
 function getOntologyChildEntityIds(entryId: string) {
   const registry = getOntologyRegistry();
   const childIds = new Set<string>();
@@ -673,7 +716,7 @@ function getOntologyResonance(entry: CodexEntry) {
     });
   });
 
-  return buildOntologyRelationItems(entry.id, sortOntologyRelations(Array.from(relationsById.values())).slice(0, 10));
+  return buildOntologyRelationItems(entry.id, sortOntologyRelations(Array.from(relationsById.values())));
 }
 
 function buildOntologyRelationItems(entryId: string, relations: OntologyRelation[]) {
@@ -691,6 +734,296 @@ function buildOntologyRelationItems(entryId: string, relations: OntologyRelation
         : "",
     };
   });
+}
+
+function compactSentence(value: string) {
+  const text = value.replace(/\s+/g, " ").trim();
+
+  if (!text) return "";
+
+  const sentence = text.match(/^[^.!?]+[.!?]/)?.[0] ?? text;
+  return sentence.length > 150 ? `${sentence.slice(0, 147).trim()}...` : sentence;
+}
+
+function formatJourneyMovement(ids: string[]) {
+  return ids.map((id) => getOntologyEntityTitle(id)).join(" -> ");
+}
+
+function getJourneyHintForRelation(sourceId: string, targetId: string) {
+  const resonanceJourney = getJourneysForNode(sourceId).find((journey) => journey.nodePath.includes(targetId));
+
+  if (resonanceJourney) {
+    return `Teil der Bewegung ${formatJourneyMovement(resonanceJourney.nodePath)}`;
+  }
+
+  const codexJourney = codexRegistry
+    .filter((entry) => entry.type === "journey" && entry.steps?.length)
+    .find((journey) => {
+      const stepIds = journey.steps?.map((step) => step.codexId) ?? [];
+      return stepIds.includes(sourceId) && stepIds.includes(targetId);
+    });
+
+  if (codexJourney?.steps?.length) {
+    return `Teil der Bewegung ${codexJourney.steps.map((step) => step.label).join(" -> ")}`;
+  }
+
+  return undefined;
+}
+
+const ONTOLOGY_CURATION_TYPE_WEIGHT: Partial<Record<OntologyRelation["type"], number>> = {
+  opens_into: 30,
+  reveals: 28,
+  emerges_from: 26,
+  source_of: 25,
+  gives_rise_to: 25,
+  structures_journey: 24,
+  contains_pattern: 22,
+  is_threshold_to: 21,
+  is_expression_of: 19,
+  appears_in_story: 18,
+  shares_letter: 16,
+  shares_number: 16,
+  resonates_with: 14,
+  belongs_to: 10,
+};
+
+const CODEX_CURATION_TYPE_WEIGHT: Partial<Record<CodexRelation["type"], number>> = {
+  "continues-journey": 30,
+  "anchors-scripture": 28,
+  "has-hebrew-word": 26,
+  "contains-letter": 24,
+  symbolizes: 23,
+  reveals: 22,
+  "shares-meaning": 20,
+  "gives-rise-to": 20,
+  "source-of": 20,
+  "leads-to": 18,
+  transforms: 18,
+  related: 10,
+};
+
+function sharedMeaningFieldScore(entry: CodexEntry, targetId: string) {
+  const targetEntry = resolveLinkedCodexEntry(targetId);
+
+  if (!targetEntry) return 0;
+
+  const entryFields = new Set(entry.meaningFields);
+  return targetEntry.meaningFields.some((field) => entryFields.has(field)) ? 12 : 0;
+}
+
+function scoreOntologyRelation(entry: CodexEntry, item: OntologyRelationItem) {
+  const strength = item.relation.strength ? item.relation.strength * 100 : 0;
+  const sourceBonus = item.relation.sourceId === entry.id ? 8 : 0;
+  const journeyBonus = getJourneyHintForRelation(entry.id, item.endpoint.id) ? 18 : 0;
+  const roomBonus = entry.symbolRoomSlug && [item.relation.sourceId, item.relation.targetId].includes(entry.symbolRoomSlug) ? 10 : 0;
+  const directEntityBonus = getOntologyEntity(entry.id) ? 8 : 0;
+
+  return strength + (ONTOLOGY_CURATION_TYPE_WEIGHT[item.relation.type] ?? 0) + sourceBonus + journeyBonus + roomBonus + directEntityBonus;
+}
+
+function scoreCodexRelation(entry: CodexEntry, relation: CodexRelation) {
+  const target = relationTarget(relation);
+  const strength = relation.strength ? relation.strength * 100 : 0;
+  const journeyBonus = getJourneyHintForRelation(entry.id, target) ? 18 : 0;
+  const roomBonus = target === entry.symbolRoomSlug ? 10 : 0;
+
+  return strength
+    + (CODEX_CURATION_TYPE_WEIGHT[relation.type] ?? 0)
+    + sharedMeaningFieldScore(entry, target)
+    + journeyBonus
+    + roomBonus;
+}
+
+function buildCuratedRelationItems(
+  entry: CodexEntry,
+  excludedRelationIds: Set<string> = new Set<string>(),
+): CuratedRelationItem[] {
+  const ontologyItems = getOntologyResonance(entry)
+    .filter(({ relation }) => !excludedRelationIds.has(relation.id))
+    .map((item): CuratedRelationItem => ({
+      kind: "ontology",
+      key: `ontology-${item.relation.id}`,
+      endpointId: item.endpoint.id,
+      endpointLabel: item.endpoint.label,
+      endpointHref: item.endpoint.href,
+      relationLabel: item.label,
+      markerLabel: item.markerLabel,
+      sentence: compactSentence(item.note || item.explanation || item.relation.shortResonance || item.relation.title),
+      explanation: item.explanation,
+      journeyHint: getJourneyHintForRelation(entry.id, item.endpoint.id),
+      score: scoreOntologyRelation(entry, item),
+      relation: item.relation,
+    }));
+
+  const codexItems = getVisibleCodexRelations(entry).map((relation, index): CuratedRelationItem => {
+    const target = relationTarget(relation);
+    const linkedEntry = resolveLinkedCodexEntry(target);
+    const targetLabel = linkedEntry?.title ?? resolveTargetLabel(target);
+    const relationNote = getDisplayRelationNote(relation, targetLabel);
+
+    return {
+      kind: "codex",
+      key: `codex-${relation.type}-${target}-${index}`,
+      endpointId: target,
+      endpointLabel: targetLabel,
+      endpointHref: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
+      relationLabel: formatRelationType(relation.type),
+      markerLabel: relation.source === "journey" ? "Wegspur" : relation.source === "hebrew-letter" || relation.source === "hebrew-word" ? "Hebraeisch" : "Resonanz",
+      sentence: compactSentence(relationNote || relation.label || `${entry.title} gehoert mit ${targetLabel} zusammen.`),
+      explanation: "",
+      journeyHint: getJourneyHintForRelation(entry.id, target),
+      score: scoreCodexRelation(entry, relation),
+      relation,
+    };
+  });
+
+  return [...ontologyItems, ...codexItems]
+    .sort((left, right) => right.score - left.score || left.endpointLabel.localeCompare(right.endpointLabel, "de-DE"));
+}
+
+function getScriptureReferenceTerms(entry: CodexEntry) {
+  return new Set([
+    entry.id,
+    entry.title,
+    entry.subtitle,
+    ...entry.scriptureAnchors.flatMap((anchor) => [anchor.id, anchor.reference, anchor.label]),
+  ].filter((value): value is string => Boolean(value)));
+}
+
+function getSceneSentences(entry: CodexEntry) {
+  return entry.summary
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+}
+
+function getHebrewKeysForScripture(entry: CodexEntry) {
+  const referenceTerms = getScriptureReferenceTerms(entry);
+  const relationTargets = new Set(entry.relations.map(relationTarget));
+  const words = hebrewWords.filter((word) => (
+    relationTargets.has(word.id) ||
+    word.biblicalReferences.some((reference) => (
+      referenceTerms.has(reference.id) ||
+      referenceTerms.has(reference.reference) ||
+      referenceTerms.has(reference.relation)
+    ))
+  ));
+  const relationOrder = new Map(entry.relations.map((relation, index) => [relationTarget(relation), index]));
+
+  return words
+    .sort((left, right) => (
+      (relationOrder.get(left.id) ?? 99) - (relationOrder.get(right.id) ?? 99) ||
+      left.transliteration.localeCompare(right.transliteration, "de-DE")
+    ))
+    .slice(0, 4);
+}
+
+function getScriptureJourneys(entry: CodexEntry) {
+  const codexJourneys = codexRegistry
+    .filter((candidate) => candidate.type === "journey" && (
+      entry.journeyIds.includes(candidate.id) ||
+      candidate.meta.sourceIds.includes(entry.id) ||
+      candidate.relations.some((relation) => relationTarget(relation) === entry.id) ||
+      candidate.scriptureAnchors.some((anchor) => anchor.id === entry.id)
+    ))
+    .map((journey) => ({
+      id: journey.id,
+      title: journey.title,
+      steps: journey.steps?.map((step) => ({ id: step.codexId, label: step.label, href: `/codex/${step.codexId}` })) ?? [],
+      score: (journey.steps?.length ?? 0) + (journey.meta.sourceIds.includes(entry.id) ? 5 : 0),
+    }));
+  const meaningJourneyItems = meaningJourneys
+    .filter((journey) => entry.journeyIds.includes(journey.id) || journey.biblicalReferences.includes(entry.id))
+    .map((journey) => ({
+      id: journey.id,
+      title: journey.title,
+      steps: journey.symbolPath.map((symbolId) => ({
+        id: symbolId,
+        label: resolveTargetLabel(symbolId),
+        href: resolveLinkedCodexEntry(symbolId) ? `/codex/${symbolId}` : undefined,
+      })),
+      score: journey.symbolPath.length,
+    }));
+
+  return [...codexJourneys, ...meaningJourneyItems]
+    .filter((journey) => journey.steps.length > 0)
+    .sort((left, right) => right.score - left.score || right.steps.length - left.steps.length);
+}
+
+function uniqueById<T extends { id: string }>(items: T[]) {
+  const seen = new Set<string>();
+
+  return items.filter((item) => {
+    if (seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  });
+}
+
+function getScriptureSymbols(entry: CodexEntry, relations: CuratedRelationItem[]) {
+  return uniqueById([
+    ...relations.map((item) => ({
+      id: item.endpointId,
+      label: item.endpointLabel,
+      href: item.endpointHref,
+    })),
+    ...entry.relations.map((relation) => {
+      const target = relationTarget(relation);
+      const linkedEntry = resolveLinkedCodexEntry(target);
+
+      return {
+        id: target,
+        label: linkedEntry?.title ?? resolveTargetLabel(target),
+        href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
+      };
+    }),
+  ]).slice(0, 3);
+}
+
+function getPreparedRoomsForScripture(entry: CodexEntry, journeys: ReturnType<typeof getScriptureJourneys>) {
+  const fromJourney = journeys.flatMap((journey) => journey.steps);
+  const fromRoom = entry.symbolRoomSlug
+    ? [{
+        id: entry.symbolRoomSlug,
+        label: resolveTargetLabel(entry.symbolRoomSlug),
+        href: hasSymbolRoom(entry.symbolRoomSlug)
+          ? buildRoomHref(entry.symbolRoomSlug, { from: "codex", path: entry.id, symbol: entry.symbolRoomSlug })
+          : `/codex/${entry.symbolRoomSlug}`,
+      }]
+    : [];
+
+  return uniqueById([...fromRoom, ...fromJourney])
+    .filter((item) => item.id !== entry.id)
+    .slice(0, 3)
+    .map((item) => ({
+      ...item,
+      note: `${entry.title} oeffnet diesen Raum als naechste Spur der Szene.`,
+    }));
+}
+
+function buildScriptureSceneModel(entry: CodexEntry): ScriptureSceneModel | null {
+  if (entry.type !== "scripture") {
+    return null;
+  }
+
+  const relations = buildCuratedRelationItems(entry);
+  const journeys = getScriptureJourneys(entry);
+  const primaryJourney = journeys[0];
+
+  return {
+    sceneSentences: getSceneSentences(entry),
+    hebrewKeys: getHebrewKeysForScripture(entry),
+    movementSteps: primaryJourney?.steps.slice(0, 6) ?? relations.slice(0, 4).map((item) => ({
+      id: item.endpointId,
+      label: item.endpointLabel,
+      href: item.endpointHref,
+    })),
+    journeyTitle: primaryJourney?.title,
+    symbols: getScriptureSymbols(entry, relations),
+    rooms: getPreparedRoomsForScripture(entry, journeys),
+    relations,
+  };
 }
 
 function getPatternCarriers(entity: OntologyEntity) {
@@ -1728,8 +2061,10 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const isFireEntry = entry.id === "feuer";
   const isWuesteEntry = entry.id === "wueste";
   const isBreadEntry = entry.id === "brot";
+  const isScriptureEntry = entry.type === "scripture";
   const isCuratedSymbolEntry = isWaterEntry || isLightEntry || isFireEntry;
   const shouldShowStandaloneResonanceRoom = isWuesteEntry || isBreadEntry;
+  const scriptureSceneModel = buildScriptureSceneModel(entry);
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
   const symbolJourney = getJourneysForSymbol(entry.id)[0];
@@ -1851,7 +2186,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {isWaterEntry ? <WaterCodexReferenceSection /> : null}
             {isLightEntry ? <LightCodexReferenceSection /> : null}
             {isFireEntry ? <FireCodexReferenceSection /> : null}
-            {!isCuratedSymbolEntry ? (
+            {scriptureSceneModel ? <ScriptureSceneSection model={scriptureSceneModel} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry ? (
               <EssenceSection
                 entry={entry}
                 entity={ontologyEntity}
@@ -1861,9 +2197,9 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {entry.type === "hebrew-word" ? (
               <HebrewWordIdentitySection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : activeFocus === "gematria" ? "gematria" : undefined} />
             ) : null}
-            {!isCuratedSymbolEntry ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
-            {!isCuratedSymbolEntry ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
-            {!isCuratedSymbolEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {isPatternEntity ? (
               <PatternCodexSection
                 entity={ontologyEntity}
@@ -1878,14 +2214,14 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               />
             ) : null}
 
-            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
+            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
               <VisibleHiddenSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
 
-            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <WaysBeginningSection
                 entry={entry}
                 activeContext={activeFocus === "story" ? "story" : undefined}
@@ -1921,7 +2257,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
             {shouldShowStandaloneResonanceRoom ? <ResonanceRoomSection symbolId={entry.id} /> : null}
 
-            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             ) : null}
             {entry.id === "davar" ? <DavarMidbarResonanceSection /> : null}
@@ -1940,18 +2276,15 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                 </div>
               </DetailSection>
             ) : null}
-            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
-              <OntologyResonanceSection
+            {!isCuratedSymbolEntry && !isScriptureEntry ? <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
+              <CuratedRelationsSection
                 entry={entry}
-                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+                activeContext={activeFocus === "meaning" || activeFocus === "spaces" ? activeFocus : undefined}
                 excludedRelationIds={symbolWayRelationIds}
               />
             ) : null}
-            {!isCuratedSymbolEntry ? <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
-            {!isCuratedSymbolEntry && !isCoreConceptEntity ? (
-              <RelationsSection entry={entry} activeContext={activeFocus === "spaces" ? "spaces" : undefined} />
-            ) : null}
-            {!isCuratedSymbolEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
             {symbolJourney && symbolJourneyStep ? (
               <SymbolJourneyNoticeSection journey={symbolJourney} step={symbolJourneyStep} />
             ) : null}
@@ -1976,7 +2309,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               roomHref={personalTraceSymbolConfig?.roomHref}
               journeyTitle={symbolJourney?.title}
             />
-            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
               <OntologyMetadataSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
@@ -3080,7 +3413,43 @@ function CoreConceptCodexSection({
   );
 }
 
-function OntologyResonanceSection({
+function CuratedRelationCard({ item, spacious = false }: { item: CuratedRelationItem; spacious?: boolean }) {
+  const endpoint = item.endpointHref ? (
+    <Link
+      href={item.endpointHref}
+      className="font-serif text-2xl italic text-foreground-strong transition-colors duration-500 hover:text-gold md:text-3xl"
+    >
+      {item.endpointLabel}
+    </Link>
+  ) : (
+    <p className="font-serif text-2xl italic text-foreground-strong md:text-3xl">{item.endpointLabel}</p>
+  );
+
+  return (
+    <article className={`border border-white/[0.07] bg-black/[0.12] ${spacious ? "p-5 sm:p-6" : "p-4"}`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/75">{item.relationLabel}</span>
+        <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
+          {item.markerLabel}
+        </span>
+      </div>
+      <div className="mt-4 grid gap-3">
+        {endpoint}
+        {item.sentence ? (
+          <p className="symbol-copy text-base italic leading-relaxed text-foreground-strong/82">{item.sentence}</p>
+        ) : null}
+        {item.explanation && item.explanation !== item.sentence ? (
+          <p className="symbol-copy text-sm leading-relaxed text-muted-soft">{item.explanation}</p>
+        ) : null}
+        {item.journeyHint ? (
+          <p className="text-[0.56rem] uppercase tracking-[0.18em] text-cyan-soft/65">{item.journeyHint}</p>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
+function CuratedRelationsSection({
   entry,
   activeContext,
   excludedRelationIds = new Set<string>(),
@@ -3089,55 +3458,198 @@ function OntologyResonanceSection({
   activeContext?: CodexContextFocus;
   excludedRelationIds?: Set<string>;
 }) {
-  const resonance = getOntologyResonance(entry).filter(({ relation }) => !excludedRelationIds.has(relation.id));
-  const primaryResonance = resonance.slice(0, 3);
-  const archiveResonance = resonance.slice(3);
+  const relations = buildCuratedRelationItems(entry, excludedRelationIds);
+  const primaryRelations = relations.slice(0, 3);
+  const archiveRelations = relations.slice(3);
 
-  if (resonance.length === 0) {
+  if (relations.length === 0) {
     return null;
   }
 
   return (
-    <DetailSection title="Die drei naechsten Beziehungen" activeContext={activeContext}>
-      <div className="grid gap-3">
-        {primaryResonance.map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
-          <div
-            key={relation.id}
-            className="grid gap-3 border border-white/[0.06] bg-black/[0.1] p-4"
-          >
-            <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
-                {label}
-              </span>
-              <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
-                {markerLabel}
-              </span>
-            </div>
-            <OntologyEndpointLink endpoint={endpoint} className="text-2xl" />
-            {note ? <p className="symbol-copy text-sm italic text-muted-soft">{note}</p> : null}
-            {explanation ? <p className="symbol-copy text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
+    <DetailSection title="Bedeutende Beziehungen" activeContext={activeContext}>
+      <div className="grid gap-8">
+        <div>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Die drei wichtigsten Beziehungen</p>
+          <div className="mt-5 grid gap-5 md:grid-cols-3">
+            {primaryRelations.map((item) => (
+              <CuratedRelationCard key={item.key} item={item} spacious />
+            ))}
           </div>
-        ))}
-        {archiveResonance.length > 0 ? (
-          <details className="border border-gold/15 bg-gold/[0.025] p-4">
+        </div>
+
+        {archiveRelations.length > 0 ? (
+          <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:p-5">
             <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Weitere Resonanzen oeffnen
+              Erweiterte Resonanzen und vollstaendiges Archiv oeffnen
             </summary>
-            <div className="mt-4 grid gap-3">
-              {archiveResonance.map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
-                <div key={`mobile-${relation.id}`} className="grid gap-3 border border-white/[0.06] bg-black/[0.1] p-4">
-                  <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <span className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/70">
-                      {label}
-                    </span>
-                    <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-2 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
-                      {markerLabel}
-                    </span>
-                  </div>
-                  <OntologyEndpointLink endpoint={endpoint} className="text-2xl" />
-                  {note ? <p className="symbol-copy text-sm italic text-muted-soft">{note}</p> : null}
-                  {explanation ? <p className="symbol-copy text-sm leading-relaxed text-foreground-strong/78">{explanation}</p> : null}
-                </div>
+            <div className="mt-5 grid gap-3">
+              {archiveRelations.map((item) => (
+                <CuratedRelationCard key={`archive-${item.key}`} item={item} />
+              ))}
+            </div>
+          </details>
+        ) : null}
+      </div>
+    </DetailSection>
+  );
+}
+
+function SceneMovement({ steps }: { steps: ScriptureSceneModel["movementSteps"] }) {
+  if (steps.length === 0) {
+    return null;
+  }
+
+  return (
+    <ol className="grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+      {steps.map((step, index) => (
+        <li key={`${step.id}-${index}`} className="grid justify-items-start gap-2 sm:flex sm:items-center sm:gap-3">
+          {step.href ? (
+            <Link
+              href={step.href}
+              className="border border-gold/15 bg-black/[0.14] px-4 py-3 font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:border-gold/35 hover:text-gold"
+            >
+              {step.label}
+            </Link>
+          ) : (
+            <span className="border border-gold/15 bg-black/[0.14] px-4 py-3 font-serif text-xl italic text-foreground-strong">
+              {step.label}
+            </span>
+          )}
+          {index < steps.length - 1 ? (
+            <span className="pl-5 text-sm text-cyan-soft/70 sm:pl-0" aria-hidden="true">
+              <span className="sm:hidden">&darr;</span>
+              <span className="hidden sm:inline">-&gt;</span>
+            </span>
+          ) : null}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
+  const primaryRelations = model.relations.slice(0, 3);
+  const archiveRelations = model.relations.slice(3);
+
+  return (
+    <DetailSection title="Die Szene">
+      <div className="grid gap-8">
+        {model.sceneSentences.length > 0 ? (
+          <div className="symbol-copy grid max-w-3xl gap-2 font-serif text-2xl italic leading-relaxed text-foreground-strong">
+            {model.sceneSentences.map((sentence) => (
+              <p key={sentence}>{sentence}</p>
+            ))}
+          </div>
+        ) : null}
+
+        {model.hebrewKeys.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeische Schluessel</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {model.hebrewKeys.map((word) => (
+                <Link
+                  key={word.id}
+                  href={`/codex/${word.id}`}
+                  className="group border border-white/[0.06] bg-black/[0.1] p-4 transition-colors duration-500 hover:border-gold/25 hover:bg-gold/[0.035]"
+                >
+                  <span className="block font-serif text-4xl leading-none text-gold/85" lang="he" dir="rtl">{word.hebrew}</span>
+                  <strong className="mt-3 block font-serif text-xl italic text-foreground-strong transition-colors duration-500 group-hover:text-gold">{word.transliteration}</strong>
+                  <span className="symbol-copy mt-2 block text-sm italic text-muted-soft">{word.germanMeaning}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {model.movementSteps.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Die Bewegung</p>
+              {model.journeyTitle ? (
+                <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-3 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
+                  {model.journeyTitle}
+                </span>
+              ) : null}
+            </div>
+            <div className="mt-4">
+              <SceneMovement steps={model.movementSteps} />
+            </div>
+            {model.journeyTitle ? (
+              <p className="symbol-copy mt-4 text-sm italic text-muted-soft">
+                Diese Szene gehoert zur Bewegung {model.movementSteps.map((step) => step.label).join(" -> ")}.
+              </p>
+            ) : null}
+          </section>
+        ) : null}
+
+        {model.symbols.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Welche Symbole erscheinen?</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {model.symbols.map((symbol) => (
+                symbol.href ? (
+                  <Link
+                    key={symbol.id}
+                    href={symbol.href}
+                    className="border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.075] hover:text-gold"
+                  >
+                    {symbol.label}
+                  </Link>
+                ) : (
+                  <span key={symbol.id} className="border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-gold/80">
+                    {symbol.label}
+                  </span>
+                )
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {model.rooms.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Szene oeffnet</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {model.rooms.map((room) => (
+                room.href ? (
+                  <Link
+                    key={room.id}
+                    href={room.href}
+                    className="block border border-gold/15 bg-gold/[0.035] p-4 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.06]"
+                  >
+                    <p className="font-serif text-xl italic text-foreground-strong">{room.label}</p>
+                    <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{room.note}</p>
+                  </Link>
+                ) : (
+                  <article key={room.id} className="border border-gold/15 bg-gold/[0.035] p-4">
+                    <p className="font-serif text-xl italic text-foreground-strong">{room.label}</p>
+                    <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{room.note}</p>
+                  </article>
+                )
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {primaryRelations.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Die wichtigsten Beziehungen</p>
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              {primaryRelations.map((item) => (
+                <CuratedRelationCard key={item.key} item={item} spacious />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {archiveRelations.length > 0 ? (
+          <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:p-5">
+            <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
+              Weiterfuehrende Resonanzen oeffnen
+            </summary>
+            <div className="mt-5 grid gap-3">
+              {archiveRelations.map((item) => (
+                <CuratedRelationCard key={`scripture-archive-${item.key}`} item={item} />
               ))}
             </div>
           </details>
@@ -3178,86 +3690,6 @@ function getVisibleCodexRelations(entry: CodexEntry) {
     seenRelationKeys.add(relationKey);
     return true;
   });
-}
-
-function RelationsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
-  const visibleRelations = getVisibleCodexRelations(entry);
-  const primaryRelations = visibleRelations.slice(0, 3);
-  const archiveRelations = visibleRelations.slice(3);
-
-  if (visibleRelations.length === 0) {
-    return null;
-  }
-
-  return (
-    <DetailSection title="Die drei naechsten Beziehungen" activeContext={activeContext}>
-      <div className="grid gap-3">
-        {primaryRelations.map((relation, index) => {
-          const target = relationTarget(relation);
-          const linkedEntry = resolveLinkedCodexEntry(target);
-          const targetLabel = linkedEntry?.title ?? resolveTargetLabel(target);
-          const relationNote = getDisplayRelationNote(relation, targetLabel);
-
-          return (
-            <article key={`${relation.type}-${target}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">{formatRelationType(relation.type)}</p>
-                {linkedEntry ? (
-                  <Link
-                    href={`/codex/${linkedEntry.id}`}
-                    className="font-serif text-lg italic text-foreground-strong transition-colors duration-500 hover:text-gold"
-                  >
-                    {targetLabel}
-                  </Link>
-                ) : (
-                  <p className="font-serif text-lg italic text-foreground-strong">{targetLabel}</p>
-                )}
-              </div>
-              {relationNote ? (
-                <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{relationNote}</p>
-              ) : null}
-            </article>
-          );
-        })}
-        {archiveRelations.length > 0 ? (
-          <details className="border border-gold/15 bg-gold/[0.025] p-4">
-            <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Weitere Resonanzen oeffnen
-            </summary>
-            <div className="mt-4 grid gap-3">
-              {archiveRelations.map((relation, index) => {
-                const target = relationTarget(relation);
-                const linkedEntry = resolveLinkedCodexEntry(target);
-                const targetLabel = linkedEntry?.title ?? resolveTargetLabel(target);
-                const relationNote = getDisplayRelationNote(relation, targetLabel);
-
-                return (
-                  <article key={`archive-${relation.type}-${target}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">{formatRelationType(relation.type)}</p>
-                      {linkedEntry ? (
-                        <Link
-                          href={`/codex/${linkedEntry.id}`}
-                          className="font-serif text-lg italic text-foreground-strong transition-colors duration-500 hover:text-gold"
-                        >
-                          {targetLabel}
-                        </Link>
-                      ) : (
-                        <p className="font-serif text-lg italic text-foreground-strong">{targetLabel}</p>
-                      )}
-                    </div>
-                    {relationNote ? (
-                      <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{relationNote}</p>
-                    ) : null}
-                  </article>
-                );
-              })}
-            </div>
-          </details>
-        ) : null}
-      </div>
-    </DetailSection>
-  );
 }
 
 function ScriptureAnchorsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
