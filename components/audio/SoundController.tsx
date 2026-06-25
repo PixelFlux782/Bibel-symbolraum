@@ -2,17 +2,49 @@
 
 import { useSoundPreference } from "@/hooks/useSoundPreference";
 import {
+  getRoomFromPath,
   symbolraumAudioEngine,
   type SymbolraumAudioDebugSnapshot,
 } from "@/lib/audio/symbolraumAudio";
 import { Volume2, VolumeX, Waves } from "lucide-react";
 import { usePathname } from "next/navigation";
 import type { ChangeEvent } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const MIN_ACTIVATION_VOLUME = 0.7;
 const NODE_ENV_LABEL = process.env.NODE_ENV ?? "unknown";
 const DIRECT_BASE_AUDIO_SRC = "/audio/symbolraum/base_layer3.mp3";
+const PRIMARY_INTERACTION_SELECTOR = [
+  "a.symbol-cta",
+  "button.symbol-cta",
+  "a.symbol-archive-action",
+  "button.symbol-archive-action",
+  ".symbol-archive-nav a",
+  "button.symbol-network-back-button",
+  "button.water-journey__action",
+  "button.journey-gate__skip",
+  "button.meaning-transition-scene__skip",
+  "button.symbol-engine__codex-open",
+].join(",");
+const MEANINGFUL_HOVER_SELECTOR = [
+  ".symbol-portal-entry",
+  ".symbol-constellation-node",
+  ".letter-focus-node",
+  ".number-resonance-node",
+  ".hierarchy-satellite-node",
+  ".symbol-lens-orbit__node",
+  ".symbol-mobile-gate",
+  ".symbol-room-encounter",
+  ".symbol-room-fragment-sign",
+  ".symbol-engine__codex-word",
+  ".symbol-engine__codex-cluster a",
+  ".symbol-engine__hebrew-movement-track a",
+  ".symbol-engine__hebrew-letters button",
+  ".symbol-engine__letter-alphabet button",
+  ".symbol-engine__letter-links a",
+  ".codex-meaningful-card",
+].join(",");
+const HOVER_GLOBAL_COOLDOWN_MS = 200;
 
 type SymbolraumAudioDebugWindow = Window & typeof globalThis & {
   symbolraumAudioDebug?: {
@@ -32,12 +64,108 @@ export default function SoundController() {
     symbolraumAudioEngine.getDebugSnapshot()
   ));
   const [directBaseError, setDirectBaseError] = useState<string | null>(null);
+  const lastHoverAtRef = useRef(0);
 
   const showAudioDebug = isAudioDebugQuery;
 
   useEffect(() => {
+    const currentRoom = symbolraumAudioEngine.getCurrentRoom();
+    const nextRoom = getRoomFromPath(pathname);
+
+    if (currentRoom && nextRoom && currentRoom !== nextRoom) {
+      symbolraumAudioEngine.playInteraction("change_room", {
+        trigger: `${currentRoom}->${nextRoom}`,
+        dedupeKey: `change-room:${currentRoom}->${nextRoom}`,
+        dedupeMs: 900,
+      });
+    }
+
     symbolraumAudioEngine.setRoomFromPath(pathname);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!pathname?.match(/^\/codex\/[^/]+/)) {
+      return;
+    }
+
+    symbolraumAudioEngine.playInteraction("open_codex", {
+      trigger: pathname,
+      dedupeKey: `open-codex:${pathname}`,
+      dedupeMs: 1200,
+    });
+  }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    function handleDocumentClick(event: MouseEvent) {
+      const target = event.target instanceof Element
+        ? event.target.closest<HTMLElement>(PRIMARY_INTERACTION_SELECTOR)
+        : null;
+
+      if (!target || target.closest("[data-symbolraum-audio-control]") || target.getAttribute("aria-disabled") === "true") {
+        return;
+      }
+
+      if (
+        (target instanceof HTMLButtonElement || target instanceof HTMLInputElement) &&
+        target.disabled
+      ) {
+        return;
+      }
+
+      symbolraumAudioEngine.playInteraction("button_press", {
+        trigger: target.textContent?.replace(/\s+/g, " ").trim() || target.getAttribute("aria-label") || target.tagName.toLowerCase(),
+        dedupeKey: "primary-button",
+      });
+    }
+
+    document.addEventListener("click", handleDocumentClick, { capture: true });
+
+    return () => {
+      document.removeEventListener("click", handleDocumentClick, { capture: true });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    function handleMeaningfulHover(event: MouseEvent) {
+      const target = event.target instanceof Element
+        ? event.target.closest<HTMLElement>(MEANINGFUL_HOVER_SELECTOR)
+        : null;
+
+      if (!target || target.closest("[data-symbolraum-audio-control]")) {
+        return;
+      }
+
+      if (event.relatedTarget instanceof Node && target.contains(event.relatedTarget)) {
+        return;
+      }
+
+      const now = performance.now();
+      if (now - lastHoverAtRef.current < HOVER_GLOBAL_COOLDOWN_MS) {
+        return;
+      }
+
+      lastHoverAtRef.current = now;
+      symbolraumAudioEngine.playInteraction("hover", {
+        trigger: target.textContent?.replace(/\s+/g, " ").trim() || target.getAttribute("aria-label") || target.className.toString(),
+        dedupeKey: "meaningful-hover",
+        dedupeMs: HOVER_GLOBAL_COOLDOWN_MS,
+      });
+    }
+
+    document.addEventListener("mouseover", handleMeaningfulHover, { capture: true });
+
+    return () => {
+      document.removeEventListener("mouseover", handleMeaningfulHover, { capture: true });
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -225,7 +353,7 @@ export default function SoundController() {
   const assetLoadError = Object.values(debugSnapshot.assetLoadErrors).join(" | ") || directBaseError || "none";
 
   return (
-    <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-1.5">
+    <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-1.5" data-symbolraum-audio-control="true">
       <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-2 py-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.28)] backdrop-blur supports-[backdrop-filter]:bg-black/25">
         <span
           className={`inline-flex h-2.5 w-2.5 rounded-full transition-colors ${
@@ -307,6 +435,12 @@ export default function SoundController() {
             <dd>{volume.toFixed(2)}</dd>
             <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">current room</dt>
             <dd>{debugSnapshot.currentRoom ?? "none"}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">interaction</dt>
+            <dd>{debugSnapshot.interaction.lastSound ?? "none"}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">trigger</dt>
+            <dd className="break-all">{debugSnapshot.interaction.trigger ?? "none"}</dd>
+            <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">interaction vol</dt>
+            <dd>{debugSnapshot.interaction.volume.toFixed(2)}</dd>
             <dt className="uppercase tracking-[0.16em] text-[#f0e7da]/45">asset load error</dt>
             <dd className="break-all">{assetLoadError}</dd>
           </dl>

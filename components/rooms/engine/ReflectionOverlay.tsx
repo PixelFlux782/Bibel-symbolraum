@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { ReflectionPrompt, SymbolEngineData, SymbolJourneyState } from "@/types/engine";
+import { symbolraumAudioEngine } from "@/lib/audio/symbolraumAudio";
 import { saveStoredReflection } from "@/lib/reflections";
 import type { RoomContext } from "@/lib/rooms/roomContext";
 import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
@@ -60,6 +61,11 @@ export function ReflectionOverlay({ data, reflection, roomContext, state }: Refl
       answerRef.current.value = "";
     }
     setSaved(true);
+    symbolraumAudioEngine.playInteraction("save_trace", {
+      trigger: `room-trace:${data.slug}:${state.id}`,
+      dedupeKey: `save-trace:room:${data.slug}:${state.id}`,
+      dedupeMs: 800,
+    });
     window.setTimeout(() => setSaved(false), 1600);
   }
 

@@ -2,15 +2,23 @@
 
 export type SymbolraumAudioLayer = "base" | "water" | "light" | "fire" | "desert" | "bread";
 export type SymbolraumRoom = "wasser" | "licht" | "feuer" | "wueste" | "brot";
+export type SymbolraumInteractionSound = "button_press" | "hover" | "change_room" | "open_codex" | "save_trace";
 
 export type SymbolraumMix = Record<SymbolraumAudioLayer, number>;
 export type SymbolraumAudioDebugSnapshot = {
   currentRoom: SymbolraumRoom | null;
-  assetLoadErrors: Partial<Record<SymbolraumAudioLayer, string>>;
+  assetLoadErrors: Partial<Record<SymbolraumAudioLayer | SymbolraumInteractionSound, string>>;
+  interaction: {
+    lastSound: SymbolraumInteractionSound | null;
+    trigger: string | null;
+    volume: number;
+  };
 };
 
 const AUDIO_ROOT = "/audio/symbolraum";
 const DEFAULT_CROSSFADE_MS = 5600;
+const INTERACTION_POOL_SIZE = 4;
+const DEFAULT_INTERACTION_DEDUPE_MS = 160;
 
 const LAYERS: Record<SymbolraumAudioLayer, string> = {
   base: `${AUDIO_ROOT}/base_layer3.mp3`,
@@ -19,6 +27,14 @@ const LAYERS: Record<SymbolraumAudioLayer, string> = {
   fire: `${AUDIO_ROOT}/fire_layer1.mp3`,
   desert: `${AUDIO_ROOT}/desert_layer2.mp3`,
   bread: `${AUDIO_ROOT}/bread_layer1.mp3`,
+};
+
+const INTERACTION_SOUNDS: Record<SymbolraumInteractionSound, { src: string; volume: number }> = {
+  button_press: { src: "/audio/button press/button_press1.mp3", volume: 0.2 },
+  hover: { src: "/audio/hover/hover1.mp3", volume: 0.1 },
+  change_room: { src: "/audio/change room/change_room1.mp3", volume: 0.18 },
+  open_codex: { src: "/audio/open codex/open_codex.mp3", volume: 0.16 },
+  save_trace: { src: "/audio/save_trace/save_trace1.mp3", volume: 0.17 },
 };
 
 const SILENCE_MIX: SymbolraumMix = {
@@ -120,6 +136,7 @@ function getAudioSnapshot(audio: HTMLAudioElement) {
 
 class SymbolraumAudioEngine {
   private elements = new Map<SymbolraumAudioLayer, HTMLAudioElement>();
+  private interactionElements = new Map<SymbolraumInteractionSound, HTMLAudioElement[]>();
   private audioContext: AudioContext | null = null;
   private layerLevels: SymbolraumMix = { ...SILENCE_MIX };
   private targetMix: SymbolraumMix = { ...SILENCE_MIX };
@@ -129,7 +146,11 @@ class SymbolraumAudioEngine {
   private initialized = false;
   private fadeFrame: number | null = null;
   private currentRoom: SymbolraumRoom | null = null;
-  private assetLoadErrors: Partial<Record<SymbolraumAudioLayer, string>> = {};
+  private assetLoadErrors: Partial<Record<SymbolraumAudioLayer | SymbolraumInteractionSound, string>> = {};
+  private lastInteractionSound: SymbolraumInteractionSound | null = null;
+  private lastInteractionTrigger: string | null = null;
+  private lastInteractionVolume = 0;
+  private interactionDedupe = new Map<string, number>();
 
   async activate(options?: { pathname?: string | null; volume?: number; muted?: boolean }) {
     if (typeof window === "undefined") {
@@ -191,6 +212,14 @@ class SymbolraumAudioEngine {
       audio.load();
     });
     this.elements.clear();
+    this.interactionElements.forEach((pool) => {
+      pool.forEach((audio) => {
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
+      });
+    });
+    this.interactionElements.clear();
     this.initialized = false;
     this.active = false;
   }
@@ -199,18 +228,24 @@ class SymbolraumAudioEngine {
     this.muted = muted;
     debugAudio("muted state", muted);
     this.applyComputedVolumes();
+    this.applyInteractionVolumes();
   }
 
   setGlobalVolume(volume: number) {
     this.globalVolume = clampVolume(volume);
     debugAudio("master volume", this.globalVolume);
     this.applyComputedVolumes();
+    this.applyInteractionVolumes();
   }
 
   setRoomFromPath(pathname: string | null, fadeMs = DEFAULT_CROSSFADE_MS) {
     const room = getRoomFromPath(pathname);
     this.setRoom(room, fadeMs);
     return room;
+  }
+
+  getCurrentRoom() {
+    return this.currentRoom;
   }
 
   setRoom(room: SymbolraumRoom | null, fadeMs = DEFAULT_CROSSFADE_MS) {
@@ -256,10 +291,67 @@ class SymbolraumAudioEngine {
     return true;
   }
 
+  playInteraction(
+    sound: SymbolraumInteractionSound,
+    options?: { trigger?: string; dedupeKey?: string; dedupeMs?: number },
+  ) {
+    if (typeof window === "undefined" || !this.active || this.muted) {
+      return false;
+    }
+
+    this.ensureInteractionElements();
+
+    const config = INTERACTION_SOUNDS[sound];
+    const trigger = options?.trigger ?? sound;
+    const dedupeKey = options?.dedupeKey ?? `${sound}:${trigger}`;
+    const now = performance.now();
+    const dedupeMs = options?.dedupeMs ?? DEFAULT_INTERACTION_DEDUPE_MS;
+    const previousTrigger = this.interactionDedupe.get(dedupeKey);
+
+    if (previousTrigger !== undefined && now - previousTrigger < dedupeMs) {
+      return false;
+    }
+
+    this.interactionDedupe.set(dedupeKey, now);
+    this.lastInteractionSound = sound;
+    this.lastInteractionTrigger = trigger;
+    this.lastInteractionVolume = config.volume;
+
+    const pool = this.interactionElements.get(sound) ?? [];
+    const audio = pool.find((item) => item.paused || item.ended) ?? pool[0];
+
+    if (!audio) {
+      return false;
+    }
+
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.muted = false;
+      audio.volume = clampVolume(config.volume * this.globalVolume);
+      const playTask = audio.play();
+      if (playTask) {
+        void playTask.catch((error: unknown) => {
+          debugAudio("interaction play failed", { sound, trigger, error, audio: getAudioSnapshot(audio) });
+        });
+      }
+      debugAudio("interaction played", { sound, trigger, volume: audio.volume });
+      return true;
+    } catch (error) {
+      debugAudio("interaction play failed", { sound, trigger, error, audio: getAudioSnapshot(audio) });
+      return false;
+    }
+  }
+
   getDebugSnapshot(): SymbolraumAudioDebugSnapshot {
     return {
       currentRoom: this.currentRoom,
       assetLoadErrors: { ...this.assetLoadErrors },
+      interaction: {
+        lastSound: this.lastInteractionSound,
+        trigger: this.lastInteractionTrigger,
+        volume: this.lastInteractionVolume,
+      },
     };
   }
 
@@ -300,7 +392,46 @@ class SymbolraumAudioEngine {
       this.elements.set(layer, audio);
     });
 
+    this.ensureInteractionElements();
+
     this.initialized = true;
+  }
+
+  private ensureInteractionElements() {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    (Object.entries(INTERACTION_SOUNDS) as Array<[SymbolraumInteractionSound, { src: string; volume: number }]>).forEach(([sound, config]) => {
+      if (this.interactionElements.has(sound)) {
+        return;
+      }
+
+      const pool = Array.from({ length: INTERACTION_POOL_SIZE }, () => {
+        const audio = new Audio(config.src);
+        audio.loop = false;
+        audio.preload = "auto";
+        audio.volume = 0;
+        audio.crossOrigin = "anonymous";
+        audio.addEventListener("canplaythrough", () => {
+          debugAudio("interaction loaded", { sound, src: config.src });
+        }, { once: true });
+        audio.addEventListener("ended", () => {
+          audio.currentTime = 0;
+        });
+        audio.addEventListener("error", () => {
+          const message = audio.error
+            ? `${audio.error.code}: ${audio.error.message || "audio load failed"}`
+            : "audio load failed";
+          this.assetLoadErrors[sound] = `${config.src} (${message})`;
+          debugAudio("interaction load error", { sound, src: config.src, error: audio.error });
+        });
+        audio.load();
+        return audio;
+      });
+
+      this.interactionElements.set(sound, pool);
+    });
   }
 
   private ensureAudioContext() {
@@ -383,6 +514,16 @@ class SymbolraumAudioEngine {
   private applyComputedVolumes() {
     this.elements.forEach((audio, layer) => {
       audio.volume = this.muted ? 0 : clampVolume(this.layerLevels[layer] * this.globalVolume);
+    });
+  }
+
+  private applyInteractionVolumes() {
+    this.interactionElements.forEach((pool, sound) => {
+      const config = INTERACTION_SOUNDS[sound];
+
+      pool.forEach((audio) => {
+        audio.volume = this.muted ? 0 : clampVolume(config.volume * this.globalVolume);
+      });
     });
   }
 

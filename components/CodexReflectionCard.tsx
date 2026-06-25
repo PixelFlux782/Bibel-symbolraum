@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { symbolraumAudioEngine } from "@/lib/audio/symbolraumAudio";
 import { saveStoredReflection, type StoredReflection } from "@/lib/reflections";
 
 type CodexReflectionCardProps = {
@@ -56,6 +57,11 @@ export function CodexReflectionCard({
     });
     setAnswer("");
     setSaved(true);
+    symbolraumAudioEngine.playInteraction("save_trace", {
+      trigger: `codex-trace:${sourceId}`,
+      dedupeKey: `save-trace:codex:${sourceId}`,
+      dedupeMs: 800,
+    });
     window.setTimeout(() => setSaved(false), 1800);
   }
 

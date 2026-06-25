@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { symbolraumAudioEngine } from '@/lib/audio/symbolraumAudio';
 import { getSymbolBySlug, SymbolItem } from '@/lib/symbols';
 import {
   parseStoredReflections,
@@ -37,6 +38,11 @@ export default function SymbolDetailClient({ symbol }: { symbol: SymbolItem }) {
       createdAt: new Date().toISOString(),
     });
     setSaved(true);
+    symbolraumAudioEngine.playInteraction('save_trace', {
+      trigger: `symbol-reflection:${symbol.slug}`,
+      dedupeKey: `save-trace:symbol:${symbol.slug}`,
+      dedupeMs: 800,
+    });
     window.setTimeout(() => setSaved(false), 1800);
   }
 

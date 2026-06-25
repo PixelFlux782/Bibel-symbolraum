@@ -605,7 +605,7 @@ function HebrewWordCard({
     <article
       onClickCapture={() => onActivateCodexEntry(entry.id)}
       onFocusCapture={() => onActivateCodexEntry(entry.id)}
-      className={`group relative flex h-full flex-col overflow-hidden border bg-[linear-gradient(180deg,rgba(189,160,109,0.055),rgba(255,255,255,0.018)_38%,rgba(0,0,0,0.08))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.26)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.28] sm:p-7 ${
+      className={`codex-meaningful-card group relative flex h-full flex-col overflow-hidden border bg-[linear-gradient(180deg,rgba(189,160,109,0.055),rgba(255,255,255,0.018)_38%,rgba(0,0,0,0.08))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.26)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.28] sm:p-7 ${
         isActive ? "border-gold/45" : "border-gold/[0.12]"
       }`}
     >
@@ -680,7 +680,7 @@ function HebrewLetterCard({ entry, activeCodexId, onActivateCodexEntry }: { entr
     <article
       onClickCapture={() => onActivateCodexEntry(entry.id)}
       onFocusCapture={() => onActivateCodexEntry(entry.id)}
-      className={`group relative flex h-full flex-col overflow-hidden border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.24] sm:p-7 ${
+      className={`codex-meaningful-card group relative flex h-full flex-col overflow-hidden border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.24] sm:p-7 ${
         isActive ? "border-gold/42" : "border-white/[0.075]"
       }`}
     >
@@ -825,7 +825,7 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
       href={`/codex/${entry.id}`}
       onClick={() => onActivateCodexEntry(entry.id)}
       onFocus={() => onActivateCodexEntry(entry.id)}
-      className={`group relative block h-full overflow-hidden border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)] outline-none backdrop-blur-md transition-colors duration-700 hover:border-gold/20 focus-visible:border-gold/35 focus-visible:ring-2 focus-visible:ring-gold/20 sm:p-7 ${
+      className={`codex-meaningful-card group relative block h-full overflow-hidden border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)] outline-none backdrop-blur-md transition-colors duration-700 hover:border-gold/20 focus-visible:border-gold/35 focus-visible:ring-2 focus-visible:ring-gold/20 sm:p-7 ${
         isActive ? "border-gold/42" : "border-white/[0.075]"
       }`}
       aria-label={`Codex-Eintrag ${entry.title} ansehen`}
@@ -958,7 +958,7 @@ function MeaningCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Co
     <article
       onClickCapture={() => onActivateCodexEntry(entry.id)}
       onFocusCapture={() => onActivateCodexEntry(entry.id)}
-      className={`group relative flex h-full flex-col overflow-hidden border bg-white/[0.022] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.22] sm:p-7 ${
+      className={`codex-meaningful-card group relative flex h-full flex-col overflow-hidden border bg-white/[0.022] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.22] sm:p-7 ${
         isActive ? "border-gold/42" : "border-white/[0.07]"
       }`}
     >
@@ -1049,7 +1049,7 @@ function GematriaNumberCard({ entry, activeCodexId, onActivateCodexEntry }: { en
     <article
       onClickCapture={() => onActivateCodexEntry(entry.id)}
       onFocusCapture={() => onActivateCodexEntry(entry.id)}
-      className={`group relative flex h-full flex-col overflow-hidden border bg-[linear-gradient(180deg,rgba(189,160,109,0.06),rgba(255,255,255,0.018)_36%,rgba(0,0,0,0.1))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.3] sm:p-7 ${
+      className={`codex-meaningful-card group relative flex h-full flex-col overflow-hidden border bg-[linear-gradient(180deg,rgba(189,160,109,0.06),rgba(255,255,255,0.018)_36%,rgba(0,0,0,0.1))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-md transition-colors duration-700 hover:border-gold/[0.3] sm:p-7 ${
         isActive ? "border-gold/45" : "border-gold/[0.14]"
       }`}
     >
@@ -1231,7 +1231,7 @@ function TorahSequence({ entries, activeCodexId, onActivateCodexEntry }: { entri
       {chapters.map(({ entry, children }) => entry ? (
         <article
           key={entry.id}
-          className={`border bg-white/[0.025] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md transition-colors duration-700 sm:p-6 ${
+          className={`codex-meaningful-card border bg-white/[0.025] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.2)] backdrop-blur-md transition-colors duration-700 sm:p-6 ${
             activeCodexId === entry.id ? "border-gold/42" : "border-white/[0.075]"
           }`}
         >
