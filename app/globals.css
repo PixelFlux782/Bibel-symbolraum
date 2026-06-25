@@ -2775,6 +2775,17 @@ body {
   }
 }
 
+@keyframes symbol-arrival-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.96);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes portal-light-breath {
   0%, 100% {
     opacity: 0.38;
@@ -2848,6 +2859,11 @@ body {
   opacity: 0.78;
 }
 
+.symbol-network-page.is-arrival-moment .symbol-network-orientation {
+  max-width: min(100%, 38rem);
+  opacity: 0.66;
+}
+
 .symbol-network-page {
   height: 100dvh;
   min-height: 100dvh;
@@ -2856,6 +2872,14 @@ body {
   background:
     radial-gradient(ellipse at 18% 48%, rgba(var(--cyan-rgb), 0.09), transparent 32%),
     linear-gradient(180deg, #020610 0%, #030813 48%, #010309 100%);
+}
+
+.symbol-network-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  min-height: 100svh;
 }
 
 .symbol-network-shell {
@@ -2985,6 +3009,16 @@ body {
     radial-gradient(circle at 68% 66%, rgba(var(--gold-rgb), 0.02), transparent 26%);
 }
 
+.symbol-network-page.is-arrival-moment .symbol-constellation-field {
+  border-color: rgba(var(--gold-rgb), 0.026);
+  background:
+    radial-gradient(ellipse at 17% 48%, rgba(var(--cyan-rgb), 0.13), transparent 27%),
+    radial-gradient(circle at 53% 50%, rgba(var(--gold-rgb), 0.05), transparent 22%),
+    radial-gradient(ellipse at 77% 21%, rgba(var(--gold-rgb), 0.032), transparent 29%),
+    radial-gradient(ellipse at 77% 76%, rgba(var(--gold-rgb), 0.018), transparent 30%),
+    linear-gradient(180deg, rgba(2, 6, 14, 0.06), rgba(1, 3, 8, 0.22));
+}
+
 .symbol-constellation-field::before {
   content: "";
   position: absolute;
@@ -3019,6 +3053,18 @@ body {
   z-index: 14;
   width: min(19rem, calc(100% - 1.5rem));
   pointer-events: auto;
+}
+
+.symbol-network-page.is-arrival-moment .symbol-network-search {
+  opacity: 0.24;
+  transform: translateY(-0.2rem);
+  transition: opacity 900ms ease, transform 900ms ease;
+}
+
+.symbol-network-page.is-arrival-moment .symbol-network-search:hover,
+.symbol-network-page.is-arrival-moment .symbol-network-search:focus-within {
+  opacity: 0.9;
+  transform: translateY(0);
 }
 
 .symbol-network-search__input {
@@ -3228,6 +3274,10 @@ body {
   transition: opacity 520ms ease;
 }
 
+.symbol-network-page.is-arrival-moment .symbol-viewport-controls {
+  opacity: 0.18;
+}
+
 .symbol-viewport-controls:hover,
 .symbol-viewport-controls:focus-within {
   opacity: 0.92;
@@ -3278,7 +3328,7 @@ body {
 
 .symbol-network-flow .react-flow__node {
   z-index: 5;
-  transition: opacity 360ms ease, filter 360ms ease;
+  transition: opacity 720ms ease, filter 900ms ease, transform 1100ms ease;
 }
 
 .symbol-network-flow .react-flow__node:has(.symbol-constellation-node.is-related) {
@@ -3307,6 +3357,122 @@ body {
     box-shadow 700ms ease,
     color 700ms ease,
     filter 700ms ease;
+}
+
+.symbol-arrival-node {
+  animation: symbol-arrival-rise 1700ms ease both;
+  will-change: opacity, transform, filter;
+}
+
+.symbol-arrival-node--near {
+  z-index: 11;
+  filter:
+    drop-shadow(0 0 1.4rem rgba(var(--cyan-rgb), 0.12))
+    drop-shadow(0 0 3.8rem rgba(var(--gold-rgb), 0.045));
+  transform: scale(1.08);
+}
+
+.symbol-arrival-node--promise {
+  z-index: 10;
+  filter:
+    drop-shadow(0 0 1.1rem rgba(var(--gold-rgb), 0.13))
+    drop-shadow(0 0 3.4rem rgba(var(--gold-rgb), 0.055));
+  transform: scale(1.03);
+}
+
+.symbol-arrival-node--horizon {
+  opacity: 0.74;
+  filter: blur(0.15px) saturate(0.88);
+  transform: scale(0.9) translateY(-0.28rem);
+}
+
+.symbol-arrival-node--ember {
+  opacity: 0.62;
+  filter: blur(0.25px) saturate(0.82);
+  transform: scale(0.86) translateY(0.18rem);
+}
+
+.symbol-arrival-node--dark {
+  opacity: 0.48;
+  filter: blur(0.35px) saturate(0.72);
+  transform: scale(0.82) translateY(0.52rem);
+}
+
+.symbol-constellation-node.is-arrival-near {
+  background:
+    radial-gradient(circle at 50% 26%, rgba(var(--cyan-rgb), 0.105), transparent 42%),
+    rgba(1, 5, 11, 0.26);
+  box-shadow:
+    0 0 56px rgba(var(--cyan-rgb), 0.12),
+    0 0 98px rgba(var(--gold-rgb), 0.036),
+    inset 0 0 34px rgba(var(--cyan-rgb), 0.04);
+}
+
+.symbol-constellation-node.is-arrival-promise {
+  background:
+    radial-gradient(circle at 50% 31%, rgba(var(--gold-rgb), 0.095), transparent 44%),
+    rgba(8, 6, 3, 0.24);
+  box-shadow:
+    0 0 50px rgba(var(--gold-rgb), 0.1),
+    inset 0 0 30px rgba(var(--gold-rgb), 0.032);
+}
+
+.symbol-constellation-node.is-arrival-horizon {
+  background:
+    radial-gradient(circle at 52% 24%, rgba(var(--gold-rgb), 0.052), transparent 38%),
+    rgba(2, 5, 12, 0.18);
+  box-shadow:
+    0 0 26px rgba(var(--gold-rgb), 0.032),
+    inset 0 0 24px rgba(var(--cyan-rgb), 0.016);
+}
+
+.symbol-constellation-node.is-arrival-ember {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(var(--gold-rgb), 0.046), transparent 36%),
+    rgba(7, 3, 2, 0.18);
+  box-shadow:
+    0 0 28px rgba(var(--gold-rgb), 0.036),
+    inset 0 0 22px rgba(var(--gold-rgb), 0.016);
+}
+
+.symbol-constellation-node.is-arrival-dark {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(var(--cyan-rgb), 0.028), transparent 38%),
+    rgba(1, 3, 8, 0.14);
+  box-shadow:
+    inset 0 0 22px rgba(var(--cyan-rgb), 0.012);
+}
+
+.symbol-constellation-node.is-arrival-dark::before {
+  border-color: rgba(255, 255, 255, 0.014);
+}
+
+.symbol-constellation-node.is-arrival-near p:first-child,
+.symbol-constellation-node.is-arrival-promise p:first-child {
+  color: rgba(var(--gold-rgb), 0.86);
+}
+
+.symbol-constellation-node.is-arrival-horizon p:first-child,
+.symbol-constellation-node.is-arrival-ember p:first-child {
+  color: rgba(var(--gold-rgb), 0.62);
+}
+
+.symbol-constellation-node.is-arrival-dark p:first-child {
+  color: rgba(var(--gold-rgb), 0.42);
+}
+
+.symbol-constellation-node.is-arrival-near p:last-child,
+.symbol-constellation-node.is-arrival-promise p:last-child {
+  color: rgba(var(--foreground-rgb), 0.62);
+}
+
+.symbol-constellation-node.is-arrival-horizon p:last-child,
+.symbol-constellation-node.is-arrival-ember p:last-child {
+  color: rgba(216, 209, 194, 0.38);
+}
+
+.symbol-constellation-node.is-arrival-dark p:last-child {
+  color: rgba(216, 209, 194, 0.25);
 }
 
 .symbol-constellation-node::before,
@@ -4681,6 +4847,18 @@ body {
   scrollbar-gutter: stable;
 }
 
+.symbol-detail-panel--arrival {
+  opacity: 0.46;
+  transform: translateY(0.35rem);
+  transition: opacity 900ms ease, transform 900ms ease;
+}
+
+.symbol-detail-panel--arrival:hover,
+.symbol-detail-panel--arrival:focus-within {
+  opacity: 0.86;
+  transform: translateY(0);
+}
+
 .symbol-inspector-empty {
   border-left: 1px solid rgba(var(--gold-rgb), 0.2);
   background:
@@ -4835,7 +5013,7 @@ body {
 
 .symbol-disclosure__voice,
 .symbol-disclosure__layer {
-  animation: symbol-fade-in 760ms ease both;
+  animation: symbol-fade-in 1080ms ease both;
 }
 
 .symbol-disclosure__voice {
@@ -6092,21 +6270,48 @@ body {
 .symbol-mobile-gates {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: 0.7rem;
   margin-top: 1.1rem;
 }
 
 .symbol-mobile-gate {
   display: grid;
-  min-height: 10.25rem;
+  min-height: 6.65rem;
   align-content: start;
   border: 1px solid rgba(var(--gold-rgb), 0.13);
   background:
     radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.08), transparent 46%),
     rgba(255, 255, 255, 0.025);
-  padding: 1rem;
+  padding: 0.72rem;
   text-align: left;
   transition: border-color 320ms ease, background-color 320ms ease;
+}
+
+.symbol-mobile-gate--wasser {
+  min-height: 7.2rem;
+  border-color: rgba(var(--cyan-rgb), 0.2);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--cyan-rgb), 0.11), transparent 48%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.symbol-mobile-gate--brot {
+  border-color: rgba(var(--gold-rgb), 0.2);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.105), transparent 48%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.symbol-mobile-gate--licht {
+  opacity: 0.78;
+}
+
+.symbol-mobile-gate--feuer {
+  opacity: 0.68;
+}
+
+.symbol-mobile-gate--wueste {
+  opacity: 0.56;
 }
 
 .symbol-mobile-gate:focus-visible,
@@ -6117,27 +6322,31 @@ body {
 
 .symbol-mobile-gate__hebrew {
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
-  font-size: 2.75rem;
+  font-size: 2.15rem;
   line-height: 1;
   color: rgba(var(--gold-rgb), 0.9);
 }
 
 .symbol-mobile-gate__title {
-  margin-top: 0.75rem;
+  margin-top: 0.45rem;
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
-  font-size: 1.45rem;
+  font-size: 1.16rem;
   font-style: italic;
   line-height: 1.1;
   color: rgba(var(--foreground-rgb), 0.94);
 }
 
 .symbol-mobile-gate__meaning {
-  margin-top: 0.55rem;
+  display: -webkit-box;
+  margin-top: 0.35rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   color: rgba(216, 209, 194, 0.64);
   font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
-  font-size: 0.92rem;
+  font-size: 0.76rem;
   font-style: italic;
-  line-height: 1.45;
+  line-height: 1.36;
 }
 
 .symbol-mobile-focus__head {
@@ -6171,7 +6380,7 @@ body {
   font-size: 1.25rem;
   font-style: italic;
   line-height: 1.42;
-  animation: symbol-fade-in 720ms ease both;
+  animation: symbol-fade-in 1080ms ease both;
 }
 
 .symbol-mobile-movement {
@@ -6385,6 +6594,7 @@ body {
   .living-connection-label.is-traveling,
   .letter-emergence-center,
   .letter-emergence-symbol,
+  .symbol-arrival-node,
   .symbol-lens-orbit,
   .letter-emergence-mobile__symbol,
   .meaning-transition-scene__symbol--emerging,
@@ -6531,6 +6741,10 @@ body {
     background:
       radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.05), transparent 38%),
       linear-gradient(180deg, rgba(2, 5, 12, 0.88), rgba(2, 5, 12, 0.72));
+  }
+
+  .symbol-detail-panel--arrival {
+    display: none;
   }
 
   .symbol-inspector-head {

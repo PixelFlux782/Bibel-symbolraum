@@ -94,6 +94,7 @@ type SymbolNodeData = SymbolMeaningNetworkNode & {
   lensLabel?: string;
   lensNote?: string;
   emergenceIndex?: number;
+  arrivalPresence?: SymbolArrivalPresence;
   isTouchedOnWay: boolean;
   isFamiliarOnWay: boolean;
 };
@@ -143,6 +144,7 @@ type SymbolInspectorFocus = "meaning" | "hebrew" | "gematria" | "story" | "subsp
 type SymbolCodexFocusParam = "overview" | "meaning" | "hebrew" | "gematria" | "story" | "spaces";
 type SymbolRoomLensParam = "overview" | "meaning" | "hebrew" | "gematria" | "story";
 type SymbolViewportMode = SymbolZoomLevel;
+type SymbolArrivalPresence = "near" | "promise" | "horizon" | "ember" | "dark";
 
 type SymbolLensOrbitNode = {
   id: SymbolLensMode;
@@ -307,7 +309,14 @@ const MEANING_NODE_SIZE = 96;
 const HIERARCHY_NODE_SIZE = 92;
 const DEEP_HIERARCHY_NODE_SIZE = 76;
 const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
-const MOBILE_GATE_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste"];
+const MOBILE_GATE_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
+const SYMBOL_ARRIVAL_PRESENCE: Record<string, SymbolArrivalPresence> = {
+  wasser: "near",
+  brot: "promise",
+  licht: "horizon",
+  feuer: "ember",
+  wueste: "dark",
+};
 const LETTER_NODE_PREFIX = "letter:";
 const LENS_LETTER_NODE_PREFIX = "lens-letter:";
 const NUMBER_NODE_PREFIX = "number:";
@@ -1548,7 +1557,7 @@ function getSymbolWayMemoryNotice(personalWay: PersonalWay | null, symbolId: str
 function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
   return (
     <div
-      className={`group relative cursor-pointer transition-opacity duration-700 ${data.emergenceIndex !== undefined ? "letter-emergence-symbol" : ""} ${data.isDimmed ? "opacity-[0.14]" : "opacity-100"}`}
+      className={`group relative cursor-pointer transition-opacity duration-700 ${data.arrivalPresence ? `symbol-arrival-node symbol-arrival-node--${data.arrivalPresence}` : ""} ${data.emergenceIndex !== undefined ? "letter-emergence-symbol" : ""} ${data.isDimmed ? "opacity-[0.24]" : "opacity-100"}`}
       style={data.emergenceIndex !== undefined ? { animationDelay: `${data.emergenceIndex * 220}ms` } : undefined}
     >
       {SYMBOL_PORTS.map((port) => (
@@ -1560,7 +1569,7 @@ function SymbolGraphNode({ data }: NodeProps<SymbolNodeData>) {
       <div
         className={`symbol-constellation-node relative grid h-44 w-44 place-items-center px-5 py-5 text-center transition-colors duration-700 ${
           data.isActive ? "is-active" : data.isPreviewed ? "is-previewed" : data.isRelated ? "is-related" : ""
-        } ${data.id === "wasser" ? "is-first-entry" : ""} ${data.isTouchedOnWay ? "is-touched-on-way" : ""} ${data.isFamiliarOnWay ? "is-familiar-on-way" : ""} ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
+        } ${data.arrivalPresence ? `is-arrival-${data.arrivalPresence}` : ""} ${data.id === "wasser" ? "is-first-entry" : ""} ${data.isTouchedOnWay ? "is-touched-on-way" : ""} ${data.isFamiliarOnWay ? "is-familiar-on-way" : ""} ${data.activeLens ? `has-lens has-lens-${data.activeLens}` : ""}`}
       >
         <div>
           <p className="symbol-breathe font-serif text-5xl leading-none" lang="he" dir="rtl">
@@ -2435,14 +2444,14 @@ function MobileSymbolJourney({
     return (
       <section className="symbol-mobile-guide md:hidden" aria-label="Mobile Symbolreise">
         <p className="symbol-kicker text-cyan-soft">Erster Eintritt</p>
-        <h2>Beruehre ein Zeichen.</h2>
-        <p className="symbol-copy mt-3 text-sm">Manche oeffnen einen Raum, andere eine Bedeutung. Du musst nichts verstehen, du darfst schauen und eintreten.</p>
+        <h2>Die Landschaft liegt offen.</h2>
+        <p className="symbol-copy mt-3 text-sm">Wasser liegt nah. Andere Raeume warten weiter draussen.</p>
         <div className="symbol-mobile-gates">
           {gateSymbols.map((node) => (
             <button
               key={node.id}
               type="button"
-              className="symbol-mobile-gate"
+              className={`symbol-mobile-gate symbol-mobile-gate--${node.id}`}
               onClick={() => onFocusSymbol(node.id)}
             >
               <span className="symbol-mobile-gate__hebrew" lang="he" dir="rtl">{node.hebrew}</span>
@@ -2687,9 +2696,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     }
 
     const timers = [
-      window.setTimeout(() => setLandscapeDisclosureLevel(2), 620),
-      window.setTimeout(() => setLandscapeDisclosureLevel(3), 1320),
-      window.setTimeout(() => setLandscapeDisclosureLevel(4), 2140),
+      window.setTimeout(() => setLandscapeDisclosureLevel(2), 960),
+      window.setTimeout(() => setLandscapeDisclosureLevel(3), 1960),
+      window.setTimeout(() => setLandscapeDisclosureLevel(4), 3180),
     ];
 
     return () => timers.forEach((timer) => window.clearTimeout(timer));
@@ -2949,6 +2958,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     || searchFocusSymbolId,
   );
   const canNavigateBack = hasTransientBackState || hasSymbolFocus || symbolViewportMode !== "overview";
+  const isArrivalMoment = !hasSymbolFocus && !hasTransientBackState && symbolViewportMode === "overview";
   const breadcrumbItems = useMemo(() => {
     const items = ["Uebersicht"];
 
@@ -3155,7 +3165,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
       if (graphViewMode === "SYMBOL_FOCUS") {
         const center = getNodeCenter(activeSymbolId);
-        instance.setCenter(center.x, center.y, { zoom: isSymbolLensVisible ? 1.04 : 0.86, duration: 680 });
+        instance.setCenter(center.x, center.y, { zoom: isSymbolLensVisible ? 1.04 : 0.84, duration: 1040 });
         return;
       }
 
@@ -3208,6 +3218,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 showActions: false,
                 activeLens: null,
                 emergenceIndex,
+                arrivalPresence: undefined,
                 isTouchedOnWay: touchedSymbolIds.has(node.id),
                 isFamiliarOnWay: familiarSymbolIds.has(node.id),
               },
@@ -3288,6 +3299,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       const semanticSymbolNodes = visibleSymbolNodes.length > 0 ? visibleSymbolNodes : network.nodes;
       const showMeaningNodes = symbolViewportMode !== "overview"
         && Boolean(activePathId || isJourneyFocus || activeLensMeaningIds.size > 0);
+      const shouldStageArrival = !hasGraphDisclosure && symbolViewportMode === "overview";
       const hierarchyNodes = [
         ...(shouldShowDetailHierarchy ? activeDetailHierarchyChildren.map((entry) => ({ entry, isDeepAnchor: false })) : []),
         ...(shouldShowDeepHierarchy ? activeDeepHierarchyAnchors.map((entry) => ({ entry, isDeepAnchor: true })) : []),
@@ -3337,6 +3349,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               lensLabel,
               lensNote: undefined,
               emergenceIndex: activeLetterId && letterSymbolIds.has(node.id) ? letterSymbols.findIndex((symbol) => symbol.id === node.id) : undefined,
+              arrivalPresence: shouldStageArrival ? SYMBOL_ARRIVAL_PRESENCE[node.id] : undefined,
               isTouchedOnWay: touchedSymbolIds.has(node.id),
               isFamiliarOnWay: familiarSymbolIds.has(node.id),
             },
@@ -4052,8 +4065,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   }
 
   return (
-    <section className="symbol-page symbol-section symbol-network-page relative min-h-[100svh]">
-      <div className="fixed inset-0 h-screen min-h-[100svh]">
+    <section className={`symbol-page symbol-section symbol-network-page relative min-h-[100svh] ${isArrivalMoment ? "is-arrival-moment" : ""}`}>
+      <div className="symbol-network-backdrop fixed inset-0 h-screen min-h-[100svh]">
         <Image src={visualAssets.symbolnetzHero} alt="" fill priority sizes="100vw" className="sacred-drift object-cover opacity-[0.18]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.78)_78%,rgba(0,0,0,0.95)_100%)]" />
       </div>
@@ -4062,7 +4075,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         <div className="symbol-network-main min-w-0">
           <div className="symbol-network-orientation">
             <p>Symbolnetz</p>
-            <span>Beruehre ein Zeichen. Manche oeffnen einen Raum, andere eine Bedeutung.</span>
+            <span>Wasser liegt nah. Brot wartet in der Mitte. Die anderen Raeume stehen in der Ferne.</span>
           </div>
 
           <MobileSymbolJourney
@@ -4348,7 +4361,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           ) : null}
         </div>
 
-        <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isSymbolLensVisible ? "symbol-detail-panel--lens-focus" : ""}`}>
+        <aside className={`symbol-detail-panel symbol-archive-fragment self-start p-6 ${isSymbolLensVisible ? "symbol-detail-panel--lens-focus" : ""} ${isArrivalMoment ? "symbol-detail-panel--arrival" : ""}`}>
           <p className="symbol-kicker text-cyan-soft">
             {activeSymbolLensNode ? `${activeSymbol.label}: ${activeSymbolLensNode.label}` : activeResonanceJourney ? "Resonanzspur" : activeJourney ? "Bedeutungsspur" : activePath ? "Bedeutungsspur" : activeCodexLetter ? "Buchstabenursprung" : hasSymbolFocus ? "Fokus" : "Erster Eintritt"}
           </p>
@@ -4358,8 +4371,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           </div>
           {!hasSymbolFocus && !activeResonanceJourney && !activeJourney && !activePath && !activeCodexLetter ? (
             <div className="symbol-inspector-empty mt-6">
-              <p>Waehle ein Zeichen.</p>
-              <span>Seine Spur, seine Sprache und seine Beziehungen werden hier sichtbar. Wasser ist der erste stille Eintritt.</span>
+              <p>Erster Eintritt.</p>
+              <span>Die Raeume sind schon da. Wasser ist der erste stille Nahepunkt.</span>
             </div>
           ) : null}
           {activeResonanceJourney ? (
