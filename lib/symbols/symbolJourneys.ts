@@ -90,13 +90,13 @@ export const symbolJourneys: SymbolJourney[] = [
   {
     id: WATER_TO_BREAD_JOURNEY_ID,
     title: "Vom Wasser zum Brot",
-    subtitle: "Ein Weg von Ursprung, Licht und Pruefung zur Gabe",
+    subtitle: "Ein Weg von Ursprung, Licht und Prüfung zur Gabe",
     summary:
-      "Die Spur fuehrt von der Tiefe des Wassers ueber Licht, Feuer und Wueste bis zum Brot als empfangene Gabe.",
+      "Die Spur führt von der Tiefe des Wassers über Licht, Feuer und Wüste bis zum Brot als empfangene Gabe.",
     steps: [
       buildJourneyStep({
         symbol: "wasser",
-        text: "Die Spur beginnt in der Tiefe: Wasser als Ursprung, Bewegung und geoeffneter Raum.",
+        text: "Die Spur beginnt in der Tiefe: Wasser als Ursprung, Bewegung und geöffneter Raum.",
       }),
       buildJourneyStep({
         symbol: "licht",
@@ -106,12 +106,12 @@ export const symbolJourneys: SymbolJourney[] = [
       buildJourneyStep({
         symbol: "feuer",
         path: "dornbusch",
-        text: "Im Feuer wird der Ruf hoerbar: Gegenwart, Wandlung und heilige Grenze.",
+        text: "Im Feuer wird der Ruf hörbar: Gegenwart, Wandlung und heilige Grenze.",
       }),
       buildJourneyStep({
         symbol: "wueste",
         path: "manna",
-        text: "In der Wueste wird der Mangel zum Ort des Hoerens und der Reifung.",
+        text: "In der Wüste wird der Mangel zum Ort des Hörens und der Reifung.",
       }),
       buildJourneyStep({
         symbol: "brot",

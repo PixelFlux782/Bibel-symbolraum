@@ -378,7 +378,7 @@ export default function SoundController() {
         <button
           type="button"
           onClick={handleMute}
-          aria-label={muted ? "Klangraum hoerbar machen" : "Klangraum stummschalten"}
+          aria-label={muted ? "Klangraum hörbar machen" : "Klangraum stummschalten"}
           aria-pressed={muted}
           disabled={!loaded}
           className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/5 text-[#efe4d1]/70 transition-colors hover:bg-white/10 hover:text-[#f8f2e5] disabled:opacity-45"
@@ -389,7 +389,7 @@ export default function SoundController() {
             <Volume2 aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.5} />
           )}
         </button>
-        <label className="sr-only" htmlFor="symbolraum-audio-volume">Klangraum Lautstaerke</label>
+        <label className="sr-only" htmlFor="symbolraum-audio-volume">Klangraum Lautstärke</label>
         <input
           id="symbolraum-audio-volume"
           type="range"
@@ -399,7 +399,7 @@ export default function SoundController() {
           value={volume}
           onChange={handleVolume}
           className="h-1 w-14 accent-[#d6bc8a] opacity-70"
-          aria-label="Klangraum Lautstaerke"
+          aria-label="Klangraum Lautstärke"
         />
       </div>
       {showAudioDebug ? (

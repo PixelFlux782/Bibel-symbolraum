@@ -41,10 +41,10 @@ const CODEX_GROUPS: { type: CodexEntryType; label: string; optional?: boolean }[
 ];
 
 const CODEX_VIEWS: { id: CodexViewId; label: string; description: string }[] = [
-  { id: "all", label: "Alle", description: "Alle Codex-Eintr&auml;ge" },
+  { id: "all", label: "Alle", description: "Alle Codex-Einträge" },
   { id: "symbols", label: "Symbole", description: "Symbolische Grundfiguren" },
-  { id: "hebrew", label: "Hebr&auml;isch", description: "Eintr&auml;ge mit hebr&auml;ischer Spur" },
-  { id: "letters", label: "Buchstaben", description: "Hebr&auml;ische Buchstaben" },
+  { id: "hebrew", label: "Hebräisch", description: "Einträge mit hebräischer Spur" },
+  { id: "letters", label: "Buchstaben", description: "Hebräische Buchstaben" },
   { id: "torah", label: "Thora", description: "Schrift- und Versanker" },
   { id: "gematria", label: "Gematria", description: "Zahlen und Werte" },
   { id: "meaning", label: "Bedeutung", description: "Bedeutungsfelder" },
@@ -65,7 +65,7 @@ type CodexCardFocusProps = {
 
 type ResonancePathStationKind =
   | "Symbol"
-  | "Hebraeisch"
+  | "Hebräisch"
   | "Buchstabe"
   | "Zahl"
   | "Bedeutung"
@@ -82,7 +82,7 @@ type ResonancePathStation = {
 
 const CODEX_TYPE_RESONANCE_LABELS: Partial<Record<CodexEntryType, string>> = {
   symbol: "Symbol",
-  "hebrew-word": "hebraeisches Wort",
+  "hebrew-word": "hebräisches Wort",
   "hebrew-letter": "Buchstabe",
   number: "Zahl",
   scripture: "Schriftanker",
@@ -344,7 +344,7 @@ function getStationEntryLabel(entry: CodexEntry) {
 
 function getStationKindLabel(kind: ResonancePathStationKind) {
   if (kind === "Journey") return "Spur";
-  if (kind === "Hebraeisch") return "Hebr\u00e4isch";
+  if (kind === "Hebräisch") return "Hebr\u00e4isch";
 
   return kind;
 }
@@ -390,7 +390,7 @@ function buildResonancePath(entry: CodexEntry): ResonancePathStation[] {
     symbolEntry ? { kind: "Symbol", label: symbolEntry.title, entry: symbolEntry } : null,
     hebrewSource?.hebrew
       ? {
-          kind: "Hebraeisch",
+          kind: "Hebräisch",
           label: `${hebrewSource.hebrew}${hebrewSource.transliteration ? ` / ${hebrewSource.transliteration}` : ""}`,
           entry: hebrewSource,
           lang: "he" as const,
@@ -433,7 +433,7 @@ function CodexResonancePath({
 
   return (
     <nav
-      aria-label={`Resonanzspur fuer ${entry.title}`}
+      aria-label={`Resonanzspur für ${entry.title}`}
       className="mt-4 overflow-hidden border border-gold/[0.13] bg-[linear-gradient(90deg,rgba(189,160,109,0.07),rgba(255,255,255,0.018)_46%,rgba(127,184,201,0.035))] px-4 py-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] backdrop-blur-md sm:px-5"
     >
       <ol className="flex flex-wrap items-stretch gap-2 sm:gap-3">
@@ -614,7 +614,7 @@ function HebrewWordCard({
       <div className="relative flex h-full flex-col">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="symbol-kicker text-cyan-soft">Hebraeisches Wort</p>
+            <p className="symbol-kicker text-cyan-soft">Hebräisches Wort</p>
             <h3 className="mt-4 font-serif text-3xl italic leading-tight text-foreground-strong">
               {entry.title}
             </h3>
@@ -751,7 +751,7 @@ function HebrewGroupSection({
           </h2>
         </div>
         <p className="text-[0.62rem] uppercase tracking-[0.26em] text-gold/65">
-          {count} Eintr&auml;ge
+          {count} Einträge
         </p>
       </div>
       {children}
@@ -766,7 +766,7 @@ function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { ent
   return (
     <div className="grid gap-16">
       <HebrewGroupSection
-        title="Hebr&auml;ische W&ouml;rter"
+        title="Hebräische Wörter"
         kicker="Wort-Ebene"
         count={wordEntries.length}
       >
@@ -784,7 +784,7 @@ function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { ent
           </div>
         ) : (
           <p className="symbol-copy text-base italic text-muted-soft">
-            Keine hebr&auml;ischen W&ouml;rter zu dieser Suche gefunden.
+            Keine hebräischen Wörter zu dieser Suche gefunden.
           </p>
         )}
       </HebrewGroupSection>
@@ -807,7 +807,7 @@ function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { ent
           </div>
         ) : (
           <p className="symbol-copy text-base italic text-muted-soft">
-            Buchstaben-Knoten sind vorbereitet. Verkn&uuml;pfte Eintr&auml;ge erscheinen hier automatisch.
+            Buchstaben-Knoten sind vorbereitet. Verknüpfte Einträge erscheinen hier automatisch.
           </p>
         )}
       </HebrewGroupSection>
@@ -869,7 +869,7 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
 
         {hebrewResonanceWords.length > 0 ? (
           <div className="mt-5">
-            <p className="text-[0.56rem] uppercase tracking-[0.22em] text-cyan-soft/75">Nahe hebr&auml;ische Resonanz</p>
+            <p className="text-[0.56rem] uppercase tracking-[0.22em] text-cyan-soft/75">Nahe hebräische Resonanz</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {hebrewResonanceWords.map((word) => (
                 <span
@@ -1078,7 +1078,7 @@ function GematriaNumberCard({ entry, activeCodexId, onActivateCodexEntry }: { en
         {connectedEntries.length > 0 ? (
           <div className="mt-7">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">
-              Verbundene Buchstaben, W&ouml;rter und Symbole
+              Verbundene Buchstaben, Wörter und Symbole
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {connectedEntries.map((target) => (
@@ -1161,7 +1161,7 @@ function MobileCodexMeaningTrails({
       <div>
         <p className="symbol-kicker text-cyan-soft">Bedeutungsspuren</p>
         <h2 className="mt-3 font-serif text-3xl italic leading-tight text-foreground-strong">
-          Waehle eine Spur.
+          Wähle eine Spur.
         </h2>
       </div>
 
@@ -1196,7 +1196,7 @@ function MobileCodexMeaningTrails({
 
       <div className="codex-mobile-trail codex-mobile-trail--views">
         <button type="button" onClick={() => onSelectView("symbols")}>Symbole</button>
-        <button type="button" onClick={() => onSelectView("hebrew")}>Hebraeische Woerter</button>
+        <button type="button" onClick={() => onSelectView("hebrew")}>Hebräische Wörter</button>
         <button type="button" onClick={() => onSelectView("letters")}>Buchstaben</button>
         <button type="button" onClick={() => onSelectView("gematria")}>Zahlen</button>
         <button type="button" onClick={() => onSelectView("torah")}>Thora</button>
@@ -1348,7 +1348,7 @@ function CodexPageContent() {
       ? `Bibelstelle: ${scriptureFocus.label}`
       : "";
   const focusNote = scriptureFocus && !scriptureFocus.hasDetailEntry
-    ? "Diese Stelle ist bereits als Spur markiert, aber noch nicht vollstaendig erschlossen."
+    ? "Diese Stelle ist bereits als Spur markiert, aber noch nicht vollständig erschlossen."
     : "";
 
   return (
@@ -1365,10 +1365,10 @@ function CodexPageContent() {
             CODEX
           </h1>
           <p className="symbol-copy mt-7 max-w-3xl text-2xl italic text-gold/80 md:text-3xl">
-            Das Ged&auml;chtnis des Bedeutungsuniversums
+            Das Gedächtnis des Bedeutungsuniversums
           </p>
           <p className="symbol-copy mt-7 max-w-3xl text-lg md:text-xl">
-            Der Codex verbindet Symbole, hebr&auml;ische W&ouml;rter, Buchstaben, Zahlen, Bibelstellen und Bedeutungsfelder.
+            Der Codex verbindet Symbole, hebräische Wörter, Buchstaben, Zahlen, Bibelstellen und Bedeutungsfelder.
           </p>
         </header>
 
@@ -1471,7 +1471,7 @@ function CodexPageContent() {
                     </h2>
                   </div>
                   <p className="text-[0.62rem] uppercase tracking-[0.26em] text-gold/65">
-                    {group.entries.length} Eintr&auml;ge
+                    {group.entries.length} Einträge
                   </p>
                 </div>
 
@@ -1488,7 +1488,7 @@ function CodexPageContent() {
                   </div>
                 ) : (
                   <p className="symbol-copy text-base italic text-muted-soft">
-                    Diese Ansicht ist vorbereitet. Eintr&auml;ge folgen.
+                    Diese Ansicht ist vorbereitet. Einträge folgen.
                   </p>
                 )}
               </section>
@@ -1503,7 +1503,7 @@ function CodexPageContent() {
                   </h2>
                 </div>
                 <p className="text-[0.62rem] uppercase tracking-[0.26em] text-gold/65">
-                  {visibleEntries.length} Eintr&auml;ge
+                  {visibleEntries.length} Einträge
                 </p>
               </div>
 
@@ -1557,7 +1557,7 @@ function CodexPageContent() {
               ) : (
                 <p className="symbol-copy text-base italic text-muted-soft">
                   {hasPreparedEmptyView
-                    ? "Diese Ansicht ist vorbereitet. Eintr&auml;ge folgen."
+                    ? "Diese Ansicht ist vorbereitet. Einträge folgen."
                     : "Im aktuellen Codex ist zu dieser Suche noch kein Eintrag hinterlegt."}
                 </p>
               )}

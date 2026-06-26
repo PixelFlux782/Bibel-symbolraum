@@ -219,7 +219,7 @@ export function validateMeaningGraph(
     }
 
     if (link.nodeIds.length < 2) {
-      warnings.push(`Meaning Profile fuer Symbol-Slug "${link.symbolId}" benoetigt mindestens 2 MeaningNodes.`);
+      warnings.push(`Meaning Profile für Symbol-Slug "${link.symbolId}" benötigt mindestens 2 MeaningNodes.`);
     }
   }
 

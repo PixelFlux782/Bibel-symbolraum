@@ -130,7 +130,7 @@ function getTraceContext(reflection: StoredReflection) {
     return bridge.traceLabel;
   }
 
-  return "Fruehere Wegstelle";
+  return "Frühere Wegstelle";
 }
 
 function getTraceTitle(reflection: StoredReflection) {
@@ -188,10 +188,10 @@ const MAX_WAY_FAMILIAR_ITEMS = 5;
 const MAX_WAY_OPENINGS = 3;
 
 const groupOrder: Array<{ key: ReflectionGroupKey; label: string }> = [
-  { key: "rooms", label: "Aus den Raeumen" },
+  { key: "rooms", label: "Aus den Räumen" },
   { key: "codex", label: "Aus dem Codex" },
   { key: "network", label: "Aus dem Symbolnetz" },
-  { key: "older", label: "Fruehere Wegstellen" },
+  { key: "older", label: "Frühere Wegstellen" },
 ];
 
 function getReflectionGroupKey(reflection: StoredReflection): ReflectionGroupKey {
@@ -286,7 +286,7 @@ function getTrackCtaLabel(config: SymbolPathConfig, hasTrace: boolean) {
     return `Den ${config.roomLabel} betreten`;
   }
 
-  return `In den ${config.roomLabel} zurueckkehren`;
+  return `In den ${config.roomLabel} zurückkehren`;
 }
 
 function buildPersonalSymbolTracks(reflections: StoredReflection[]): PersonalSymbolTrack[] {
@@ -360,7 +360,7 @@ function buildWayMemoryItems(personalWay: PersonalWay) {
   const anchorItems = personalWay.reflectedAnchors
     .map((anchorId) => getWayAnchorLabel(anchorId))
     .filter(Boolean)
-    .map((label) => `${label} bleibt als beruehrter Anker nahe.`);
+    .map((label) => `${label} bleibt als berührter Anker nahe.`);
 
   return [...roomItems, ...anchorItems].slice(0, MAX_WAY_MEMORY_ITEMS);
 }
@@ -441,7 +441,7 @@ export default function MeinPfadPage() {
           <div className="symbol-path-empty mx-auto max-w-3xl text-center">
             <p className="symbol-kicker">Der Weg wird still</p>
             <p className="mt-6 font-serif text-3xl italic text-foreground-strong">
-              Deine Wegstellen oeffnen sich gerade.
+              Deine Wegstellen öffnen sich gerade.
             </p>
           </div>
         ) : (
@@ -467,7 +467,7 @@ export default function MeinPfadPage() {
                     Den Wasser-Raum betreten
                   </Link>
                   <Link href="/symbolnetz" className="symbol-archive-action symbol-archive-action--quiet">
-                    Symbolnetz oeffnen
+                    Symbolnetz öffnen
                   </Link>
                 </div>
               </div>
@@ -550,7 +550,7 @@ export default function MeinPfadPage() {
 function GreatMovementSection({ movement }: { movement: SymbolicGreatMovementStep[] }) {
   return (
     <section className="symbol-great-movement" aria-labelledby="great-movement-title">
-      <h2 id="great-movement-title">Die gro&szlig;e Bewegung</h2>
+      <h2 id="great-movement-title">Die große Bewegung</h2>
       <div className="symbol-great-movement__lines">
         {movement.map((step) => (
           <Link
@@ -571,7 +571,7 @@ function GreatMovementSection({ movement }: { movement: SymbolicGreatMovementSte
 }
 
 function getJourneyStepCtaLabel(hasTrace: boolean) {
-  return hasTrace ? "In diesen Raum zurueckkehren" : "Diesen Raum betreten";
+  return hasTrace ? "In diesen Raum zurückkehren" : "Diesen Raum betreten";
 }
 
 function PersonalWaySection({ personalWay }: { personalWay: PersonalWay }) {
@@ -590,8 +590,8 @@ function PersonalWaySection({ personalWay }: { personalWay: PersonalWay }) {
         <p className="symbol-kicker">Der Weg</p>
         <h2>Der Weg</h2>
         <p>
-          Nicht alles, was du beruehrt hast, liegt hinter dir. Manche Zeichen bleiben nahe und oeffnen von hier aus
-          einen naechsten Raum.
+          Nicht alles, was du berührt hast, liegt hinter dir. Manche Zeichen bleiben nahe und öffnen von hier aus
+          einen nächsten Raum.
         </p>
       </div>
 
@@ -640,7 +640,7 @@ function WayQuietArea({
 function WayOpeningsArea({ openings }: { openings: PersonalWayOpening[] }) {
   return (
     <article className="symbol-personal-way__area symbol-personal-way__area--openings">
-      <h3>Was sich leise oeffnet</h3>
+      <h3>Was sich leise öffnet</h3>
       {openings.length > 0 ? (
         <div className="symbol-personal-way__openings">
           {openings.map((opening) => (
@@ -651,7 +651,7 @@ function WayOpeningsArea({ openings }: { openings: PersonalWayOpening[] }) {
           ))}
         </div>
       ) : (
-        <p>Der naechste Raum muss sich nicht draengen. Dein Weg bleibt lesbar.</p>
+        <p>Der nächste Raum muss sich nicht drängen. Dein Weg bleibt lesbar.</p>
       )}
     </article>
   );
@@ -676,15 +676,15 @@ function PersonalJourneyCard({
         <h2>{journey.title}</h2>
         <p className="symbol-journey-card__subtitle">Geschlossene symbolische Bewegung</p>
         <p className="symbol-copy">
-          Wasser, Licht, Feuer, Wueste und Brot bilden zusammen eine Bewegung: Ursprung, Offenbarung, Wandlung,
-          Laeuterung und Gabe. Das Brot erinnert wieder an Wasser.
+          Wasser, Licht, Feuer, Wüste und Brot bilden zusammen eine Bewegung: Ursprung, Offenbarung, Wandlung,
+          Läuterung und Gabe. Das Brot erinnert wieder an Wasser.
         </p>
       </div>
 
       {!hasAnyTrace ? (
         <div className="symbol-journey-empty">
           <p className="symbol-kicker">Der Weg ist noch still</p>
-          <p>Wasser kann sich zuerst oeffnen, oder ein anderer Raum ruft leise.</p>
+          <p>Wasser kann sich zuerst öffnen, oder ein anderer Raum ruft leise.</p>
           <div>
             <Link href={journey.steps[0]?.roomHref ?? "/raeume/wasser"} className="symbol-archive-action">
               Den Wasser-Raum betreten
@@ -774,10 +774,10 @@ function PersonalJourneyCard({
 
 function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
   return (
-    <section className="symbol-personal-map" aria-label="Persoenlicher Weg">
+    <section className="symbol-personal-map" aria-label="Persönlicher Weg">
       <div className="symbol-personal-map__head">
         <p className="symbol-kicker">Wegzeichen</p>
-        <h2>Fuenf innere Zeichen</h2>
+        <h2>Fünf innere Zeichen</h2>
       </div>
 
       <div className="symbol-personal-map__grid">
@@ -794,7 +794,7 @@ function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
 
             <h3>{track.config.label}</h3>
             <p className="symbol-personal-track__count">
-              {track.count > 0 ? getTraceCountLabel(track.count) : "Noch unberuehrt"}
+              {track.count > 0 ? getTraceCountLabel(track.count) : "Noch unberührt"}
             </p>
             <p className="symbol-personal-track__last">
               {track.lastPathLabel ? `Zuletzt nahe: ${track.lastPathLabel}` : "Dieses Zeichen wartet still."}
@@ -884,7 +884,7 @@ function ReflectionArticle({
           onClick={() => onRemove(reflection.id)}
           className="symbol-archive-action"
         >
-          Wegstelle loesen
+          Wegstelle lösen
         </button>
       </div>
     </article>

@@ -62,13 +62,13 @@ export function getSymbolHebrewProfile(
   );
 
   if (!mapping) {
-    warnings.push(`Kein HebrewSymbolMapping fuer Symbol-Slug "${symbolSlug}" gefunden.`);
+    warnings.push(`Kein HebrewSymbolMapping für Symbol-Slug "${symbolSlug}" gefunden.`);
   }
 
   const hebrewWordId = engineData?.hebrew.hebrewWordId ?? mapping?.primaryHebrewWordId;
 
   if (!hebrewWordId) {
-    warnings.push(`Kein HebrewWord fuer Symbol-Slug "${symbolSlug}" referenziert.`);
+    warnings.push(`Kein HebrewWord für Symbol-Slug "${symbolSlug}" referenziert.`);
   }
 
   const hebrewWord = hebrewWords.find((word) => word.id === hebrewWordId);
@@ -86,7 +86,7 @@ export function getSymbolHebrewProfile(
     .slice(0, 7);
 
   if (hebrewWordId && !hebrewWord) {
-    warnings.push(`HebrewWord "${hebrewWordId}" fuer Symbol-Slug "${symbolSlug}" fehlt.`);
+    warnings.push(`HebrewWord "${hebrewWordId}" für Symbol-Slug "${symbolSlug}" fehlt.`);
   }
 
   const letterIds = engineData?.hebrew.hebrewLetterIds ?? hebrewWord?.letterIds ?? [];
@@ -94,7 +94,7 @@ export function getSymbolHebrewProfile(
     const letter = hebrewLetters.find((candidate) => candidate.id === letterId);
 
     if (!letter) {
-      warnings.push(`HebrewLetter "${letterId}" fuer Symbol-Slug "${symbolSlug}" fehlt.`);
+      warnings.push(`HebrewLetter "${letterId}" für Symbol-Slug "${symbolSlug}" fehlt.`);
       return [];
     }
 
@@ -111,7 +111,7 @@ export function getSymbolHebrewProfile(
 
         if (!meaningField) {
           warnings.push(
-            `HebrewMeaningField "${meaningFieldId}" fuer Symbol-Slug "${symbolSlug}" fehlt.`,
+            `HebrewMeaningField "${meaningFieldId}" für Symbol-Slug "${symbolSlug}" fehlt.`,
           );
           return [];
         }

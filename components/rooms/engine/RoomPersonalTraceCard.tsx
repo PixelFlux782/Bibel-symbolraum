@@ -70,7 +70,7 @@ export function RoomPersonalTraceCard({ roomContext, symbolSlug }: RoomPersonalT
   const contextLabel = reflection && roomContext?.source !== "journey" ? getReflectionContextLabel(reflection) : undefined;
 
   return (
-    <aside className="symbol-engine__personal-trace" aria-label={preview ? "Persoenlicher Nachklang" : "Wegmarke"}>
+    <aside className="symbol-engine__personal-trace" aria-label={preview ? "Persönlicher Nachklang" : "Wegmarke"}>
       {preview ? (
         <>
           <p className="symbol-engine__personal-trace-title">Auf deinem Weg</p>

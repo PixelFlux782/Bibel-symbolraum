@@ -8,7 +8,7 @@ import { resolveRoomContext } from "@/lib/rooms/roomContext";
 
 export const metadata = {
   title: "Feuer-Raum",
-  description: "Ein Symbolraum zu \u05d0\u05e9 / Esh / Feuer.",
+  description: "Ein Symbolraum zu \u05d0\u05e9 / Esch / Feuer.",
 };
 
 export default async function FeuerRaumPage({ searchParams }: { searchParams: RoomSearchParams }) {

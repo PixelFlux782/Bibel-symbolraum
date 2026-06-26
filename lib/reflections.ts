@@ -327,14 +327,14 @@ export function resolveReflectionReturnLinks(reflection: StoredReflection): Refl
     const links: ReflectionReturnLink[] = [];
 
     if (reflection.codexHref) {
-      pushUniqueLink(links, { key: "codex", label: "Codex oeffnen", href: reflection.codexHref });
+      pushUniqueLink(links, { key: "codex", label: "Codex öffnen", href: reflection.codexHref });
     }
 
     if (reflection.roomHref) {
-      pushUniqueLink(links, { key: "room", label: "In den Raum zurueckkehren", href: reflection.roomHref });
+      pushUniqueLink(links, { key: "room", label: "In den Raum zurückkehren", href: reflection.roomHref });
     }
 
-    pushUniqueLink(links, { key: "symbol-network", label: "Symbolnetz oeffnen", href: "/symbolnetz" });
+    pushUniqueLink(links, { key: "symbol-network", label: "Symbolnetz öffnen", href: "/symbolnetz" });
 
     return links;
   }
@@ -356,7 +356,7 @@ export function resolveReflectionReturnLinks(reflection: StoredReflection): Refl
   pushUniqueLink(links, { key: "codex", label: getReflectionCodexReturnLabel(bridge.symbolId, bridge.label), href: getCodexHref(bridge.symbolId) });
   pushUniqueLink(links, {
     key: "room",
-    label: `In den ${bridge.roomLabel} zurueckkehren`,
+    label: `In den ${bridge.roomLabel} zurückkehren`,
     href: roomHref,
   });
   pushUniqueLink(links, { key: "symbol-network", label: `${bridge.label} im Symbolnetz ansehen`, href: getSymbolNetworkHref(bridge.symbolId) });

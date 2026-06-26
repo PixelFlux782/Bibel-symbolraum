@@ -65,7 +65,7 @@ function deriveCodexWaymark({
 
   if (matchingOpening?.source === "codex" && personalWay.reflectedAnchors.includes(entryId)) {
     return {
-      text: "Von hier oeffnet sich ein naechster Raum.",
+      text: "Von hier öffnet sich ein nächster Raum.",
       opening: matchingOpening,
     };
   }
@@ -84,7 +84,7 @@ function deriveCodexWaymark({
 
   if (matchingOpening) {
     return {
-      text: "Von hier oeffnet sich ein naechster Raum.",
+      text: "Von hier öffnet sich ein nächster Raum.",
       opening: matchingOpening,
     };
   }
@@ -170,7 +170,7 @@ export function CodexPersonalTraceCard({
           </Link>
           {traceRoomHref ? (
             <Link href={traceRoomHref} className="symbol-archive-action symbol-archive-action--quiet">
-              In den Raum zurueckkehren
+              In den Raum zurückkehren
             </Link>
           ) : null}
         </div>

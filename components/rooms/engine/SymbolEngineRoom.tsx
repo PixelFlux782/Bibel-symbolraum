@@ -88,7 +88,7 @@ function WaterFirstEntryNotice({ symbolSlug }: { symbolSlug: string }) {
     <aside className="symbol-engine__first-entry" aria-label="Erster Eintritt">
       <p className="symbol-engine__first-entry-title">Erster Eintritt</p>
       <p className="symbol-engine__first-entry-copy">
-        Der Wasser-Raum oeffnet sich in der Tiefe. Wenn du antwortest, bleibt hier dein erster Nachklang.
+        Der Wasser-Raum öffnet sich in der Tiefe. Wenn du antwortest, bleibt hier dein erster Nachklang.
       </p>
     </aside>
   );
@@ -131,8 +131,8 @@ const nextRoomNotices: Record<string, {
     buttonLabel: "Den Feuer-Raum betreten",
     copy: (
       <>
-        Wo Licht offenbar wird, beginnt auch Feuer: nicht als Zerst&ouml;rung, sondern als L&auml;uterung,
-        W&auml;rme und innere Wandlung.
+        Wo Licht offenbar wird, beginnt auch Feuer: nicht als Zerstörung, sondern als Läuterung,
+        Wärme und innere Wandlung.
       </>
     ),
     fallbackHref: "/raeume/feuer",
@@ -143,8 +143,8 @@ const nextRoomNotices: Record<string, {
     buttonLabel: "Den Wüste-Raum betreten",
     copy: (
       <>
-        Was im Feuer gel&auml;utert wurde, tritt in die W&uuml;ste: in den Raum der Leere, der Pr&uuml;fung
-        und der h&ouml;rbaren Stimme.
+        Was im Feuer geläutert wurde, tritt in die Wüste: in den Raum der Leere, der Prüfung
+        und der hörbaren Stimme.
       </>
     ),
     fallbackHref: "/raeume/wueste",
@@ -155,7 +155,7 @@ const nextRoomNotices: Record<string, {
     buttonLabel: "Den Brot-Raum betreten",
     copy: (
       <>
-        In der W&uuml;ste wird der Mangel h&ouml;rbar. Dort, wo nichts festzuhalten bleibt, erscheint Brot
+        In der Wüste wird der Mangel hörbar. Dort, wo nichts festzuhalten bleibt, erscheint Brot
         als Gabe in der Leere.
       </>
     ),
@@ -237,7 +237,7 @@ function RoomOnwardLinks({ data, context }: { data: SymbolEngineData; context?: 
       <div>
         <Link href="/mein-pfad">Den Weg ansehen</Link>
         <Link href={codexHref}>{data.symbolLabel} im Codex lesen</Link>
-        <Link href={symbolNetworkHref}>Zum Symbolnetz zurueckkehren</Link>
+        <Link href={symbolNetworkHref}>Zum Symbolnetz zurückkehren</Link>
         {contextReturnLink ? <Link href={contextReturnLink.returnHref}>{contextReturnLink.returnLabel}</Link> : null}
       </div>
     </div>
@@ -284,7 +284,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
 
       <section className="symbol-engine__content" key={`${activeState.id}-content`}>
         <nav className="mb-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-foreground-strong/45" aria-label="Raumweg">
-          <span>Raeume</span>
+          <span>Räume</span>
           <span aria-hidden="true">-&gt;</span>
           <span>{data.symbolLabel}</span>
         </nav>
@@ -321,7 +321,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         <div className="symbol-engine__dimension-bar">
           <p>Bedeutungsebene</p>
           <div>
-            <button type="button" className={engine.activeDimension === "hebrew" ? "is-active" : ""} onClick={() => engine.setActiveDimension("hebrew")}>Hebraeisch</button>
+            <button type="button" className={engine.activeDimension === "hebrew" ? "is-active" : ""} onClick={() => engine.setActiveDimension("hebrew")}>Hebräisch</button>
             <button type="button" className={engine.activeDimension === "biblical" ? "is-active" : ""} onClick={() => engine.setActiveDimension("biblical")}>Bibelstelle</button>
             <button type="button" className={engine.activeDimension === "connections" ? "is-active" : ""} onClick={() => engine.setActiveDimension("connections")}>Symbolnetz</button>
           </div>

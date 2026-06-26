@@ -5,10 +5,10 @@ export default function WasserTiefePage() {
     <CinematicRoom
       eyebrow="Wasser / Tiefe"
       title="Innerer Raum"
-      copy="Unter der Oberflaeche wird Wasser zum Bild fuer Erinnerung, Angst, Reinigung und die leise Bereitschaft, neu zu werden."
+      copy="Unter der Oberfläche wird Wasser zum Bild für Erinnerung, Angst, Reinigung und die leise Bereitschaft, neu zu werden."
       links={[
-        { href: "/symbol/wasser", label: "Zurueck zum Wasser-Raum", meta: "Symbol" },
-        { href: "/symbol/wasser/hebraeisch", label: "Weiter zur Sprache", meta: "Hebraeisch" },
+        { href: "/symbol/wasser", label: "Zurück zum Wasser-Raum", meta: "Symbol" },
+        { href: "/symbol/wasser/hebraeisch", label: "Weiter zur Sprache", meta: "Hebräisch" },
       ]}
     />
   );

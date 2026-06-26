@@ -80,7 +80,7 @@ export function HebrewLayer({ activeLetter, data, scenes, state, onSelect }: Heb
 
       {codex.relatedHebrewWords.length > 1 ? (
         <div className="symbol-engine__codex-stage">
-          <p>Nahe hebr&auml;ische Resonanz</p>
+          <p>Nahe hebräische Resonanz</p>
           <div className="symbol-engine__codex-cluster">
             {codex.relatedHebrewWords
               .filter((word) => word.id !== codex.hebrewWord?.id)

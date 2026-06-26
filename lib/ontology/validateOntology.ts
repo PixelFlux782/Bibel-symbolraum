@@ -66,11 +66,11 @@ export function validateOntology(
 
   for (const entity of entities) {
     if (!entity.id.trim()) {
-      errors.push("OntologyEntity benoetigt eine id.");
+      errors.push("OntologyEntity benötigt eine id.");
     }
 
     if (!entity.title.trim()) {
-      errors.push(`OntologyEntity "${entity.id}" benoetigt einen title.`);
+      errors.push(`OntologyEntity "${entity.id}" benötigt einen title.`);
     }
 
     if (entity.primaryHierarchyId && !getHierarchyEntry(entity.primaryHierarchyId)) {
@@ -131,11 +131,11 @@ export function validateOntology(
 
   for (const relation of relations) {
     if (!relation.sourceId.trim()) {
-      errors.push(`OntologyRelation "${relation.id}" benoetigt eine sourceId.`);
+      errors.push(`OntologyRelation "${relation.id}" benötigt eine sourceId.`);
     }
 
     if (!relation.targetId.trim()) {
-      errors.push(`OntologyRelation "${relation.id}" benoetigt eine targetId.`);
+      errors.push(`OntologyRelation "${relation.id}" benötigt eine targetId.`);
     }
 
     if (relation.sourceId && !entityIds.has(relation.sourceId)) {
@@ -152,15 +152,15 @@ export function validateOntology(
     }
 
     if (!relation.title.trim()) {
-      errors.push(`OntologyRelation "${relation.id}" benoetigt einen title.`);
+      errors.push(`OntologyRelation "${relation.id}" benötigt einen title.`);
     }
 
     if (!relation.shortResonance.trim()) {
-      errors.push(`OntologyRelation "${relation.id}" benoetigt eine shortResonance.`);
+      errors.push(`OntologyRelation "${relation.id}" benötigt eine shortResonance.`);
     }
 
     if ("strength" in relation && relation.strength === undefined) {
-      errors.push(`OntologyRelation "${relation.id}" benoetigt eine strength, wenn das Feld vorhanden ist.`);
+      errors.push(`OntologyRelation "${relation.id}" benötigt eine strength, wenn das Feld vorhanden ist.`);
     }
 
     if (relation.type === "resonates_with") {

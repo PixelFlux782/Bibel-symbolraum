@@ -42,24 +42,24 @@ export const biblicalReferences: BiblicalReference[] = [
   {
     id: "exodus-13-21",
     reference: "Exodus 13,21",
-    label: "Feuersaeule",
+    label: "Feuersäule",
   },
   {
     id: "malachi-3-2-3",
     reference: "Maleachi 3,2-3",
-    label: "Laeuterndes Feuer",
+    label: "Läuterndes Feuer",
     aliases: ["Maleachi 3"],
   },
   {
     id: "exodus-wilderness",
     reference: "Exodus 16",
-    label: "Israel in der Wueste",
-    aliases: ["Exodus Wueste"],
+    label: "Israel in der Wüste",
+    aliases: ["Exodus Wüste"],
   },
   {
     id: "deuteronomy-8",
     reference: "Deuteronomium 8",
-    label: "Der Weg durch die Wueste",
+    label: "Der Weg durch die Wüste",
   },
   {
     id: "matthew-4",
@@ -74,7 +74,7 @@ export const biblicalReferences: BiblicalReference[] = [
   {
     id: "exodus-16-4",
     reference: "Exodus 16,4",
-    label: "Manna in der Wueste",
+    label: "Manna in der Wüste",
   },
   {
     id: "deuteronomy-8-3",

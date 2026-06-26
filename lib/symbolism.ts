@@ -177,7 +177,7 @@ export const waterSymbolGraph: SymbolGraph = {
       type: "hebrew-word",
       label: "Majim",
       hebrew: "מים",
-      transliteration: "Mayim / Majim",
+      transliteration: "Majim",
       gematria: 90,
       shortMeaning: "Die hebräische Tiefenebene des Wassers: offene Tiefe, göttlicher Impuls und geschlossene Tiefe.",
       importance: 0.96,

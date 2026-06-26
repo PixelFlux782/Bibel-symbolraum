@@ -276,7 +276,7 @@ export const symbolMeaningLinks: SymbolMeaningLink[] = [
   {
     id: "symbol-desert",
     symbolId: "wueste",
-    label: "Wueste",
+    label: "Wüste",
     aliases: ["w\u00fcste", "desert"],
     nodeIds: ["testing", "dependence", "transition", "guidance"],
   },
@@ -332,20 +332,20 @@ export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
   {
     id: "biblical-exodus-13-fire",
     biblicalReferenceId: "exodus-13-21",
-    label: "Feuersaeule",
+    label: "Feuersäule",
     nodeIds: ["fire", "presence", "guidance"],
   },
   {
     id: "biblical-malachi-3",
     biblicalReferenceId: "malachi-3-2-3",
-    label: "Laeuterndes Feuer",
+    label: "Läuterndes Feuer",
     aliases: ["Maleachi 3"],
     nodeIds: ["fire", "transformation", "purification"],
   },
   {
     id: "biblical-exodus-wilderness",
     biblicalReferenceId: "exodus-wilderness",
-    label: "Israel in der Wueste",
+    label: "Israel in der Wüste",
     nodeIds: ["desert", "lack", "dependence", "guidance"],
   },
   {
@@ -369,7 +369,7 @@ export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
   {
     id: "biblical-exodus-16-manna",
     biblicalReferenceId: "exodus-16-4",
-    label: "Manna in der Wueste",
+    label: "Manna in der Wüste",
     nodeIds: ["desert", "lack", "gift", "nourishment"],
   },
   {

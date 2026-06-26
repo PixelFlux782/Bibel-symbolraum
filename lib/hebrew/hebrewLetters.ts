@@ -68,9 +68,9 @@ export const hebrewLetters: HebrewLetter[] = [
     numericValue: 4,
     alphabetPosition: 4,
     symbolism: [
-      interpretive("dalet-threshold", "Schwelle", "Kann als Schwelle, Tuer und Eintritt gelesen werden."),
+      interpretive("dalet-threshold", "Schwelle", "Kann als Schwelle, Tür und Eintritt gelesen werden."),
     ],
-    archetypalMeanings: ["Schwelle", "Tuer", "Eintritt"],
+    archetypalMeanings: ["Schwelle", "Tür", "Eintritt"],
     relatedSymbolSlugs: ["wueste"],
     relatedWordIds: ["midbar", "davar"],
     biblicalReferences: [],
@@ -98,9 +98,9 @@ export const hebrewLetters: HebrewLetter[] = [
     numericValue: 6,
     alphabetPosition: 6,
     symbolism: [
-      interpretive("vav-connection", "Verbindung", "Kann als Verbindung, Traeger und vermittelnde Linie gelesen werden."),
+      interpretive("vav-connection", "Verbindung", "Kann als Verbindung, Träger und vermittelnde Linie gelesen werden."),
     ],
-    archetypalMeanings: ["Verbindung", "Traeger", "Vermittlung"],
+    archetypalMeanings: ["Verbindung", "Träger", "Vermittlung"],
     relatedSymbolSlugs: ["licht"],
     relatedWordIds: ["or", "qol", "ruach"],
     biblicalReferences: [],

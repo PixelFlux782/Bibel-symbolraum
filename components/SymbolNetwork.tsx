@@ -140,7 +140,7 @@ type LivingConnectionData = {
 };
 
 type SymbolGraphViewMode = "OVERVIEW" | "SYMBOL_FOCUS" | "RELATION_FOCUS";
-type SymbolMobileLayer = "Uebersicht" | "Symbol" | "Resonanz" | "Info" | "Beziehung";
+type SymbolMobileLayer = "Übersicht" | "Symbol" | "Resonanz" | "Info" | "Beziehung";
 type SymbolLensMode = "meaning" | "story" | "hebrew" | "gematria" | "journey";
 type SymbolInspectorFocus = "meaning" | "hebrew" | "gematria" | "story" | "subspaces" | "codex" | "room";
 type SymbolCodexFocusParam = "overview" | "meaning" | "hebrew" | "gematria" | "story" | "spaces";
@@ -178,7 +178,7 @@ type SearchResonanceGroupItem = {
   registryIndex: number;
 };
 
-type SymbolSearchSuggestionKind = "Symbol" | "Hebraeisch" | "Bedeutung" | "Thora" | "Spur";
+type SymbolSearchSuggestionKind = "Symbol" | "Hebräisch" | "Bedeutung" | "Thora" | "Spur";
 
 type SymbolSearchSuggestion = {
   id: string;
@@ -344,14 +344,14 @@ const SYMBOL_LENS_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 const CURATED_RESONANCE_JOURNEY_ID = "journey-wasser-wueste-brot";
 const CURATED_RESONANCE_PRIMARY_CONNECTION_IDS = ["resonance-wasser-wueste", "resonance-wueste-brot"];
 const CURATED_RESONANCE_SECONDARY_CONNECTION_IDS = ["resonance-wasser-brot"];
-const CURATED_RESONANCE_INSCRIPTION = "Wasser ist Ursprung. Die Wueste ist der Weg. Das Brot ist die Erfuellung.";
+const CURATED_RESONANCE_INSCRIPTION = "Wasser ist Ursprung. Die Wüste ist der Weg. Das Brot ist die Erfüllung.";
 const CURATED_RESONANCE_VISUAL_CONNECTIONS: ResonanceConnection[] = [
   {
     id: "resonance-wasser-wueste",
     sourceId: "wasser",
     targetId: "wueste",
     resonanceType: "story",
-    title: "Weg der Pruefung",
+    title: "Weg der Prüfung",
     shortResonance: "Erst die Leere zeigt, wonach die Tiefe sucht.",
     explanation: "",
     strength: 1,
@@ -385,20 +385,20 @@ const CURATED_RESONANCE_VISUAL_CONNECTIONS: ResonanceConnection[] = [
 ];
 const SYMBOL_LENS_MODE_LABELS: Record<SymbolLensMode, string> = {
   meaning: "Bedeutung",
-  story: "Erzaehlung",
-  hebrew: "Hebraeisch",
+  story: "Erzählung",
+  hebrew: "Hebräisch",
   gematria: "Zahl",
-  journey: "Erzaehlung",
+  journey: "Erzählung",
 };
 const SYMBOL_LENS_MODE_NOTES: Record<SymbolLensMode, string> = {
   meaning: "Bedeutungsfelder und lokale Meaning-Verbindungen bleiben sichtbar.",
-  story: "Story, Spur und Resonanz erscheinen als gemeinsame Erzaehlspur.",
-  hebrew: "Das hebraeische Wort oeffnet seine Buchstaben als innere Spur.",
+  story: "Story, Spur und Resonanz erscheinen als gemeinsame Erzählspur.",
+  hebrew: "Das hebräische Wort öffnet seine Buchstaben als innere Spur.",
   gematria: "Zahlenresonanzen erscheinen als leise Zeichen im Raum.",
-  journey: "Story, Spur und Resonanz erscheinen als gemeinsame Erzaehlspur.",
+  journey: "Story, Spur und Resonanz erscheinen als gemeinsame Erzählspur.",
 };
 const SYMBOL_VIEWPORT_LABELS: Record<SymbolViewportMode, string> = {
-  overview: "Uebersicht",
+  overview: "Übersicht",
   focus: "Fokus",
   detail: "Detail",
   deep: "Tiefe",
@@ -406,8 +406,8 @@ const SYMBOL_VIEWPORT_LABELS: Record<SymbolViewportMode, string> = {
 const SYMBOL_VIEWPORT_HINTS: Record<SymbolViewportMode, string> = {
   overview: "Die grossen Zeichen bleiben sichtbar.",
   focus: "Nahe Resonanzen treten hervor.",
-  detail: "Unterraeume werden leise sichtbar.",
-  deep: "Erzaehlungen und Verse oeffnen Tiefe.",
+  detail: "Unterräume werden leise sichtbar.",
+  deep: "Erzählungen und Verse öffnen Tiefe.",
 };
 const BACK_VIEWPORT_TARGETS: Partial<Record<SymbolViewportMode, SymbolViewportMode>> = {
   deep: "detail",
@@ -476,7 +476,7 @@ const LANDSCAPE_DISCLOSURE_PROFILES: Record<string, LandscapeDisclosureProfile> 
   },
   feuer: {
     response: "Nach der Glut bleibt die Weite.",
-    movement: ["Esch", "Mizbeach", "Korban", "Ruach", "Wueste"],
+    movement: ["Esch", "Mizbeach", "Korban", "Ruach", "Wüste"],
   },
   wueste: {
     response: "Im Mangel erscheint die Gabe.",
@@ -584,7 +584,7 @@ const WATER_SUBSPACE_DETAILS: Record<string, string> = {
 
 const INSPECTOR_GUIDING_LINES: Record<Exclude<SymbolInspectorFocus, "codex" | "room">, string> = {
   meaning: "Wasser öffnet Übergänge zwischen Tiefe, Reinigung und Leben.",
-  hebrew: "Das Wort selbst trägt die Bewegung von Tiefe - Ursprung - Tiefe.",
+  hebrew: "Das Wort selbst trägt die Bewegung von Tiefe – Ursprung – Tiefe.",
   gematria: "Die Zahl zeigt die verborgene Struktur des Wortes.",
   story: "Die Spur zeigt eine Bewegung vom Ursprung zur Gabe.",
   subspaces: "Die Gestalten des Wassers machen seine Bedeutungen erfahrbar.",
@@ -595,7 +595,7 @@ function getNodePosition(nodeId: string) {
 
   if (!position && process.env.NODE_ENV !== "production" && !missingPositionWarnings.has(nodeId)) {
     missingPositionWarnings.add(nodeId);
-    console.warn(`SymbolNetwork: Position fuer Node "${nodeId}" fehlt. Fallback wird verwendet.`);
+    console.warn(`SymbolNetwork: Position für Node "${nodeId}" fehlt. Fallback wird verwendet.`);
   }
 
   return position ?? fallbackPosition;
@@ -860,7 +860,7 @@ function getSymbolIdForCodexEntry(entry: CodexEntry) {
 
 function getCodexSuggestionKind(entry: CodexEntry): SymbolSearchSuggestionKind {
   if (entry.type === "symbol") return "Symbol";
-  if (entry.type === "hebrew-word" || entry.type === "hebrew-letter" || entry.type === "number") return "Hebraeisch";
+  if (entry.type === "hebrew-word" || entry.type === "hebrew-letter" || entry.type === "number") return "Hebräisch";
   if (entry.type === "scripture") return "Thora";
   if (entry.type === "journey") return "Spur";
   return "Bedeutung";
@@ -950,7 +950,7 @@ function getSymbolSearchSuggestions(query: string): SymbolSearchSuggestion[] {
       id: `hebrew:${link.id}`,
       title: getSymbolLabel(symbolId),
       detail: `${link.hebrew} / ${link.transliteration}`,
-      kind: "Hebraeisch",
+      kind: "Hebräisch",
       symbolId,
       value: link.transliteration,
       priority: suggestionScore(query, values, 12),
@@ -1047,10 +1047,10 @@ function getOntologyRelationDeepeningText(relation: OntologyRelation) {
 
   if (displayText) return displayText;
   if (source?.summary && target?.title) {
-    return `${source.summary} So beruehrt ${source.title} ${target.title}.`;
+    return `${source.summary} So berührt ${source.title} ${target.title}.`;
   }
 
-  return `${getOntologyDisplayLabel(relation.sourceId)} und ${getOntologyDisplayLabel(relation.targetId)} oeffnen hier eine gemeinsame Bedeutungsspur.`;
+  return `${getOntologyDisplayLabel(relation.sourceId)} und ${getOntologyDisplayLabel(relation.targetId)} öffnen hier eine gemeinsame Bedeutungsspur.`;
 }
 
 function collectOntologyContextIds(symbolId: string) {
@@ -1144,7 +1144,7 @@ function getLetterDiscoveryText(letterId: string) {
   }
 
   if (letterId === "mem") {
-    return "Die Wasserform des Werdens. Mem umhuellt, traegt und verbirgt den Ursprung im Inneren.";
+    return "Die Wasserform des Werdens. Mem umhüllt, trägt und verbirgt den Ursprung im Inneren.";
   }
 
   return "";
@@ -1291,7 +1291,7 @@ function getPathResonanceText(path: SymbolMeaningPath, bridge?: MeaningBridge, r
     ?? PATH_RESONANCE_FALLBACKS[getPathKey(path.from, path.to)]
     ?? path.bridgeDescription
     ?? path.summary
-    ?? `${getSymbolLabel(path.from)} und ${getSymbolLabel(path.to)} gehoeren in einer gemeinsamen Bedeutung zusammen.`;
+    ?? `${getSymbolLabel(path.from)} und ${getSymbolLabel(path.to)} gehören in einer gemeinsamen Bedeutung zusammen.`;
 
   return compactResonanceText(sourceText);
 }
@@ -1498,7 +1498,7 @@ function getSymbolLensData(symbolId: string): SymbolLensData | null {
   }
 
   if (storyConnections.length > 0 || journeys.length > 0 || resonanceJourneys.length > 0) {
-    addNode("story", "Erzaehlspur", resonanceJourneys[0]?.title ?? storyConnections[0]?.title ?? journeys[0]?.title ?? "Erzaehlung");
+    addNode("story", "Erzählspur", resonanceJourneys[0]?.title ?? storyConnections[0]?.title ?? journeys[0]?.title ?? "Erzählung");
     lensMeaningNodeIds.story = Array.from(new Set(journeys.flatMap((journey) => journey.meaningNodePath)));
   }
 
@@ -1652,7 +1652,7 @@ function HebrewResonanceLinks({
   if (words.length === 0) return null;
 
   return (
-    <div className="symbol-inspector-ctas" aria-label="Nahe hebraeische Resonanz">
+    <div className="symbol-inspector-ctas" aria-label="Nahe hebräische Resonanz">
       {words.map((word) => (
         <Link key={word.id} href={`/codex/${word.id}?from=symbolnetz&symbol=${symbolId}&focus=hebrew&lens=hebrew`} className="symbol-archive-action">
           <span lang="he" dir="rtl">{word.hebrew}</span> {word.transliteration}
@@ -1690,7 +1690,7 @@ function getSymbolWayMemoryNotice(personalWay: PersonalWay | null, symbolId: str
   }
 
   if (personalWay?.touchedSymbols.includes(symbolId)) {
-    return "Dieses Zeichen wurde auf deinem Weg schon beruehrt.";
+    return "Dieses Zeichen wurde auf deinem Weg schon berührt.";
   }
 
   return null;
@@ -1962,7 +1962,7 @@ function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
           <p><strong>{transitionWay.title}</strong> {transitionWay.shortMeaning}</p>
           <div className="symbol-inspector-room-movement">
             <span>Bereitet vor: {transitionWay.targetLabel}</span>
-            <span>{transitionWay.isCycleReturn ? "Kein Neustart, sondern Rueckbindung an den Ursprung." : `Aus ${transitionWay.sourceLabel} geht ${transitionWay.targetLabel} hervor.`}</span>
+            <span>{transitionWay.isCycleReturn ? "Kein Neustart, sondern Rückbindung an den Ursprung." : `Aus ${transitionWay.sourceLabel} geht ${transitionWay.targetLabel} hervor.`}</span>
           </div>
           <p>Getragen von: {transitionWay.stations.slice(1, -1).map((station) => station.label).join(" - ")}</p>
           <RoomTransitionWayInline way={transitionWay} />
@@ -1985,7 +1985,7 @@ function SymbolJourneyInspectorNotice({ symbolId }: { symbolId: string }) {
         </>
       )}
       <div>
-        <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF}>Spur in Mein Pfad oeffnen</Link>
+        <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF}>Spur in Mein Pfad öffnen</Link>
         <Link href={step.roomHref}>Den Raum dieser Spur betreten</Link>
       </div>
       {!transitionWay && hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
@@ -2048,10 +2048,10 @@ function SymbolLensFocusDetail({
   const activeLabel = activeInspectorFocus
     ? {
       meaning: "Bedeutung",
-      hebrew: "Hebraeisch",
+      hebrew: "Hebräisch",
       gematria: "Zahl",
-      story: "Erzaehlspur",
-      subspaces: "Unterraeume",
+      story: "Erzählspur",
+      subspaces: "Unterräume",
       codex: "Codex",
       room: "Raum",
     }[activeInspectorFocus]
@@ -2143,7 +2143,7 @@ function SymbolLensFocusDetail({
 
         <section className={activeInspectorFocus === "hebrew" ? "is-open" : ""}>
           <button type="button" onClick={() => onSelectFocus("hebrew")} aria-expanded={activeInspectorFocus === "hebrew"}>
-            Hebraeisch entdecken
+            Hebräisch entdecken
           </button>
           {activeInspectorFocus === "hebrew" ? (
             <div className="symbol-inspector-accordion__content">
@@ -2153,10 +2153,10 @@ function SymbolLensFocusDetail({
                   <h3>Das hebräische Wort</h3>
                   <p lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</p>
                   <p>{hebrewWord?.transliteration ?? activeSymbol.transliteration}</p>
-                  <p>Mem - Jod - Mem</p>
-                  <p>Wasser beginnt und endet mit Mem. In der Mitte steht Jod - ein kleiner Punkt von Richtung, Same oder Ursprung.</p>
+                  <p>Mem – Jod – Mem</p>
+                  <p>Wasser beginnt und endet mit Mem. In der Mitte steht Jod – ein kleiner Punkt von Richtung, Same oder Ursprung.</p>
                   <InspectorStationList stations={WATER_HEBREW_STATIONS} />
-                  <p className="symbol-kicker text-cyan-soft">Nahe hebr&auml;ische Resonanz</p>
+                  <p className="symbol-kicker text-cyan-soft">Nahe hebräische Resonanz</p>
                   <HebrewResonanceLinks symbolId={activeSymbol.id} excludeWordId={hebrewWord?.id} />
                   {hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
                   <InspectorCtaList ctas={[
@@ -2170,7 +2170,7 @@ function SymbolLensFocusDetail({
                   <p lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</p>
                   <p>{hebrewWord?.transliteration ?? activeSymbol.transliteration}</p>
                   <p>{hebrewLettersText || uniqueLetters.map((letter) => letter.name).join(" - ") || "Buchstaben noch nicht hinterlegt"}</p>
-                  <p className="symbol-kicker text-cyan-soft">W&ouml;rter im selben Bedeutungsfeld</p>
+                  <p className="symbol-kicker text-cyan-soft">Wörter im selben Bedeutungsfeld</p>
                   <HebrewResonanceLinks symbolId={activeSymbol.id} excludeWordId={hebrewWord?.id} />
                   {hebrewMovement ? <InspectorHebrewMovement movement={hebrewMovement} /> : null}
                 </>
@@ -2190,7 +2190,7 @@ function SymbolLensFocusDetail({
                   <InspectorLeitsatz>{INSPECTOR_GUIDING_LINES.gematria}</InspectorLeitsatz>
                   <h3>Zahlbewegung von Majim</h3>
                   <p><span lang="he" dir="rtl">{hebrewWord?.hebrew ?? activeSymbol.hebrew}</span> = Mem 40 + Jod 10 + Mem 40 = 90</p>
-                  <p>Die Zahl 90 sammelt die Bewegung von Tiefe - Punkt - Tiefe. Wasser erscheint hier als Raum, in dem Ursprung verborgen liegt und Leben vorbereitet wird.</p>
+                  <p>Die Zahl 90 sammelt die Bewegung von Tiefe – Punkt – Tiefe. Wasser erscheint hier als Raum, in dem Ursprung verborgen liegt und Leben vorbereitet wird.</p>
                   <InspectorStationList stations={WATER_GEMATRIA_STATIONS} />
                   <InspectorCtaList ctas={[
                     { label: "Zahl 40 im Codex lesen", href: number40CodexHref },
@@ -2210,7 +2210,7 @@ function SymbolLensFocusDetail({
 
         <section className={activeInspectorFocus === "story" ? "is-open" : ""}>
           <button type="button" onClick={() => onSelectFocus("story")} aria-expanded={activeInspectorFocus === "story"}>
-            Erzaehlspur oeffnen
+            Erzählspur öffnen
           </button>
           {activeInspectorFocus === "story" ? (
             <div className="symbol-inspector-accordion__content">
@@ -2232,7 +2232,7 @@ function SymbolLensFocusDetail({
               )}
               {showResonanceJourneyOption && discoverableResonanceJourney ? (
                 <button type="button" onClick={() => onActivateResonanceJourney(discoverableResonanceJourney.id)} className="symbol-archive-action">
-                  Resonanzspur oeffnen
+                  Resonanzspur öffnen
                 </button>
               ) : null}
             </div>
@@ -2241,7 +2241,7 @@ function SymbolLensFocusDetail({
 
         <section className={activeInspectorFocus === "subspaces" ? "is-open" : ""}>
           <button type="button" onClick={() => onSelectFocus("subspaces")} aria-expanded={activeInspectorFocus === "subspaces"}>
-            Unterraeume ansehen
+            Unterräume ansehen
           </button>
           {activeInspectorFocus === "subspaces" ? (
             <div className="symbol-inspector-accordion__content">
@@ -2265,7 +2265,7 @@ function SymbolLensFocusDetail({
                   </div>
                 </>
               ) : (
-                <p>Keine Unterraeume fuer diesen Fokus sichtbar.</p>
+                <p>Keine Unterräume für diesen Fokus sichtbar.</p>
               )}
             </div>
           ) : null}
@@ -2527,7 +2527,7 @@ function LandscapeDisclosureDetail({
 
       {disclosureLevel >= 4 ? (
         <div className="symbol-disclosure__layer">
-          <p className="symbol-kicker text-cyan-soft">Welche Tueren oeffnen sich?</p>
+          <p className="symbol-kicker text-cyan-soft">Welche Türen öffnen sich?</p>
           <div className="symbol-disclosure__doors">
             <RoomTransitionButton href={roomHref} className="symbol-cta w-full">
               {symbolBridge?.ctaLabels.room ?? `${activeSymbol.label}-Raum betreten`}
@@ -2538,10 +2538,10 @@ function LandscapeDisclosureDetail({
               </Link>
             ) : null}
             <button type="button" onClick={() => onSelectFocus("story")} className="symbol-archive-action">
-              Journey oeffnen
+              Journey öffnen
             </button>
             <button type="button" onClick={() => onSelectFocus("subspaces")} className="symbol-archive-action">
-              Unterraeume ansehen
+              Unterräume ansehen
             </button>
             <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF} className="symbol-archive-action">
               Mein Pfad
@@ -2605,7 +2605,7 @@ function MobileSymbolJourney({
       <section className="symbol-mobile-guide md:hidden" aria-label="Mobile Symbolreise">
         <p className="symbol-kicker text-cyan-soft">Erster Eintritt</p>
         <h2>Die Landschaft liegt offen.</h2>
-        <p className="symbol-copy mt-3 text-sm">Wasser liegt nah. Andere Raeume warten weiter draussen.</p>
+        <p className="symbol-copy mt-3 text-sm">Wasser liegt nah. Andere Räume warten weiter draussen.</p>
         <div className="symbol-mobile-gates">
           {gateSymbols.map((node) => (
             <button
@@ -2955,7 +2955,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       const hebrew = profile.hebrewWord?.hebrew ?? symbol?.hebrew ?? "";
       const wordValue = hebrew ? calculateGematria(hebrew) : 0;
       const numbers: NumberNodeData[] = wordValue > 0
-        ? [{ kind: "number", value: wordValue, label: profile.hebrewWord?.transliteration ?? symbol?.transliteration ?? "Wort", note: "Zahlenwert des hebraeischen Wortes" }]
+        ? [{ kind: "number", value: wordValue, label: profile.hebrewWord?.transliteration ?? symbol?.transliteration ?? "Wort", note: "Zahlenwert des hebräischen Wortes" }]
         : [];
       const seenLetterNumbers = new Set<string>();
 
@@ -3126,7 +3126,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         ? "Resonanz"
         : hasSymbolFocus || activeLetterId
         ? "Symbol"
-        : "Uebersicht";
+        : "Übersicht";
   const hasTransientBackState = Boolean(
     activeResonanceLens
     || activeInspectorFocus
@@ -3140,7 +3140,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const canNavigateBack = hasTransientBackState || hasSymbolFocus || symbolViewportMode !== "overview";
   const isArrivalMoment = !hasSymbolFocus && !hasTransientBackState && symbolViewportMode === "overview";
   const breadcrumbItems = useMemo(() => {
-    const items = ["Uebersicht"];
+    const items = ["Übersicht"];
 
     if (hasSymbolFocus || hasTransientBackState || symbolViewportMode !== "overview") {
       items.push(activeSymbol.label);
@@ -3151,10 +3151,10 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     } else if (activeInspectorFocus) {
       items.push({
         meaning: "Bedeutung",
-        hebrew: "Hebraeisch",
+        hebrew: "Hebräisch",
         gematria: "Zahl",
-        story: "Erzaehlspur",
-        subspaces: "Unterraeume",
+        story: "Erzählspur",
+        subspaces: "Unterräume",
         codex: "Codex",
         room: "Raum",
       }[activeInspectorFocus]);
@@ -3165,7 +3165,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     } else if (activePath) {
       items.push("Beziehung");
     } else if (activeCodexLetter) {
-      items.push("Hebraeisch");
+      items.push("Hebräisch");
     } else if (symbolViewportMode !== "overview") {
       items.push(SYMBOL_VIEWPORT_LABELS[symbolViewportMode]);
     }
@@ -4280,7 +4280,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         <div className="symbol-network-main min-w-0">
           <div className="symbol-network-orientation">
             <p>Symbolnetz</p>
-            <span>Wasser liegt nah. Brot wartet in der Mitte. Die anderen Raeume stehen in der Ferne.</span>
+            <span>Wasser liegt nah. Brot wartet in der Mitte. Die anderen Räume stehen in der Ferne.</span>
           </div>
 
           <MobileSymbolJourney
@@ -4369,7 +4369,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                   id="symbol-network-search-suggestions"
                   className="symbol-network-search__suggestions"
                   role="listbox"
-                  aria-label="Suchvorschlaege"
+                  aria-label="Suchvorschläge"
                 >
                   {searchSuggestions.length > 0 ? searchSuggestions.map((suggestion) => (
                     <button
@@ -4396,7 +4396,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               <div className="symbol-network-back-trace max-md:hidden">
                 <button type="button" className="symbol-network-back-button" onClick={navigateSymbolBack}>
                   <span aria-hidden="true">&larr;</span>
-                  Zur&uuml;ck
+                  Zurück
                 </button>
                 <p className="symbol-network-breadcrumb" aria-label="Aktuelle Position im Symbolnetz">
                   {breadcrumbItems.map((item, index) => (
@@ -4491,9 +4491,9 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 {activeRoomTransitionWay.title}
               </p>
             ) : null}
-            <div className="symbol-viewport-controls" aria-label="Kartentiefe waehlen">
-              <button type="button" onClick={() => setSymbolViewport("overview")} aria-label="Uebersicht anzeigen">
-                <span>Uebersicht</span>
+            <div className="symbol-viewport-controls" aria-label="Kartentiefe wählen">
+              <button type="button" onClick={() => setSymbolViewport("overview")} aria-label="Übersicht anzeigen">
+                <span>Übersicht</span>
               </button>
               <button type="button" onClick={() => setSymbolViewport("focus")} aria-label="Fokus anzeigen">
                 <span>Fokus</span>
@@ -4517,7 +4517,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           </div>
 
           <div className="symbol-mobile-layer-stepper mt-3 md:hidden" aria-label="Mobile Symbolnetz-Ebene">
-            {(["Uebersicht", "Symbol", "Resonanz", "Info", "Beziehung"] as const).map((layer) => (
+            {(["Übersicht", "Symbol", "Resonanz", "Info", "Beziehung"] as const).map((layer) => (
               <span key={layer} className={mobileLayerStep === layer ? "is-active" : ""}>
                 {layer}
               </span>
@@ -4527,7 +4527,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             <div className="symbol-mobile-back-row md:hidden">
               <button type="button" className="symbol-network-back-button" onClick={navigateSymbolBack}>
                 <span aria-hidden="true">&larr;</span>
-                Zur&uuml;ck
+                Zurück
               </button>
               <p className="symbol-network-breadcrumb" aria-label="Aktuelle Position im Symbolnetz">
                 {breadcrumbItems.map((item, index) => (
@@ -4540,7 +4540,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             </div>
           ) : null}
           {isLensPickerVisible && activeSymbolLensData ? (
-            <div className="symbol-mobile-lens-bar md:hidden" aria-label="Resonanz-Linse waehlen">
+            <div className="symbol-mobile-lens-bar md:hidden" aria-label="Resonanz-Linse wählen">
               {activeSymbolLensData.nodes.map((node) => (
                 <button
                   key={node.id}
@@ -4560,7 +4560,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               className="symbol-mobile-resonance-hint md:hidden"
               onClick={() => activateResonanceJourney(discoverableResonanceJourney.id)}
             >
-              Resonanzspur oeffnen
+              Resonanzspur öffnen
             </button>
           ) : null}
           {activeResonanceJourney ? (
@@ -4590,7 +4590,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           {!hasSymbolFocus && !activeResonanceJourney && !activeJourney && !activePath && !activeCodexLetter ? (
             <div className="symbol-inspector-empty mt-6">
               <p>Erster Eintritt.</p>
-              <span>Die Raeume sind schon da. Wasser ist der erste stille Nahepunkt.</span>
+              <span>Die Räume sind schon da. Wasser ist der erste stille Nahepunkt.</span>
             </div>
           ) : null}
           {activeResonanceJourney ? (
@@ -4636,7 +4636,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 <p className="symbol-copy mt-4 text-base">
                   {activeLetterResonance
                     ? `${activeCodexLetter.name} verbindet ${letterSymbols.map((symbol) => symbol.label).join(", ")} durch die Erfahrung der ${activeLetterResonance.label}.`
-                    : `${activeCodexLetter.name} verbindet ${letterSymbols.map((symbol) => symbol.label).join(", ")}. Beruehre den Buchstaben, um bis zu drei Resonanzen zu oeffnen.`}
+                    : `${activeCodexLetter.name} verbindet ${letterSymbols.map((symbol) => symbol.label).join(", ")}. Berühre den Buchstaben, um bis zu drei Resonanzen zu öffnen.`}
                 </p>
                 {isLetterResonanceOpen && letterResonances.length > 0 ? (
                   <div className="letter-resonance-pills mt-5" aria-label="Buchstabenresonanzen">
@@ -4656,11 +4656,11 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               <div className="letter-inspector-accordions mt-7">
                 <details>
                   <summary>Bibelanker</summary>
-                  <p>{activeLetterSourcePath?.evidence ?? activeCodexLetter.biblicalReferences[0]?.reference ?? "Noch kein direkter Anker gewaehlt."}</p>
+                  <p>{activeLetterSourcePath?.evidence ?? activeCodexLetter.biblicalReferences[0]?.reference ?? "Noch kein direkter Anker gewählt."}</p>
                 </details>
                 <details>
                   <summary>Spuren</summary>
-                  <p>{network.journeys.find((journey) => journey.symbolPath.some((symbolId) => letterSymbolIds.has(symbolId)))?.title ?? "Noch keine Spur fuer diese Buchstabenspur."}</p>
+                  <p>{network.journeys.find((journey) => journey.symbolPath.some((symbolId) => letterSymbolIds.has(symbolId)))?.title ?? "Noch keine Spur für diese Buchstabenspur."}</p>
                 </details>
                 <details>
                   <summary>Codex</summary>

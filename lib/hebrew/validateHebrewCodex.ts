@@ -27,11 +27,11 @@ function validateWord(
   const errors: string[] = [];
 
   if (word.germanMeaning.trim() === "") {
-    errors.push(`HebrewWord "${word.id}" benoetigt eine deutsche Grundbedeutung.`);
+    errors.push(`HebrewWord "${word.id}" benötigt eine deutsche Grundbedeutung.`);
   }
 
   if (word.meaningThreshold.trim() === "") {
-    errors.push(`HebrewWord "${word.id}" benoetigt eine kurze Bedeutungsschwelle.`);
+    errors.push(`HebrewWord "${word.id}" benötigt eine kurze Bedeutungsschwelle.`);
   }
 
   const sentenceCount = word.meaningThreshold
@@ -40,7 +40,7 @@ function validateWord(
     .filter(Boolean).length;
 
   if (sentenceCount > 2) {
-    errors.push(`HebrewWord "${word.id}" darf hoechstens zwei Saetze als Bedeutungsschwelle fuehren.`);
+    errors.push(`HebrewWord "${word.id}" darf höchstens zwei Sätze als Bedeutungsschwelle führen.`);
   }
 
   for (const letterId of word.letterIds) {

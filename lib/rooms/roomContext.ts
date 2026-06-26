@@ -48,12 +48,12 @@ const patternRoomStations: Record<string, { roomId: string; title: string; text:
   "pattern-gabe-im-mangel": {
     roomId: "wueste",
     title: "In die Wüste eintreten",
-    text: "Der Mangel wird hier nicht erklaert, sondern als Raum spuerbar.",
+    text: "Der Mangel wird hier nicht erklärt, sondern als Raum spürbar.",
   },
   "pattern-pruefung-durch-entzug": {
     roomId: "wueste",
     title: "Wüstenraum betreten",
-    text: "Der Entzug wird hier als Stille, Mangel und Pruefung erfahrbar.",
+    text: "Der Entzug wird hier als Stille, Mangel und Prüfung erfahrbar.",
   },
   "pattern-schwelle-durch-wasser": {
     roomId: "wasser",
@@ -68,7 +68,7 @@ const patternRoomStations: Record<string, { roomId: string; title: string; text:
   "pattern-weg-der-reifung": {
     roomId: "wueste",
     title: "Wüstenraum betreten",
-    text: "Der Weg wird hier als Pruefung und Reifung spuerbar.",
+    text: "Der Weg wird hier als Prüfung und Reifung spürbar.",
   },
 };
 
@@ -149,7 +149,7 @@ export function deriveRoomWaymark({
 
     return {
       state: "journey-arrival",
-      text: "Du kommst aus einer Spur. Von hier oeffnet sich der Raum.",
+      text: "Du kommst aus einer Spur. Von hier öffnet sich der Raum.",
     };
   }
 
@@ -165,7 +165,7 @@ export function deriveRoomWaymark({
   if (naturalNextOpening) {
     return {
       state: "next-opening",
-      text: "Von hier fuehrt der Weg weiter.",
+      text: "Von hier führt der Weg weiter.",
     };
   }
 
@@ -253,7 +253,7 @@ export function resolveRoomContext(
       mobileTitle: `Symbolnetz -> ${roomTitle}`,
       mobileText: pathTraceText ?? "Die Karte wird zum Raum.",
       returnHref: returnParams.toString() ? `/symbolnetz?${returnParams.toString()}` : getSymbolNetworkHref(symbolId),
-      returnLabel: getSymbolPathConfig(symbolId)?.ctaLabels.symbolNetworkReturn ?? "Zum Symbolnetz zurueckkehren",
+      returnLabel: getSymbolPathConfig(symbolId)?.ctaLabels.symbolNetworkReturn ?? "Zum Symbolnetz zurückkehren",
     };
   }
 
@@ -271,7 +271,7 @@ export function resolveRoomContext(
       mobileTitle: `Codex -> ${roomTitle}`,
       mobileText: pathTraceText ?? `${symbolLabel} wird nun nicht nur gelesen, sondern betreten.`,
       returnHref: getSymbolPathConfig(symbolId)?.codexHref ?? `/codex/${symbolId}`,
-      returnLabel: `Zurueck zu ${symbolLabel} im Codex`,
+      returnLabel: `Zurück zu ${symbolLabel} im Codex`,
     };
   }
 
@@ -280,15 +280,15 @@ export function resolveRoomContext(
     const roomLabel = bridge?.roomLabel ?? roomTitle;
     const tracePhrase = getPersonalTracePhrase(symbolId);
     const personalPathMobileText = symbolId === "wasser"
-      ? "Der Wasserraum oeffnet sich erneut von deinem Pfad her."
+      ? "Der Wasserraum öffnet sich erneut von deinem Pfad her."
       : symbolId === "licht" && pathTraceText
         ? pathTraceText
         : symbolId === "licht"
-          ? "Der Lichtraum oeffnet sich erneut von deinem Pfad her."
-          : "Der Raum oeffnet sich erneut von deinem Pfad her.";
+          ? "Der Lichtraum öffnet sich erneut von deinem Pfad her."
+          : "Der Raum öffnet sich erneut von deinem Pfad her.";
     const personalPathText = pathTraceText
-      ? `Du kommst aus deiner ${tracePhrase}. ${pathTraceText}. Der ${roomLabel} oeffnet sich erneut von deinem Pfad her.`
-      : `Du kommst aus deiner ${tracePhrase}. Der ${roomLabel} oeffnet sich erneut von deinem Pfad her.`;
+      ? `Du kommst aus deiner ${tracePhrase}. ${pathTraceText}. Der ${roomLabel} öffnet sich erneut von deinem Pfad her.`
+      : `Du kommst aus deiner ${tracePhrase}. Der ${roomLabel} öffnet sich erneut von deinem Pfad her.`;
 
     return {
       source: "mein-pfad",
@@ -296,12 +296,12 @@ export function resolveRoomContext(
       symbolLabel,
       pathId: path,
       pathLabel: pathDisplayLabel,
-      title: "Rueckkehr",
+      title: "Rückkehr",
       text: personalPathText,
       mobileTitle: `Mein Pfad -> ${roomTitle}`,
       mobileText: personalPathMobileText,
       returnHref: "/mein-pfad",
-      returnLabel: "Zurueck zu Mein Pfad",
+      returnLabel: "Zurück zu Mein Pfad",
     };
   }
 
@@ -322,7 +322,7 @@ export function resolveRoomContext(
       mobileTitle: `Spur -> ${roomTitle}`,
       mobileText: pathTraceText && path !== journey?.id ? `${pathTraceText}. ${journeyTraceText}.` : journeyTraceText,
       returnHref: "/mein-pfad",
-      returnLabel: "Zurueck zu Mein Pfad",
+      returnLabel: "Zurück zu Mein Pfad",
     };
   }
 
@@ -344,7 +344,7 @@ export function resolveRoomContext(
       mobileTitle: `${movement} -> ${roomTitle}`,
       mobileText: pathTraceText ?? "Du betrittst einen Raum dieser Spur.",
       returnHref: `/codex/${path}`,
-      returnLabel: `Zurueck zur Spur ${pathTitle}`,
+      returnLabel: `Zurück zur Spur ${pathTitle}`,
     };
   }
 
@@ -358,7 +358,7 @@ export function resolveRoomContext(
       mobileTitle: `${fromTitle} -> ${roomTitle}`,
       mobileText: "Diese Bewegung wird hier als Raum erfahrbar.",
       returnHref: `/codex/${from}`,
-      returnLabel: `Zurueck zur Bewegung ${fromTitle}`,
+      returnLabel: `Zurück zur Bewegung ${fromTitle}`,
     };
   }
 

@@ -18,13 +18,13 @@ export const meaningNodes: MeaningNode[] = [
   },
   {
     id: "transition",
-    label: "Uebergang",
+    label: "Übergang",
     description: "Eine Schwelle zwischen einem bisherigen und einem neuen Zustand.",
   },
   {
     id: "purification",
     label: "Reinigung",
-    description: "Eine Bewegung der Klaerung und Erneuerung.",
+    description: "Eine Bewegung der Klärung und Erneuerung.",
   },
   {
     id: "life",
@@ -34,12 +34,12 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "hiddenness",
     label: "Verborgenheit",
-    description: "Eine Wirklichkeit, die gegenwaertig ist, ohne ganz sichtbar zu sein.",
+    description: "Eine Wirklichkeit, die gegenwärtig ist, ohne ganz sichtbar zu sein.",
   },
   {
     id: "light",
     label: "Licht",
-    description: "Sichtbarkeit, die Konturen hervortreten und Unterscheidung moeglich werden laesst.",
+    description: "Sichtbarkeit, die Konturen hervortreten und Unterscheidung möglich werden lässt.",
   },
   {
     id: "revelation",
@@ -54,12 +54,12 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "guidance",
     label: "Orientierung",
-    description: "Eine sichtbare Richtung im gegenwaertigen Dunkel.",
+    description: "Eine sichtbare Richtung im gegenwärtigen Dunkel.",
   },
   {
     id: "fire",
     label: "Feuer",
-    description: "Eine wirksame Energie, die glimmt, leuchtet und Gestalt veraendert.",
+    description: "Eine wirksame Energie, die glimmt, leuchtet und Gestalt verändert.",
   },
   {
     id: "transformation",
@@ -69,42 +69,42 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "presence",
     label: "Gegenwart",
-    description: "Eine tragende Naehe, die im Augenblick erfahrbar wird.",
+    description: "Eine tragende Nähe, die im Augenblick erfahrbar wird.",
   },
   {
     id: "calling",
     label: "Ruf",
-    description: "Eine persoenliche Ansprache, die in Bewegung und Verantwortung fuehrt.",
+    description: "Eine persönliche Ansprache, die in Bewegung und Verantwortung führt.",
   },
   {
     id: "desert",
-    label: "Wueste",
+    label: "Wüste",
     description: "Ein leerer Raum, in dem Sicherheiten schwinden und eine Spur neu sichtbar werden kann.",
   },
   {
     id: "lack",
     label: "Mangel",
-    description: "Das spuerbare Fehlen dessen, was sonst selbstverstaendlich traegt.",
+    description: "Das spürbare Fehlen dessen, was sonst selbstverständlich trägt.",
   },
   {
     id: "testing",
-    label: "Pruefung",
+    label: "Prüfung",
     description: "Eine Erfahrung, in der Verborgenes hervortritt und Vertrauen Gestalt gewinnen kann.",
   },
   {
     id: "dependence",
-    label: "Abhaengigkeit",
-    description: "Die Einsicht, dass Leben nicht allein aus eigener Verfuegbarkeit getragen wird.",
+    label: "Abhängigkeit",
+    description: "Die Einsicht, dass Leben nicht allein aus eigener Verfügbarkeit getragen wird.",
   },
   {
     id: "trust",
     label: "Vertrauen",
-    description: "Eine innere Ausrichtung, die auch ohne vollstaendige Sicherheit einer leisen Spur vertraut.",
+    description: "Eine innere Ausrichtung, die auch ohne vollständige Sicherheit einer leisen Spur vertraut.",
   },
   {
     id: "voice",
     label: "Stimme",
-    description: "Eine leise Ansprache, die in der Stille hoerbar werden kann.",
+    description: "Eine leise Ansprache, die in der Stille hörbar werden kann.",
   },
   {
     id: "word",
@@ -114,17 +114,17 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "path",
     label: "Weg",
-    description: "Eine begehbare Richtung durch einen noch nicht vollstaendig sichtbaren Raum.",
+    description: "Eine begehbare Richtung durch einen noch nicht vollständig sichtbaren Raum.",
   },
   {
     id: "nourishment",
     label: "Nahrung",
-    description: "Versorgung, die Leben erhaelt und Staerkung fuer den Weg schenkt.",
+    description: "Versorgung, die Leben erhält und Stärkung für den Weg schenkt.",
   },
   {
     id: "gift",
     label: "Gabe",
-    description: "Empfangene Versorgung, die sich nicht allein eigener Verfuegbarkeit verdankt.",
+    description: "Empfangene Versorgung, die sich nicht allein eigener Verfügbarkeit verdankt.",
   },
   {
     id: "community",
@@ -142,31 +142,31 @@ export const meaningFields: MeaningField[] = [
   {
     id: "water",
     label: "Wasser",
-    description: "Archetypische Bedeutungsraeume, die sich im Symbol Wasser verdichten.",
+    description: "Archetypische Bedeutungsräume, die sich im Symbol Wasser verdichten.",
     nodeIds: ["depth", "chaos", "birth", "transition", "purification", "life", "hiddenness"],
   },
   {
     id: "light",
     label: "Licht",
-    description: "Archetypische Bedeutungsraeume, die sich im Symbol Licht verdichten.",
+    description: "Archetypische Bedeutungsräume, die sich im Symbol Licht verdichten.",
     nodeIds: ["light", "revelation", "awareness", "guidance", "life"],
   },
   {
     id: "fire",
     label: "Feuer",
-    description: "Archetypische Bedeutungsraeume, die sich im Symbol Feuer verdichten.",
+    description: "Archetypische Bedeutungsräume, die sich im Symbol Feuer verdichten.",
     nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
   },
   {
     id: "desert",
-    label: "Wueste",
-    description: "Archetypische Bedeutungsraeume, die sich im Symbol Wueste verdichten.",
+    label: "Wüste",
+    description: "Archetypische Bedeutungsräume, die sich im Symbol Wüste verdichten.",
     nodeIds: ["desert", "lack", "testing", "dependence", "trust", "voice", "word", "path", "transition", "guidance", "hiddenness", "revelation"],
   },
   {
     id: "bread",
     label: "Brot",
-    description: "Archetypische Bedeutungsraeume, die sich im Symbol Brot verdichten.",
+    description: "Archetypische Bedeutungsräume, die sich im Symbol Brot verdichten.",
     nodeIds: ["nourishment", "gift", "community", "breaking", "life", "word"],
   },
 ];

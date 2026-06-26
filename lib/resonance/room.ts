@@ -77,7 +77,7 @@ const statementProjections: Record<string, StatementProjection[]> = {
     },
     {
       type: "prepares",
-      text: "Der Durchgang durch das Wasser oeffnet die Wueste.",
+      text: "Der Durchgang durch das Wasser öffnet die Wüste.",
       href: codexHref("wueste"),
       hasEvidence: () => hasConnection("wasser", "wueste") && hasMeaningField("wasser", "uebergang"),
     },
@@ -117,7 +117,7 @@ const statementProjections: Record<string, StatementProjection[]> = {
     },
     {
       type: "prepares",
-      text: "Das Feuer bereitet die Wueste als Ort der Stimme vor.",
+      text: "Das Feuer bereitet die Wüste als Ort der Stimme vor.",
       href: codexHref("wueste"),
       hasEvidence: () => hasJourneyStep("feuer", "wueste") && hasMeaningField("wueste", "stimme"),
     },
@@ -131,13 +131,13 @@ const statementProjections: Record<string, StatementProjection[]> = {
     },
     {
       type: "returns",
-      text: "Das Feuer ruft in der Wueste.",
+      text: "Das Feuer ruft in der Wüste.",
       href: codexHref("feuer"),
       hasEvidence: () => hasJourneyStep("feuer", "wueste") && hasMeaningField("feuer", "ruf"),
     },
     {
       type: "mirrors",
-      text: "Die Pruefung macht Versorgung sichtbar.",
+      text: "Die Prüfung macht Versorgung sichtbar.",
       href: "/codex/pattern-pruefung-durch-entzug",
       hasEvidence: () => hasMeaningField("wueste", "pruefung") && hasMeaningField("brot", "gabe"),
     },
@@ -145,7 +145,7 @@ const statementProjections: Record<string, StatementProjection[]> = {
   brot: [
     {
       type: "returns",
-      text: "Brot kehrt aus der Wueste als Gabe wieder.",
+      text: "Brot kehrt aus der Wüste als Gabe wieder.",
       href: codexHref("wueste"),
       hasEvidence: () => hasConnection("wueste", "brot") && hasMeaningField("brot", "gabe"),
     },

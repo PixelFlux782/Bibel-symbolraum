@@ -73,8 +73,8 @@ type ReflectionSourceType = "symbol" | "pattern" | "journey" | "core" | "letter"
 
 function formatType(type: CodexEntryType) {
   const labels: Record<CodexEntryType, string> = {
-    "hebrew-letter": "Hebraeischer Buchstabe",
-    "hebrew-word": "Hebraeisches Wort",
+    "hebrew-letter": "Hebräischer Buchstabe",
+    "hebrew-word": "Hebräisches Wort",
     journey: "Bedeutungspfad",
     meaning: "Bedeutungsfeld",
     "meaning-field": "Bedeutungsfeld",
@@ -89,35 +89,35 @@ function formatType(type: CodexEntryType) {
 function formatRelationType(type: CodexRelation["type"]) {
   const labels: Record<CodexRelation["type"], string> = {
     "anchors-scripture": "Bibelanker",
-    "contains-letter": "Traegt den Buchstaben",
-    "continues-journey": "Fuehrt weiter zu",
-    contrasts: "Steht im Gegenueber zu",
+    "contains-letter": "Trägt den Buchstaben",
+    "continues-journey": "Führt weiter zu",
+    contrasts: "Steht im Gegenüber zu",
     "carried-by": "getragen von",
-    "moves-over": "bewegt sich ueber",
-    "hovers-over": "schwebt ueber",
-    carries: "traegt",
+    "moves-over": "bewegt sich über",
+    "hovers-over": "schwebt über",
+    carries: "trägt",
     "gives-voice-to": "gibt Stimme",
-    "opens-to": "oeffnet zu",
+    "opens-to": "öffnet zu",
     "breathes-into": "haucht Atem in",
     "stirred-by": "bewegt durch",
     "moves-through": "bewegt sich durch",
-    expresses: "Drueckt aus",
-    "expressed-through": "ausgedrueckt durch",
+    expresses: "Drückt aus",
+    "expressed-through": "ausgedrückt durch",
     "echoes-within": "Erinnert an",
     "gives-rise-to": "Entspringt",
-    "heard-within": "hoerbar in",
-    "has-hebrew-word": "Klingt hebraeisch mit",
+    "heard-within": "hörbar in",
+    "has-hebrew-word": "Klingt hebräisch mit",
     "hidden-within": "verborgen in",
-    "leads-to": "Fuehrt weiter zu",
-    "nourishes-as": "naehrt als",
+    "leads-to": "Führt weiter zu",
+    "nourishes-as": "nährt als",
     precedes: "Bereitet vor",
-    related: "Gehoert zusammen",
+    related: "Gehört zusammen",
     "revealed-at": "offenbart an",
-    reveals: "Oeffnet",
-    "shares-meaning": "Gehoert zusammen",
+    reveals: "Öffnet",
+    "shares-meaning": "Gehört zusammen",
     "source-of": "Entspringt aus",
     symbolizes: "Macht sichtbar",
-    transforms: "Fuehrt weiter zu",
+    transforms: "Führt weiter zu",
   };
 
   return labels[type];
@@ -389,7 +389,7 @@ function codexEntryFromMeaningBridge(id: string): CodexEntry | undefined {
     id: bridge.id,
     type: "journey",
     title: bridge.title,
-    subtitle: "Bedeutungsbruecke",
+    subtitle: "Bedeutungsbrücke",
     hebrew: null,
     transliteration: null,
     aliases: [bridge.title, bridge.sourceId, bridge.targetId, ...(bridge.tags ?? [])],
@@ -397,8 +397,8 @@ function codexEntryFromMeaningBridge(id: string): CodexEntry | undefined {
     summary: bridge.summary,
     meaningFields: bridge.meaningFields,
     relations: [
-      { targetId: bridge.sourceId, type: "shares-meaning", label: "Ausgangspunkt der Bruecke.", source: "meaning-graph" },
-      { targetId: bridge.targetId, type: "continues-journey", label: "Zielpunkt der Bruecke.", source: "meaning-graph" },
+      { targetId: bridge.sourceId, type: "shares-meaning", label: "Ausgangspunkt der Brücke.", source: "meaning-graph" },
+      { targetId: bridge.targetId, type: "continues-journey", label: "Zielpunkt der Brücke.", source: "meaning-graph" },
       ...(bridge.hebrewConnections ?? []).flatMap((connection) => connection.hebrewWordId ? [{
         targetId: connection.hebrewWordId,
         type: "has-hebrew-word" as const,
@@ -592,10 +592,10 @@ function resolvePathContext({
     return {
       labels,
       note: symbolLabel
-        ? `Vom ${symbolLabel} aus oeffnet sich diese Bewegung.`
+        ? `Vom ${symbolLabel} aus öffnet sich diese Bewegung.`
         : `Du vertiefst jetzt die Spur von ${entry.title}.`,
       returnHref: symbol ? buildSymbolNetworkReturnHref({ symbol, lens: "story", path }) : "/symbolnetz",
-      returnLabel: "Zum Symbolnetz zurueckkehren",
+      returnLabel: "Zum Symbolnetz zurückkehren",
     };
   }
 
@@ -607,7 +607,7 @@ function resolvePathContext({
       labels: [pathLabel, entry.title],
       note,
       returnHref: `/codex/${path}`,
-      returnLabel: `Zurueck zur Bewegung ${pathLabel}`,
+      returnLabel: `Zurück zur Bewegung ${pathLabel}`,
     };
   }
 
@@ -615,15 +615,15 @@ function resolvePathContext({
     const sourceEntity = getOntologyEntity(from);
     const note = getExistingRelationText(from, entry.id, ["contains_pattern", "opens_into", "structures_journey"])
       || (sourceEntity?.domain === "pattern"
-        ? "Von dieser Bewegung aus fuehrt der Weg hierher."
-        : "Von hier aus oeffnet sich diese Bewegung.");
+        ? "Von dieser Bewegung aus führt der Weg hierher."
+        : "Von hier aus öffnet sich diese Bewegung.");
     const isPatternSource = sourceEntity?.domain === "pattern";
 
     return {
       labels: [fromLabel, entry.title],
       note,
       returnHref: `/codex/${from}`,
-      returnLabel: isPatternSource ? `Zurueck zur Bewegung ${fromLabel}` : `Zurueck zu ${fromLabel}`,
+      returnLabel: isPatternSource ? `Zurück zur Bewegung ${fromLabel}` : `Zurück zu ${fromLabel}`,
     };
   }
 
@@ -646,10 +646,10 @@ function getReflectionQuestionForEntry(sourceType: ReflectionSourceType) {
   }
 
   if (sourceType === "core") {
-    return "Welche Spur fuehrt dich zu dieser Achse?";
+    return "Welche Spur führt dich zu dieser Achse?";
   }
 
-  return "Welche Frage oeffnet sich dir hier?";
+  return "Welche Frage öffnet sich dir hier?";
 }
 
 function normalizeCodexContextFocus(value: string | undefined): CodexContextFocus {
@@ -974,8 +974,8 @@ function buildCuratedRelationItems(
       endpointLabel: targetLabel,
       endpointHref: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
       relationLabel: formatRelationType(relation.type),
-      markerLabel: relation.source === "journey" ? "Wegspur" : relation.source === "hebrew-letter" || relation.source === "hebrew-word" ? "Hebraeisch" : "Resonanz",
-      sentence: compactSentence(relationNote || relation.label || `${entry.title} gehoert mit ${targetLabel} zusammen.`),
+      markerLabel: relation.source === "journey" ? "Wegspur" : relation.source === "hebrew-letter" || relation.source === "hebrew-word" ? "Hebräisch" : "Resonanz",
+      sentence: compactSentence(relationNote || relation.label || `${entry.title} gehört mit ${targetLabel} zusammen.`),
       explanation: "",
       journeyHint: getJourneyHintForRelation(entry.id, target),
       score: scoreCodexRelation(entry, relation),
@@ -1104,7 +1104,7 @@ function getPreparedRoomsForScripture(entry: CodexEntry, journeys: ReturnType<ty
     .slice(0, 3)
     .map((item) => ({
       ...item,
-      note: `${entry.title} oeffnet diesen Raum als naechste Spur der Szene.`,
+      note: `${entry.title} öffnet diesen Raum als nächste Spur der Szene.`,
     }));
 }
 
@@ -1411,26 +1411,26 @@ function getSymbolicTrail(entry: CodexEntry) {
 function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
   if (entry.type === "hebrew-word") {
     return hebrewWords.find((word) => word.id === entry.id)?.meaningThreshold
-      ?? "Dieses hebraeische Wort oeffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenfuehrt.";
+      ?? "Dieses hebräische Wort öffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenführt.";
   }
 
   if (entity?.domain === "pattern") {
-    return "Dieses Muster lohnt sich, weil es Bedeutung nicht als Begriff zeigt, sondern als Bewegung. Wer eintritt, sieht, wodurch ein Raum zum naechsten Raum wird.";
+    return "Dieses Muster lohnt sich, weil es Bedeutung nicht als Begriff zeigt, sondern als Bewegung. Wer eintritt, sieht, wodurch ein Raum zum nächsten Raum wird.";
   }
 
   if (entity && isCoreConceptId(entity.id)) {
-    return "Diese Achse sammelt mehrere Wege, ohne sie zu verschmelzen. Wer eintritt, erkennt, welche Bewegungen hier zusammenlaufen und wohin sie weiterfuehren.";
+    return "Diese Achse sammelt mehrere Wege, ohne sie zu verschmelzen. Wer eintritt, erkennt, welche Bewegungen hier zusammenlaufen und wohin sie weiterführen.";
   }
 
   const texts: Record<CodexEntryType, string> = {
-    "hebrew-letter": "Dieser Buchstabe ist klein, aber nicht schmal. Wer ihn betritt, begegnet einem Zeichenkoerper, in dem Zahl, Wort und Symbol leise zusammenklingen.",
-    "hebrew-word": "Dieses hebraeische Wort oeffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenfuehrt.",
-    journey: "Diese Spur will nicht erklaeren, sondern fuehren. Wer eintritt, geht von Station zu Station und merkt, welche Bedeutung unterwegs Gestalt gewinnt.",
+    "hebrew-letter": "Dieser Buchstabe ist klein, aber nicht schmal. Wer ihn betritt, begegnet einem Zeichenkörper, in dem Zahl, Wort und Symbol leise zusammenklingen.",
+    "hebrew-word": "Dieses hebräische Wort öffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenführt.",
+    journey: "Diese Spur will nicht erklären, sondern führen. Wer eintritt, geht von Station zu Station und merkt, welche Bedeutung unterwegs Gestalt gewinnt.",
     meaning: "Dieses Bedeutungsfeld ist ein stiller Sammlungsraum. Wer eintritt, sieht, welche Symbole, Worte und Stellen hier aufeinander antworten.",
     "meaning-field": "Dieses Bedeutungsfeld ist ein stiller Sammlungsraum. Wer eintritt, sieht, welche Symbole, Worte und Stellen hier aufeinander antworten.",
-    number: "Diese Zahl ist hier kein Rechenwert, sondern ein Resonanzkoerper. Wer eintritt, sieht, welche Buchstaben, Worte und Symbole durch sie beruehrt werden.",
-    scripture: "Diese Stelle ist keine isolierte Referenz. Wer eintritt, steht in einer Szene, aus der hebraeische Schluessel, Symbole und Bewegungen hervortreten.",
-    symbol: "Dieses Symbol lohnt sich, weil es mehr ist als ein Bild. Wer es betritt, folgt einer inneren Bewegung durch Hebraeisch, Thora und nahe Resonanzen.",
+    number: "Diese Zahl ist hier kein Rechenwert, sondern ein Resonanzkörper. Wer eintritt, sieht, welche Buchstaben, Worte und Symbole durch sie berührt werden.",
+    scripture: "Diese Stelle ist keine isolierte Referenz. Wer eintritt, steht in einer Szene, aus der hebräische Schlüssel, Symbole und Bewegungen hervortreten.",
+    symbol: "Dieses Symbol lohnt sich, weil es mehr ist als ein Bild. Wer es betritt, folgt einer inneren Bewegung durch Hebräisch, Thora und nahe Resonanzen.",
   };
 
   return texts[entry.type];
@@ -1604,14 +1604,14 @@ function SymbolJourneyNoticeSection({
 }
 
 const WATER_CODEX_ESSENCE =
-  "Wasser steht im SYMBOLRAUM fuer Tiefe, Ursprung, Reinigung und Uebergang. Es erscheint vor der Ordnung und traegt das Leben, bevor es sichtbar wird.";
+  "Wasser steht im SYMBOLRAUM für Tiefe, Ursprung, Reinigung und Übergang. Es erscheint vor der Ordnung und trägt das Leben, bevor es sichtbar wird.";
 
 const WATER_CODEX_MOVEMENT = [
   { label: "Tiefe", text: "Wasser bewahrt das Verborgene unter dem Sichtbaren." },
   { label: "Ursprung", text: "Aus der Tiefe tritt Leben hervor, bevor es eine feste Gestalt hat." },
-  { label: "Reinigung", text: "Wasser loest, klaert und laesst einen neuen Anfang moeglich werden." },
-  { label: "Uebergang", text: "Es markiert die Schwelle zwischen altem Zustand und neuem Weg." },
-  { label: "Leben", text: "Was in der Tiefe beginnt, wird zur Quelle und traegt Frucht." },
+  { label: "Reinigung", text: "Wasser löst, klärt und lässt einen neuen Anfang möglich werden." },
+  { label: "Übergang", text: "Es markiert die Schwelle zwischen altem Zustand und neuem Weg." },
+  { label: "Leben", text: "Was in der Tiefe beginnt, wird zur Quelle und trägt Frucht." },
 ];
 
 const WATER_SCRIPTURE_TRACE = [
@@ -1619,12 +1619,12 @@ const WATER_SCRIPTURE_TRACE = [
     id: "genesis-1-2",
     reference: "Genesis 1,2",
     title: "Wasser vor der Ordnung",
-    note: "Die Wasser stehen am Anfang als Tiefe, ueber der Geist und Moeglichkeit schweben.",
+    note: "Die Wasser stehen am Anfang als Tiefe, über der Geist und Möglichkeit schweben.",
   },
   {
     id: "exodus-14",
     reference: "Exodus 14",
-    title: "Wasser als Uebergang",
+    title: "Wasser als Übergang",
     note: "Das Meer wird nicht ausgelassen, sondern zur Schwelle der Befreiung.",
   },
   {
@@ -1704,9 +1704,9 @@ function WaterCodexReferenceSection() {
 
         <section className="grid gap-5 border-t border-white/[0.06] pt-6 md:grid-cols-2">
           <div>
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeischer Koerper</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräischer Körper</p>
             <p className="mt-4 font-serif text-5xl leading-none text-gold/85" lang="he" dir="rtl">{"\u05de\u05d9\u05dd"}</p>
-            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">majim / Mem - Jod - Mem</p>
+            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">majim / Mem – Jod – Mem</p>
             <p className="symbol-copy mt-4 text-base italic text-muted-soft">
               Das Wort beginnt und endet mit Mem. In der Mitte steht Jod: ein Ursprungspunkt in der Tiefe.
             </p>
@@ -1715,7 +1715,7 @@ function WaterCodexReferenceSection() {
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahl</p>
             <p className="mt-4 font-serif text-3xl italic text-foreground-strong">{"\u05de\u05d9\u05dd"} = 40 + 10 + 40 = 90</p>
             <p className="symbol-copy mt-4 text-base italic text-muted-soft">
-              Die Zahl 90 sammelt die Bewegung von Tiefe - Punkt - Tiefe.
+              Die Zahl 90 sammelt die Bewegung von Tiefe – Punkt – Tiefe.
             </p>
           </div>
         </section>
@@ -1743,7 +1743,7 @@ function WaterCodexReferenceSection() {
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Aus dieser Tiefe</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href={waterRoomHref} className="symbol-cta">Den Wasser-Raum betreten</Link>
-            <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Erzaehlspur Wasser - Wueste - Brot ansehen</Link>
+            <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Erzählspur Wasser – Wüste – Brot ansehen</Link>
             <a href="#spur-aufnehmen" className="symbol-cta symbol-cta-secondary">Diese Spur bewahren</a>
           </div>
         </section>
@@ -1757,9 +1757,9 @@ const LIGHT_CODEX_ESSENCE =
 
 const LIGHT_CODEX_MOVEMENT = [
   { label: "Finsternis", text: "Noch ist Wirklichkeit da, aber sie ist nicht lesbar." },
-  { label: "Ruf", text: "Das Wort oeffnet einen ersten Spalt von Richtung." },
+  { label: "Ruf", text: "Das Wort öffnet einen ersten Spalt von Richtung." },
   { label: "Licht", text: "Was verborgen war, tritt in Sichtbarkeit." },
-  { label: "Scheidung", text: "Licht macht Unterscheidung moeglich, ohne die Tiefe zu verwerfen." },
+  { label: "Scheidung", text: "Licht macht Unterscheidung möglich, ohne die Tiefe zu verwerfen." },
   { label: "Ordnung", text: "Konturen werden zu einer tragenden Gestalt." },
   { label: "Erkenntnis", text: "Sichtbarkeit wird innerlich wahrgenommen und deutbar." },
 ];
@@ -1798,11 +1798,11 @@ function LightCodexReferenceSection() {
 
         <section className="grid gap-5 border-t border-white/[0.06] pt-6 md:grid-cols-2">
           <div>
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeischer Koerper</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräischer Körper</p>
             <p className="mt-4 font-serif text-5xl leading-none text-gold/85" lang="he" dir="rtl">{"\u05d0\u05d5\u05e8"}</p>
-            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">Or / Aleph - Waw - Resch</p>
+            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">Or / Aleph – Waw – Resch</p>
             <p className="symbol-copy mt-4 text-base italic text-muted-soft">
-              Or traegt den stillen Anfang des Aleph, eine verbindende Mitte und das Hervortreten in Sichtbarkeit.
+              Or trägt den stillen Anfang des Aleph, eine verbindende Mitte und das Hervortreten in Sichtbarkeit.
             </p>
           </div>
           <div>
@@ -1843,7 +1843,7 @@ function LightCodexReferenceSection() {
                     href={anchor.href}
                     className="font-serif text-xl italic text-foreground-strong transition-colors duration-500 hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/20"
                   >
-                    {anchor.label} - Es werde Licht
+                    {anchor.label} – Es werde Licht
                   </Link>
                   <p className="symbol-copy mt-3 text-sm italic text-muted-soft">
                     In Genesis 1,3 wird Licht gerufen: nicht als Dekoration der Welt, sondern als erstes Sichtbarwerden von Ordnung.
@@ -1869,15 +1869,15 @@ function LightCodexReferenceSection() {
 }
 
 const FIRE_CODEX_ESSENCE =
-  "Feuer ist im SYMBOLRAUM die brennende Grenze zwischen Sichtbarem und Unsichtbarem: Offenbarung, Ruf, Gegenwart und klaerende Wandlung.";
+  "Feuer ist im SYMBOLRAUM die brennende Grenze zwischen Sichtbarem und Unsichtbarem: Offenbarung, Ruf, Gegenwart und klärende Wandlung.";
 
 const FIRE_CODEX_MOVEMENT = [
   { label: "Ruf", text: "Feuer zieht nicht in Aktion, sondern in Aufmerksamkeit." },
   { label: "Flamme", text: "Was sichtbar brennt, weist auf eine tiefere Gegenwart." },
-  { label: "Grenze", text: "Das Feuer markiert den Ort, an dem Naehe und Abstand zugleich wahr werden." },
-  { label: "Gegenwart", text: "Im Brennen wird etwas anwesend, ohne sich verfuegbar zu machen." },
-  { label: "Laeuterung", text: "Feuer klaert, ohne das Wesentliche auszuloeschen." },
-  { label: "Wandlung", text: "Was durch das Feuer geht, kehrt verwandelt in die Welt zurueck." },
+  { label: "Grenze", text: "Das Feuer markiert den Ort, an dem Nähe und Abstand zugleich wahr werden." },
+  { label: "Gegenwart", text: "Im Brennen wird etwas anwesend, ohne sich verfügbar zu machen." },
+  { label: "Läuterung", text: "Feuer klärt, ohne das Wesentliche auszulöschen." },
+  { label: "Wandlung", text: "Was durch das Feuer geht, kehrt verwandelt in die Welt zurück." },
 ];
 
 function FireCodexReferenceSection() {
@@ -1914,9 +1914,9 @@ function FireCodexReferenceSection() {
 
         <section className="grid gap-5 border-t border-white/[0.06] pt-6 md:grid-cols-2">
           <div>
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeischer Koerper</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräischer Körper</p>
             <p className="mt-4 font-serif text-5xl leading-none text-gold/85" lang="he" dir="rtl">{"\u05d0\u05e9"}</p>
-            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">Esch / Aleph - Schin</p>
+            <p className="mt-3 text-[0.62rem] uppercase tracking-[0.22em] text-gold/65">Esch / Aleph – Schin</p>
             <p className="symbol-copy mt-4 text-base italic text-muted-soft">
               Esch verbindet den stillen Anfang des Aleph mit dem brennenden Zeichen des Schin.
             </p>
@@ -2210,7 +2210,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             href="/codex"
             className="symbol-kicker inline-flex text-gold/70 transition-colors duration-500 hover:text-gold"
           >
-            Zurueck zum Codex
+            Zurück zum Codex
           </Link>
           {isFromSymbolNetwork ? (
             <Link
@@ -2368,16 +2368,16 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             ) : null}
             {entry.id === "davar" ? <DavarMidbarResonanceSection /> : null}
             {entry.id === "qol" ? (
-              <DetailSection title="Die Stimme in der Wueste">
+              <DetailSection title="Die Stimme in der Wüste">
                 <div className="grid gap-5">
                   <div className="grid max-w-sm gap-3 border border-gold/15 bg-gold/[0.035] p-5 text-right font-serif text-5xl leading-none text-gold" lang="he" dir="rtl">
                     <p>מדבר</p>
                     <p>קול</p>
                   </div>
                   <div className="symbol-copy grid gap-3 text-base italic text-muted-soft">
-                    <p>Die Wueste erscheint aeusserlich leer.</p>
-                    <p>Gerade deshalb wird die Stimme hoerbar.</p>
-                    <p>Midbar ist nicht nur Ort des Mangels. Sie wird zum Raum des Hoerens.</p>
+                    <p>Die Wüste erscheint äußerlich leer.</p>
+                    <p>Gerade deshalb wird die Stimme hörbar.</p>
+                    <p>Midbar ist nicht nur Ort des Mangels. Sie wird zum Raum des Hörens.</p>
                   </div>
                 </div>
               </DetailSection>
@@ -2480,13 +2480,13 @@ function OntologyMetadataSection({
   }
 
   return (
-    <DetailSection title="Symbolische Identitaet" activeContext={activeContext}>
+    <DetailSection title="Symbolische Identität" activeContext={activeContext}>
       <div className="grid gap-6">
         {entity.hebrew || entity.transliteration || entity.gematria !== undefined ? (
           <dl className="grid gap-4 sm:grid-cols-3">
             {entity.hebrew ? (
               <div className="border border-gold/15 bg-gold/[0.035] p-4">
-                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeisch</dt>
+                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräisch</dt>
                 <dd className="mt-3 font-serif text-4xl leading-none text-gold/90" lang="he" dir="rtl">
                   {entity.hebrew}
                 </dd>
@@ -2502,7 +2502,7 @@ function OntologyMetadataSection({
             ) : null}
             {entity.gematria !== undefined ? (
               <div className="border border-white/[0.06] bg-black/[0.12] p-4">
-                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlkoerper</dt>
+                <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlkörper</dt>
                 <dd className="mt-3 font-serif text-4xl italic leading-none text-gold/85">
                   {entity.gematria}
                 </dd>
@@ -2517,7 +2517,7 @@ function OntologyMetadataSection({
           ) : null}
           {entity.firstMention ? (
             <FieldRow
-              label="Erste Erwaehnung"
+              label="Erste Erwähnung"
               value={
                 <span>
                   <span className="font-serif italic text-gold/85">{entity.firstMention.ref}</span>
@@ -2665,7 +2665,7 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
 
       {exitCore ? (
         <div className="mt-6 border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Spur oeffnet sich zu</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Spur öffnet sich zu</p>
           <WayLinkCard
             href={withPathContext(`/codex/${exitCore.id}`, { path: entry.id })}
             title={exitCore.title}
@@ -2736,11 +2736,11 @@ function HebrewWordIdentitySection({ entry, activeContext }: { entry: CodexEntry
   const word = hebrewWords.find((candidate) => candidate.id === entry.id);
 
   return (
-    <DetailSection title="Hebraeischer Koerper" activeContext={activeContext}>
+    <DetailSection title="Hebräischer Körper" activeContext={activeContext}>
       <div className="grid gap-5">
         <dl className="grid gap-4 sm:grid-cols-3">
           <div className="border border-gold/15 bg-gold/[0.035] p-4">
-            <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeisch</dt>
+            <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräisch</dt>
             <dd className="mt-3 font-serif text-4xl leading-none text-gold/90" lang="he" dir="rtl">
               {entry.hebrew}
             </dd>
@@ -2752,7 +2752,7 @@ function HebrewWordIdentitySection({ entry, activeContext }: { entry: CodexEntry
             </dd>
           </div>
           <div className="border border-white/[0.06] bg-black/[0.12] p-4">
-            <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlkoerper</dt>
+            <dt className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zahlkörper</dt>
             <dd className="mt-3 font-serif text-4xl italic leading-none text-gold/85">
               {breakdown.value}
             </dd>
@@ -2793,7 +2793,7 @@ function HebrewWordIdentitySection({ entry, activeContext }: { entry: CodexEntry
 
 function DavarMidbarResonanceSection() {
   return (
-    <DetailSection title="Das Wort in der Wueste">
+    <DetailSection title="Das Wort in der Wüste">
       <div className="grid gap-5">
         <div className="grid max-w-sm gap-3 border border-gold/15 bg-gold/[0.035] p-5 text-right font-serif text-5xl leading-none text-gold" lang="he" dir="rtl">
           <p>מדבר</p>
@@ -2863,8 +2863,8 @@ function MeaningResonanceSection({ entry, activeContext }: { entry: CodexEntry; 
           </div>
 
           <div>
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebr&auml;ische Knoten</p>
-            <MeaningResonanceLinkList items={resonance.hebrewNodes} emptyText="Noch keine hebr&auml;ischen Knoten verbunden." />
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräische Knoten</p>
+            <MeaningResonanceLinkList items={resonance.hebrewNodes} emptyText="Noch keine hebräischen Knoten verbunden." />
           </div>
         </div>
 
@@ -2898,7 +2898,7 @@ function MeaningResonanceSection({ entry, activeContext }: { entry: CodexEntry; 
         </div>
 
         <div>
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Moegliche Resonanzen</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Mögliche Resonanzen</p>
           <MeaningResonanceLinkList items={resonance.onward} emptyText="Noch keine Resonanzen verbunden." />
         </div>
       </div>
@@ -2921,7 +2921,7 @@ function NumberResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
             {resonance.value}
           </p>
           <p className="mt-4 text-[0.58rem] uppercase tracking-[0.22em] text-muted-soft">
-            Zahlkoerper
+            Zahlkörper
           </p>
         </div>
 
@@ -2940,8 +2940,8 @@ function NumberResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
             </div>
 
             <div>
-              <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene W&ouml;rter</p>
-              <ResonanceLinkList items={resonance.words} emptyText="Noch keine W&ouml;rter verbunden." />
+              <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Wörter</p>
+              <ResonanceLinkList items={resonance.words} emptyText="Noch keine Wörter verbunden." />
             </div>
 
             <div>
@@ -2976,7 +2976,7 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
           ) : null}
           {resonance.numericValue ? (
             <p className="mt-3 text-[0.58rem] uppercase tracking-[0.22em] text-muted-soft">
-              Zahlkoerper {resonance.numericValue}
+              Zahlkörper {resonance.numericValue}
             </p>
           ) : null}
         </div>
@@ -2991,7 +2991,7 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene W&ouml;rter</p>
+              <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Wörter</p>
               {resonance.words.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {resonance.words.map((word) => {
@@ -3013,7 +3013,7 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
                   })}
                 </div>
               ) : (
-                <p className="symbol-copy mt-3 text-sm italic text-muted-soft">Noch keine W&ouml;rter verbunden.</p>
+                <p className="symbol-copy mt-3 text-sm italic text-muted-soft">Noch keine Wörter verbunden.</p>
               )}
             </div>
 
@@ -3140,7 +3140,7 @@ function WaysBeginningSection({
   }
 
   return (
-    <DetailSection title="Spuren, die sich hier oeffnen" activeContext={activeContext}>
+    <DetailSection title="Spuren, die sich hier öffnen" activeContext={activeContext}>
       <div className="grid gap-3 sm:grid-cols-2">
         {patternWays.slice(0, 3).map((way, index) => (
           <WayProjectionCard
@@ -3375,7 +3375,7 @@ function PatternCodexSection({
                 <WayLinkCard
                   key={journey.id}
                   href={withPathContext(`/codex/${journey.id}`, { from: entity.id })}
-                  title="Spur oeffnen"
+                  title="Spur öffnen"
                   note={journey.steps?.map((step) => step.label).join(" -> ") ?? journey.summary}
                   movementSteps={journey.steps?.map((step) => step.label) ?? []}
                 />
@@ -3390,7 +3390,7 @@ function PatternCodexSection({
                     key={destination.label}
                     href={withPathContext(destination.href, { path: entity.id })}
                     title={destination.label}
-                    note="Diese Bewegung oeffnet sich in diese Richtung."
+                    note="Diese Bewegung öffnet sich in diese Richtung."
                     movementSteps={movement}
                     className="hidden md:block"
                   />
@@ -3402,7 +3402,7 @@ function PatternCodexSection({
 
         {resonance.length > 0 ? (
           <div className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Die drei naechsten Beziehungen</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Die drei nächsten Beziehungen</p>
             <div className="mt-4 grid gap-3">
               {primaryResonance.map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
                 <article key={relation.id} className="border border-white/[0.06] bg-black/[0.1] p-4">
@@ -3420,7 +3420,7 @@ function PatternCodexSection({
               {archiveResonance.length > 0 ? (
                 <details className="border border-gold/15 bg-gold/[0.025] p-4">
                   <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-                    Weitere Resonanzen oeffnen
+                    Weitere Resonanzen öffnen
                   </summary>
                   <div className="mt-4 grid gap-3">
                     {archiveResonance.map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
@@ -3587,7 +3587,7 @@ function CuratedRelationsSection({
         {archiveRelations.length > 0 ? (
           <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:p-5">
             <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Erweiterte Resonanzen und vollstaendiges Archiv oeffnen
+              Erweiterte Resonanzen und vollständiges Archiv öffnen
             </summary>
             <div className="mt-5 grid gap-3">
               {archiveRelations.map((item) => (
@@ -3651,7 +3651,7 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
 
         {model.hebrewKeys.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeische Schluessel</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräische Schlüssel</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               {model.hebrewKeys.map((word) => (
                 <Link
@@ -3683,7 +3683,7 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
             </div>
             {model.journeyTitle ? (
               <p className="symbol-copy mt-4 text-sm italic text-muted-soft">
-                Diese Szene gehoert zur Bewegung {model.movementSteps.map((step) => step.label).join(" -> ")}.
+                Diese Szene gehört zur Bewegung {model.movementSteps.map((step) => step.label).join(" -> ")}.
               </p>
             ) : null}
           </section>
@@ -3714,7 +3714,7 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
 
         {model.rooms.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Szene oeffnet</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Szene öffnet</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {model.rooms.map((room) => (
                 room.href ? (
@@ -3751,7 +3751,7 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
         {archiveRelations.length > 0 ? (
           <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:p-5">
             <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Weiterfuehrende Resonanzen oeffnen
+              Weiterführende Resonanzen öffnen
             </summary>
             <div className="mt-5 grid gap-3">
               {archiveRelations.map((item) => (
@@ -3856,7 +3856,7 @@ function NearbyEntriesSection({ entry }: { entry: CodexEntry }) {
   }
 
   return (
-    <DetailSection title="Weitere Tueren">
+    <DetailSection title="Weitere Türen">
       <div className="grid gap-3">
         {primaryEntries.map((nearbyEntry) => (
           <Link
@@ -3872,7 +3872,7 @@ function NearbyEntriesSection({ entry }: { entry: CodexEntry }) {
         {archiveEntries.length > 0 ? (
           <details className="border border-gold/15 bg-gold/[0.025] p-4">
             <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Weitere Resonanzen oeffnen
+              Weitere Resonanzen öffnen
             </summary>
             <div className="mt-4 grid gap-3">
               {archiveEntries.map((nearbyEntry) => (

@@ -144,7 +144,7 @@ export default function WaterRoom() {
       </section>
 
       <p className="water-journey__hint">
-        {isComplete ? "Die Spur ist sichtbar geworden." : "Eine Spur oeffnet sich leise."}
+        {isComplete ? "Die Spur ist sichtbar geworden." : "Eine Spur öffnet sich leise."}
       </p>
     </main>
   );

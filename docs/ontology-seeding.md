@@ -5,7 +5,7 @@
 Die Hierarchie steuert Sichtbarkeit.
 Die Ontologie beschreibt Bedeutung.
 
-Validator-Warnings sind redaktionelle Hinweise. Sie werden entweder fachlich behoben oder bewusst als Uebergangszustand dokumentiert.
+Validator-Warnings sind redaktionelle Hinweise. Sie werden entweder fachlich behoben oder bewusst als Übergangszustand dokumentiert.
 
 ## 2. Neue Entity anlegen
 
@@ -28,7 +28,7 @@ Keine Entity nur anlegen, damit eine Warning verschwindet. Sie braucht einen tra
 
 Core-Concepts sind keine Tags, sondern Bedeutungsachsen.
 
-Sie werden nur angelegt, wenn mehrere bestehende Symbole, Unterraeume oder Relationen auf sie zulaufen.
+Sie werden nur angelegt, wenn mehrere bestehende Symbole, Unterräume oder Relationen auf sie zulaufen.
 
 Neue Core-Concepts brauchen:
 
@@ -36,7 +36,7 @@ Neue Core-Concepts brauchen:
 - `domain`
 - `archetypalRole`
 - `summary`
-- moeglichst `polarity`
+- möglichst `polarity`
 - wenige starke Relationen, keine Flut
 
 ## 3. Neue Relation anlegen
@@ -49,17 +49,17 @@ Jede neue Relation braucht:
 - type
 - title
 - shortResonance
-- explanation, falls noetig
+- explanation, falls nötig
 - strength
 - scriptureAnchors oder hebrewAnchors bei starken Relationen
 
-Keine kuenstlichen Anchors setzen. Wenn ein Anker fehlt, entweder die Relation schwaecher modellieren oder die Warning bewusst stehen lassen.
+Keine künstlichen Anchors setzen. Wenn ein Anker fehlt, entweder die Relation schwächer modellieren oder die Warning bewusst stehen lassen.
 
-## 4. Relationstyp waehlen
+## 4. Relationstyp wählen
 
-Verwende praezise Typen vor `resonates_with`.
+Verwende präzise Typen vor `resonates_with`.
 
-Bevor `resonates_with` genutzt wird, pruefe:
+Bevor `resonates_with` genutzt wird, prüfe:
 
 - is_expression_of
 - opens_into
@@ -81,26 +81,26 @@ Pattern-Entities sind:
 - type: "concept"
 - domain: "pattern"
 - mit archetypalRole
-- moeglichst mit polarity
+- möglichst mit polarity
 
 ## 6. Polarity-Regel
 
-Innere Spannungen gehoeren zuerst an `entity.polarity`.
+Innere Spannungen gehören zuerst an `entity.polarity`.
 
-`has_polarity` nur verwenden, wenn die Polaritaet selbst als Concept/Pattern-Entity existiert.
+`has_polarity` nur verwenden, wenn die Polarität selbst als Concept/Pattern-Entity existiert.
 
 ## 7. Sichtbarkeitsregel
 
 Nicht jede Ontologie-Relation erscheint im Symbolnetz.
 
 Overview bleibt kuratiert.
-Fokus/Detail duerfen mehr zeigen.
-Inspector erklaert.
+Fokus/Detail dürfen mehr zeigen.
+Inspector erklärt.
 Codex vertieft.
 
-## 8. Unterraeume anbinden
+## 8. Unterräume anbinden
 
-Unterraeume aus der Hierarchie werden nicht automatisch zu ontologischer Wahrheit.
+Unterräume aus der Hierarchie werden nicht automatisch zu ontologischer Wahrheit.
 
 Wenn ein Unterraum ontologisch relevant ist, bekommt er:
 
@@ -111,7 +111,7 @@ Wenn ein Unterraum ontologisch relevant ist, bekommt er:
 - maximal 2-4 Kernrelationen
 - bevorzugt `is_expression_of`, `opens_into`, `is_threshold_to`, `contains_pattern`
 
-## 9. Qualitaetsschwelle
+## 9. Qualitätsschwelle
 
 Keine Relation ohne guten Satz:
 
@@ -121,18 +121,18 @@ Wenn dieser Satz schwach klingt, Relation nicht anlegen.
 
 ## 10. Bewusst akzeptierte Warnings
 
-Eine Warning darf stehen bleiben, wenn sie einen legitimen Uebergangszustand markiert:
+Eine Warning darf stehen bleiben, wenn sie einen legitimen Übergangszustand markiert:
 
 - Ein Begriff ist redaktionell wichtig, aber noch nicht als Entity modelliert.
 - Ein Story- oder Versanker existiert noch nicht in der Ontologie.
-- Eine starke symbolische Relation ist sinnvoll, aber noch nicht sicher biblisch oder hebraeisch verankert.
-- `resonates_with` bleibt stehen, weil kein praeziserer Relationstyp fachlich passt.
+- Eine starke symbolische Relation ist sinnvoll, aber noch nicht sicher biblisch oder hebräisch verankert.
+- `resonates_with` bleibt stehen, weil kein präziserer Relationstyp fachlich passt.
 
 Akzeptierte Warnings werden im Phasenbericht genannt und nicht stillschweigend ignoriert.
 
 ## 11. Validierung
 
-Vor Abschluss ausfuehren:
+Vor Abschluss ausführen:
 
 ```bash
 npm run validate:ontology

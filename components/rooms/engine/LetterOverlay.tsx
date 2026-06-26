@@ -92,7 +92,7 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
           <button type="button" onClick={onClose} aria-label="Letter Overlay schliessen">Schliessen</button>
         </header>
 
-        <nav className="symbol-engine__letter-alphabet" aria-label="Hebraeische Buchstaben">
+        <nav className="symbol-engine__letter-alphabet" aria-label="Hebräische Buchstaben">
           {hebrewLetters.map((letter) => {
             const isVisible = visibleLetterIdSet ? visibleLetterIdSet.has(letter.id) : true;
 
@@ -139,7 +139,7 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
                   </article>
                 ))}
               </div>
-            ) : <p className="symbol-engine__letter-empty">Fuer diesen Buchstaben ist noch keine Kurzdeutung im Codex hinterlegt.</p>}
+            ) : <p className="symbol-engine__letter-empty">Für diesen Buchstaben ist noch keine Kurzdeutung im Codex hinterlegt.</p>}
           </section>
 
           <section>
@@ -147,7 +147,7 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
             <div className="symbol-engine__letter-cluster">
               {meaningFields.map((field) => <span key={field.id} title={field.description}>{field.label}</span>)}
               {graphNodes.map((node) => <span key={node.id} className="is-graph-node" title={node.description}>{node.label}</span>)}
-              {!meaningFields.length && !graphNodes.length ? <p className="symbol-engine__letter-empty">Noch keine verknuepften Meaning Fields.</p> : null}
+              {!meaningFields.length && !graphNodes.length ? <p className="symbol-engine__letter-empty">Noch keine verknüpften Meaning Fields.</p> : null}
             </div>
           </section>
 
@@ -162,11 +162,11 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
                   </li>
                 ))}
               </ol>
-            ) : <p className="symbol-engine__letter-empty">Noch keine verknuepften Meaning Nodes oder Symbolraeume.</p>}
+            ) : <p className="symbol-engine__letter-empty">Noch keine verknüpften Meaning Nodes oder Symbolräume.</p>}
           </section>
 
           <section>
-            <h4>Erscheint in: Woerter</h4>
+            <h4>Erscheint in: Wörter</h4>
             <div className="symbol-engine__letter-links">
               {words.map((word) => {
                 const room = symbols.find((symbol) => getSymbolHebrewProfile(symbol.id).hebrewWord?.id === word.id);
@@ -185,12 +185,12 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
                   </span>
                 );
               })}
-              {!words.length ? <p className="symbol-engine__letter-empty">Noch keine verknuepften Woerter.</p> : null}
+              {!words.length ? <p className="symbol-engine__letter-empty">Noch keine verknüpften Wörter.</p> : null}
             </div>
           </section>
 
           <section>
-            <h4>Fuehrt zu: Symbolraeume</h4>
+            <h4>Führt zu: Symbolräume</h4>
             <div className="symbol-engine__letter-links">
               {symbols.map((symbol) => (
                 <Link key={symbol.id} href={symbol.roomHref}>
@@ -199,7 +199,7 @@ export function LetterOverlay({ initialLetterId, bridgeContext, onActiveLetterCh
                   <i>Raum betreten</i>
                 </Link>
               ))}
-              {!symbols.length ? <p className="symbol-engine__letter-empty">Noch keine verknuepften Symbolraeume.</p> : null}
+              {!symbols.length ? <p className="symbol-engine__letter-empty">Noch keine verknüpften Symbolräume.</p> : null}
             </div>
           </section>
         </div>

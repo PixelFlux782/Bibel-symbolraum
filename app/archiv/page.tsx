@@ -77,7 +77,7 @@ function getDiscoveryContext(activity: StoredPathActivity, letterId: string) {
 
   const symbol = network.nodes.find((node) => node.id === activation.symbolId);
 
-  return symbol ? `LetterOverlay: ${symbol.label}` : "Im Hebrew Codex geoeffnet";
+  return symbol ? `LetterOverlay: ${symbol.label}` : "Im Hebrew Codex geöffnet";
 }
 
 export default function ArchivPage() {
@@ -127,7 +127,7 @@ export default function ArchivPage() {
             Entdeckter Hebrew Codex
           </h1>
           <p className="symbol-copy mt-9 max-w-3xl text-xl italic md:text-2xl">
-            Mein Pfad erzaehlt die persoenliche Reise. Der Archivraum sammelt, was sich im Codex bereits geoeffnet hat.
+            Mein Pfad erzählt die persönliche Reise. Der Archivraum sammelt, was sich im Codex bereits geöffnet hat.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/mein-pfad" className="symbol-archive-action">
@@ -151,13 +151,13 @@ export default function ArchivPage() {
             <section className="symbol-path-section">
               <div className="flex flex-wrap items-end justify-between gap-6">
                 <div>
-                  <p className="symbol-kicker text-cyan-soft">Hebraeisches Alphabet</p>
+                  <p className="symbol-kicker text-cyan-soft">Hebräisches Alphabet</p>
                   <h2 className="mt-4 font-serif text-4xl italic leading-tight text-foreground-strong md:text-5xl">
                     {discoveredLetterIds.length} von 22 Buchstaben entdeckt
                   </h2>
                 </div>
                 <p className="symbol-copy max-w-xl text-sm">
-                  Entdeckt bedeutet: im LetterOverlay geoeffnet, als Letter Bridge aktiviert oder im persoenlichen Pfad als activatedLetters gespeichert.
+                  Entdeckt bedeutet: im LetterOverlay geöffnet, als Letter Bridge aktiviert oder im persönlichen Pfad als activatedLetters gespeichert.
                 </p>
               </div>
 
@@ -180,7 +180,7 @@ export default function ArchivPage() {
                           type="button"
                           onClick={() => isDiscovered ? setOverlayLetterId(letter.id) : undefined}
                           disabled={!isDiscovered}
-                          aria-label={isDiscovered ? `${letter.name} im Hebrew Codex oeffnen` : `${letter.name} ist noch verborgen`}
+                          aria-label={isDiscovered ? `${letter.name} im Hebrew Codex öffnen` : `${letter.name} ist noch verborgen`}
                           className={`font-serif text-6xl leading-none transition-colors ${
                             isDiscovered ? "text-gold/90 hover:text-gold" : "text-gold/25"
                           }`}
@@ -209,7 +209,7 @@ export default function ArchivPage() {
                       {isDiscovered ? (
                         <>
                           <p className="symbol-copy mt-4 text-sm">
-                            {primarySymbolism?.description ?? (letter.archetypalMeanings.join(", ") || "Fuer diesen Buchstaben ist noch keine Kurzdeutung im Codex hinterlegt.")}
+                            {primarySymbolism?.description ?? (letter.archetypalMeanings.join(", ") || "Für diesen Buchstaben ist noch keine Kurzdeutung im Codex hinterlegt.")}
                           </p>
                           <p className="mt-4 text-[10px] uppercase tracking-[0.18em] text-gold/65">
                             {getDiscoveryContext(activity, letter.id)}
@@ -217,7 +217,7 @@ export default function ArchivPage() {
 
                           <div className="mt-5 grid gap-4 border-t border-white/[0.055] pt-5">
                             <div>
-                              <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">Woerter</p>
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">Wörter</p>
                               <div className="mt-2 flex flex-wrap gap-2">
                                 {words.length > 0 ? words.map((word) => (
                                   <span key={word.id} className="border border-white/[0.07] bg-white/[0.025] px-3 py-2">
@@ -226,18 +226,18 @@ export default function ArchivPage() {
                                       {word.transliteration} / {word.germanMeaning}
                                     </span>
                                   </span>
-                                )) : <span className="symbol-copy text-sm">Noch keine verknuepften Woerter.</span>}
+                                )) : <span className="symbol-copy text-sm">Noch keine verknüpften Wörter.</span>}
                               </div>
                             </div>
 
                             <div>
-                              <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">Raeume</p>
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">Räume</p>
                               <div className="mt-2 flex flex-wrap gap-2">
                                 {rooms.length > 0 ? rooms.map((room) => (
                                   <Link key={room.id} href={room.roomHref} className="symbol-archive-action">
                                     {room.label}
                                   </Link>
-                                )) : <span className="symbol-copy text-sm">Noch keine verknuepften Raeume.</span>}
+                                )) : <span className="symbol-copy text-sm">Noch keine verknüpften Räume.</span>}
                               </div>
                             </div>
                           </div>
@@ -258,11 +258,11 @@ export default function ArchivPage() {
                 <div>
                   <p className="symbol-kicker text-cyan-soft">Reflexionen</p>
                   <h2 className="mt-4 font-serif text-4xl italic text-foreground-strong">
-                    Persoenliche Notizen bleiben darunter
+                    Persönliche Notizen bleiben darunter
                   </h2>
                 </div>
                 <p className="symbol-copy max-w-xl text-sm">
-                  Sie gehoeren weiter zum Archiv, aber der Raum wird zuerst vom entdeckten Codex getragen.
+                  Sie gehören weiter zum Archiv, aber der Raum wird zuerst vom entdeckten Codex getragen.
                 </p>
               </div>
 
@@ -284,7 +284,7 @@ export default function ArchivPage() {
                       </p>
                       {reflection.roomHref ? (
                         <Link href={reflection.roomHref} className="symbol-archive-action">
-                          Raum oeffnen
+                          Raum öffnen
                         </Link>
                       ) : null}
                     </div>

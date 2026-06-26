@@ -16,8 +16,8 @@ export type RoomHebrewMovement = {
 export const roomHebrewMovements: RoomHebrewMovement[] = [
   {
     symbolId: "wasser",
-    title: "Hebraeische Spur durch diesen Raum",
-    summary: "Aus Tiefe wird Atem, aus Atem wird Wasser, aus Wasser wird Uebergang.",
+    title: "Hebräische Spur durch diesen Raum",
+    summary: "Aus Tiefe wird Atem, aus Atem wird Wasser, aus Wasser wird Übergang.",
     stations: [
       { id: "wasser-tehom", label: "tehom", hebrew: "\u05ea\u05d4\u05d5\u05dd", meaning: "Die Tiefe birgt, was noch keine Gestalt hat.", codexId: "tehom" },
       { id: "wasser-ruach", label: "ruach", hebrew: "\u05e8\u05d5\u05d7", meaning: "Der Atem bewegt die Tiefe, bevor etwas sichtbar wird.", codexId: "ruach" },
@@ -41,22 +41,22 @@ export const roomHebrewMovements: RoomHebrewMovement[] = [
   {
     symbolId: "feuer",
     title: "Die Bewegung dieses Raums",
-    summary: "Aus Anfang wird Flamme, aus Flamme Naehe, aus Naehe Atem.",
+    summary: "Aus Anfang wird Flamme, aus Flamme Nähe, aus Nähe Atem.",
     stations: [
       { id: "feuer-aleph", label: "aleph", hebrew: "\u05d0", meaning: "Aleph steht still am Anfang, bevor die Flamme spricht.", codexId: "aleph" },
-      { id: "feuer-esch", label: "esch", hebrew: "\u05d0\u05e9", meaning: "Feuer macht Gegenwart sichtbar, ohne sie verfuegbar zu machen.", codexId: "esch" },
-      { id: "feuer-mizbeach", label: "mizbeach", hebrew: "\u05de\u05d6\u05d1\u05d7", meaning: "Der Altar sammelt Naehe, Grenze und Hingabe an einem Ort.", codexId: "mizbeach" },
-      { id: "feuer-korban", label: "korban", hebrew: "\u05e7\u05e8\u05d1\u05df", meaning: "Die Gabe wird zur Bewegung des Naeherkommens.", codexId: "korban" },
-      { id: "feuer-ruach", label: "ruach", hebrew: "\u05e8\u05d5\u05d7", meaning: "Aus dem Brennen bleibt Atem, der weitertraegt.", codexId: "ruach" },
+      { id: "feuer-esch", label: "esch", hebrew: "\u05d0\u05e9", meaning: "Feuer macht Gegenwart sichtbar, ohne sie verfügbar zu machen.", codexId: "esch" },
+      { id: "feuer-mizbeach", label: "mizbeach", hebrew: "\u05de\u05d6\u05d1\u05d7", meaning: "Der Altar sammelt Nähe, Grenze und Hingabe an einem Ort.", codexId: "mizbeach" },
+      { id: "feuer-korban", label: "korban", hebrew: "\u05e7\u05e8\u05d1\u05df", meaning: "Die Gabe wird zur Bewegung des Näherkommens.", codexId: "korban" },
+      { id: "feuer-ruach", label: "ruach", hebrew: "\u05e8\u05d5\u05d7", meaning: "Aus dem Brennen bleibt Atem, der weiterträgt.", codexId: "ruach" },
     ],
   },
   {
     symbolId: "wueste",
-    title: "Hebraeische Spur durch diesen Raum",
+    title: "Hebräische Spur durch diesen Raum",
     summary: "Leere wird Weg, Weg wird Zeichen, Zeichen wird Stimme.",
     stations: [
-      { id: "wueste-midbar", label: "midbar", hebrew: "\u05de\u05d3\u05d1\u05e8", meaning: "Die Wueste ist der Raum, in dem Leere hoerbar wird.", codexId: "midbar" },
-      { id: "wueste-derech", label: "derech", hebrew: "\u05d3\u05e8\u05da", meaning: "Der Weg entsteht, waehrend man ihn geht.", codexId: "derech" },
+      { id: "wueste-midbar", label: "midbar", hebrew: "\u05de\u05d3\u05d1\u05e8", meaning: "Die Wüste ist der Raum, in dem Leere hörbar wird.", codexId: "midbar" },
+      { id: "wueste-derech", label: "derech", hebrew: "\u05d3\u05e8\u05da", meaning: "Der Weg entsteht, während man ihn geht.", codexId: "derech" },
       { id: "wueste-nes", label: "nes", hebrew: "\u05e0\u05e1", meaning: "Das Zeichen hebt Orientierung aus dem Offenen hervor.", codexId: "nes" },
       { id: "wueste-sinai", label: "sinai", hebrew: "\u05e1\u05d9\u05e0\u05d9", meaning: "Sinai sammelt Warten, Furcht und Offenbarung am Berg.", codexId: "sinai" },
       { id: "wueste-qol", label: "qol", hebrew: "\u05e7\u05d5\u05dc", meaning: "Die Stimme macht aus Stille einen Ruf.", codexId: "qol" },
@@ -68,7 +68,7 @@ export const roomHebrewMovements: RoomHebrewMovement[] = [
     summary: "Gabe wird Korn, Korn wird Brot, Brot wird Teilen.",
     stations: [
       { id: "brot-manna", label: "manna", hebrew: "\u05de\u05df", meaning: "Manna ist Gabe, bevor Besitz daraus werden kann.", codexId: "manna" },
-      { id: "brot-dagan", label: "dagan", hebrew: "\u05d3\u05d2\u05df", meaning: "Korn traegt die verborgene Geduld des Wachsens.", codexId: "dagan" },
+      { id: "brot-dagan", label: "dagan", hebrew: "\u05d3\u05d2\u05df", meaning: "Korn trägt die verborgene Geduld des Wachsens.", codexId: "dagan" },
       { id: "brot-lechem", label: "lechem", hebrew: "\u05dc\u05d7\u05dd", meaning: "Brot macht Nahrung greifbar und gemeinsam.", codexId: "lechem" },
       { id: "brot-shever", label: "shever", hebrew: "\u05e9\u05d1\u05e8", meaning: "Im Brechen wird sichtbar, dass Gabe teilbar ist.", codexId: "shever" },
       { id: "brot-seudah", label: "seudah", hebrew: "\u05e1\u05e2\u05d5\u05d3\u05d4", meaning: "Das Mahl verwandelt Nahrung in Gemeinschaft.", codexId: "seudah" },

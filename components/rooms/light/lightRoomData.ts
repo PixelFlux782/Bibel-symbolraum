@@ -90,7 +90,7 @@ const lightSymbolGraph: SymbolGraph = {
       id: "way",
       type: "spiritual-symbol",
       label: "Weg",
-      shortMeaning: "Licht wird zur Orientierung im gegenwaertigen Dunkel.",
+      shortMeaning: "Licht wird zur Orientierung im gegenwärtigen Dunkel.",
       importance: 0.84,
       depthLevel: 1,
       visuals: { material: "gold-thread", accent: "gold", glow: 0.76, opacity: 0.84, motion: "emerging" },
@@ -150,7 +150,7 @@ const lightSymbolGraph: SymbolGraph = {
       meaningQuality: "transition",
       emotionalTone: "hope",
       visualBehavior: "emerging",
-      explanation: "Licht nimmt den Weg nicht vorweg, aber es laesst eine Spur sichtbar werden.",
+      explanation: "Licht nimmt den Weg nicht vorweg, aber es lässt eine Spur sichtbar werden.",
     },
     {
       source: "light",
@@ -233,7 +233,7 @@ export const lightRoomDefinition: SymbolRoomDefinition = {
   ],
   decision: {
     kicker: "Reflexionsraum",
-    reflectionQuestion: "Wo brauchst du gerade genug Licht fuer das, was sich zeigt?",
+    reflectionQuestion: "Wo brauchst du gerade genug Licht für das, was sich zeigt?",
     textareaLabel: "Reflexion zum Lichtraum",
     placeholder: "Still notieren...",
     storageNotice: "Deine Reflexion bleibt nur auf diesem Ger\u00e4t gespeichert.",

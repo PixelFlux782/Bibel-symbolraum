@@ -204,8 +204,8 @@ function buildJourneyOpenings(personalWay: Omit<PersonalWay, "nextOpenings">) {
       label: `${nextStep.label} betreten`,
       href: nextStep.roomHref,
       reason: currentConfig
-        ? `Nach ${currentConfig.label} oeffnet sich von hier ${nextStep.label}.`
-        : `${nextStep.label} oeffnet sich von hier.`,
+        ? `Nach ${currentConfig.label} öffnet sich von hier ${nextStep.label}.`
+        : `${nextStep.label} öffnet sich von hier.`,
       source: "journey",
     });
   }
@@ -232,7 +232,7 @@ function buildReturnOpenings(personalWay: Omit<PersonalWay, "nextOpenings">) {
         path: anchorId,
         symbol: config.symbolId,
       }),
-      reason: `Diese Codex-Spur fuehrt weiter; der ${config.roomLabel} nimmt deine Spur auf.`,
+      reason: `Diese Codex-Spur führt weiter; der ${config.roomLabel} nimmt deine Spur auf.`,
       source: "codex",
     });
   }

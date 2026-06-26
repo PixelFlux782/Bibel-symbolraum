@@ -14,7 +14,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "let-there-be-light",
     meaningNodeIds: ["revelation"],
     biblicalReferenceIds: ["genesis-1-3"],
-    bridgeText: "Aus der noch verborgenen Tiefe des Wassers tritt Licht hervor und macht Schoepfung sichtbar.",
+    bridgeText: "Aus der noch verborgenen Tiefe des Wassers tritt Licht hervor und macht Schöpfung sichtbar.",
   },
   {
     journeyId: "purification",
@@ -29,7 +29,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "refining-fire",
     meaningNodeIds: ["purification", "transformation"],
     biblicalReferenceIds: ["malachi-3-2-3"],
-    bridgeText: "Wasser klaert und Feuer verwandelt: Reinigung wird als Weg durch zwei elementare Symbolraeume lesbar.",
+    bridgeText: "Wasser klärt und Feuer verwandelt: Reinigung wird als Weg durch zwei elementare Symbolräume lesbar.",
   },
   {
     journeyId: "revelation",
@@ -44,7 +44,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "let-there-be-light",
     meaningNodeIds: ["presence", "revelation"],
     biblicalReferenceIds: ["exodus-13-21", "john-1-4-5"],
-    bridgeText: "Feuer macht Gegenwart erfahrbar; Licht laesst das zuvor Verborgene hervortreten.",
+    bridgeText: "Feuer macht Gegenwart erfahrbar; Licht lässt das zuvor Verborgene hervortreten.",
   },
   {
     journeyId: "wilderness-path",
@@ -59,7 +59,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "guidance",
     meaningNodeIds: ["desert", "guidance"],
     biblicalReferenceIds: ["exodus-wilderness", "deuteronomy-8", "exodus-13-21"],
-    bridgeText: "In der Wueste wird aus dem Weg durch den Mangel eine Suche nach Fuehrung.",
+    bridgeText: "In der Wüste wird aus dem Weg durch den Mangel eine Suche nach Führung.",
   },
   {
     journeyId: "wilderness-path",
@@ -67,7 +67,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "light-on-the-way",
     meaningNodeIds: ["guidance", "presence"],
     biblicalReferenceIds: ["exodus-13-21"],
-    bridgeText: "Licht wird in der Wueste zur Fuehrung.",
+    bridgeText: "Licht wird in der Wüste zur Führung.",
   },
   {
     journeyId: "wilderness-path",
@@ -75,7 +75,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "pillar-of-fire",
     meaningNodeIds: ["guidance", "presence"],
     biblicalReferenceIds: ["exodus-13-21"],
-    bridgeText: "Die Feuersaeule verbindet die dunkle Weite mit tragender Gegenwart.",
+    bridgeText: "Die Feuersäule verbindet die dunkle Weite mit tragender Gegenwart.",
   },
   {
     journeyId: "bread-path",
@@ -90,7 +90,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "let-there-be-light",
     meaningNodeIds: ["revelation"],
     biblicalReferenceIds: ["mark-4-26-29"],
-    bridgeText: "Wasser traegt das verborgene Wachstum; im Licht kann das Korn reifen.",
+    bridgeText: "Wasser trägt das verborgene Wachstum; im Licht kann das Korn reifen.",
   },
   {
     journeyId: "bread-path",
@@ -106,7 +106,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "emptiness",
     meaningNodeIds: ["lack", "gift"],
     biblicalReferenceIds: ["exodus-16-4"],
-    bridgeText: "In der Wueste wird Versorgung gerade im Mangel als Gabe sichtbar.",
+    bridgeText: "In der Wüste wird Versorgung gerade im Mangel als Gabe sichtbar.",
   },
   {
     journeyId: "bread-path",
@@ -114,7 +114,7 @@ export const journeyEntryTargets: JourneyEntryTarget[] = [
     suggestedStateId: "manna",
     meaningNodeIds: ["gift", "nourishment"],
     biblicalReferenceIds: ["exodus-16-4", "deuteronomy-8-3", "john-6-35"],
-    bridgeText: "Manna verbindet die Wueste mit Brot: Nahrung wird als taegliche Gabe fuer den Weg empfangen.",
+    bridgeText: "Manna verbindet die Wüste mit Brot: Nahrung wird als tägliche Gabe für den Weg empfangen.",
   },
 ];
 

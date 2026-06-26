@@ -51,7 +51,7 @@ export const resonanceJourneys: ResonanceJourney[] = [
   {
     id: "tehom-ruach-davar-qol-or",
     title: "Vom Ursprung zum Licht",
-    summary: "Die Tiefe wird bewegt.\nDas Wort wird getragen.\nDie Stimme wird hoerbar.\nDas Licht erscheint.",
+    summary: "Die Tiefe wird bewegt.\nDas Wort wird getragen.\nDie Stimme wird hörbar.\nDas Licht erscheint.",
     nodePath: ["tehom", "ruach", "davar", "qol", "or"],
     connectionIds: [
       "resonance-tehom-ruach",
@@ -63,7 +63,7 @@ export const resonanceJourneys: ResonanceJourney[] = [
   },
   {
     id: "journey-hebraeische-schoepfung",
-    title: "Hebraeische Schoepfung",
+    title: "Hebräische Schöpfung",
     summary: "Bara ruft.\nTehom wird bewegt.\nSchamajim und Erez werden Raum.\nOr macht sichtbar.",
     nodePath: ["bara", "tehom", "ruach", "schamajim", "or", "erez"],
     connectionIds: [
@@ -78,7 +78,7 @@ export const resonanceJourneys: ResonanceJourney[] = [
   {
     id: "journey-wasser-resonanznetz",
     title: "Wasser Resonanznetz",
-    summary: "Majim traegt Tiefe.\nTehom wird von Ruach bewegt.\nJordan und Mikwe machen Wasser zur Schwelle.\nTahor fuehrt ins Licht.",
+    summary: "Majim trägt Tiefe.\nTehom wird von Ruach bewegt.\nJordan und Mikwe machen Wasser zur Schwelle.\nTahor führt ins Licht.",
     nodePath: ["majim", "tehom", "ruach", "schamajim", "nahar", "jordan", "mikwe", "tahor", "or"],
     connectionIds: [
       "resonance-tehom-majim",
@@ -94,8 +94,8 @@ export const resonanceJourneys: ResonanceJourney[] = [
   },
   {
     id: "journey-wueste-sinai-stimme",
-    title: "Wueste, Sinai, Stimme",
-    summary: "Midbar wird Derech.\nNes sammelt Orientierung.\nSinai laesst Qol hoeren.\nKavod erscheint in Feuer.",
+    title: "Wüste, Sinai, Stimme",
+    summary: "Midbar wird Derech.\nNes sammelt Orientierung.\nSinai lässt Qol hören.\nKavod erscheint in Feuer.",
     nodePath: ["midbar", "derech", "nes", "sinai", "qol", "kavod"],
     connectionIds: [
       "resonance-phase36a-midbar-derech",
@@ -109,7 +109,7 @@ export const resonanceJourneys: ResonanceJourney[] = [
   {
     id: "journey-brot-korn-mahl",
     title: "Brot, Korn, Mahl",
-    summary: "Lechem wird Manna im Mangel.\nDagan waechst verborgen.\nShever bricht.\nSeudah teilt.",
+    summary: "Lechem wird Manna im Mangel.\nDagan wächst verborgen.\nShever bricht.\nSeudah teilt.",
     nodePath: ["lechem", "manna", "dagan", "shever", "seudah"],
     connectionIds: [
       "resonance-phase36a-lechem-manna",

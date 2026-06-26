@@ -116,11 +116,11 @@ export function validateCodex(entries: CodexEntry[] = codexRegistry): CodexValid
 
   for (const entry of entries) {
     if (!entry.id.trim()) {
-      errors.push("CodexEntry benoetigt eine id.");
+      errors.push("CodexEntry benötigt eine id.");
     }
 
     if (!entry.title.trim()) {
-      errors.push(`CodexEntry "${entry.id}" benoetigt einen title.`);
+      errors.push(`CodexEntry "${entry.id}" benötigt einen title.`);
     }
 
     if (!entry.summary.trim()) {
@@ -135,7 +135,7 @@ export function validateCodex(entries: CodexEntry[] = codexRegistry): CodexValid
 
     for (const relation of entry.relations) {
       if (!entryIds.has(relation.targetId) && !symbolSlugs.has(relation.targetId) && !externalCodexTargetIds.has(relation.targetId)) {
-        warnings.push(`CodexEntry "${entry.id}" verknuepft Ziel "${relation.targetId}", das noch kein CodexEntry ist.`);
+        warnings.push(`CodexEntry "${entry.id}" verknüpft Ziel "${relation.targetId}", das noch kein CodexEntry ist.`);
       }
     }
 

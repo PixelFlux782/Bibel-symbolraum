@@ -79,7 +79,7 @@ const pathDefinitions: PathDefinition[] = [
   },
   {
     id: "desert-light",
-    label: "Fuehrung",
+    label: "Führung",
     from: "wueste",
     to: "licht",
     fromMeaningId: "desert",
@@ -89,7 +89,7 @@ const pathDefinitions: PathDefinition[] = [
   },
   {
     id: "desert-fire",
-    label: "Feuersaeule",
+    label: "Feuersäule",
     from: "wueste",
     to: "feuer",
     fromMeaningId: "guidance",
@@ -204,7 +204,7 @@ function getEngine(slug: string): SymbolEngineData {
   const engine = engines.find((item) => item.slug === slug);
 
   if (!engine) {
-    throw new Error(`Symbol Engine fuer "${slug}" fehlt.`);
+    throw new Error(`Symbol Engine für "${slug}" fehlt.`);
   }
 
   return engine;
@@ -214,7 +214,7 @@ function getSymbolLink(slug: string): SymbolMeaningLink {
   const link = symbolMeaningLinks.find((item) => item.symbolId === slug);
 
   if (!link) {
-    throw new Error(`Meaning-Graph-Link fuer "${slug}" fehlt.`);
+    throw new Error(`Meaning-Graph-Link für "${slug}" fehlt.`);
   }
 
   return link;
@@ -302,7 +302,7 @@ function buildPath(definition: PathDefinition): SymbolMeaningPath {
   const toMeaning = getMeaningNode(definition.toMeaningId);
   const relation = meaningRelations.find((item) => item.id === definition.relationId);
   if (!relation) {
-    throw new Error(`Meaning Relation "${definition.relationId}" fuer Verbindung "${definition.id}" fehlt.`);
+    throw new Error(`Meaning Relation "${definition.relationId}" für Verbindung "${definition.id}" fehlt.`);
   }
 
   return {

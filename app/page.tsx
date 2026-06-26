@@ -4,7 +4,7 @@ import { PathPreview } from "@/components/home/PathPreview";
 import { visualAssets } from "@/lib/visualAssets";
 
 const MEANING_FLOW = [
-  "Hebraeischer Buchstabe",
+  "Hebräischer Buchstabe",
   "Symbol",
   "Raum",
   "Spur",
@@ -15,7 +15,7 @@ const CURRENT_ROOMS = [
   "Wasser",
   "Licht",
   "Feuer",
-  "Wueste",
+  "Wüste",
   "Brot",
 ];
 
@@ -55,11 +55,11 @@ export default function StartPage() {
             SYMBOLRAUM
           </h1>
           <p className="symbol-copy mx-auto mt-9 max-w-[16rem] text-base italic text-muted-soft sm:max-w-xl sm:text-xl">
-            Eine Spur oeffnet sich im Wasser.
+            Eine Spur öffnet sich im Wasser.
           </p>
 
           <p className="symbol-copy mx-auto mt-7 max-w-[20rem] text-sm text-muted-soft sm:max-w-2xl sm:text-lg">
-            Der Wasser-Raum oeffnet die Tiefe. Was dort sichtbar wird, darf als Spur bleiben.
+            Der Wasser-Raum öffnet die Tiefe. Was dort sichtbar wird, darf als Spur bleiben.
           </p>
 
           <div className="mt-16 flex flex-col items-center gap-6">
@@ -69,7 +69,7 @@ export default function StartPage() {
             </Link>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
               <Link href="/symbolnetz" className="symbol-cta">
-                Symbolnetz oeffnen
+                Symbolnetz öffnen
               </Link>
               <Link href="/mein-pfad" className="symbol-cta symbol-cta-secondary">
                 Mein Pfad ansehen
@@ -107,7 +107,7 @@ export default function StartPage() {
               Bedeutungsbewegung
             </p>
             <h3 className="mt-5 font-serif text-4xl italic leading-tight text-foreground-strong sm:text-5xl">
-              Aus Zeichen werden Raeume. Aus Raeumen werden Spuren.
+              Aus Zeichen werden Räume. Aus Räumen werden Spuren.
             </h3>
 
             <div className="mt-12 grid gap-4">
@@ -127,12 +127,12 @@ export default function StartPage() {
             </div>
 
             <div className="mt-12 border-t border-gold/[0.08] pt-7">
-              <p className="symbol-kicker">Aktuelle Raeume im Netz</p>
+              <p className="symbol-kicker">Aktuelle Räume im Netz</p>
               <p className="symbol-copy mt-4 text-lg">
                 {CURRENT_ROOMS.join(" / ")}
               </p>
               <Link href="/symbolnetz" className="symbol-cta mt-6">
-                Symbolnetz oeffnen
+                Symbolnetz öffnen
               </Link>
             </div>
           </div>
