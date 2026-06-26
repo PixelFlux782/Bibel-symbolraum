@@ -70,6 +70,130 @@ type ResolvedPathContext = {
 };
 
 type ReflectionSourceType = "symbol" | "pattern" | "journey" | "core" | "letter";
+type CodexGenre =
+  | "symbol"
+  | "hebrew-word"
+  | "hebrew-letter"
+  | "scripture"
+  | "journey"
+  | "pattern"
+  | "meaning"
+  | "core"
+  | "number";
+
+type GenreCopy = {
+  formula: string;
+  threshold: string;
+  essenceTitle: string;
+  meaningFieldsTitle: string;
+  waysTitle: string;
+  relationsTitle: string;
+  relationsLead: string;
+  scriptureTitle: string;
+  nearbyTitle: string;
+};
+
+const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
+  symbol: {
+    formula: "Ort der Bedeutung",
+    threshold: "Dieses Symbol wird als Raum betreten. Erst kommt die Atmosphaere, dann der hebräische Körper, dann die Beziehungen, die diesen Ort tragen.",
+    essenceTitle: "Essenz",
+    meaningFieldsTitle: "Bedeutungsraum",
+    waysTitle: "Türen in Raum und Pfad",
+    relationsTitle: "Drei tragende Beziehungen",
+    relationsLead: "Welche Bedeutungen tragen diesen Raum?",
+    scriptureTitle: "Biblische Spuren",
+    nearbyTitle: "Türen: Raum, Codex, Symbolnetz, Pfad",
+  },
+  "hebrew-word": {
+    formula: "Sprachkörper",
+    threshold: "Dieses hebräische Wort wird zuerst gehört. Klang, Schriftbild und Zahlkörper tragen die Bedeutung, bevor sie in Symbolräume weitergeht.",
+    essenceTitle: "Bedeutungsschwelle",
+    meaningFieldsTitle: "Innere Wortbedeutung",
+    waysTitle: "Bewegung",
+    relationsTitle: "Drei antwortende Sprachkörper",
+    relationsLead: "Welche anderen Sprachkörper antworten diesem Wort?",
+    scriptureTitle: "Biblische Klangspuren",
+    nearbyTitle: "Symbolräume",
+  },
+  "hebrew-letter": {
+    formula: "Urzeichen",
+    threshold: "Dieser Buchstabe wird angeschaut wie eine Urform. Zeichen, Name und Zahlenwert kommen vor den weiteren Resonanzen.",
+    essenceTitle: "Urbild / Grundbewegung",
+    meaningFieldsTitle: "Bedeutungsnähe",
+    waysTitle: "Symbolische Nähe",
+    relationsTitle: "Drei tragende Beziehungen",
+    relationsLead: "Welche Wörter, Symbole und Zahlen werden von dieser Form berührt?",
+    scriptureTitle: "Biblische Spuren",
+    nearbyTitle: "Nahe Zeichenräume",
+  },
+  scripture: {
+    formula: "Szene",
+    threshold: "Diese Bibelstelle wird als Szene betreten. Ein Moment öffnet sich, aus dem hebräische Schlüssel, Symbole und Bewegungen hervortreten.",
+    essenceTitle: "Szene",
+    meaningFieldsTitle: "Bedeutungen der Szene",
+    waysTitle: "Weiterführende Resonanzen",
+    relationsTitle: "Drei hervortretende Beziehungen",
+    relationsLead: "Welche Bedeutungen treten in dieser Szene hervor?",
+    scriptureTitle: "Szenenanker",
+    nearbyTitle: "Weitere Szenentüren",
+  },
+  journey: {
+    formula: "Weg",
+    threshold: "Diese Journey will gegangen werden. Bedeutung entsteht nicht auf einmal, sondern von Station zu Station.",
+    essenceTitle: "Ausgangspunkt",
+    meaningFieldsTitle: "Was dieser Weg sammelt",
+    waysTitle: "Verwandte Räume / Symbole",
+    relationsTitle: "Wegbeziehungen",
+    relationsLead: "Welche Stationen und Räume halten diesen Weg zusammen?",
+    scriptureTitle: "Biblische Wegspuren",
+    nearbyTitle: "Nahe Wege",
+  },
+  pattern: {
+    formula: "Wiederkehrende Bewegung",
+    threshold: "Dieses Muster zeigt Bedeutung als wiederkehrende Bewegung. Es fragt nicht nur, was etwas ist, sondern wo es immer wieder geschieht.",
+    essenceTitle: "Musterformel",
+    meaningFieldsTitle: "Musterfelder",
+    waysTitle: "Verwandte Journeys",
+    relationsTitle: "Wo diese Bewegung wiederkehrt",
+    relationsLead: "Wo kehrt diese Bewegung wieder?",
+    scriptureTitle: "Biblische Beispiele",
+    nearbyTitle: "Nahe Muster",
+  },
+  meaning: {
+    formula: "Bedeutungsfeld",
+    threshold: "Dieses Bedeutungsfeld sammelt, ohne alles gleichzumachen. Symbole, Wörter und Stellen stehen hier in einem gemeinsamen Raum.",
+    essenceTitle: "Kurze innere Definition",
+    meaningFieldsTitle: "Bedeutungsfeld",
+    waysTitle: "Bewegung innerhalb des Feldes",
+    relationsTitle: "Drei tragende Beziehungen",
+    relationsLead: "Welche Symbole, Wörter und Stellen sammeln sich in diesem Feld?",
+    scriptureTitle: "Biblische Spuren",
+    nearbyTitle: "Nahe Bedeutungsfelder",
+  },
+  core: {
+    formula: "Achse",
+    threshold: "Diese Achse trägt mehrere Räume, ohne sie zu verschmelzen. Wer eintritt, erkennt, welche Bewegungen hier zusammenlaufen.",
+    essenceTitle: "Achse benennen",
+    meaningFieldsTitle: "Achsenfelder",
+    waysTitle: "Bewegungen durch diese Achse",
+    relationsTitle: "Achsenbeziehungen",
+    relationsLead: "Welche Bewegungen laufen durch diese Achse?",
+    scriptureTitle: "Verdichtende Bibelstellen",
+    nearbyTitle: "Nahe Achsen",
+  },
+  number: {
+    formula: "Rhythmus",
+    threshold: "Diese Zahl wird als Rhythmus gelesen. Sie ordnet Bedeutungen durch Maß, Wiederkehr und hebräische Zahlkörper.",
+    essenceTitle: "Symbolischer Rhythmus",
+    meaningFieldsTitle: "Rhythmusfelder",
+    waysTitle: "Welche Bewegung diese Zahl trägt",
+    relationsTitle: "Drei tragende Beziehungen",
+    relationsLead: "Welche Buchstaben, Wörter und Symbole werden durch diese Zahl geordnet?",
+    scriptureTitle: "Biblische Zahlenspuren",
+    nearbyTitle: "Nahe Rhythmen",
+  },
+};
 
 function formatType(type: CodexEntryType) {
   const labels: Record<CodexEntryType, string> = {
@@ -638,6 +762,14 @@ function resolveReflectionSourceType(entry: CodexEntry, entity?: OntologyEntity)
   if (entry.type === "symbol" && ["wasser", "licht", "feuer", "wueste"].includes(entry.id)) return "symbol";
 
   return null;
+}
+
+function resolveCodexGenre(entry: CodexEntry, entity?: OntologyEntity): CodexGenre {
+  if (entity?.domain === "pattern") return "pattern";
+  if (entity && isCoreConceptId(entity.id)) return "core";
+  if (entry.type === "meaning" || entry.type === "meaning-field") return "meaning";
+
+  return entry.type;
 }
 
 function getReflectionQuestionForEntry(sourceType: ReflectionSourceType) {
@@ -1414,6 +1546,8 @@ function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
       ?? "Dieses hebräische Wort öffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenführt.";
   }
 
+  if (resolveCodexGenre(entry, entity)) return GENRE_COPY[resolveCodexGenre(entry, entity)].threshold;
+
   if (entity?.domain === "pattern") {
     return "Dieses Muster lohnt sich, weil es Bedeutung nicht als Begriff zeigt, sondern als Bewegung. Wer eintritt, sieht, wodurch ein Raum zum nächsten Raum wird.";
   }
@@ -1437,9 +1571,11 @@ function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
 }
 
 function ThresholdSection({ entry, entity }: { entry: CodexEntry; entity?: OntologyEntity }) {
+  const genre = resolveCodexGenre(entry, entity);
+
   return (
     <section className="mt-8 max-w-3xl border-l border-gold/35 pl-5">
-      <p className="symbol-kicker text-gold/70">Schwelle</p>
+      <p className="symbol-kicker text-gold/70">Schwelle / {GENRE_COPY[genre].formula}</p>
       <p className="symbol-copy mt-3 text-lg italic leading-relaxed text-foreground-strong md:text-xl">
         {getCodexThresholdText(entry, entity)}
       </p>
@@ -1460,13 +1596,7 @@ function EssenceSection({
     return null;
   }
 
-  const title = entity?.domain === "pattern"
-    ? "Warum diese Bewegung?"
-    : entry.type === "scripture"
-      ? "Szene"
-      : entry.type === "journey"
-        ? "Ausgangspunkt"
-        : "Essenz";
+  const title = GENRE_COPY[resolveCodexGenre(entry, entity)].essenceTitle;
 
   return (
     <DetailSection title={title} activeContext={activeContext}>
@@ -2118,6 +2248,47 @@ function VisibleHiddenSection({
   );
 }
 
+function MeaningFieldsSection({
+  entry,
+  title,
+  activeContext,
+}: {
+  entry: CodexEntry;
+  title: string;
+  activeContext?: CodexContextFocus;
+}) {
+  if (entry.meaningFields.length === 0) {
+    return null;
+  }
+
+  return (
+    <DetailSection title={title} activeContext={activeContext}>
+      <div className="flex flex-wrap gap-2">
+        {entry.meaningFields.map((field) => {
+          const linkedEntry = resolveLinkedCodexEntry(field);
+          const className =
+            "border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs tracking-[0.18em] text-gold/80 transition-colors duration-500";
+          const label = getMeaningFieldLabel(field);
+
+          return linkedEntry ? (
+            <Link
+              key={field}
+              href={`/codex/${linkedEntry.id}`}
+              className={`${className} hover:border-gold/30 hover:bg-gold/[0.075] hover:text-gold`}
+            >
+              {label}
+            </Link>
+          ) : (
+            <span key={field} className={className}>
+              {label}
+            </span>
+          );
+        })}
+      </div>
+    </DetailSection>
+  );
+}
+
 export function generateStaticParams() {
   return Array.from(new Set([
     ...codexEntryIds,
@@ -2173,6 +2344,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   const scriptureSceneModel = buildScriptureSceneModel(entry);
   const isPatternEntity = ontologyEntity?.domain === "pattern";
   const isCoreConceptEntity = ontologyEntity ? isCoreConceptId(ontologyEntity.id) : false;
+  const genre = resolveCodexGenre(entry, ontologyEntity);
+  const genreCopy = GENRE_COPY[genre];
   const symbolJourney = getJourneysForSymbol(entry.id)[0];
   const symbolJourneyStep = symbolJourney?.steps.find((step) => step.symbol === entry.id);
   const codexRoomHref = buildCodexRoomHref(entry);
@@ -2196,6 +2369,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
     lens: activeResonanceJourney ? "story" : symbolNetworkReturnLens,
     path: activeResonanceJourney?.id,
   });
+  const showGenericSections = !isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity;
+  const showMeaningFieldSection = !isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity;
 
   return (
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-28 md:py-36">
@@ -2231,7 +2406,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         <header className={`mt-10 grid gap-10 ${entry.type === "hebrew-word" ? "" : "lg:grid-cols-[1fr_auto] lg:items-start"}`}>
           <div>
             <p className="symbol-kicker text-cyan-soft">
-              {isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)}
+              {isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} / {genreCopy.formula}
             </p>
             {entry.type === "hebrew-word" && entry.hebrew ? (
               <>
@@ -2287,13 +2462,22 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
         <PathContextCard context={pathContext} />
         <SymbolAnchorReturnCard entryId={entry.id} />
 
-        <div className="mt-14 grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="mt-14 grid gap-5">
           <div className="grid gap-5">
             {isWaterEntry ? <WaterCodexReferenceSection /> : null}
             {isLightEntry ? <LightCodexReferenceSection /> : null}
             {isFireEntry ? <FireCodexReferenceSection /> : null}
             {scriptureSceneModel ? <ScriptureSceneSection model={scriptureSceneModel} /> : null}
-            {!isCuratedSymbolEntry && !isScriptureEntry ? (
+            {entry.type === "hebrew-letter" ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
+            {entry.type === "number" ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
+            {isPatternEntity ? (
+              <PatternCodexSection
+                entity={ontologyEntity}
+                entry={entry}
+                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
+            ) : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && entry.type !== "hebrew-letter" && entry.type !== "number" ? (
               <EssenceSection
                 entry={entry}
                 entity={ontologyEntity}
@@ -2303,16 +2487,9 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {entry.type === "hebrew-word" ? (
               <HebrewWordIdentitySection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : activeFocus === "gematria" ? "gematria" : undefined} />
             ) : null}
-            {!isCuratedSymbolEntry && !isScriptureEntry ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
-            {!isCuratedSymbolEntry && !isScriptureEntry ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry && entry.type !== "hebrew-letter" ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry && entry.type !== "number" ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
             {!isCuratedSymbolEntry && !isScriptureEntry ? <JourneyStepsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
-            {isPatternEntity ? (
-              <PatternCodexSection
-                entity={ontologyEntity}
-                entry={entry}
-                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
-              />
-            ) : null}
             {!isPatternEntity && isCoreConceptEntity && ontologyEntity ? (
               <CoreConceptCodexSection
                 entity={ontologyEntity}
@@ -2320,50 +2497,31 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               />
             ) : null}
 
-            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity && ontologyEntity?.visibleHidden ? (
+            {showGenericSections && ontologyEntity?.visibleHidden ? (
               <VisibleHiddenSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
               />
             ) : null}
 
-            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {showGenericSections ? (
               <WaysBeginningSection
                 entry={entry}
                 activeContext={activeFocus === "story" ? "story" : undefined}
               />
             ) : null}
 
-            {!isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity && entry.meaningFields.length > 0 ? (
-              <DetailSection title="Bedeutungsfelder" activeContext={activeFocus === "meaning" ? "meaning" : undefined}>
-                <div className="flex flex-wrap gap-2">
-                  {entry.meaningFields.map((field) => {
-                    const linkedEntry = resolveLinkedCodexEntry(field);
-                    const className =
-                      "border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs tracking-[0.18em] text-gold/80 transition-colors duration-500";
-                    const label = getMeaningFieldLabel(field);
-
-                    return linkedEntry ? (
-                      <Link
-                        key={field}
-                        href={`/codex/${linkedEntry.id}`}
-                        className={`${className} hover:border-gold/30 hover:bg-gold/[0.075] hover:text-gold`}
-                      >
-                        {label}
-                      </Link>
-                    ) : (
-                      <span key={field} className={className}>
-                        {label}
-                      </span>
-                    );
-                  })}
-                </div>
-              </DetailSection>
+            {showMeaningFieldSection ? (
+              <MeaningFieldsSection
+                entry={entry}
+                title={genreCopy.meaningFieldsTitle}
+                activeContext={activeFocus === "meaning" ? "meaning" : undefined}
+              />
             ) : null}
 
             {shouldShowStandaloneResonanceRoom ? <ResonanceRoomSection symbolId={entry.id} /> : null}
 
-            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {showGenericSections ? (
               <MeaningResonanceSection entry={entry} activeContext={activeFocus === "meaning" ? "meaning" : undefined} />
             ) : null}
             {entry.id === "davar" ? <DavarMidbarResonanceSection /> : null}
@@ -2383,14 +2541,22 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </DetailSection>
             ) : null}
             {!isCuratedSymbolEntry && !isScriptureEntry ? <SymbolicTrailSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
-            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {showGenericSections ? (
               <CuratedRelationsSection
                 entry={entry}
+                title={genreCopy.relationsTitle}
+                lead={genreCopy.relationsLead}
                 activeContext={activeFocus === "meaning" || activeFocus === "spaces" ? activeFocus : undefined}
                 excludedRelationIds={symbolWayRelationIds}
               />
             ) : null}
-            {!isCuratedSymbolEntry && !isScriptureEntry ? <ScriptureAnchorsSection entry={entry} activeContext={activeFocus === "story" ? "story" : undefined} /> : null}
+            {!isCuratedSymbolEntry && !isScriptureEntry ? (
+              <ScriptureAnchorsSection
+                entry={entry}
+                title={genreCopy.scriptureTitle}
+                activeContext={activeFocus === "story" ? "story" : undefined}
+              />
+            ) : null}
             {symbolJourney && symbolJourneyStep ? (
               <SymbolJourneyNoticeSection journey={symbolJourney} step={symbolJourneyStep} />
             ) : null}
@@ -2415,7 +2581,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               roomHref={personalTraceSymbolConfig?.roomHref}
               journeyTitle={symbolJourney?.title}
             />
-            {!isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity ? (
+            {showGenericSections ? (
               <OntologyMetadataSection
                 entity={ontologyEntity}
                 activeContext={activeFocus === "meaning" ? "meaning" : undefined}
@@ -2423,7 +2589,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             ) : null}
           </div>
 
-          <aside className="grid content-start gap-5 lg:pt-24">
+          <aside className="grid content-start gap-5 md:grid-cols-2">
             <DetailSection title="Archiv">
               <dl>
                 <FieldRow label="Typ" value={isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} />
@@ -2446,7 +2612,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
               </dl>
             </DetailSection>
 
-            {!isCuratedSymbolEntry && !isCoreConceptEntity ? <NearbyEntriesSection entry={entry} /> : null}
+            {!isCuratedSymbolEntry && !isCoreConceptEntity ? <NearbyEntriesSection entry={entry} title={genreCopy.nearbyTitle} /> : null}
           </aside>
         </div>
       </div>
@@ -3559,10 +3725,14 @@ function CuratedRelationsSection({
   entry,
   activeContext,
   excludedRelationIds = new Set<string>(),
+  title = "Bedeutende Beziehungen",
+  lead = "Die drei wichtigsten Beziehungen",
 }: {
   entry: CodexEntry;
   activeContext?: CodexContextFocus;
   excludedRelationIds?: Set<string>;
+  title?: string;
+  lead?: string;
 }) {
   const relations = buildCuratedRelationItems(entry, excludedRelationIds);
   const primaryRelations = relations.slice(0, 3);
@@ -3573,10 +3743,10 @@ function CuratedRelationsSection({
   }
 
   return (
-    <DetailSection title="Bedeutende Beziehungen" activeContext={activeContext}>
+    <DetailSection title={title} activeContext={activeContext}>
       <div className="grid gap-8">
         <div>
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Die drei wichtigsten Beziehungen</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">{lead}</p>
           <div className="mt-5 grid gap-5 md:grid-cols-3">
             {primaryRelations.map((item) => (
               <CuratedRelationCard key={item.key} item={item} spacious />
@@ -3798,13 +3968,21 @@ function getVisibleCodexRelations(entry: CodexEntry) {
   });
 }
 
-function ScriptureAnchorsSection({ entry, activeContext }: { entry: CodexEntry; activeContext?: CodexContextFocus }) {
+function ScriptureAnchorsSection({
+  entry,
+  activeContext,
+  title = "Bibelanker",
+}: {
+  entry: CodexEntry;
+  activeContext?: CodexContextFocus;
+  title?: string;
+}) {
   if (entry.scriptureAnchors.length === 0) {
     return null;
   }
 
   return (
-    <DetailSection title="Bibelanker" activeContext={activeContext}>
+    <DetailSection title={title} activeContext={activeContext}>
       <div className="grid gap-3">
         {entry.scriptureAnchors.map((anchor, index) => {
           const linkedEntry =
@@ -3846,7 +4024,7 @@ function ScriptureAnchorsSection({ entry, activeContext }: { entry: CodexEntry; 
   );
 }
 
-function NearbyEntriesSection({ entry }: { entry: CodexEntry }) {
+function NearbyEntriesSection({ entry, title = "Weitere TÃ¼ren" }: { entry: CodexEntry; title?: string }) {
   const nearbyEntries = getNearbyEntries(entry);
   const primaryEntries = nearbyEntries.slice(0, 3);
   const archiveEntries = nearbyEntries.slice(3);
@@ -3856,7 +4034,7 @@ function NearbyEntriesSection({ entry }: { entry: CodexEntry }) {
   }
 
   return (
-    <DetailSection title="Weitere Türen">
+    <DetailSection title={title}>
       <div className="grid gap-3">
         {primaryEntries.map((nearbyEntry) => (
           <Link
