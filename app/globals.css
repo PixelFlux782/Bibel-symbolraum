@@ -6666,6 +6666,153 @@ body {
   animation: symbol-fade-in 720ms ease both;
 }
 
+.codex-mobile-gate {
+  display: grid;
+  gap: 1.05rem;
+  margin-top: 1.7rem;
+}
+
+.codex-mobile-gate__threshold {
+  border-top: 1px solid rgba(var(--gold-rgb), 0.16);
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.09);
+  background:
+    linear-gradient(90deg, rgba(var(--gold-rgb), 0.055), transparent 54%),
+    rgba(255, 255, 255, 0.014);
+  padding: 1rem 0 1.05rem;
+}
+
+.codex-mobile-gate__threshold h2 {
+  max-width: 21rem;
+  margin-top: 0.55rem;
+  color: rgba(var(--foreground-rgb), 0.96);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.55rem;
+  font-style: italic;
+  line-height: 1.18;
+}
+
+.codex-mobile-gate__threshold p:not(.symbol-kicker) {
+  max-width: 20rem;
+  margin-top: 0.65rem;
+  color: rgba(216, 209, 194, 0.68);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.codex-mobile-starts,
+.codex-mobile-genres {
+  border-top: 1px solid rgba(var(--gold-rgb), 0.11);
+  padding-top: 0.85rem;
+}
+
+.codex-mobile-starts > p,
+.codex-mobile-genres > p {
+  color: rgba(var(--cyan-rgb), 0.72);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.codex-mobile-starts > div {
+  display: flex;
+  gap: 0.55rem;
+  margin-top: 0.7rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+
+.codex-mobile-starts > div::-webkit-scrollbar {
+  display: none;
+}
+
+.codex-mobile-starts a {
+  display: inline-flex;
+  min-height: 3.65rem;
+  min-width: 8.2rem;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.17);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.07), transparent 58%),
+    rgba(255, 255, 255, 0.018);
+  padding: 0.7rem 0.85rem;
+  color: rgba(var(--gold-rgb), 0.88);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.12rem;
+  font-style: italic;
+  line-height: 1.15;
+}
+
+.codex-mobile-starts a span {
+  margin-bottom: 0.28rem;
+  color: rgba(var(--cyan-rgb), 0.7);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  font-style: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.codex-mobile-genres > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.72rem;
+}
+
+.codex-mobile-genres button {
+  position: relative;
+  display: grid;
+  min-height: 4.15rem;
+  align-content: center;
+  gap: 0.18rem;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  background: rgba(255, 255, 255, 0.016);
+  padding: 0.7rem 0.78rem;
+  text-align: left;
+}
+
+.codex-mobile-genres button.is-featured {
+  min-height: 4.85rem;
+  border-color: rgba(var(--gold-rgb), 0.18);
+  background:
+    linear-gradient(180deg, rgba(var(--gold-rgb), 0.06), rgba(255, 255, 255, 0.014)),
+    rgba(255, 255, 255, 0.012);
+}
+
+.codex-mobile-genres span {
+  color: rgba(var(--cyan-rgb), 0.66);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.codex-mobile-genres strong {
+  color: rgba(var(--foreground-rgb), 0.92);
+  font-family: var(--font-serif), "Hoefler Text", "Times New Roman", serif;
+  font-size: 1.08rem;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.16;
+}
+
+.codex-mobile-genres i {
+  position: absolute;
+  right: 0.7rem;
+  top: 0.62rem;
+  color: rgba(var(--gold-rgb), 0.58);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.55rem;
+  font-style: normal;
+  letter-spacing: 0.14em;
+}
+
 .codex-mobile-trail {
   border-top: 1px solid rgba(var(--gold-rgb), 0.11);
   background: rgba(255, 255, 255, 0.018);

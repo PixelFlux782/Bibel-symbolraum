@@ -51,6 +51,16 @@ const CODEX_VIEWS: { id: CodexViewId; label: string; description: string }[] = [
   { id: "journeys", label: "Spuren", description: "Verbundene Spuren" },
 ];
 
+const MOBILE_CURATED_ENTRY_IDS = [
+  { id: "wasser", label: "Wasser", note: "Ort" },
+  { id: "majim", label: "Majim", note: "Wort" },
+  { id: "tehom", label: "Tehom", note: "Tiefe" },
+  { id: "genesis-1-2", label: "Genesis 1,2", note: "Szene" },
+  { id: "licht", label: "Licht", note: "Ort" },
+  { id: "davar", label: "Davar", note: "Wort" },
+  { id: "zahl-90", label: "Wasser zum Brot", note: "Rhythmus" },
+] as const;
+
 const TORAH_SEQUENCE = [
   {
     id: "genesis-1",
@@ -262,6 +272,23 @@ function getPatternOverviewEntries() {
       summary: entity.summary,
       movementSteps: entity.movementSteps ?? [],
     }));
+}
+
+function getMobileCuratedEntries() {
+  return MOBILE_CURATED_ENTRY_IDS.flatMap((item) => {
+    const entry = resolveCodexEntry(item.id);
+
+    if (!entry) {
+      return [];
+    }
+
+    return [{
+      ...item,
+      title: entry.title,
+      summary: entry.summary,
+      type: entry.type,
+    }];
+  });
 }
 
 function filterCoreConceptOverviewEntries(query: string) {
@@ -1151,18 +1178,119 @@ function MobileCodexMeaningTrails({
   coreConceptEntries,
   patternEntries,
   onSelectView,
+  onActivateCodexEntry,
 }: {
   coreConceptEntries: ReturnType<typeof getCoreConceptOverviewEntries>;
   patternEntries: ReturnType<typeof getPatternOverviewEntries>;
   onSelectView: (viewId: CodexViewId) => void;
+  onActivateCodexEntry: (entryId: string) => void;
 }) {
+  const curatedEntries = getMobileCuratedEntries();
+  const genreTiles = [
+    {
+      label: "Symbole",
+      note: "Orte",
+      count: getCodexEntriesByType("symbol").length,
+      viewId: "symbols" as const,
+      featured: true,
+    },
+    {
+      label: "Hebräische Wörter",
+      note: "Wortkörper",
+      count: getHebrewWordEntries(codexRegistry).length,
+      viewId: "hebrew" as const,
+      featured: true,
+    },
+    {
+      label: "Buchstaben",
+      note: "Zeichen",
+      count: getCodexEntriesByType("hebrew-letter").length,
+      viewId: "letters" as const,
+    },
+    {
+      label: "Bibelstellen",
+      note: "Szenen",
+      count: getCodexEntriesByType("scripture").length,
+      viewId: "torah" as const,
+      featured: true,
+    },
+    {
+      label: "Journeys",
+      note: "Wege",
+      count: getCodexEntriesByType("journey").length,
+      viewId: "journeys" as const,
+    },
+    {
+      label: "Pattern",
+      note: "Muster",
+      count: patternEntries.length,
+      viewId: "meaning" as const,
+    },
+    {
+      label: "Bedeutungsfelder",
+      note: "Felder",
+      count: getCodexEntriesByType("meaning-field").length,
+      viewId: "meaning" as const,
+    },
+    {
+      label: "Achsen",
+      note: "Grundlinien",
+      count: coreConceptEntries.length,
+      viewId: "meaning" as const,
+    },
+    {
+      label: "Zahlen",
+      note: "Rhythmen",
+      count: getCodexEntriesByType("number").length,
+      viewId: "gematria" as const,
+    },
+  ];
+
   return (
-    <section className="mt-8 grid gap-4 md:hidden" aria-label="Mobile Bedeutungsspuren">
-      <div>
-        <p className="symbol-kicker text-cyan-soft">Bedeutungsspuren</p>
-        <h2 className="mt-3 font-serif text-3xl italic leading-tight text-foreground-strong">
-          Wähle eine Spur.
-        </h2>
+    <section className="codex-mobile-gate md:hidden" aria-label="Mobiler Codex-Eingang">
+      <div className="codex-mobile-gate__threshold">
+        <p className="symbol-kicker text-cyan-soft">Eingang</p>
+        <h2>Ein Archiv aus Orten, Wörtern, Szenen und Wegen.</h2>
+        <p>
+          Beginne mit wenigen starken Knoten. Das ganze Archiv bleibt darunter offen.
+        </p>
+      </div>
+
+      {curatedEntries.length > 0 ? (
+        <div className="codex-mobile-starts">
+          <p>Erste Türen</p>
+          <div>
+            {curatedEntries.map((entry) => (
+              <Link
+                key={entry.id}
+                href={`/codex/${entry.id}`}
+                onClick={() => onActivateCodexEntry(entry.id)}
+                onFocus={() => onActivateCodexEntry(entry.id)}
+              >
+                <span>{entry.note}</span>
+                {entry.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="codex-mobile-genres">
+        <p>Gattungen</p>
+        <div>
+          {genreTiles.map((genre) => (
+            <button
+              key={genre.label}
+              type="button"
+              onClick={() => onSelectView(genre.viewId)}
+              className={genre.featured ? "is-featured" : undefined}
+            >
+              <span>{genre.note}</span>
+              <strong>{genre.label}</strong>
+              <i>{genre.count}</i>
+            </button>
+          ))}
+        </div>
       </div>
 
       {coreConceptEntries.length > 0 ? (
@@ -1193,15 +1321,6 @@ function MobileCodexMeaningTrails({
           </div>
         </div>
       ) : null}
-
-      <div className="codex-mobile-trail codex-mobile-trail--views">
-        <button type="button" onClick={() => onSelectView("symbols")}>Symbole</button>
-        <button type="button" onClick={() => onSelectView("hebrew")}>Hebräische Wörter</button>
-        <button type="button" onClick={() => onSelectView("letters")}>Buchstaben</button>
-        <button type="button" onClick={() => onSelectView("gematria")}>Zahlen</button>
-        <button type="button" onClick={() => onSelectView("torah")}>Thora</button>
-        <button type="button" onClick={() => onSelectView("journeys")}>Spuren</button>
-      </div>
     </section>
   );
 }
@@ -1352,7 +1471,7 @@ function CodexPageContent() {
     : "";
 
   return (
-    <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-28 md:py-36">
+    <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-20 md:py-36">
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_8%,rgba(189,160,109,0.12),transparent_30%),radial-gradient(ellipse_at_78%_28%,rgba(127,184,201,0.055),transparent_28%),linear-gradient(180deg,rgba(2,5,12,0.18),rgba(2,5,12,0.82)_52%,rgba(2,5,12,0.96))]" />
         <div className="absolute inset-x-[8%] top-[23rem] h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
@@ -1372,7 +1491,14 @@ function CodexPageContent() {
           </p>
         </header>
 
-        <section className="mt-10 max-w-2xl md:mt-12">
+        <MobileCodexMeaningTrails
+          coreConceptEntries={visibleCoreConceptEntries}
+          patternEntries={patternOverviewEntries}
+          onSelectView={setActiveViewId}
+          onActivateCodexEntry={setActiveCodexId}
+        />
+
+        <section className="mt-8 max-w-2xl md:mt-12">
           <label htmlFor="codex-search" className="symbol-kicker text-cyan-soft">
             Suche
           </label>
@@ -1391,13 +1517,10 @@ function CodexPageContent() {
           ) : null}
         </section>
 
-        <MobileCodexMeaningTrails
-          coreConceptEntries={visibleCoreConceptEntries}
-          patternEntries={patternOverviewEntries}
-          onSelectView={setActiveViewId}
-        />
-
         <section className="mt-9 md:mt-12">
+          <div className="mb-4 border-t border-gold/[0.12] pt-4 md:hidden">
+            <p className="symbol-kicker text-gold/65">Ganzes Archiv</p>
+          </div>
           <div
             role="tablist"
             aria-label="Codex-Ansichten"

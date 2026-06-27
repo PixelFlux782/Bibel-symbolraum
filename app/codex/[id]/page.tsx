@@ -913,6 +913,8 @@ type CuratedRelationItem =
     };
 
 type ScriptureSceneModel = {
+  formula: string;
+  threshold: string;
   sceneSentences: string[];
   hebrewKeys: HebrewWord[];
   movementSteps: { id: string; label: string; href?: string }[];
@@ -920,6 +922,112 @@ type ScriptureSceneModel = {
   symbols: { id: string; label: string; href?: string }[];
   rooms: { id: string; label: string; href?: string; note: string }[];
   relations: CuratedRelationItem[];
+};
+
+type ScriptureSceneFormula = {
+  formula: string;
+  threshold: string;
+  sceneSentences: string[];
+  movementSteps: { id: string; label: string; href?: string }[];
+  symbols: { id: string; label: string; href?: string }[];
+  roomNotes?: Record<string, string>;
+};
+
+const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
+  "genesis-1-1": {
+    formula: "Ursprung",
+    threshold: "Vor allem steht der Anfang. Himmel und Erde werden als Ursprungsspannung sichtbar.",
+    sceneSentences: [
+      "Vor allem steht der Anfang.",
+      "Himmel und Erde treten einander gegenueber.",
+      "Noch bewegt sich nichts; aber die erste Setzung ist da.",
+    ],
+    movementSteps: [
+      { id: "anfang", label: "Anfang", href: "/codex/anfang" },
+      { id: "himmel", label: "Himmel", href: "/codex/himmel" },
+      { id: "erde", label: "Erde", href: "/codex/erde" },
+      { id: "genesis-1-2", label: "Tiefe", href: "/codex/genesis-1-2" },
+    ],
+    symbols: [
+      { id: "anfang", label: "Anfang", href: "/codex/anfang" },
+      { id: "himmel", label: "Himmel", href: "/codex/himmel" },
+      { id: "erde", label: "Erde", href: "/codex/erde" },
+    ],
+    roomNotes: {
+      "genesis-1-2": "Aus dem Ursprung oeffnet sich die Tiefe als naechster Moment der Genesis-Achse.",
+    },
+  },
+  "genesis-1-2": {
+    formula: "Tiefe",
+    threshold: "Die Tiefe liegt offen. Der Geist schwebt ueber den Wassern. Noch ist nichts geordnet, aber alles ist beruehrt.",
+    sceneSentences: [
+      "Die Tiefe liegt offen.",
+      "Wasser, Finsternis und Ungeformtes tragen den Anfang.",
+      "Der Geist schwebt ueber den Wassern: noch ist nichts geordnet, aber alles ist beruehrt.",
+    ],
+    movementSteps: [
+      { id: "tehom", label: "Tiefe", href: "/codex/tehom" },
+      { id: "majim", label: "Wasser", href: "/codex/majim" },
+      { id: "ruach", label: "Ruach", href: "/codex/ruach" },
+      { id: "genesis-1-3", label: "Licht", href: "/codex/genesis-1-3" },
+    ],
+    symbols: [
+      { id: "tehom", label: "Tiefe", href: "/codex/tehom" },
+      { id: "majim", label: "Wasser", href: "/codex/majim" },
+      { id: "ruach", label: "Geist", href: "/codex/ruach" },
+    ],
+    roomNotes: {
+      wasser: "Der Wasser-Raum wird hier als Tiefe vor der Ordnung vorbereitet.",
+      "genesis-1-3": "Aus dem beruehrten Ungeformten fuehrt die Achse zum gerufenen Licht.",
+    },
+  },
+  "genesis-1-3": {
+    formula: "Licht",
+    threshold: "Das Wort ruft Licht. Offenbarung beginnt nicht als Erklaerung, sondern als Ruf.",
+    sceneSentences: [
+      "Das Wort ruft Licht.",
+      "Offenbarung beginnt nicht als Erklaerung, sondern als Ruf.",
+      "Die erste Trennung wird moeglich, weil Licht die Tiefe sichtbar macht.",
+    ],
+    movementSteps: [
+      { id: "davar", label: "Wort", href: "/codex/davar" },
+      { id: "or", label: "Licht", href: "/codex/or" },
+      { id: "offenbarung", label: "Offenbarung", href: "/codex/offenbarung" },
+      { id: "ordnung", label: "Trennung", href: "/codex/ordnung" },
+    ],
+    symbols: [
+      { id: "davar", label: "Wort", href: "/codex/davar" },
+      { id: "or", label: "Licht", href: "/codex/or" },
+      { id: "offenbarung", label: "Offenbarung", href: "/codex/offenbarung" },
+    ],
+    roomNotes: {
+      licht: "Der Licht-Raum wird hier als erster Ruf in Sichtbarkeit vorbereitet.",
+    },
+  },
+  "exodus-14": {
+    formula: "Schwelle",
+    threshold: "Das Wasser wird zur Schwelle. Der Weg entsteht dort, wo kein Weg war.",
+    sceneSentences: [
+      "Das Wasser steht vor den Fliehenden wie eine Grenze.",
+      "Angst, Tiefe und Rettung liegen im selben Raum.",
+      "Der Weg entsteht dort, wo kein Weg war.",
+    ],
+    movementSteps: [
+      { id: "majim", label: "Wasser", href: "/codex/majim" },
+      { id: "schilfmeer", label: "Schwelle", href: "/codex/schilfmeer" },
+      { id: "offenbarung", label: "Rettung", href: "/codex/offenbarung" },
+      { id: "midbar", label: "Freie Weite", href: "/codex/midbar" },
+    ],
+    symbols: [
+      { id: "majim", label: "Wasser", href: "/codex/majim" },
+      { id: "schilfmeer", label: "Schwelle", href: "/codex/schilfmeer" },
+      { id: "midbar", label: "Wuestenweg", href: "/codex/midbar" },
+    ],
+    roomNotes: {
+      wasser: "Der Wasser-Raum wird hier zur Schwelle zwischen Angst und Rettung.",
+      midbar: "Hinter dem Wasser beginnt der freie, offene Weg.",
+    },
+  },
 };
 
 function getOntologyChildEntityIds(entryId: string) {
@@ -1220,6 +1328,7 @@ function getScriptureSymbols(entry: CodexEntry, relations: CuratedRelationItem[]
 }
 
 function getPreparedRoomsForScripture(entry: CodexEntry, journeys: ReturnType<typeof getScriptureJourneys>) {
+  const formula = SCRIPTURE_SCENE_FORMULAS[entry.id];
   const fromJourney = journeys.flatMap((journey) => journey.steps);
   const fromRoom = entry.symbolRoomSlug
     ? [{
@@ -1236,7 +1345,7 @@ function getPreparedRoomsForScripture(entry: CodexEntry, journeys: ReturnType<ty
     .slice(0, 3)
     .map((item) => ({
       ...item,
-      note: `${entry.title} öffnet diesen Raum als nächste Spur der Szene.`,
+      note: formula?.roomNotes?.[item.id] ?? `${entry.title} oeffnet diesen Raum als naechste Spur der Szene.`,
     }));
 }
 
@@ -1248,17 +1357,20 @@ function buildScriptureSceneModel(entry: CodexEntry): ScriptureSceneModel | null
   const relations = buildCuratedRelationItems(entry);
   const journeys = getScriptureJourneys(entry);
   const primaryJourney = journeys[0];
+  const formula = SCRIPTURE_SCENE_FORMULAS[entry.id];
 
   return {
-    sceneSentences: getSceneSentences(entry),
+    formula: formula?.formula ?? "Szene",
+    threshold: formula?.threshold ?? getCodexThresholdText(entry),
+    sceneSentences: formula?.sceneSentences ?? getSceneSentences(entry),
     hebrewKeys: getHebrewKeysForScripture(entry),
-    movementSteps: primaryJourney?.steps.slice(0, 6) ?? relations.slice(0, 4).map((item) => ({
+    movementSteps: formula?.movementSteps ?? primaryJourney?.steps.slice(0, 6) ?? relations.slice(0, 4).map((item) => ({
       id: item.endpointId,
       label: item.endpointLabel,
       href: item.endpointHref,
     })),
     journeyTitle: primaryJourney?.title,
-    symbols: getScriptureSymbols(entry, relations),
+    symbols: formula?.symbols ?? getScriptureSymbols(entry, relations),
     rooms: getPreparedRoomsForScripture(entry, journeys),
     relations,
   };
@@ -1541,6 +1653,12 @@ function getSymbolicTrail(entry: CodexEntry) {
 }
 
 function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
+  const scriptureFormula = SCRIPTURE_SCENE_FORMULAS[entry.id];
+
+  if (scriptureFormula) {
+    return scriptureFormula.threshold;
+  }
+
   if (entry.type === "hebrew-word") {
     return hebrewWords.find((word) => word.id === entry.id)?.meaningThreshold
       ?? "Dieses hebräische Wort öffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenführt.";
@@ -1572,10 +1690,13 @@ function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
 
 function ThresholdSection({ entry, entity }: { entry: CodexEntry; entity?: OntologyEntity }) {
   const genre = resolveCodexGenre(entry, entity);
+  const scriptureFormula = entry.type === "scripture" ? SCRIPTURE_SCENE_FORMULAS[entry.id] : undefined;
 
   return (
     <section className="mt-8 max-w-3xl border-l border-gold/35 pl-5">
-      <p className="symbol-kicker text-gold/70">Schwelle / {GENRE_COPY[genre].formula}</p>
+      <p className="symbol-kicker text-gold/70">
+        {scriptureFormula ? "Szenenschwelle" : "Schwelle"} / {scriptureFormula?.formula ?? GENRE_COPY[genre].formula}
+      </p>
       <p className="symbol-copy mt-3 text-lg italic leading-relaxed text-foreground-strong md:text-xl">
         {getCodexThresholdText(entry, entity)}
       </p>
@@ -2370,7 +2491,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
     path: activeResonanceJourney?.id,
   });
   const showGenericSections = !isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity;
-  const showMeaningFieldSection = !isCuratedSymbolEntry && !isPatternEntity && !isCoreConceptEntity;
+  const showMeaningFieldSection = !isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity;
 
   return (
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-28 md:py-36">
@@ -2403,10 +2524,12 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           </p>
         ) : null}
 
-        <header className={`mt-10 grid gap-10 ${entry.type === "hebrew-word" ? "" : "lg:grid-cols-[1fr_auto] lg:items-start"}`}>
+        <header className={`mt-10 grid gap-10 ${entry.type === "hebrew-word" ? "" : "lg:grid-cols-[1fr_auto] lg:items-start"} ${scriptureSceneModel ? "codex-scripture-hero" : ""}`}>
           <div>
             <p className="symbol-kicker text-cyan-soft">
-              {isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} / {genreCopy.formula}
+              {scriptureSceneModel
+                ? `Bibelstelle als Szene / ${scriptureSceneModel.formula}`
+                : `${isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} / ${genreCopy.formula}`}
             </p>
             {entry.type === "hebrew-word" && entry.hebrew ? (
               <>
@@ -2425,9 +2548,14 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             ) : (
               <>
                 <h1 className="mt-6 font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
-                  {entry.title}
+                  {scriptureSceneModel?.formula ?? entry.title}
                 </h1>
-                {entry.subtitle ? (
+                {scriptureSceneModel ? (
+                  <p className="symbol-copy mt-6 max-w-3xl text-2xl italic text-gold/80 md:text-3xl">
+                    {entry.title}
+                    {entry.subtitle ? ` / ${entry.subtitle}` : ""}
+                  </p>
+                ) : entry.subtitle ? (
                   <p className="symbol-copy mt-6 max-w-3xl text-2xl italic text-gold/80 md:text-3xl">
                     {entry.subtitle}
                   </p>
@@ -2459,8 +2587,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
         <ThresholdSection entry={entry} entity={ontologyEntity} />
 
-        <PathContextCard context={pathContext} />
-        <SymbolAnchorReturnCard entryId={entry.id} />
+        {!isScriptureEntry ? <PathContextCard context={pathContext} /> : null}
+        {!isScriptureEntry ? <SymbolAnchorReturnCard entryId={entry.id} /> : null}
 
         <div className="mt-14 grid gap-5">
           <div className="grid gap-5">
@@ -2468,6 +2596,8 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
             {isLightEntry ? <LightCodexReferenceSection /> : null}
             {isFireEntry ? <FireCodexReferenceSection /> : null}
             {scriptureSceneModel ? <ScriptureSceneSection model={scriptureSceneModel} /> : null}
+            {isScriptureEntry ? <PathContextCard context={pathContext} /> : null}
+            {isScriptureEntry ? <SymbolAnchorReturnCard entryId={entry.id} /> : null}
             {entry.type === "hebrew-letter" ? <LetterResonanceSection entry={entry} activeContext={activeFocus === "hebrew" ? "hebrew" : undefined} /> : null}
             {entry.type === "number" ? <NumberResonanceSection entry={entry} activeContext={activeFocus === "gematria" ? "gematria" : undefined} /> : null}
             {isPatternEntity ? (
@@ -3811,8 +3941,15 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
   return (
     <DetailSection title="Die Szene">
       <div className="grid gap-8">
+        <section className="grid gap-3">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Szenenformel / {model.formula}</p>
+          <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
+            {model.threshold}
+          </p>
+        </section>
+
         {model.sceneSentences.length > 0 ? (
-          <div className="symbol-copy grid max-w-3xl gap-2 font-serif text-2xl italic leading-relaxed text-foreground-strong">
+          <div className="symbol-copy grid max-w-3xl gap-2 border-t border-white/[0.06] pt-6 font-serif text-2xl italic leading-relaxed text-foreground-strong">
             {model.sceneSentences.map((sentence) => (
               <p key={sentence}>{sentence}</p>
             ))}
@@ -3909,7 +4046,7 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
 
         {primaryRelations.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Die wichtigsten Beziehungen</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verwandte Journeys / Pattern</p>
             <div className="mt-4 grid gap-4 md:grid-cols-3">
               {primaryRelations.map((item) => (
                 <CuratedRelationCard key={item.key} item={item} spacious />
