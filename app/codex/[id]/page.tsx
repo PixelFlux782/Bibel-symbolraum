@@ -6,6 +6,7 @@ import { CodexReflectionCard } from "@/components/CodexReflectionCard";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
 import { getSymbolCodexAnchorBridge, getSymbolCodexChipLinks, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
+import { buildScriptureFoundationModel, type ScriptureFoundationLink, type ScriptureFoundationModel } from "@/lib/codex/scriptureFoundation";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { breakdownHebrewWord } from "@/lib/hebrew/gematria";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
@@ -934,79 +935,6 @@ type ScriptureSceneFormula = {
   roomNotes?: Record<string, string>;
 };
 
-type ScriptureFoundationWordSeed = {
-  id?: string;
-  hebrew: string;
-  transliteration: string;
-  meaning: string;
-  note?: string;
-  letterIds?: string[];
-  letterGlyphs?: string[];
-  symbolIds?: string[];
-  roomIds?: string[];
-  meaningFieldIds?: MeaningNodeId[];
-  numberIds?: string[];
-};
-
-type ScriptureFoundationSeed = {
-  label: string;
-  hebrewText: string;
-  germanText: string;
-  words: ScriptureFoundationWordSeed[];
-  opens: {
-    words?: string[];
-    letters?: string[];
-    symbols?: string[];
-    rooms?: string[];
-    meaningFields?: MeaningNodeId[];
-    journeys?: string[];
-    patterns?: string[];
-    numbers?: string[];
-  };
-  growingRooms: { id: string; label: string; note: string }[];
-};
-
-type ScriptureFoundationWord = ScriptureFoundationWordSeed & {
-  codexHref?: string;
-  existingWord?: HebrewWord;
-  gematria?: number;
-  letters: {
-    id?: string;
-    glyph: string;
-    label: string;
-    href?: string;
-    value?: number;
-  }[];
-  symbols: { id: string; label: string; href?: string }[];
-  rooms: { id: string; label: string; href?: string }[];
-  meaningFields: ScriptureFoundationLink[];
-  numbers: { id: string; label: string; href?: string }[];
-};
-
-type ScriptureFoundationLink = {
-  id: string;
-  label: string;
-  href?: string;
-};
-
-type ScriptureFoundationModel = {
-  label: string;
-  hebrewText: string;
-  germanText: string;
-  words: ScriptureFoundationWord[];
-  connections: {
-    words: ScriptureFoundationLink[];
-    letters: ScriptureFoundationLink[];
-    symbols: ScriptureFoundationLink[];
-    rooms: ScriptureFoundationLink[];
-    meaningFields: ScriptureFoundationLink[];
-    journeys: ScriptureFoundationLink[];
-    patterns: ScriptureFoundationLink[];
-    numbers: ScriptureFoundationLink[];
-  };
-  growingRooms: (ScriptureFoundationLink & { note: string })[];
-};
-
 const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   "genesis-1-1": {
     formula: "Ursprung",
@@ -1104,117 +1032,6 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   },
 };
 
-const SCRIPTURE_FOUNDATIONS: Record<string, ScriptureFoundationSeed> = {
-  "genesis-1-1": {
-    label: "Thora-Fundament",
-    hebrewText: "\u05d1\u05b0\u05bc\u05e8\u05b5\u05d0\u05e9\u05b4\u05c1\u05d9\u05ea \u05d1\u05b8\u05bc\u05e8\u05b8\u05d0 \u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd \u05d0\u05b5\u05ea \u05d4\u05b7\u05e9\u05b8\u05bc\u05c1\u05de\u05b7\u05d9\u05b4\u05dd \u05d5\u05b0\u05d0\u05b5\u05ea \u05d4\u05b8\u05d0\u05b8\u05e8\u05b6\u05e5",
-    germanText: "Im Anfang schuf Gott den Himmel und die Erde.",
-    words: [
-      { hebrew: "\u05d1\u05b0\u05bc\u05e8\u05b5\u05d0\u05e9\u05b4\u05c1\u05d9\u05ea", transliteration: "bereschit", meaning: "im Anfang", note: "Der Vers beginnt nicht mit Erklaerung, sondern mit Ursprung.", symbolIds: ["anfang"], roomIds: ["schoepfung"], meaningFieldIds: ["birth", "hiddenness"] },
-      { id: "bara", hebrew: "\u05d1\u05b8\u05bc\u05e8\u05b8\u05d0", transliteration: "bara", meaning: "schaffen", letterIds: ["bet", "resh", "aleph"], letterGlyphs: ["\u05d1", "\u05e8", "\u05d0"], symbolIds: ["schoepfung", "licht"], roomIds: ["schoepfung"], meaningFieldIds: ["revelation", "word", "birth"] },
-      { hebrew: "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd", transliteration: "elohim", meaning: "Gott", note: "Als Gottesname im Pilot passiv sichtbar, noch ohne eigenen Codex-Eintrag." },
-      { id: "schamajim", hebrew: "\u05e9\u05b8\u05c1\u05de\u05b7\u05d9\u05b4\u05dd", transliteration: "schamajim", meaning: "Himmel", letterIds: ["shin", "mem", "jod", "mem"], letterGlyphs: ["\u05e9", "\u05de", "\u05d9", "\u05dd"], symbolIds: ["himmel", "wasser", "licht"], roomIds: ["licht"], meaningFieldIds: ["light", "revelation", "depth"] },
-      { id: "erez", hebrew: "\u05d0\u05b8\u05e8\u05b6\u05e5", transliteration: "erez", meaning: "Erde / Land", letterIds: ["aleph", "resh", "tsadi"], letterGlyphs: ["\u05d0", "\u05e8", "\u05e5"], symbolIds: ["erde", "brot", "wueste"], roomIds: ["brot", "wueste"], meaningFieldIds: ["life", "nourishment", "path"] },
-    ],
-    opens: {
-      words: ["bara", "schamajim", "erez"],
-      letters: ["aleph", "mem"],
-      symbols: ["anfang", "schoepfung", "himmel", "erde"],
-      rooms: ["licht", "wasser", "wueste", "brot"],
-      meaningFields: ["birth", "hiddenness", "life", "revelation"],
-      journeys: ["tehom-ruach-davar-qol-or"],
-      numbers: ["zahl-1", "zahl-40"],
-    },
-    growingRooms: [
-      { id: "schoepfung", label: "Schoepfung", note: "Der Symbolraum beginnt als gesetzter Anfang." },
-      { id: "licht", label: "Licht", note: "Himmel und Anfang bereiten Sichtbarkeit vor." },
-      { id: "brot", label: "Erde", note: "Erde wird der spaetere Raum von Nahrung, Boden und Frucht." },
-    ],
-  },
-  "genesis-1-2": {
-    label: "Thora-Fundament",
-    hebrewText: "\u05d5\u05b0\u05d4\u05b8\u05d0\u05b8\u05e8\u05b6\u05e5 \u05d4\u05b8\u05d9\u05b0\u05ea\u05b8\u05d4 \u05ea\u05b9\u05d4\u05d5\u05bc \u05d5\u05b8\u05d1\u05b9\u05d4\u05d5\u05bc \u05d5\u05b0\u05d7\u05b9\u05e9\u05b6\u05c1\u05da\u05b0 \u05e2\u05b7\u05dc\u05be\u05e4\u05b0\u05bc\u05e0\u05b5\u05d9 \u05ea\u05b0\u05d4\u05d5\u05b9\u05dd \u05d5\u05b0\u05e8\u05d5\u05bc\u05d7\u05b7 \u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd \u05de\u05b0\u05e8\u05b7\u05d7\u05b6\u05e4\u05b6\u05ea \u05e2\u05b7\u05dc\u05be\u05e4\u05b0\u05bc\u05e0\u05b5\u05d9 \u05d4\u05b7\u05de\u05b8\u05bc\u05d9\u05b4\u05dd",
-    germanText: "Und die Erde war wuest und leer; Finsternis lag auf der Tiefe, und der Geist Gottes schwebte ueber den Wassern.",
-    words: [
-      { id: "erez", hebrew: "\u05d0\u05b6\u05e8\u05b6\u05e5", transliteration: "erez", meaning: "Erde / Land", letterIds: ["aleph", "resh", "tsadi"], letterGlyphs: ["\u05d0", "\u05e8", "\u05e5"], symbolIds: ["erde"], roomIds: ["wueste", "brot"], meaningFieldIds: ["life", "path"] },
-      { hebrew: "\u05ea\u05b9\u05d4\u05d5\u05bc", transliteration: "tohu", meaning: "Wuestheit", note: "Im Pilot passiv sichtbar; ein eigener Wort-Codex ist noch nicht angelegt.", meaningFieldIds: ["chaos", "hiddenness"] },
-      { hebrew: "\u05d1\u05b9\u05d4\u05d5\u05bc", transliteration: "bohu", meaning: "Leere", note: "Im Pilot passiv sichtbar; keine kuenstliche Vollstaendigkeit.", meaningFieldIds: ["chaos", "hiddenness"] },
-      { hebrew: "\u05d7\u05b9\u05e9\u05b6\u05c1\u05da\u05b0", transliteration: "choschech", meaning: "Finsternis", note: "Noch ohne eigenen Codex-Eintrag, aber als Verskraft sichtbar.", meaningFieldIds: ["hiddenness", "chaos"] },
-      { id: "tehom", hebrew: "\u05ea\u05b0\u05d4\u05d5\u05b9\u05dd", transliteration: "tehom", meaning: "Tiefe / Urflut", letterIds: ["tav", "he", "vav", "mem"], letterGlyphs: ["\u05ea", "\u05d4", "\u05d5", "\u05dd"], symbolIds: ["tiefe", "wasser"], roomIds: ["wasser", "tiefe"], meaningFieldIds: ["depth", "hiddenness", "chaos"], numberIds: ["zahl-40"] },
-      { id: "ruach", hebrew: "\u05e8\u05d5\u05bc\u05d7\u05b7", transliteration: "ruach", meaning: "Geist / Atem / Wind", letterIds: ["resh", "vav", "chet"], letterGlyphs: ["\u05e8", "\u05d5", "\u05d7"], symbolIds: ["geist", "licht", "wasser"], roomIds: ["wasser", "licht"], meaningFieldIds: ["presence", "life", "voice"] },
-      { hebrew: "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd", transliteration: "elohim", meaning: "Gott", note: "Als Gottesname im Pilot passiv sichtbar." },
-      { id: "majim", hebrew: "\u05de\u05b8\u05bc\u05d9\u05b4\u05dd", transliteration: "majim", meaning: "Wasser", letterIds: ["mem", "jod", "mem"], letterGlyphs: ["\u05de", "\u05d9", "\u05dd"], symbolIds: ["wasser", "tiefe"], roomIds: ["wasser"], meaningFieldIds: ["depth", "birth", "hiddenness"], numberIds: ["zahl-90", "zahl-40"] },
-    ],
-    opens: {
-      words: ["erez", "tehom", "ruach", "majim"],
-      letters: ["mem", "aleph"],
-      symbols: ["wasser", "tiefe", "geist"],
-      rooms: ["wasser", "licht"],
-      meaningFields: ["chaos", "depth", "hiddenness", "presence", "life"],
-      journeys: ["journey-wasser-geist", "tehom-ruach-davar-qol-or", "tehom-davar-qol-or"],
-      numbers: ["zahl-40", "zahl-90"],
-    },
-    growingRooms: [
-      { id: "wasser", label: "Wasser", note: "Wasser wurzelt hier als Anfangsraum vor der Ordnung." },
-      { id: "tiefe", label: "Tiefe", note: "Tehom macht den Raum unter der sichtbaren Oberflaeche lesbar." },
-      { id: "ruach", label: "Geist / Ruach", note: "Die Bewegung des Geistes beruehrt die Wasser, bevor Licht gerufen wird." },
-      { id: "schoepfung", label: "Ordnungsvorbereitung", note: "Noch nicht Ordnung, aber der Raum, aus dem Ordnung wachsen kann." },
-    ],
-  },
-  "genesis-1-3": {
-    label: "Thora-Fundament",
-    hebrewText: "\u05d5\u05b7\u05d9\u05b9\u05bc\u05d0\u05de\u05b6\u05e8 \u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd \u05d9\u05b0\u05d4\u05b4\u05d9 \u05d0\u05d5\u05b9\u05e8 \u05d5\u05b7\u05d9\u05b0\u05d4\u05b4\u05d9\u05be\u05d0\u05d5\u05b9\u05e8",
-    germanText: "Und Gott sprach: Licht werde. Und Licht wurde.",
-    words: [
-      { id: "davar", hebrew: "\u05d5\u05b7\u05d9\u05b9\u05bc\u05d0\u05de\u05b6\u05e8", transliteration: "wajomer", meaning: "und er sprach", note: "Der vorhandene Codex fasst diese Kraft im Wortkoerper Davar.", letterIds: ["dalet", "bet", "resh"], letterGlyphs: ["\u05d3", "\u05d1", "\u05e8"], symbolIds: ["wort", "offenbarung"], roomIds: ["licht"], meaningFieldIds: ["word", "voice", "revelation"] },
-      { hebrew: "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd", transliteration: "elohim", meaning: "Gott", note: "Als Gottesname im Pilot passiv sichtbar." },
-      { hebrew: "\u05d9\u05b0\u05d4\u05b4\u05d9", transliteration: "jehi", meaning: "es werde", note: "Die Rufbewegung bleibt sichtbar, ohne eigenen Eintrag zu erzwingen.", meaningFieldIds: ["calling", "word"] },
-      { id: "or", hebrew: "\u05d0\u05d5\u05b9\u05e8", transliteration: "or", meaning: "Licht", letterIds: ["aleph", "vav", "resh"], letterGlyphs: ["\u05d0", "\u05d5", "\u05e8"], symbolIds: ["licht", "offenbarung"], roomIds: ["licht"], meaningFieldIds: ["light", "revelation", "awareness"], numberIds: ["zahl-1"] },
-    ],
-    opens: {
-      words: ["davar", "or", "qol"],
-      letters: ["aleph"],
-      symbols: ["licht", "wort", "offenbarung", "ordnung"],
-      rooms: ["licht"],
-      meaningFields: ["word", "voice", "light", "revelation", "guidance"],
-      journeys: ["davar-qol-or", "tehom-davar-qol-or", "tehom-ruach-davar-qol-or"],
-      numbers: ["zahl-1"],
-    },
-    growingRooms: [
-      { id: "licht", label: "Licht", note: "Das Licht ist hier nicht Idee, sondern gerufene Sichtbarkeit." },
-      { id: "wort", label: "Wort", note: "Der Raum des Wortes wurzelt im ersten Ruf." },
-      { id: "offenbarung", label: "Offenbarung", note: "Sichtbarkeit waechst aus dem gesprochenen Anfang." },
-      { id: "ordnung", label: "Ordnung", note: "Licht bereitet Unterscheidung vor." },
-    ],
-  },
-  "exodus-14": {
-    label: "Thora-Fundament",
-    hebrewText: "\u05d5\u05b7\u05d9\u05b5\u05bc\u05d8 \u05de\u05b9\u05e9\u05b6\u05c1\u05d4 \u05d0\u05b6\u05ea\u05be\u05d9\u05b8\u05d3\u05d5\u05b9 \u05e2\u05b7\u05dc\u05be\u05d4\u05b7\u05d9\u05b8\u05bc\u05dd \u05d5\u05b7\u05d9\u05bc\u05d5\u05b9\u05dc\u05b6\u05da\u05b0 \u05d9\u05b0\u05d4\u05d5\u05b8\u05d4 \u05d0\u05b6\u05ea\u05be\u05d4\u05b7\u05d9\u05b8\u05bc\u05dd \u05d1\u05b0\u05bc\u05e8\u05d5\u05bc\u05d7\u05b7 \u05e7\u05b8\u05d3\u05b4\u05d9\u05dd \u05e2\u05b7\u05d6\u05b8\u05bc\u05d4 \u05db\u05b8\u05bc\u05dc\u05be\u05d4\u05b7\u05dc\u05b7\u05bc\u05d9\u05b0\u05dc\u05b8\u05d4 \u05d5\u05b7\u05d9\u05b8\u05bc\u05e9\u05b6\u05c2\u05dd \u05d0\u05b6\u05ea\u05be\u05d4\u05b7\u05d9\u05b8\u05bc\u05dd \u05dc\u05b6\u05d7\u05b8\u05e8\u05b8\u05d1\u05b8\u05d4",
-    germanText: "Mose streckte seine Hand ueber das Meer aus; und der HERR trieb das Meer durch einen starken Ostwind die ganze Nacht zurueck und machte das Meer zu trockenem Boden.",
-    words: [
-      { id: "jam", hebrew: "\u05d9\u05b8\u05bc\u05dd", transliteration: "jam", meaning: "Meer", letterIds: ["jod", "mem"], letterGlyphs: ["\u05d9", "\u05dd"], symbolIds: ["wasser", "tiefe"], roomIds: ["wasser"], meaningFieldIds: ["depth", "transition", "hiddenness"], numberIds: ["zahl-40"] },
-      { id: "majim", hebrew: "\u05de\u05b7\u05d9\u05b4\u05dd", transliteration: "majim", meaning: "Wasser", letterIds: ["mem", "jod", "mem"], letterGlyphs: ["\u05de", "\u05d9", "\u05dd"], symbolIds: ["wasser"], roomIds: ["wasser"], meaningFieldIds: ["depth", "transition"], numberIds: ["zahl-90"] },
-      { id: "ruach", hebrew: "\u05e8\u05d5\u05bc\u05d7\u05b7", transliteration: "ruach", meaning: "Wind / Geist", letterIds: ["resh", "vav", "chet"], letterGlyphs: ["\u05e8", "\u05d5", "\u05d7"], symbolIds: ["geist"], roomIds: ["wasser", "licht"], meaningFieldIds: ["presence", "transition"] },
-      { id: "derech", hebrew: "\u05d3\u05b6\u05bc\u05e8\u05b6\u05da\u05b0", transliteration: "derech", meaning: "Weg", letterIds: ["dalet", "resh", "kaf"], letterGlyphs: ["\u05d3", "\u05e8", "\u05da"], symbolIds: ["uebergang"], roomIds: ["wueste"], meaningFieldIds: ["path", "guidance", "transition"] },
-      { hebrew: "\u05d7\u05b8\u05e8\u05b8\u05d1\u05b8\u05d4", transliteration: "charavah", meaning: "trockenes Land", note: "Der Durchgang wird im Pilot sichtbar, ohne neuen Wort-Codex." },
-    ],
-    opens: {
-      words: ["jam", "majim", "ruach", "derech"],
-      letters: ["mem", "aleph"],
-      symbols: ["wasser", "uebergang", "offenbarung", "schilfmeer"],
-      rooms: ["wasser", "wueste"],
-      meaningFields: ["depth", "transition", "guidance", "trust", "path"],
-      journeys: ["journey-chaos-ordnung", "journey-wasser-geist"],
-      numbers: ["zahl-40", "zahl-90"],
-    },
-    growingRooms: [
-      { id: "wasser", label: "Wasser", note: "Das Wasser wird Grenze, Schwelle und Weg." },
-      { id: "schilfmeer", label: "Schwelle", note: "Der Durchgang sammelt die Exodus-Wasserpassage." },
-      { id: "offenbarung", label: "Rettung", note: "Rettung wird als oeffnender Weg sichtbar." },
-      { id: "midbar", label: "Weg", note: "Hinter dem Wasser beginnt der offene Weg in die Wuestenweite." },
-    ],
-  },
-};
 
 function getOntologyChildEntityIds(entryId: string) {
   const registry = getOntologyRegistry();
@@ -1493,10 +1310,6 @@ function uniqueById<T extends { id: string }>(items: T[]) {
   });
 }
 
-function uniqueStrings(items: string[]) {
-  return Array.from(new Set(items));
-}
-
 function getScriptureSymbols(entry: CodexEntry, relations: CuratedRelationItem[]) {
   return uniqueById([
     ...relations.map((item) => ({
@@ -1517,111 +1330,6 @@ function getScriptureSymbols(entry: CodexEntry, relations: CuratedRelationItem[]
   ]).slice(0, 3);
 }
 
-function buildCodexLink(id: string): ScriptureFoundationLink {
-  const linkedEntry = resolveLinkedCodexEntry(id);
-
-  return {
-    id,
-    label: linkedEntry?.title ?? resolveTargetLabel(id),
-    href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
-  };
-}
-
-function buildRoomLink(id: string): ScriptureFoundationLink {
-  if (hasSymbolRoom(id)) {
-    return {
-      id,
-      label: getOntologyEntityTitle(id) ?? resolveTargetLabel(id),
-      href: buildRoomHref(id, { from: "codex", symbol: id }),
-    };
-  }
-
-  return buildCodexLink(id);
-}
-
-function buildMeaningFieldLink(id: MeaningNodeId): ScriptureFoundationLink {
-  const linkedEntry = resolveLinkedCodexEntry(id);
-
-  return {
-    id,
-    label: getMeaningFieldLabel(id),
-    href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
-  };
-}
-
-function resolveFoundationLetters(seed: ScriptureFoundationWordSeed, word?: HebrewWord): ScriptureFoundationWord["letters"] {
-  const letterIds = seed.letterIds ?? word?.letterIds ?? [];
-  const fallbackGlyphs = seed.letterGlyphs ?? Array.from(seed.hebrew.replace(/[\u0591-\u05c7]/g, ""));
-
-  return letterIds.map((letterId, index) => {
-    const letter = hebrewLetters.find((item) => item.id === letterId);
-    const linkedEntry = resolveLinkedCodexEntry(letterId);
-    const glyph = fallbackGlyphs[index] ?? letter?.glyph ?? letterId;
-
-    return {
-      id: letterId,
-      glyph,
-      label: letter?.name ?? humanizeId(letterId),
-      href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
-      value: letter?.numericValue,
-    };
-  });
-}
-
-function buildFoundationWord(seed: ScriptureFoundationWordSeed): ScriptureFoundationWord {
-  const existingWord = seed.id ? hebrewWords.find((word) => word.id === seed.id) : undefined;
-  const linkedEntry = seed.id ? resolveLinkedCodexEntry(seed.id) : undefined;
-  const meaningFieldIds = uniqueStrings(seed.meaningFieldIds ?? []) as MeaningNodeId[];
-
-  return {
-    ...seed,
-    codexHref: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
-    existingWord,
-    gematria: existingWord?.gematria ?? (seed.id ? breakdownHebrewWord(seed.hebrew).value : undefined),
-    letters: resolveFoundationLetters(seed, existingWord),
-    symbols: uniqueStrings(seed.symbolIds ?? existingWord?.relatedSymbolSlugs ?? [])
-      .map((id) => buildCodexLink(id)),
-    rooms: uniqueStrings(seed.roomIds ?? [])
-      .map((id) => buildRoomLink(id)),
-    meaningFields: meaningFieldIds.map((id) => buildMeaningFieldLink(id)),
-    numbers: uniqueStrings(seed.numberIds ?? [])
-      .map((id) => buildCodexLink(id)),
-  };
-}
-
-function buildFoundationLinks(ids: string[] | undefined, resolver: (id: string) => ScriptureFoundationLink = buildCodexLink) {
-  return uniqueStrings(ids ?? []).map((id) => resolver(id));
-}
-
-function buildScriptureFoundationModel(entry: CodexEntry): ScriptureFoundationModel | null {
-  const foundation = SCRIPTURE_FOUNDATIONS[entry.id];
-
-  if (!foundation) {
-    return null;
-  }
-
-  return {
-    label: foundation.label,
-    hebrewText: foundation.hebrewText,
-    germanText: foundation.germanText,
-    words: foundation.words.map(buildFoundationWord),
-    connections: {
-      words: buildFoundationLinks(foundation.opens.words),
-      letters: buildFoundationLinks(foundation.opens.letters),
-      symbols: buildFoundationLinks(foundation.opens.symbols),
-      rooms: buildFoundationLinks(foundation.opens.rooms, buildRoomLink),
-      meaningFields: uniqueStrings(foundation.opens.meaningFields ?? []).map((id) => buildMeaningFieldLink(id as MeaningNodeId)),
-      journeys: buildFoundationLinks(foundation.opens.journeys),
-      patterns: buildFoundationLinks(foundation.opens.patterns),
-      numbers: buildFoundationLinks(foundation.opens.numbers),
-    },
-    growingRooms: foundation.growingRooms.map((room) => ({
-      ...buildRoomLink(room.id),
-      note: room.note,
-      label: room.label,
-    })),
-  };
-}
 
 function getPreparedRoomsForScripture(entry: CodexEntry, journeys: ReturnType<typeof getScriptureJourneys>) {
   const formula = SCRIPTURE_SCENE_FORMULAS[entry.id];
@@ -4267,11 +3975,11 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/78">{model.label}</p>
           <span className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-3 py-1 text-[0.56rem] uppercase tracking-[0.16em] text-cyan-soft/75">
-            Ursprungskammer
+            {model.foundationTitle}
           </span>
         </div>
         <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong md:text-3xl">
-          Hier liegt der Text, aus dem der Symbolraum waechst.
+          {model.foundationSubtitle}
         </p>
         <div className="grid gap-5 border-t border-gold/15 pt-6">
           <p className="text-center font-serif text-4xl leading-relaxed text-gold/90 md:text-5xl" lang="he" dir="rtl">
