@@ -75,6 +75,7 @@ export interface HebrewWord {
   meaningFields: HebrewMeaningField[];
   relatedSymbolSlugs: string[];
   biblicalReferences: HebrewBiblicalReference[];
+  letterMovement?: string;
 }
 
 export interface HebrewSymbolMapping {

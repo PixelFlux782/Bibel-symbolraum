@@ -1,5 +1,12 @@
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
+import {
+  genesisRoomLetterCarriers,
+  getGenesisLetterProfile,
+  getGenesisVerseLetterLayer,
+  getGenesisWordMovement,
+  getGenesisWordsForLetter,
+} from "@/lib/hebrew/genesisLetterLayer";
 import { symbolHebrewMappings } from "@/lib/hebrew/symbolHebrewMappings";
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import { biblicalMeaningLinks, hebrewMeaningLinks, symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
@@ -332,6 +339,7 @@ function symbolEntry(symbolId: "wasser" | "licht" | "feuer" | "wueste" | "brot",
     ...(word ? (["hebrew-word"] as const) : []),
     "meaning-graph",
   ];
+  const carryingLetterIds = genesisRoomLetterCarriers[symbolId as keyof typeof genesisRoomLetterCarriers] ?? [];
 
   return {
     id: symbolId,
@@ -344,6 +352,12 @@ function symbolEntry(symbolId: "wasser" | "licht" | "feuer" | "wueste" | "brot",
     summary: symbol.network?.shortMeaning ?? symbol.legacy?.shortMeaning ?? "",
     meaningFields: symbolMeaningFields(symbolId),
     relations: [
+      ...carryingLetterIds.map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "contains-letter",
+        label: `Dieser Buchstabe traegt den ${findSymbolTitle(symbolId)}-Raum in Genesis 1,1-3.`,
+        source: "hebrew-letter",
+      })),
       ...(word
         ? [
             {
@@ -625,12 +639,22 @@ function letterEntry(letterId: string): CodexEntry {
     throw new Error(`HebrewLetter "${letterId}" fehlt für Codex-Seed.`);
   }
 
+  const deepProfile = getGenesisLetterProfile(letterId);
   const profile = LETTER_CODEX_PROFILES[letterId] ?? {
     glyph: letter.glyph,
     transliteration: `${letter.transcription} / ${letter.name}`,
-    essence: `${letter.name} traegt in Genesis 1,1-3 die Spur ${letter.archetypalMeanings.slice(0, 3).join(", ")}. Der Buchstabe wird ueber seine Woerter, Raeume und Bedeutungsfelder gelesen.`,
+    essence: deepProfile
+      ? `${deepProfile.shortEssence} ${deepProfile.deeperMeaning} ${deepProfile.genesisRole} ${deepProfile.contemplative}`
+      : `${letter.name} traegt in Genesis 1,1-3 die Spur ${letter.archetypalMeanings.slice(0, 3).join(", ")}. Der Buchstabe wird ueber seine Woerter, Raeume und Bedeutungsfelder gelesen.`,
     meaningFields: [] satisfies CodexEntry["meaningFields"],
-    searchTerms: [letter.name, letter.id, letter.glyph, letter.transcription, ...letter.archetypalMeanings],
+    searchTerms: [
+      letter.name,
+      letter.id,
+      letter.glyph,
+      letter.transcription,
+      ...letter.archetypalMeanings,
+      ...(deepProfile?.meaningFieldLabels ?? []),
+    ],
     scriptureAnchors: letter.biblicalReferences.map((reference) => ({
       reference: reference.reference,
       label: reference.context,
@@ -639,7 +663,11 @@ function letterEntry(letterId: string): CodexEntry {
     })),
     extraRelations: [] satisfies CodexRelation[],
   };
-  const relatedWords = hebrewWords.filter((word) => letter.relatedWordIds.includes(word.id));
+  const genesisWords = getGenesisWordsForLetter(letter.id);
+  const relatedWords = [
+    ...hebrewWords.filter((word) => letter.relatedWordIds.includes(word.id)),
+    ...genesisWords,
+  ].filter((word, index, words) => words.findIndex((candidate) => candidate.id === word.id) === index);
   const relatedWordScriptureAnchors = relatedWords.flatMap((word) => word.biblicalReferences.map((reference) => ({
     reference: reference.reference,
     label: reference.context,
@@ -661,18 +689,38 @@ function letterEntry(letterId: string): CodexEntry {
       ...profile.meaningFields,
       ...letter.relatedSymbolSlugs.flatMap(symbolMeaningFields),
       ...letter.relatedWordIds.flatMap(hebrewMeaningFields),
+      ...(deepProfile?.symbolIds ?? []).flatMap(symbolMeaningFields),
+      ...genesisWords.flatMap((word) => hebrewMeaningFields(word.id)),
     ]),
     relations: uniqueRelations([
+      ...(deepProfile?.roomIds ?? []).map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "symbolizes",
+        label: `${letter.name} traegt diesen Raum als Genesis-Zeichen.`,
+        source: "hebrew-letter",
+      })),
+      ...(deepProfile?.symbolIds ?? []).map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "shares-meaning",
+        label: `${letter.name} beruehrt das Feld ${findSymbolTitle(targetId)}.`,
+        source: "hebrew-letter",
+      })),
       ...letter.relatedSymbolSlugs.map<CodexRelation>((targetId) => ({
         targetId,
         type: "symbolizes",
         label: `Verwandtes Symbol: ${findSymbolTitle(targetId)}`,
         source: "hebrew-letter",
       })),
-      ...letter.relatedWordIds.map<CodexRelation>((targetId) => ({
-        targetId,
+      ...relatedWords.map<CodexRelation>((word) => ({
+        targetId: word.id,
         type: "has-hebrew-word",
-        label: hebrewWords.find((word) => word.id === targetId)?.germanMeaning,
+        label: getGenesisWordMovement(word.id)?.movement ?? word.germanMeaning,
+        source: "hebrew-letter",
+      })),
+      ...(deepProfile?.relatedLetterIds ?? []).map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "related",
+        label: `Nahe Buchstabenresonanz im Genesis-Feld.`,
         source: "hebrew-letter",
       })),
       ...profile.extraRelations,
@@ -683,8 +731,11 @@ function letterEntry(letterId: string): CodexEntry {
     meta: {
       status: "seed",
       source: ["hebrew-letter", "hebrew-word", "meaning-graph", "scripture-reference"],
-      sourceIds: [letter.id, ...letter.relatedWordIds, ...profile.scriptureAnchors.map((anchor) => anchor.id).filter((id): id is string => Boolean(id))],
+      sourceIds: [letter.id, ...relatedWords.map((word) => word.id), ...profile.scriptureAnchors.map((anchor) => anchor.id).filter((id): id is string => Boolean(id))],
       tags: ["codex-seed", "hebrew-letter", "letter-resonance"],
+      notes: deepProfile
+        ? `Genesis-Rolle: ${deepProfile.genesisRole} Bedeutungsfelder: ${deepProfile.meaningFieldLabels.join(", ")}. Kontemplativ: ${deepProfile.contemplative}`
+        : undefined,
     },
   };
 }
@@ -781,6 +832,8 @@ function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2"
     },
   }[referenceId];
 
+  const verseLayer = getGenesisVerseLetterLayer(referenceId);
+
   return {
     id: referenceId,
     type: "scripture",
@@ -792,7 +845,33 @@ function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2"
     searchTerms: base.searchTerms,
     summary: base.summary,
     meaningFields: base.meaningFields,
-    relations: base.relations,
+    relations: uniqueRelations([
+      ...base.relations,
+      ...(verseLayer?.wordIds ?? []).map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "has-hebrew-word",
+        label: getGenesisWordMovement(targetId)?.movement ?? "Hebraeisches Wort dieses Verses.",
+        source: "hebrew-word",
+      })),
+      ...(verseLayer?.focusLetterIds ?? []).map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "contains-letter",
+        label: getGenesisLetterProfile(targetId)?.genesisRole ?? "Tragendes Zeichen dieses Verses.",
+        source: "hebrew-letter",
+      })),
+      ...(verseLayer?.roomIds ?? []).map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "opens-to",
+        label: `${verseLayer.movement} Dieser Raum wird durch die Zeichen des Verses beruehrt.`,
+        source: "scripture-reference",
+      })),
+      ...(verseLayer?.symbolIds ?? []).map<CodexRelation>((targetId) => ({
+        targetId,
+        type: "shares-meaning",
+        label: verseLayer.note,
+        source: "scripture-reference",
+      })),
+    ]),
     scriptureAnchors: [
       {
         id: referenceId === "genesis-1" ? undefined : referenceId,
@@ -863,6 +942,7 @@ function numberEntry({
 
 function generatedHebrewWordEntry(word: (typeof hebrewWords)[number]): CodexEntry {
   const symbolSlug = word.relatedSymbolSlugs.find((slug) => ["wasser", "licht", "feuer", "wueste", "brot"].includes(slug)) ?? null;
+  const movement = getGenesisWordMovement(word.id);
 
   return {
     id: word.id,
@@ -878,7 +958,10 @@ function generatedHebrewWordEntry(word: (typeof hebrewWords)[number]): CodexEntr
       ...word.relatedSymbolSlugs,
       ...word.meaningFields.flatMap((field) => [field.label, ...field.experienceFields]),
     ],
-    summary: word.meaningFields.map((field) => field.description).join(" "),
+    summary: [
+      word.meaningFields.map((field) => field.description).join(" "),
+      movement?.movement,
+    ].filter(Boolean).join(" "),
     meaningFields: uniqueMeaningFields(hebrewMeaningFields(word.id)),
     relations: uniqueRelations([
       ...(symbolSlug
@@ -897,10 +980,10 @@ function generatedHebrewWordEntry(word: (typeof hebrewWords)[number]): CodexEntr
           label: `Wort im selben Bedeutungsfeld: ${findSymbolTitle(slug)}.`,
           source: "hebrew-word",
         })),
-      ...word.letterIds.map<CodexRelation>((targetId) => ({
+      ...word.letterIds.map<CodexRelation>((targetId, index) => ({
         targetId,
         type: "contains-letter",
-        label: `Buchstabe ${targetId}`,
+        label: movement?.letters[index]?.role ?? `Buchstabe ${targetId}`,
         source: "hebrew-letter",
       })),
     ]),

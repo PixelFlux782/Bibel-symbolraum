@@ -9,6 +9,12 @@ import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { buildScriptureFoundationModel, type ScriptureFoundationLink, type ScriptureFoundationModel } from "@/lib/codex/scriptureFoundation";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { breakdownHebrewWord } from "@/lib/hebrew/gematria";
+import {
+  getGenesisLetterProfile,
+  getGenesisVerseLetterLayer,
+  getGenesisWordMovement,
+  getGenesisWordsForLetter,
+} from "@/lib/hebrew/genesisLetterLayer";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { getRoomHebrewMovement, type RoomHebrewMovement } from "@/lib/hebrew/roomHebrewMovements";
@@ -923,6 +929,14 @@ type ScriptureSceneModel = {
   journeyTitle?: string;
   symbols: { id: string; label: string; href?: string }[];
   rooms: { id: string; label: string; href?: string; note: string }[];
+  verseLetters: {
+    id: string;
+    glyph: string;
+    name: string;
+    note: string;
+    href?: string;
+  }[];
+  verseLetterNote?: string;
   relations: CuratedRelationItem[];
 };
 
@@ -1362,6 +1376,7 @@ function buildScriptureSceneModel(entry: CodexEntry): ScriptureSceneModel | null
   const journeys = getScriptureJourneys(entry);
   const primaryJourney = journeys[0];
   const formula = SCRIPTURE_SCENE_FORMULAS[entry.id];
+  const verseLayer = getGenesisVerseLetterLayer(entry.id);
 
   return {
     formula: formula?.formula ?? "Szene",
@@ -1377,6 +1392,19 @@ function buildScriptureSceneModel(entry: CodexEntry): ScriptureSceneModel | null
     journeyTitle: primaryJourney?.title,
     symbols: formula?.symbols ?? getScriptureSymbols(entry, relations),
     rooms: getPreparedRoomsForScripture(entry, journeys),
+    verseLetters: verseLayer?.focusLetterIds.map((letterId) => {
+      const letter = hebrewLetters.find((candidate) => candidate.id === letterId);
+      const linkedEntry = resolveLinkedCodexEntry(letterId);
+
+      return {
+        id: letterId,
+        glyph: letter?.glyph ?? letterId,
+        name: letter?.name ?? humanizeId(letterId),
+        note: getGenesisLetterProfile(letterId)?.shortEssence ?? letter?.archetypalMeanings.slice(0, 2).join(" / ") ?? "",
+        href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
+      };
+    }) ?? [],
+    verseLetterNote: verseLayer?.note,
     relations,
   };
 }
@@ -1514,8 +1542,13 @@ function getLetterResonance(entry: CodexEntry) {
   }
 
   const relationTargets = new Set(entry.relations.map(relationTarget).filter(Boolean));
-  const words = hebrewWords.filter((word) => letter.relatedWordIds.includes(word.id) || relationTargets.has(word.id));
+  const genesisWords = getGenesisWordsForLetter(letter.id);
+  const words = [
+    ...hebrewWords.filter((word) => letter.relatedWordIds.includes(word.id) || relationTargets.has(word.id)),
+    ...genesisWords,
+  ].filter((word, index, allWords) => allWords.findIndex((candidate) => candidate.id === word.id) === index);
   const symbolRelations = entry.relations.filter((relation) => relation.type === "symbolizes");
+  const genesisProfile = getGenesisLetterProfile(letter.id);
   const essence = entry.summary || letter.symbolism[0]?.description || letter.archetypalMeanings.join(", ");
 
   return {
@@ -1525,6 +1558,8 @@ function getLetterResonance(entry: CodexEntry) {
     numericValue: letter.numericValue,
     words,
     symbolRelations,
+    genesisProfile,
+    genesisWords,
     essence,
   };
 }
@@ -3035,6 +3070,7 @@ function HebrewWordIdentitySection({ entry, activeContext }: { entry: CodexEntry
 
   const breakdown = breakdownHebrewWord(entry.hebrew);
   const word = hebrewWords.find((candidate) => candidate.id === entry.id);
+  const movement = getGenesisWordMovement(entry.id);
 
   return (
     <DetailSection title="Hebräischer Körper" activeContext={activeContext}>
@@ -3062,26 +3098,48 @@ function HebrewWordIdentitySection({ entry, activeContext }: { entry: CodexEntry
 
         {breakdown.letters.length > 0 ? (
           <div className="border-t border-white/[0.06] pt-5">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Buchstabenfolge</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Buchstabenbewegung</p>
+            {movement ? (
+              <p className="symbol-copy mt-3 max-w-3xl font-serif text-xl italic leading-relaxed text-foreground-strong">
+                {movement.movement}
+              </p>
+            ) : null}
             <div className="mt-4 grid gap-3 sm:grid-cols-3" dir="rtl">
               {breakdown.letters.map((letterBreakdown, index) => {
-                const letterId = word?.letterIds[index];
+                const letterId = movement?.letters[index]?.letterId ?? word?.letterIds[index];
                 const letter = letterId ? hebrewLetters.find((candidate) => candidate.id === letterId) : undefined;
                 const meanings = letter?.archetypalMeanings.length ? letter.archetypalMeanings : letter?.experienceFields ?? [];
-
-                return (
-                  <article key={`${entry.id}-${letterBreakdown.letter}-${index}`} className="border border-white/[0.06] bg-black/[0.12] p-4" dir="ltr">
+                const role = movement?.letters[index]?.role;
+                const displayedGlyph = movement?.letters[index]?.form ?? letterBreakdown.letter;
+                const linkedEntry = letterId ? resolveLinkedCodexEntry(letterId) : undefined;
+                const card = (
+                  <article className="h-full border border-white/[0.06] bg-black/[0.12] p-4 transition-colors duration-500" dir="ltr">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">{letter?.name ?? letterId ?? "Buchstabe"}</p>
                         <p className="mt-2 text-xs uppercase tracking-[0.18em] text-gold/70">{letterBreakdown.value}</p>
                       </div>
-                      <p className="font-serif text-4xl leading-none text-gold" lang="he" dir="rtl">{letterBreakdown.letter}</p>
+                      <p className="font-serif text-4xl leading-none text-gold" lang="he" dir="rtl">{displayedGlyph}</p>
                     </div>
+                    {role ? (
+                      <p className="symbol-copy mt-4 text-sm italic text-foreground-strong/82">{role}</p>
+                    ) : null}
                     {meanings.length > 0 ? (
                       <p className="symbol-copy mt-4 text-sm italic text-muted-soft">{meanings.slice(0, 3).join(" / ")}</p>
                     ) : null}
                   </article>
+                );
+
+                return linkedEntry ? (
+                  <Link
+                    key={`${entry.id}-${letterBreakdown.letter}-${index}`}
+                    href={`/codex/${linkedEntry.id}`}
+                    className="block hover:[&>article]:border-gold/30 hover:[&>article]:bg-gold/[0.035]"
+                  >
+                    {card}
+                  </Link>
+                ) : (
+                  <div key={`${entry.id}-${letterBreakdown.letter}-${index}`}>{card}</div>
                 );
               })}
             </div>
@@ -3263,6 +3321,15 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
     return null;
   }
 
+  const roomRelations = (resonance.genesisProfile?.roomIds ?? []).map((targetId) => ({
+    targetId,
+    type: "symbolizes" as const,
+    label: "Tragender Buchstabe dieses Raums.",
+    source: "hebrew-letter" as const,
+  }));
+  const symbolAndRoomRelations = [...resonance.symbolRelations, ...roomRelations]
+    .filter((relation, index, relations) => relations.findIndex((candidate) => candidate.targetId === relation.targetId) === index);
+
   return (
     <DetailSection title="Buchstaben-Resonanz" activeContext={activeContext}>
       <div className="grid gap-6 md:grid-cols-[auto_1fr] md:items-start">
@@ -3288,11 +3355,19 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
             <p className="symbol-copy mt-3 text-base italic text-foreground-strong">
               {resonance.essence}
             </p>
+            {resonance.genesisProfile ? (
+              <div className="symbol-copy mt-4 grid gap-2 text-sm italic leading-relaxed text-muted-soft">
+                <p>{resonance.genesisProfile.deeperMeaning}</p>
+                <p>{resonance.genesisProfile.genesisRole}</p>
+                <p className="text-gold/78">{resonance.genesisProfile.contemplative}</p>
+              </div>
+            ) : null}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Wörter</p>
+              <p className="mt-2 text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Vorkommen in Genesis 1,1-3</p>
               {resonance.words.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {resonance.words.map((word) => {
@@ -3320,22 +3395,22 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
 
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Symbole</p>
-              {resonance.symbolRelations.length > 0 ? (
+              {symbolAndRoomRelations.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {resonance.symbolRelations.map((relation) => {
+                  {symbolAndRoomRelations.map((relation, index) => {
                     const linkedEntry = resolveLinkedCodexEntry(relation.targetId);
                     const label = linkedEntry?.title ?? relation.targetId;
 
                     return linkedEntry ? (
                       <Link
-                        key={`${relation.type}-${relation.targetId}`}
+                        key={`${relation.type}-${relation.targetId}-${index}`}
                         href={`/codex/${linkedEntry.id}`}
                         className="border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs uppercase tracking-[0.18em] text-gold/80 transition-colors duration-500 hover:border-gold/30 hover:text-gold"
                       >
                         {label}
                       </Link>
                     ) : (
-                      <span key={`${relation.type}-${relation.targetId}`} className="border border-white/[0.07] bg-white/[0.025] px-3 py-2 text-xs uppercase tracking-[0.18em] text-muted-soft">
+                      <span key={`${relation.type}-${relation.targetId}-${index}`} className="border border-white/[0.07] bg-white/[0.025] px-3 py-2 text-xs uppercase tracking-[0.18em] text-muted-soft">
                         {label}
                       </span>
                     );
@@ -3346,6 +3421,37 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
               )}
             </div>
           </div>
+          {resonance.genesisProfile ? (
+            <div className="border-t border-white/[0.06] pt-5">
+              <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bedeutungsfelder und Nachbarzeichen</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {resonance.genesisProfile.meaningFieldLabels.map((label) => (
+                  <span key={label} className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-3 py-2 text-xs uppercase tracking-[0.16em] text-cyan-soft/78">
+                    {label}
+                  </span>
+                ))}
+                {resonance.genesisProfile.relatedLetterIds.map((letterId) => {
+                  const letter = hebrewLetters.find((candidate) => candidate.id === letterId);
+                  const linkedEntry = resolveLinkedCodexEntry(letterId);
+                  const label = letter?.name ?? humanizeId(letterId);
+
+                  return linkedEntry ? (
+                    <Link
+                      key={letterId}
+                      href={`/codex/${linkedEntry.id}`}
+                      className="border border-gold/15 bg-gold/[0.035] px-3 py-2 text-xs uppercase tracking-[0.16em] text-gold/78 transition-colors duration-500 hover:border-gold/30 hover:text-gold"
+                    >
+                      {label}
+                    </Link>
+                  ) : (
+                    <span key={letterId} className="border border-white/[0.06] bg-white/[0.025] px-3 py-2 text-xs uppercase tracking-[0.16em] text-muted-soft">
+                      {label}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </DetailSection>
@@ -3976,6 +4082,7 @@ function FoundationWordCard({ word }: { word: ScriptureFoundationModel["words"][
     </>
   );
   const isPassive = word.layer === "passive";
+  const movement = word.existingWord ? getGenesisWordMovement(word.existingWord.id) : undefined;
 
   return (
     <article className={`border p-4 sm:p-5 ${isPassive ? "border-white/[0.055] bg-white/[0.018]" : "border-white/[0.07] bg-black/[0.12]"}`}>
@@ -3995,14 +4102,23 @@ function FoundationWordCard({ word }: { word: ScriptureFoundationModel["words"][
       </div>
       <p className="symbol-copy mt-2 text-base italic text-muted-soft">{word.meaning}</p>
       {word.note ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/72">{word.note}</p> : null}
+      {movement ? (
+        <p className="symbol-copy mt-3 border-l border-gold/20 pl-3 text-sm italic leading-relaxed text-gold/78">
+          {movement.movement}
+        </p>
+      ) : null}
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {word.letters.map((letter, index) => {
+          const step = movement?.letters[index];
           const content = (
             <>
-              <span className="font-serif text-2xl leading-none text-gold/85" lang="he" dir="rtl">{letter.glyph}</span>
+              <span className="font-serif text-2xl leading-none text-gold/85" lang="he" dir="rtl">{step?.form ?? letter.glyph}</span>
               <span className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-soft">{letter.label}</span>
               {letter.meaning ? (
                 <span className="max-w-20 text-center text-[0.56rem] leading-tight text-foreground-strong/62">{letter.meaning}</span>
+              ) : null}
+              {step?.role ? (
+                <span className="max-w-24 text-center text-[0.54rem] leading-tight text-gold/68">{step.role}</span>
               ) : null}
             </>
           );
@@ -4203,6 +4319,42 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
                 Diese Szene gehört zur Bewegung {model.movementSteps.map((step) => step.label).join(" -> ")}.
               </p>
             ) : null}
+          </section>
+        ) : null}
+
+        {model.verseLetters.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zeichen dieses Verses</p>
+            {model.verseLetterNote ? (
+              <p className="symbol-copy mt-3 max-w-3xl text-sm italic leading-relaxed text-muted-soft">
+                {model.verseLetterNote}
+              </p>
+            ) : null}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {model.verseLetters.map((letter) => {
+                const content = (
+                  <>
+                    <span className="font-serif text-2xl leading-none text-gold/88" lang="he" dir="rtl">{letter.glyph}</span>
+                    <span className="text-[0.52rem] uppercase tracking-[0.14em] text-cyan-soft/72">{letter.name}</span>
+                    <span className="max-w-28 text-center text-[0.56rem] leading-tight text-muted-soft">{letter.note}</span>
+                  </>
+                );
+
+                return letter.href ? (
+                  <Link
+                    key={letter.id}
+                    href={letter.href}
+                    className="grid min-w-20 justify-items-center gap-1 border border-gold/18 bg-gold/[0.035] px-3 py-3 transition-colors duration-500 hover:border-gold/35 hover:bg-gold/[0.065]"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <span key={letter.id} className="grid min-w-20 justify-items-center gap-1 border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+                    {content}
+                  </span>
+                );
+              })}
+            </div>
           </section>
         ) : null}
 

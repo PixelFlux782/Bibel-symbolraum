@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "validate:ontology": "jiti scripts/validate-ontology.ts",
+    "validate:genesis-letters": "node scripts/validate-genesis-letters.mjs",
     "validate:traces": "node scripts/validate-traces.mjs"
   },
   "dependencies": {
