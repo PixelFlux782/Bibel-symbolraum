@@ -35,6 +35,7 @@ export type ScriptureFoundationPassiveWord = {
   hebrew: string;
   transliteration: string;
   german: string;
+  codexId?: string;
   note?: string;
   letters?: ScriptureFoundationLetter[];
   meaningIds?: MeaningNodeId[];
@@ -136,7 +137,7 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
       { order: 5, codexId: "erez", hebrew: "\u05d0\u05b8\u05e8\u05b6\u05e5", transliteration: "erez", german: "Erde / Land", note: "Erez ist der untere Raum, der noch nicht ausgeformt ist und doch schon als tragender Boden angesprochen wird.", letters: [letter("aleph"), letter("resh"), letter("tsadi")], symbolIds: ["erde", "brot", "wueste"], roomIds: ["brot", "wueste"], meaningIds: ["life", "nourishment", "path", "guidance"], numberIds: ["zahl-1", "zahl-90"] },
     ],
     passiveWords: [
-      { order: 6, hebrew: "\u05d0\u05b5\u05ea", transliteration: "et", german: "Akkusativzeichen", note: "Et bleibt grammatisch sichtbar: Aleph und Tav umgreifen symbolisch gelesen die Spannweite von Anfang und Zeichen, ohne hier als eigener Codex-Weg aktiviert zu werden.", letters: [letter("aleph"), letter("tav")], meaningIds: ["hiddenness", "word"], numberIds: ["zahl-1"] },
+      { order: 6, codexId: "et", hebrew: "\u05d0\u05b5\u05ea", transliteration: "et", german: "Akkusativzeichen", note: "Et bleibt grammatisch sichtbar: Aleph und Tav umgreifen die Spannweite von Anfang und Zeichen, ohne den Satz zu ueberladen.", letters: [letter("aleph"), letter("tav")], meaningIds: ["hiddenness", "word"], numberIds: ["zahl-1"] },
     ],
     linkedLetters: [letter("bet"), letter("resh"), letter("aleph"), letter("shin"), letter("jod"), letter("tav"), letter("mem"), letter("he"), letter("lamed")],
     openedSymbols: ["anfang", "ursprung", "schoepfung", "ordnung", "himmel", "erde", "offenbarung"],
@@ -165,7 +166,7 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
       { order: 1, codexId: "erez", hebrew: "\u05d0\u05b6\u05e8\u05b6\u05e5", transliteration: "erez", german: "Erde / Land", note: "Die Erde aus Genesis 1,1 ist jetzt noch ungestaltet. Der Boden ist genannt, aber noch nicht bewohnbar.", letters: [letter("aleph"), letter("resh"), letter("tsadi")], symbolIds: ["erde", "wueste", "brot"], roomIds: ["wueste", "brot"], meaningIds: ["life", "path", "hiddenness"] },
       { order: 2, codexId: "haja", hebrew: "\u05d4\u05b8\u05d9\u05b0\u05ea\u05b8\u05d4", transliteration: "hajeta / haja", german: "war / wurde", note: "Haja bleibt als Seins- und Werdensspur sichtbar: Der Vers beschreibt einen Zustand, der noch nicht Endgestalt ist.", letters: [letter("he"), letter("jod"), letter("tav"), letter("he")], symbolIds: ["wandlung"], meaningIds: ["hiddenness", "transition"] },
       { order: 3, codexId: "tohu", hebrew: "\u05ea\u05b9\u05d4\u05d5\u05bc", transliteration: "tohu", german: "Wuestheit / Formlosigkeit", note: "Tohu wird nicht romantisiert. Es benennt den ungeformten Raum, in dem Ordnung noch nicht lesbar ist.", letters: [letter("tav"), letter("he"), letter("vav")], symbolIds: ["wueste", "tiefe"], roomIds: ["wueste"], meaningIds: ["chaos", "hiddenness", "desert"] },
-      { order: 4, codexId: "vohu", hebrew: "\u05d5\u05b8\u05d1\u05b9\u05d4\u05d5\u05bc", transliteration: "vohu", german: "und Leere", note: "Vohu bleibt als Leere sichtbar: kein Nichts, sondern ein noch unbesetzter Raum, der mit Tohu zusammen den Anfangszustand beschreibt.", letters: [letter("vav"), letter("bet"), letter("he"), letter("vav")], symbolIds: ["wueste"], roomIds: ["wueste"], meaningIds: ["chaos", "hiddenness", "lack"] },
+      { order: 4, codexId: "bohu", hebrew: "\u05d1\u05b9\u05d4\u05d5\u05bc", transliteration: "bohu", german: "Leere", note: "Bohu bleibt als Leere sichtbar: kein Nichts, sondern ein noch unbesetzter Raum, der mit Tohu zusammen den Anfangszustand beschreibt.", letters: [letter("bet"), letter("he"), letter("vav")], symbolIds: ["wueste"], roomIds: ["wueste"], meaningIds: ["chaos", "hiddenness", "lack"] },
       { order: 5, codexId: "choschech", hebrew: "\u05d7\u05b9\u05e9\u05b6\u05c1\u05da\u05b0", transliteration: "choschech", german: "Finsternis", note: "Choschech ist die bedeckte Sichtbarkeit vor dem Licht. Die Dunkelheit wird genannt, ohne schon aufgeloest zu sein.", letters: [letter("chet"), letter("shin"), letter("kaf")], symbolIds: ["verborgenheit"], meaningIds: ["hiddenness", "chaos"] },
       { order: 6, codexId: "tehom", hebrew: "\u05ea\u05b0\u05d4\u05d5\u05b9\u05dd", transliteration: "tehom", german: "Tiefe / Urflut", note: "Tehom ist die Tiefe unter der sichtbaren Ordnung: nicht einfach Wasser, sondern Ursprungstiefe vor Form.", letters: [letter("tav"), letter("he"), letter("vav"), letter("mem")], symbolIds: ["tiefe", "wasser", "ursprung"], roomIds: ["wasser"], meaningIds: ["depth", "hiddenness", "chaos", "birth"], numberIds: ["zahl-40"] },
       { order: 7, codexId: "ruach", hebrew: "\u05e8\u05d5\u05bc\u05d7\u05b7", transliteration: "ruach", german: "Geist / Atem / Wind", note: "Ruach ist die unsichtbare Bewegung ueber der Tiefe: Atem, Wind und Geist in einem verdichteten Wort.", letters: [letter("resh"), letter("vav"), letter("chet")], symbolIds: ["geist", "licht", "wasser", "offenbarung"], roomIds: ["wasser", "licht"], meaningIds: ["presence", "life", "voice", "word", "revelation"] },
@@ -174,9 +175,10 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
     ],
     passiveWords: [
       { order: 10, hebrew: "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd", transliteration: "elohim", german: "Gott", note: "Der Gottesname bleibt passiv sichtbar; die aktive Bewegung des Verses wird ueber Ruach, Tehom und Majim erschlossen.", letters: [letter("aleph"), letter("lamed"), letter("he"), letter("jod"), letter("mem")], meaningIds: ["presence", "hiddenness"] },
-      { order: 11, hebrew: "\u05e4\u05b0\u05bc\u05e0\u05b5\u05d9", transliteration: "pnei", german: "Angesicht / Oberflaeche", note: "Pnei ist sichtbar, aber nicht als eigener Zielraum aktiviert: Die Bewegung geschieht an der Schwelle von Tiefe und Oberflaeche.", letters: [letter("pe"), letter("nun"), letter("jod")], meaningIds: ["presence", "transition"] },
+      { order: 11, hebrew: "\u05e2\u05b7\u05dc", transliteration: "al", german: "ueber / auf", note: "Al macht die Lage der Szene sichtbar: Finsternis und Ruach werden an der Schwelle ueber Tiefe und Wasser erzaehlt.", letters: [letter("ayin"), letter("lamed")], meaningIds: ["presence", "transition"] },
+      { order: 12, hebrew: "\u05e4\u05b0\u05bc\u05e0\u05b5\u05d9", transliteration: "pnei", german: "Angesicht / Oberflaeche", note: "Pnei ist sichtbar, aber nicht als eigener Zielraum aktiviert: Die Bewegung geschieht an der Schwelle von Tiefe und Oberflaeche.", letters: [letter("pe"), letter("nun"), letter("jod")], meaningIds: ["presence", "transition"] },
     ],
-    linkedLetters: [letter("tav"), letter("he"), letter("vav"), letter("mem"), letter("resh"), letter("chet"), letter("kaf"), letter("pe"), letter("jod"), letter("bet"), letter("shin"), letter("aleph")],
+    linkedLetters: [letter("tav"), letter("he"), letter("vav"), letter("mem"), letter("resh"), letter("chet"), letter("kaf"), letter("ayin"), letter("lamed"), letter("pe"), letter("nun"), letter("jod"), letter("bet"), letter("shin"), letter("aleph")],
     openedSymbols: ["wasser", "tiefe", "geist", "verborgenheit", "wandlung", "ordnung"],
     openedRooms: ["wasser", "licht", "wueste"],
     openedMeanings: ["chaos", "depth", "hiddenness", "presence", "life", "transition", "voice", "word", "revelation"],
@@ -185,7 +187,7 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
     openedNumbers: ["zahl-40", "zahl-90"],
     growingRooms: [
       { id: "genesis-1-1", label: "Zurueck zum gesetzten Ursprung", note: "Die Tiefe ist nicht losgeloest; sie antwortet auf Himmel und Erde aus Genesis 1,1." },
-      { id: "wasser", label: "Wasser", note: "Wasser wurzelt hier als Anfangsraum vor der Ordnung." },
+      { id: "wasser", label: "Wasser", note: "Diese Stelle oeffnet den Wasser-Raum: Tiefe, Majim und Ruach werden hier zur zentralen Bibelwurzel." },
       { id: "tiefe", label: "Tiefe", note: "Tehom macht den Raum unter der sichtbaren Oberflaeche lesbar." },
       { id: "ruach", label: "Geist / Ruach", note: "Die Bewegung des Geistes beruehrt die Wasser, bevor Licht gerufen wird." },
       { id: "licht", label: "Licht", note: "Licht ist noch nicht da, aber die Ruach bereitet den Rueckweg in Sichtbarkeit vor." },
@@ -203,7 +205,7 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
     coreWords: [
       { order: 1, codexId: "amar", hebrew: "\u05d0\u05b8\u05de\u05b7\u05e8", transliteration: "amar", german: "sprechen", note: "Amar ist das konkrete Sprechen; Davar und Qol bleiben die weiterfuehrenden Wort- und Stimme-Achsen.", letters: [letter("aleph"), letter("mem"), letter("resh")], symbolIds: ["wort", "offenbarung"], roomIds: ["licht"], meaningIds: ["word", "voice", "revelation", "calling"], numberIds: ["zahl-1", "zahl-40"] },
       { order: 2, codexId: "elohim", hebrew: "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u05d9\u05dd", transliteration: "elohim", german: "Gott", note: "Der Gottesname bleibt zurueckhaltend im Schriftkoerper und wird ueber Ursprung, Gegenwart und gesprochenes Licht gelesen.", letters: [letter("aleph"), letter("lamed"), letter("he"), letter("jod"), letter("mem")], symbolIds: ["ursprung", "offenbarung"], meaningIds: ["presence", "revelation", "hiddenness"] },
-      { order: 3, codexId: "haja", hebrew: "\u05d9\u05b0\u05d4\u05b4\u05d9", transliteration: "jehi / haja", german: "es werde", note: "Haja erscheint als Werden im Ruf: noch nicht Besitz, sondern Uebergang von gesprochenem Sinn in sichtbare Wirklichkeit.", letters: [letter("jod"), letter("he"), letter("jod")], symbolIds: ["wandlung", "ordnung"], roomIds: ["licht"], meaningIds: ["calling", "word", "transition", "revelation"] },
+      { order: 3, codexId: "jehi", hebrew: "\u05d9\u05b0\u05d4\u05b4\u05d9", transliteration: "jehi", german: "es werde", note: "Jehi ist der Ruf ins Werden: noch nicht Besitz, sondern Uebergang von gesprochenem Sinn in sichtbare Wirklichkeit.", letters: [letter("jod"), letter("he"), letter("jod")], symbolIds: ["wandlung", "ordnung"], roomIds: ["licht"], meaningIds: ["calling", "word", "transition", "revelation"] },
       { order: 4, codexId: "or", hebrew: "\u05d0\u05d5\u05b9\u05e8", transliteration: "or", german: "Licht", note: "Or ist die erste gerufene Sichtbarkeit. Aleph, Vav und Resch verbinden stillen Ursprung, tragende Linie und Ausrichtung.", letters: [letter("aleph"), letter("vav"), letter("resh")], symbolIds: ["licht", "offenbarung", "ordnung"], roomIds: ["licht"], meaningIds: ["light", "revelation", "awareness", "guidance"], numberIds: ["zahl-1"] },
       { order: 5, codexId: "wajehi", hebrew: "\u05d5\u05b7\u05d9\u05b0\u05d4\u05b4\u05d9", transliteration: "wajehi", german: "und es wurde", note: "Das zweite Werden bestaetigt die Bewegung: Aus Ruf wird erfahrbare Sichtbarkeit.", letters: [letter("vav"), letter("jod"), letter("he"), letter("jod")], symbolIds: ["licht", "offenbarung"], roomIds: ["licht"], meaningIds: ["light", "revelation", "transition"] },
     ],
@@ -220,7 +222,7 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
     openedNumbers: ["zahl-1", "zahl-40"],
     growingRooms: [
       { id: "genesis-1-2", label: "Rueckweg in die Tiefe", note: "Das Licht verliert seine Herkunft nicht: Es antwortet auf Tiefe, Wasser und Ruach." },
-      { id: "licht", label: "Licht", note: "Das Licht ist hier nicht Idee, sondern gerufene Sichtbarkeit." },
+      { id: "licht", label: "Licht", note: "Diese Stelle oeffnet den Licht-Raum: Wort, Jehi und Or werden zur zentralen Bibelwurzel." },
       { id: "wort", label: "Wort", note: "Der Raum des Wortes wurzelt im ersten Ruf." },
       { id: "davar-qol-or", label: "Wort wird Licht", note: "Die kleine Journey macht die Bewegung von Wort, Stimme und Licht begehbar." },
       { id: "offenbarung", label: "Offenbarung", note: "Sichtbarkeit waechst aus dem gesprochenen Anfang." },
@@ -273,7 +275,7 @@ const torahFoundationRequirements = {
     minLetters: 8,
   },
   "genesis-1-2": {
-    words: ["erez", "haja", "tohu", "vohu", "choschech", "tehom", "ruach", "merachefet", "majim"],
+    words: ["erez", "haja", "tohu", "bohu", "choschech", "tehom", "ruach", "merachefet", "majim"],
     rooms: ["wasser", "licht"],
     meanings: ["chaos", "depth", "hiddenness", "presence", "transition"],
     journeys: ["journey-wasser-geist", "tehom-ruach-davar-qol-or"],
@@ -281,7 +283,7 @@ const torahFoundationRequirements = {
     minLetters: 10,
   },
   "genesis-1-3": {
-    words: ["amar", "elohim", "haja", "or", "wajehi", "raah", "tov"],
+    words: ["amar", "elohim", "jehi", "or", "wajehi", "raah", "tov"],
     rooms: ["licht"],
     meanings: ["word", "voice", "light", "revelation", "awareness"],
     journeys: ["davar-qol-or", "tehom-ruach-davar-qol-or"],

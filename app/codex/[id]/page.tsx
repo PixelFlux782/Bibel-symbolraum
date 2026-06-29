@@ -759,7 +759,7 @@ function resolveReflectionSourceType(entry: CodexEntry, entity?: OntologyEntity)
   if (entity?.domain === "pattern") return "pattern";
   if (entity && isCoreConceptId(entity.id)) return "core";
   if (entry.type === "journey") return "journey";
-  if (entry.type === "hebrew-letter" && (entry.id === "aleph" || entry.id === "mem")) return "letter";
+  if (entry.type === "hebrew-letter") return "letter";
   if (entry.type === "symbol" && ["wasser", "licht", "feuer", "wueste"].includes(entry.id)) return "symbol";
 
   return null;
@@ -979,7 +979,7 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
       { id: "ruach", label: "Geist", href: "/codex/ruach" },
     ],
     roomNotes: {
-      wasser: "Der Wasser-Raum wird hier als Tiefe vor der Ordnung vorbereitet.",
+      wasser: "Diese Stelle oeffnet den Wasser-Raum: Tiefe, Majim und Ruach werden zur zentralen Bibelwurzel.",
       "genesis-1-3": "Aus dem beruehrten Ungeformten fuehrt die Achse zum gerufenen Licht.",
     },
   },
@@ -1003,7 +1003,7 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
       { id: "offenbarung", label: "Offenbarung", href: "/codex/offenbarung" },
     ],
     roomNotes: {
-      licht: "Der Licht-Raum wird hier als erster Ruf in Sichtbarkeit vorbereitet.",
+      licht: "Diese Stelle oeffnet den Licht-Raum: Wort, Jehi und Or werden zur zentralen Bibelwurzel.",
     },
   },
   "exodus-14": {

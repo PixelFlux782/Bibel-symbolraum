@@ -27,11 +27,11 @@ function validateWord(
   const errors: string[] = [];
 
   if (word.germanMeaning.trim() === "") {
-    errors.push(`HebrewWord "${word.id}" benötigt eine deutsche Grundbedeutung.`);
+    errors.push(`HebrewWord "${word.id}" benoetigt eine deutsche Grundbedeutung.`);
   }
 
   if (word.meaningThreshold.trim() === "") {
-    errors.push(`HebrewWord "${word.id}" benötigt eine kurze Bedeutungsschwelle.`);
+    errors.push(`HebrewWord "${word.id}" benoetigt eine kurze Bedeutungsschwelle.`);
   }
 
   const sentenceCount = word.meaningThreshold
@@ -40,7 +40,7 @@ function validateWord(
     .filter(Boolean).length;
 
   if (sentenceCount > 2) {
-    errors.push(`HebrewWord "${word.id}" darf höchstens zwei Sätze als Bedeutungsschwelle führen.`);
+    errors.push(`HebrewWord "${word.id}" darf hoechstens zwei Saetze als Bedeutungsschwelle fuehren.`);
   }
 
   for (const letterId of word.letterIds) {
@@ -62,7 +62,7 @@ function validateMapping(mapping: HebrewSymbolMapping, wordIds: Set<string>): st
   const errors: string[] = [];
 
   if (typeof mapping.symbolSlug !== "string" || mapping.symbolSlug.trim() === "") {
-    errors.push(`HebrewSymbolMapping "${mapping.id}" benötigt einen Symbol-Slug als String.`);
+    errors.push(`HebrewSymbolMapping "${mapping.id}" benoetigt einen Symbol-Slug als String.`);
   }
 
   for (const wordId of mapping.hebrewWordIds) {
@@ -76,7 +76,7 @@ function validateMapping(mapping: HebrewSymbolMapping, wordIds: Set<string>): st
   }
 
   if (!mapping.hebrewWordIds.includes(mapping.primaryHebrewWordId)) {
-    errors.push(`HebrewSymbolMapping "${mapping.id}" muss sein Hauptwort auch in hebrewWordIds aufführen.`);
+    errors.push(`HebrewSymbolMapping "${mapping.id}" muss sein Hauptwort auch in hebrewWordIds auffuehren.`);
   }
 
   return errors;
@@ -114,12 +114,12 @@ export function validateHebrewCodex(): string[] {
   if (!mem) {
     errors.push('HebrewLetter "mem" fehlt.');
   } else {
-    if (mem.glyph !== "מ" || mem.openForm !== "מ") {
-      errors.push('HebrewLetter "mem" muss "מ" als offene Form führen.');
+    if (mem.glyph !== "\u05de" || mem.openForm !== "\u05de") {
+      errors.push('HebrewLetter "mem" muss "\u05de" als offene Form fuehren.');
     }
 
-    if (mem.closedForm !== "ם" || mem.finalForm !== "ם") {
-      errors.push('HebrewLetter "mem" muss "ם" als geschlossene Schlussform führen.');
+    if (mem.closedForm !== "\u05dd" || mem.finalForm !== "\u05dd") {
+      errors.push('HebrewLetter "mem" muss "\u05dd" als geschlossene Schlussform fuehren.');
     }
 
     if (mem.openForm === mem.closedForm) {

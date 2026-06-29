@@ -171,6 +171,27 @@ const WATER_SCRIPTURE_REFERENCES: SymbolScriptureReference[] = [
   },
 ];
 
+const LIGHT_SCRIPTURE_REFERENCES: SymbolScriptureReference[] = [
+  {
+    reference: 'Genesis 1,3',
+    book: 'Genesis',
+    chapter: 1,
+    verseRange: '3',
+    shortNote: 'Gott spricht: Es werde Licht, und Licht wird.',
+    symbolicRole: 'Im SYMBOLRAUM kann dies als erstes Sichtbarwerden, Offenbarung und Beginn von Orientierung gelesen werden.',
+    relatedSymbols: ['wort', 'offenbarung', 'ordnung'],
+  },
+  {
+    reference: 'Johannes 8,12',
+    book: 'Johannes',
+    chapter: 8,
+    verseRange: '12',
+    shortNote: 'Jesus spricht vom Licht des Lebens.',
+    symbolicRole: 'Licht wird zur Spur von Leben, Gegenwart und Wegorientierung.',
+    relatedSymbols: ['leben', 'weg', 'offenbarung'],
+  },
+];
+
 export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
   {
     id: 'wasser',
@@ -638,6 +659,7 @@ export const SYMBOL_NETWORK: SymbolNetworkItem[] = [
     shortMeaning: 'Klarheit, Offenbarung und Orientierung im dunklen Raum.',
     poeticIntro: 'Licht fällt auf die Wasser und macht Konturen sichtbar. Es trennt nicht kalt, sondern schenkt Orientierung.',
     reflectionQuestion: 'Welches kleine Licht würde gerade genügen, damit eine Spur sichtbar wird?',
+    scriptureReferences: LIGHT_SCRIPTURE_REFERENCES,
     relatedSymbols: ['wasser', 'geist', 'reinigung', 'brot', 'baum'],
     relations: [
       {
@@ -841,7 +863,9 @@ export const SYMBOLS: SymbolItem[] = [
     shortMeaning: 'Die Klarheit, die das Verborgene offenlegt und Orientierung schenkt.',
     outerLevel: 'Sonne, Lampe, Strahl',
     symbolicLevel: 'Erkenntnis, Hoffnung, Schöpfung',
-    bibleReferences: ['Johannes 8,12', 'Psalm 119,105', '1. Johannes 1,5'],
+    bibleReferences: ['Genesis 1,3', 'Johannes 8,12', 'Psalm 119,105', '1. Johannes 1,5'],
+    firstOccurrences: LIGHT_SCRIPTURE_REFERENCES,
+    scriptureReferences: LIGHT_SCRIPTURE_REFERENCES,
     hebrewTrace: 'Licht als Urwort der Schöpfung und inneren Erlösung.',
     numberMeaning: '1 – Ursprung, Einzelheit und die klare Linie der Intention.',
     lifeQuestion: 'Welches kleine Licht willst du heute entzünden?',

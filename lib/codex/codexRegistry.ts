@@ -40,6 +40,20 @@ const CODEX_ENTRY_IDS = [
   "wandlung",
   "mem",
   "aleph",
+  "bet",
+  "resh",
+  "shin",
+  "jod",
+  "tav",
+  "lamed",
+  "he",
+  "vav",
+  "tsadi",
+  "chet",
+  "kaf",
+  "ayin",
+  "pe",
+  "nun",
   "genesis-1",
   "genesis-1-1",
   "genesis-1-2",
@@ -93,6 +107,20 @@ const CODEX_ALIASES = {
   wandlung: ["Wandlung", "Verwandlung", "Transformation"],
   mem: ["Mem"],
   aleph: ["Aleph"],
+  bet: ["Bet", "\u05d1", "Beth"],
+  resh: ["Resh", "\u05e8", "Resch"],
+  shin: ["Shin", "\u05e9", "Schin"],
+  jod: ["Jod", "Yod", "\u05d9"],
+  tav: ["Tav", "\u05ea"],
+  lamed: ["Lamed", "\u05dc"],
+  he: ["He", "\u05d4"],
+  vav: ["Vav", "Waw", "\u05d5"],
+  tsadi: ["Tsade", "Tsadi", "\u05e6", "\u05e5"],
+  chet: ["Chet", "Het", "\u05d7"],
+  kaf: ["Kaf", "Kaph", "\u05db", "\u05da"],
+  ayin: ["Ayin", "Ajin", "\u05e2"],
+  pe: ["Pe", "Peh", "\u05e4"],
+  nun: ["Nun", "\u05e0"],
   "genesis-1": ["Genesis 1", "1 Mose 1", "Bereschit 1", "Schöpfungsanfang"],
   "genesis-1-1": ["Genesis 1,1", "1 Mose 1,1", "Bereschit 1:1", "Im Anfang"],
   "genesis-1-2": ["Genesis 1,2", "1 Mose 1,2", "Bereschit 1:2", "Tohu wabohu", "Ruach"],
@@ -152,7 +180,15 @@ function journeyIdsForScripture(referenceId: string): string[] {
     .map((journey) => journey.id);
 }
 
-const LETTER_CODEX_PROFILES = {
+const LETTER_CODEX_PROFILES: Record<string, {
+  glyph: string;
+  transliteration: string;
+  essence: string;
+  meaningFields: CodexEntry["meaningFields"];
+  searchTerms: string[];
+  scriptureAnchors: CodexEntry["scriptureAnchors"];
+  extraRelations: CodexRelation[];
+}> = {
   mem: {
     glyph: "\u05de",
     transliteration: "m / Mem",
@@ -224,15 +260,7 @@ const LETTER_CODEX_PROFILES = {
       { targetId: "offenbarung", type: "shares-meaning", label: "Im Aleph beginnt das Hervortreten des Verborgenen.", source: "hebrew-letter" },
     ],
   },
-} satisfies Record<"mem" | "aleph", {
-  glyph: string;
-  transliteration: string;
-  essence: string;
-  meaningFields: CodexEntry["meaningFields"];
-  searchTerms: string[];
-  scriptureAnchors: CodexEntry["scriptureAnchors"];
-  extraRelations: CodexRelation[];
-}>;
+};
 
 function uniqueMeaningFields(fields: CodexEntry["meaningFields"]): CodexEntry["meaningFields"] {
   return Array.from(new Set(fields));
@@ -590,14 +618,27 @@ function journeyEntry({
   };
 }
 
-function letterEntry(letterId: "mem" | "aleph"): CodexEntry {
+function letterEntry(letterId: string): CodexEntry {
   const letter = hebrewLetters.find((entry) => entry.id === letterId);
-  const profile = LETTER_CODEX_PROFILES[letterId];
 
   if (!letter) {
     throw new Error(`HebrewLetter "${letterId}" fehlt für Codex-Seed.`);
   }
 
+  const profile = LETTER_CODEX_PROFILES[letterId] ?? {
+    glyph: letter.glyph,
+    transliteration: `${letter.transcription} / ${letter.name}`,
+    essence: `${letter.name} traegt in Genesis 1,1-3 die Spur ${letter.archetypalMeanings.slice(0, 3).join(", ")}. Der Buchstabe wird ueber seine Woerter, Raeume und Bedeutungsfelder gelesen.`,
+    meaningFields: [] satisfies CodexEntry["meaningFields"],
+    searchTerms: [letter.name, letter.id, letter.glyph, letter.transcription, ...letter.archetypalMeanings],
+    scriptureAnchors: letter.biblicalReferences.map((reference) => ({
+      reference: reference.reference,
+      label: reference.context,
+      note: reference.relation,
+      source: "hebrew-letter" as const,
+    })),
+    extraRelations: [] satisfies CodexRelation[],
+  };
   const relatedWords = hebrewWords.filter((word) => letter.relatedWordIds.includes(word.id));
   const relatedWordScriptureAnchors = relatedWords.flatMap((word) => word.biblicalReferences.map((reference) => ({
     reference: reference.reference,
@@ -613,7 +654,7 @@ function letterEntry(letterId: "mem" | "aleph"): CodexEntry {
     subtitle: `Buchstabe ${letter.alphabetPosition}, Zahlkörper ${letter.numericValue}`,
     hebrew: profile.glyph,
     transliteration: profile.transliteration,
-    aliases: aliasesFor(letterId),
+    aliases: aliasesFor(letterId as CodexEntryId),
     searchTerms: profile.searchTerms,
     summary: profile.essence,
     meaningFields: uniqueMeaningFields([
@@ -1560,6 +1601,20 @@ const seededCodexRegistry = [
   },
   letterEntry("mem"),
   letterEntry("aleph"),
+  letterEntry("bet"),
+  letterEntry("resh"),
+  letterEntry("shin"),
+  letterEntry("jod"),
+  letterEntry("tav"),
+  letterEntry("lamed"),
+  letterEntry("he"),
+  letterEntry("vav"),
+  letterEntry("tsadi"),
+  letterEntry("chet"),
+  letterEntry("kaf"),
+  letterEntry("ayin"),
+  letterEntry("pe"),
+  letterEntry("nun"),
   scriptureEntry("genesis-1"),
   scriptureEntry("genesis-1-1"),
   scriptureEntry("genesis-1-2"),
