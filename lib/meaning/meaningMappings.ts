@@ -12,6 +12,13 @@ import { meaningRelations } from "./meaningRelations";
 
 export const hebrewMeaningLinks: HebrewMeaningLink[] = [
   {
+    id: "hebrew-bereschit",
+    hebrewWordId: "bereschit",
+    hebrew: "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea",
+    transliteration: "bereschit",
+    nodeIds: ["birth", "hiddenness", "revelation", "word"],
+  },
+  {
     id: "hebrew-majim",
     hebrewWordId: "majim",
     hebrew: "\u05de\u05d9\u05dd",
@@ -73,6 +80,62 @@ export const hebrewMeaningLinks: HebrewMeaningLink[] = [
     hebrew: "\u05e7\u05d5\u05dc",
     transliteration: "qol",
     nodeIds: ["voice", "word", "revelation", "calling", "guidance", "presence", "awareness", "path"],
+  },
+  {
+    id: "hebrew-elohim",
+    hebrewWordId: "elohim",
+    hebrew: "\u05d0\u05dc\u05d4\u05d9\u05dd",
+    transliteration: "elohim",
+    nodeIds: ["presence", "hiddenness", "revelation", "word", "light"],
+  },
+  {
+    id: "hebrew-tohu",
+    hebrewWordId: "tohu",
+    hebrew: "\u05ea\u05d4\u05d5",
+    transliteration: "tohu",
+    nodeIds: ["chaos", "hiddenness", "desert", "transition"],
+  },
+  {
+    id: "hebrew-vohu",
+    hebrewWordId: "vohu",
+    hebrew: "\u05d5\u05d1\u05d4\u05d5",
+    transliteration: "vohu",
+    nodeIds: ["chaos", "hiddenness", "lack", "transition"],
+  },
+  {
+    id: "hebrew-choschech",
+    hebrewWordId: "choschech",
+    hebrew: "\u05d7\u05e9\u05da",
+    transliteration: "choschech",
+    nodeIds: ["hiddenness", "chaos", "revelation", "light"],
+  },
+  {
+    id: "hebrew-merachefet",
+    hebrewWordId: "merachefet",
+    hebrew: "\u05de\u05e8\u05d7\u05e4\u05ea",
+    transliteration: "merachefet",
+    nodeIds: ["presence", "life", "hiddenness", "transition", "birth"],
+  },
+  {
+    id: "hebrew-amar",
+    hebrewWordId: "amar",
+    hebrew: "\u05d0\u05de\u05e8",
+    transliteration: "amar",
+    nodeIds: ["word", "voice", "revelation", "calling", "light"],
+  },
+  {
+    id: "hebrew-haja",
+    hebrewWordId: "haja",
+    hebrew: "\u05d4\u05d9\u05d4",
+    transliteration: "haja",
+    nodeIds: ["presence", "transition", "revelation", "hiddenness"],
+  },
+  {
+    id: "hebrew-wajehi",
+    hebrewWordId: "wajehi",
+    hebrew: "\u05d5\u05d9\u05d4\u05d9",
+    transliteration: "wajehi",
+    nodeIds: ["transition", "revelation", "light", "word"],
   },
   {
     id: "hebrew-bara",
@@ -291,10 +354,16 @@ export const symbolMeaningLinks: SymbolMeaningLink[] = [
 
 export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
   {
+    id: "biblical-genesis-1-1",
+    biblicalReferenceId: "genesis-1-1",
+    label: "Genesis 1 Anfang",
+    nodeIds: ["birth", "hiddenness", "revelation", "word", "guidance", "life"],
+  },
+  {
     id: "biblical-genesis-1",
     biblicalReferenceId: "genesis-1-2",
     label: "Genesis 1",
-    nodeIds: ["chaos", "depth"],
+    nodeIds: ["chaos", "depth", "hiddenness", "presence", "transition", "word"],
   },
   {
     id: "biblical-exodus-14",
@@ -314,7 +383,7 @@ export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
     biblicalReferenceId: "genesis-1-3",
     label: "Genesis 1 Licht",
     aliases: ["Genesis 1"],
-    nodeIds: ["revelation", "life"],
+    nodeIds: ["light", "word", "revelation", "guidance", "awareness", "transition"],
   },
   {
     id: "biblical-john-1",

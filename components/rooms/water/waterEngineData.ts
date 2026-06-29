@@ -14,7 +14,7 @@ export const waterEngineData: SymbolEngineData = {
     transliteration: "majim",
     translation: "Wasser",
     summary:
-      "Majim trägt eine Bewegung zwischen Tiefe und Gestalt: vom offenen Mem über den Impuls des Jod zum geschlossenen Mem.",
+      "Majim steht in Genesis 1,2 nicht nur als Element, sondern als Tiefe vor der Form: vom offenen Mem über den Impuls des Jod zum geschlossenen Mem.",
     letters: [
       {
         id: "open-mem",
@@ -47,11 +47,18 @@ export const waterEngineData: SymbolEngineData = {
   },
   scenes: [
     {
+      id: "genesis-1-1",
+      reference: "Genesis 1,1",
+      title: "Ursprungsschwelle",
+      text: "Im Anfang werden Himmel und Erde genannt. Noch ist die Geschichte kaum geöffnet, aber der Raum ist gesetzt.",
+      meaning: "Genesis 1,1 bleibt die Schwelle, aus der die Tiefe von Genesis 1,2 hervortritt.",
+    },
+    {
       id: "genesis-1-2",
       reference: "Genesis 1,2",
-      title: "Vor der Ordnung",
-      text: "Finsternis liegt über der Tiefe, und der Geist Gottes schwebt über dem Wasser.",
-      meaning: "Wasser ist hier kein fertiges Bild. Es ist der Raum, in dem Schöpfung beginnen kann.",
+      title: "Tiefe vor der Form",
+      text: "Die Erde ist tohu wa-vohu. Finsternis liegt auf Tehom, und die Ruach Gottes schwebt über den Wassern.",
+      meaning: "Wasser ist hier kein fertiges Element. Es ist Tiefe vor der Form, von Geist berührt und noch ungeordnet offen.",
     },
     {
       id: "noah",
@@ -83,14 +90,18 @@ export const waterEngineData: SymbolEngineData = {
     },
   ],
   connections: [
+    { id: "origin-threshold", label: "Bereschit", relation: "Schwelle", detail: "Genesis 1,1 setzt den Raum, bevor Tiefe und Wasser erzählbar werden." },
     { id: "creation", label: "Schöpfung", relation: "Ursprung", detail: "Aus ungeordneter Tiefe tritt Gestalt hervor." },
+    { id: "tehom", label: "Tehom", relation: "Urtiefe", detail: "Die Tiefe ist nicht Wasser allein, sondern der verborgene Raum vor Form und Licht." },
+    { id: "tohu-vohu", label: "Tohu wa-vohu", relation: "Möglichkeit", detail: "Das Ungeformte ist noch nicht bewohnbar, aber nicht bedeutungslos leer." },
     { id: "chaos", label: "Chaos", relation: "Tiefe", detail: "Das Wasser bewahrt, was noch keine Form gefunden hat." },
     { id: "boundary", label: "Grenze", relation: "Sammlung", detail: "Wasser trennt Ufer, Zeiten und Zustände voneinander." },
     { id: "freedom", label: "Befreiung", relation: "Durchgang", detail: "Die Grenze wird zum Weg, als Israel hindurchgeht." },
     { id: "cleansing", label: "Reinigung", relation: "Neubeginn", detail: "Wasser löst, wäscht und eröffnet einen neuen Zustand." },
     { id: "baptism", label: "Taufe", relation: "Verwandlung", detail: "Untertauchen und Auftauchen werden zu einer inneren Bewegung." },
     { id: "life", label: "Leben", relation: "Quelle", detail: "Lebendiges Wasser strömt aus verborgener Tiefe." },
-    { id: "spirit", label: "Geist", relation: "Bewegung", detail: "Der Geist schwebt über dem Wasser und setzt Möglichkeit in Bewegung." },
+    { id: "spirit", label: "Ruach", relation: "Bewegung", detail: "Der Geist schwebt über dem Wasser und setzt Möglichkeit in Bewegung." },
+    { id: "merachefet", label: "Merachefet", relation: "Schweben", detail: "Das Schweben hält Nähe ohne Zugriff: Bewegung über der Tiefe, bevor Licht gesprochen wird." },
   ],
   states: [
     {
@@ -98,8 +109,8 @@ export const waterEngineData: SymbolEngineData = {
       navigationLabel: "Vor der Ordnung",
       eyebrow: "Genesis 1,2",
       title: "Noch ist nichts getrennt.",
-      text: "Wasser erscheint vor jeder klaren Grenze. Die Tiefe ist dunkel, aber nicht leer: Über ihr schwebt bereits Bewegung.",
-      inscription: "Tiefe / Geist / Möglichkeit",
+      text: "Aus der Ursprungsschwelle von Genesis 1,1 öffnet sich der ungeformte Raum: Tehom, Majim und Ruach stehen vor jeder klaren Grenze.",
+      inscription: "Bereschit / Tehom / Ruach",
       visual: {
         image: visualAssets.wasserCinema,
         backgroundImage: visualAssets.wasserInterface,
@@ -110,9 +121,9 @@ export const waterEngineData: SymbolEngineData = {
       hebrewLetterIds: ["open-mem"],
       hebrewCodexLetterIds: ["mem"],
       hebrewMeaningFieldIds: ["majim-depth"],
-      hebrewSummary: "Das offene Mem führt in die unbestimmte Tiefe des Anfangs.",
-      biblicalSceneIds: ["genesis-1-2"],
-      connectionIds: ["creation", "chaos", "spirit"],
+      hebrewSummary: "Das offene Mem führt in die unbestimmte Tiefe des Anfangs; Merachefet hält diese Tiefe in Bewegung.",
+      biblicalSceneIds: ["genesis-1-1", "genesis-1-2"],
+      connectionIds: ["origin-threshold", "tehom", "spirit"],
       reflection: { kicker: "Innere Erfahrung", question: "Wo ist in deinem Leben etwas noch ungeordnet, aber bereits in Bewegung?" },
     },
     {
@@ -120,7 +131,7 @@ export const waterEngineData: SymbolEngineData = {
       navigationLabel: "Tiefe",
       eyebrow: "Offenes Mem",
       title: "Die Tiefe öffnet sich.",
-      text: "Das offene Mem ist keine Antwort. Es ist ein Raum, in dem Ursprung, Unsicherheit und Geburt nebeneinander liegen dürfen.",
+      text: "Das offene Mem ist keine Antwort. Es ist ein Raum, in dem Tohu wa-vohu, Ursprung und Geburt nebeneinander liegen dürfen.",
       inscription: "Offenes Mem / Ursprung / Tiefe",
       visual: {
         image: visualAssets.wasserDepth,
@@ -134,7 +145,7 @@ export const waterEngineData: SymbolEngineData = {
       hebrewMeaningFieldIds: ["majim-depth"],
       hebrewSummary: "Mem beginnt offen. Die Tiefe ist zugänglich, aber nicht kontrollierbar.",
       biblicalSceneIds: ["genesis-1-2", "noah"],
-      connectionIds: ["chaos", "creation", "cleansing"],
+      connectionIds: ["tehom", "tohu-vohu", "creation"],
       reflection: { kicker: "Innere Erfahrung", question: "Welche Tiefe vermeidest du, obwohl in ihr auch ein Anfang liegen könnte?" },
     },
     {
@@ -263,9 +274,9 @@ export const waterEngineData: SymbolEngineData = {
       hebrewLetterIds: ["open-mem", "yod", "closed-mem"],
       hebrewCodexLetterIds: ["mem", "jod", "mem"],
       hebrewMeaningFieldIds: ["majim-depth", "majim-transition", "majim-new-birth"],
-      hebrewSummary: "Offenes Mem, Jod und geschlossenes Mem bilden eine Reise: Tiefe, Impuls und gesammelte Quelle.",
-      biblicalSceneIds: ["genesis-1-2", "exodus-14", "jordan-baptism", "john-4-14"],
-      connectionIds: ["creation", "freedom", "baptism", "life"],
+      hebrewSummary: "Offenes Mem, Jod und geschlossenes Mem bilden eine Reise: Tiefe vor der Form, Impuls und gesammelte Quelle.",
+      biblicalSceneIds: ["genesis-1-1", "genesis-1-2", "exodus-14", "jordan-baptism", "john-4-14"],
+      connectionIds: ["tehom", "merachefet", "life"],
       reflection: { kicker: "Innere Erfahrung", question: "Was nimmst du aus der Tiefe mit zurück an die Oberfläche?" },
     },
   ],

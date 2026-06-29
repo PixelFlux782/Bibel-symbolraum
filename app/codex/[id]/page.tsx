@@ -3968,7 +3968,78 @@ function FoundationConnectionGroup({ title, items }: { title: string; items: Scr
   );
 }
 
+function FoundationWordCard({ word }: { word: ScriptureFoundationModel["words"][number] }) {
+  const title = (
+    <>
+      <span className="block font-serif text-4xl leading-none text-gold/90" lang="he" dir="rtl">{word.hebrew}</span>
+      <strong className="mt-3 block font-serif text-2xl italic text-foreground-strong">{word.transliteration}</strong>
+    </>
+  );
+  const isPassive = word.layer === "passive";
+
+  return (
+    <article className={`border p-4 sm:p-5 ${isPassive ? "border-white/[0.055] bg-white/[0.018]" : "border-white/[0.07] bg-black/[0.12]"}`}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        {word.codexHref ? (
+          <Link href={word.codexHref} className="group block transition-colors duration-500 hover:text-gold">
+            {title}
+          </Link>
+        ) : (
+          <div>{title}</div>
+        )}
+        {isPassive ? (
+          <span className="border border-cyan-soft/15 bg-cyan-soft/[0.025] px-2 py-1 text-[0.52rem] uppercase tracking-[0.14em] text-cyan-soft/62">
+            vorbereitet
+          </span>
+        ) : null}
+      </div>
+      <p className="symbol-copy mt-2 text-base italic text-muted-soft">{word.meaning}</p>
+      {word.note ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/72">{word.note}</p> : null}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        {word.letters.map((letter, index) => {
+          const content = (
+            <>
+              <span className="font-serif text-2xl leading-none text-gold/85" lang="he" dir="rtl">{letter.glyph}</span>
+              <span className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-soft">{letter.label}</span>
+              {letter.meaning ? (
+                <span className="max-w-20 text-center text-[0.56rem] leading-tight text-foreground-strong/62">{letter.meaning}</span>
+              ) : null}
+            </>
+          );
+
+          return letter.href ? (
+            <Link
+              key={`${word.transliteration}-${letter.label}-${index}`}
+              href={letter.href}
+              className="grid min-w-14 justify-items-center gap-1 border border-gold/20 bg-gold/[0.035] px-2 py-2 transition-colors duration-500 hover:border-gold/40 hover:bg-gold/[0.07]"
+            >
+              {content}
+            </Link>
+          ) : (
+            <span key={`${word.transliteration}-${letter.label}-${index}`} className="grid min-w-14 justify-items-center gap-1 border border-white/[0.06] bg-white/[0.025] px-2 py-2 opacity-70">
+              {content}
+            </span>
+          );
+        })}
+      </div>
+      {word.gematria ? (
+        <p className="mt-4 text-[0.56rem] uppercase tracking-[0.18em] text-cyan-soft/70">Gematria {word.gematria}</p>
+      ) : null}
+      {[...word.symbols, ...word.rooms, ...word.meaningFields, ...word.numbers].length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {[...word.symbols, ...word.rooms, ...word.meaningFields, ...word.numbers].map((item) => (
+            <FoundationPillLink key={`${word.transliteration}-${item.id}`} item={item} />
+          ))}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel }) {
+  const coreWords = model.words.filter((word) => word.layer === "core");
+  const passiveWords = model.words.filter((word) => word.layer === "passive");
+
   return (
     <section className="grid gap-8">
       <section className="grid gap-5 border border-gold/20 bg-gold/[0.035] p-5 sm:p-7">
@@ -3988,88 +4059,49 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
           <p className="symbol-copy mx-auto max-w-3xl text-center font-serif text-2xl italic leading-relaxed text-foreground-strong">
             {model.germanText}
           </p>
+          <p className="symbol-copy mx-auto max-w-3xl border-t border-gold/10 pt-5 text-center text-sm leading-relaxed text-muted-soft">
+            {model.sceneSummary}
+          </p>
         </div>
       </section>
 
       <section className="border-t border-white/[0.06] pt-6">
-        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Wortkoerper</p>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {model.words.map((word) => {
-            const title = (
-              <>
-                <span className="block font-serif text-4xl leading-none text-gold/90" lang="he" dir="rtl">{word.hebrew}</span>
-                <strong className="mt-3 block font-serif text-2xl italic text-foreground-strong">{word.transliteration}</strong>
-              </>
-            );
-
-            return (
-              <article key={`${word.transliteration}-${word.meaning}`} className="border border-white/[0.07] bg-black/[0.12] p-4 sm:p-5">
-                {word.codexHref ? (
-                  <Link href={word.codexHref} className="group block transition-colors duration-500 hover:text-gold">
-                    {title}
-                  </Link>
-                ) : (
-                  <div>{title}</div>
-                )}
-                <p className="symbol-copy mt-2 text-base italic text-muted-soft">{word.meaning}</p>
-                {word.note ? <p className="symbol-copy mt-3 text-sm leading-relaxed text-foreground-strong/72">{word.note}</p> : null}
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  {word.letters.map((letter, index) => {
-                    const content = (
-                      <>
-                        <span className="font-serif text-2xl leading-none text-gold/85" lang="he" dir="rtl">{letter.glyph}</span>
-                        <span className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-soft">{letter.label}</span>
-                      </>
-                    );
-
-                    return letter.href ? (
-                      <Link
-                        key={`${word.transliteration}-${letter.label}-${index}`}
-                        href={letter.href}
-                        className="grid min-w-14 justify-items-center gap-1 border border-gold/20 bg-gold/[0.035] px-2 py-2 transition-colors duration-500 hover:border-gold/40 hover:bg-gold/[0.07]"
-                      >
-                        {content}
-                      </Link>
-                    ) : (
-                      <span key={`${word.transliteration}-${letter.label}-${index}`} className="grid min-w-14 justify-items-center gap-1 border border-white/[0.06] bg-white/[0.025] px-2 py-2 opacity-70">
-                        {content}
-                      </span>
-                    );
-                  })}
-                </div>
-                {word.gematria ? (
-                  <p className="mt-4 text-[0.56rem] uppercase tracking-[0.18em] text-cyan-soft/70">Gematria {word.gematria}</p>
-                ) : null}
-                {[...word.symbols, ...word.rooms, ...word.meaningFields, ...word.numbers].length > 0 ? (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {[...word.symbols, ...word.rooms, ...word.meaningFields, ...word.numbers].map((item) => (
-                      <FoundationPillLink key={`${word.transliteration}-${item.id}`} item={item} />
-                    ))}
-                  </div>
-                ) : null}
-              </article>
-            );
-          })}
+        <div className="grid gap-2">
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebraeische Schwellen</p>
+          <p className="symbol-copy max-w-2xl text-sm italic leading-relaxed text-muted-soft">
+            Von hier aus laesst sich die Stelle in Wort, Buchstabe, Symbol, Raum und Bedeutung betreten.
+          </p>
         </div>
-      </section>
-
-      <section className="border-t border-white/[0.06] pt-6">
-        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Aus dieser Stelle oeffnen sich</p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <FoundationConnectionGroup title="Woerter" items={model.connections.words} />
-          <FoundationConnectionGroup title="Buchstaben" items={model.connections.letters} />
-          <FoundationConnectionGroup title="Symbole" items={model.connections.symbols} />
-          <FoundationConnectionGroup title="Raeume" items={model.connections.rooms} />
-          <FoundationConnectionGroup title="Bedeutungsfelder" items={model.connections.meaningFields} />
-          <FoundationConnectionGroup title="Journeys" items={model.connections.journeys} />
-          <FoundationConnectionGroup title="Pattern" items={model.connections.patterns} />
-          <FoundationConnectionGroup title="Zahlen" items={model.connections.numbers} />
+          {coreWords.map((word) => (
+            <FoundationWordCard key={`${word.transliteration}-${word.meaning}`} word={word} />
+          ))}
         </div>
+        {passiveWords.length > 0 ? (
+          <details className="mt-4 border border-white/[0.06] bg-black/[0.08] p-4 sm:p-5">
+            <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-cyan-soft/70">
+              Leise Tiefen dieser Stelle
+            </summary>
+            <p className="symbol-copy mt-3 max-w-2xl text-sm italic leading-relaxed text-muted-soft">
+              Diese Spuren bleiben bewusst vorbereitet: sichtbar genug zum Wandern, aber noch nicht als eigene Hauptraeume ausgebaut.
+            </p>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {passiveWords.map((word) => (
+                <FoundationWordCard key={`passive-${word.transliteration}-${word.meaning}`} word={word} />
+              ))}
+            </div>
+          </details>
+        ) : null}
       </section>
 
       {model.growingRooms.length > 0 ? (
         <section className="border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Welche Raeume aus dieser Stelle wachsen</p>
+          <div className="grid gap-2">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Rueckwege und naechste Raeume</p>
+            <p className="symbol-copy max-w-2xl text-sm italic leading-relaxed text-muted-soft">
+              Die Stelle bleibt kein Endpunkt: sie fuehrt zurueck in den Codex, hinein in Raeume und weiter entlang der Genesis-Bewegung.
+            </p>
+          </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {model.growingRooms.map((room) => (
               room.href ? (
@@ -4091,6 +4123,21 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
           </div>
         </section>
       ) : null}
+
+      <section className="border-t border-white/[0.06] pt-6">
+        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Symbolnetz dieser Stelle</p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <FoundationConnectionGroup title="Woerter" items={model.connections.words} />
+          <FoundationConnectionGroup title="Raeume" items={model.connections.rooms} />
+          <FoundationConnectionGroup title="Symbole" items={model.connections.symbols} />
+          <FoundationConnectionGroup title="Buchstaben" items={model.connections.letters} />
+          <FoundationConnectionGroup title="Bedeutungsfelder" items={model.connections.meaningFields} />
+          <FoundationConnectionGroup title="Journeys" items={model.connections.journeys} />
+          <FoundationConnectionGroup title="Pattern" items={model.connections.patterns} />
+          <FoundationConnectionGroup title="Zahlen" items={model.connections.numbers} />
+        </div>
+      </section>
+
     </section>
   );
 }

@@ -65,6 +65,12 @@ const statementProjections: Record<string, StatementProjection[]> = {
   wasser: [
     {
       type: "prepares",
+      text: "Genesis 1,2 zeigt Wasser als Tiefe vor der Form.",
+      href: "/codex/genesis-1-2",
+      hasEvidence: () => hasConnection("tehom", "wasser") && hasConnection("wasser", "ruach"),
+    },
+    {
+      type: "prepares",
       text: "Die Tiefe bereitet das Licht vor.",
       href: codexHref("licht"),
       hasEvidence: () => hasJourneyStep("wasser", "licht") && hasMeaningField("wasser", "tiefe"),
@@ -83,6 +89,12 @@ const statementProjections: Record<string, StatementProjection[]> = {
     },
   ],
   licht: [
+    {
+      type: "returns",
+      text: "Genesis 1,3 lässt Licht aus gesprochenem Werden hervortreten.",
+      href: "/codex/genesis-1-3",
+      hasEvidence: () => hasConnection("amar", "licht") && hasConnection("wajehi", "licht"),
+    },
     {
       type: "prepares",
       text: "Das Licht bereitet das Feuer vor.",

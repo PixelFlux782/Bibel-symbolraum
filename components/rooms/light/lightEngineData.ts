@@ -13,7 +13,7 @@ export const lightEngineData: SymbolEngineData = {
     word: "\u05d0\u05d5\u05e8",
     transliteration: "or",
     translation: "Licht",
-    summary: "Or verbindet Sichtbarkeit, Erkenntnis und Orientierung: vom stillen Ursprung über die Verbindung bis zur sichtbaren Gegenwart.",
+    summary: "Or verbindet Genesis 1,3 mit Sichtbarkeit, Erkenntnis und Ordnung: vom stillen Ursprung über die Verbindung bis zur sichtbaren Gegenwart.",
     letters: [
       {
         id: "aleph",
@@ -46,6 +46,13 @@ export const lightEngineData: SymbolEngineData = {
   },
   scenes: [
     {
+      id: "genesis-origin",
+      reference: "Genesis 1,1",
+      title: "Vor der Erzählung",
+      text: "Bereschit setzt den Anfang. Himmel und Erde stehen als erste Spannung, bevor Licht benannt wird.",
+      meaning: "Der Lichtraum beginnt nicht bei Helligkeit, sondern an der Schwelle, an der Erzählung Raum bekommt.",
+    },
+    {
       id: "genesis-darkness",
       reference: "Genesis 1,2",
       title: "Vor dem Licht",
@@ -56,8 +63,8 @@ export const lightEngineData: SymbolEngineData = {
       id: "genesis-light",
       reference: "Genesis 1,3",
       title: "Es werde Licht",
-      text: "Gott spricht: Es werde Licht. Der erste Unterschied tritt hervor.",
-      meaning: "Licht erscheint als Offenbarung und erster Durchbruch der Sichtbarkeit.",
+      text: "Gott spricht: Es werde Licht. Und es wurde Licht.",
+      meaning: "Amar und Wajehi halten Ruf und Ereignis zusammen: Licht wird erste Sichtbarkeit und Beginn von Ordnung.",
     },
     {
       id: "exodus-pillar",
@@ -75,8 +82,12 @@ export const lightEngineData: SymbolEngineData = {
     },
   ],
   connections: [
+    { id: "origin-threshold", label: "Bereschit", relation: "Schwelle", detail: "Genesis 1,1 setzt Himmel und Erde als erste Spannung vor dem Licht." },
     { id: "darkness", label: "Dunkelheit", relation: "Tiefe", detail: "Vor der Sichtbarkeit liegt ein Raum der Erwartung." },
+    { id: "amar", label: "Amar", relation: "Sprechen", detail: "Das Licht beginnt als gesprochenes Werden, nicht als bloße Helligkeit." },
+    { id: "wajehi", label: "Wajehi", relation: "Ereignis", detail: "Was gesprochen wird, geschieht: Sichtbarkeit tritt in Wirklichkeit." },
     { id: "revelation", label: "Offenbarung", relation: "Durchbruch", detail: "Licht lässt hervortreten, was zuvor verborgen blieb." },
+    { id: "order", label: "Ordnung", relation: "Unterscheidung", detail: "Licht macht den ersten Unterschied lesbar und bereitet Ordnung vor." },
     { id: "awareness", label: "Erkenntnis", relation: "Bewusstsein", detail: "Sichtbarkeit kann zur inneren Wahrnehmung werden." },
     { id: "guidance", label: "Orientierung", relation: "Führung", detail: "Licht zeigt genug Richtung für den Augenblick." },
     { id: "presence", label: "Gegenwart", relation: "Nahe", detail: "Licht macht eine tragende Gegenwart erfahrbar." },
@@ -88,8 +99,8 @@ export const lightEngineData: SymbolEngineData = {
       navigationLabel: "Vor dem Licht",
       eyebrow: "Genesis 1,2",
       title: "Noch liegt alles in der Tiefe.",
-      text: "Dunkelheit liegt über dem Anfang. Der Raum ist still, tief und erwartend.",
-      inscription: "Dunkelheit / Tiefe / Erwartung",
+      text: "Bereschit hat den Raum gesetzt, doch noch liegt alles in der Tiefe. Licht ist vorbereitet, aber noch nicht gesprochen.",
+      inscription: "Bereschit / Tiefe / Erwartung",
       visual: {
         image: visualAssets.lichtCinema,
         alt: "Dunkler Raum aus Tiefe und Nebel vor dem ersten Licht",
@@ -101,17 +112,17 @@ export const lightEngineData: SymbolEngineData = {
       hebrewCodexLetterIds: ["aleph"],
       hebrewMeaningFieldIds: ["or-presence"],
       hebrewSummary: "Aleph steht am Anfang: still, verborgen und noch vor jeder sichtbaren Kontur.",
-      biblicalSceneIds: ["genesis-darkness"],
-      connectionIds: ["darkness", "presence"],
+      biblicalSceneIds: ["genesis-origin", "genesis-darkness"],
+      connectionIds: ["origin-threshold", "darkness", "presence"],
       reflection: { kicker: "Innere Erfahrung", question: "Wo fehlt dir gerade Klarheit?" },
     },
     {
       id: "let-there-be-light",
       navigationLabel: "Es werde Licht",
       eyebrow: "Genesis 1,3",
-      title: "Ein erster Durchbruch wird sichtbar.",
-      text: "Licht tritt in den dunklen Raum. Es überstrahlt die Tiefe nicht, sondern macht den ersten Unterschied lesbar.",
-      inscription: "Licht / Offenbarung / Durchbruch",
+      title: "Das Gesprochene wird sichtbar.",
+      text: "Amar ruft Or. Wajehi bestätigt das Geschehen: Licht überstrahlt die Tiefe nicht, sondern macht den ersten Unterschied lesbar.",
+      inscription: "Amar / Or / Wajehi",
       visual: {
         image: visualAssets.lichtHero,
         backgroundImage: visualAssets.lichtOrderLine,
@@ -122,9 +133,9 @@ export const lightEngineData: SymbolEngineData = {
       hebrewLetterIds: ["aleph", "vav"],
       hebrewCodexLetterIds: ["aleph", "vav"],
       hebrewMeaningFieldIds: ["or-light", "or-revelation", "or-visibility"],
-      hebrewSummary: "Aus dem stillen Aleph führt Vav in die Sichtbarkeit: Licht wird zur Offenbarung.",
+      hebrewSummary: "Aus dem stillen Aleph führt Vav in die Sichtbarkeit: Or wird Offenbarung und Anfang von Ordnung.",
       biblicalSceneIds: ["genesis-light"],
-      connectionIds: ["revelation", "awareness"],
+      connectionIds: ["amar", "wajehi", "order"],
       reflection: { kicker: "Innere Erfahrung", question: "Was beginnt sichtbar zu werden?" },
     },
     {
@@ -132,7 +143,7 @@ export const lightEngineData: SymbolEngineData = {
       navigationLabel: "Licht auf dem Weg",
       eyebrow: "Exodus 13,21",
       title: "Das Licht öffnet eine Spur.",
-      text: "In der Nacht wird Licht zur Säule. Es nimmt den Weg nicht vorweg, aber es gibt Richtung.",
+      text: "Nach dem ersten Licht wird Sichtbarkeit zur Spur. Es nimmt den Weg nicht vorweg, aber es gibt Richtung.",
       inscription: "Säule / Orientierung / Führung",
       visual: {
         image: visualAssets.lichtOrderLine,
@@ -146,7 +157,7 @@ export const lightEngineData: SymbolEngineData = {
       hebrewMeaningFieldIds: ["or-orientation"],
       hebrewSummary: "Vav wirkt wie eine verbindende Achse: Licht wird zum Weg durch die Nacht.",
       biblicalSceneIds: ["exodus-pillar"],
-      connectionIds: ["guidance", "presence"],
+      connectionIds: ["guidance", "order", "presence"],
       reflection: { kicker: "Innere Erfahrung", question: "Woran orientierst du dich?" },
     },
     {

@@ -134,6 +134,17 @@ export const SYMBOL_HIERARCHY: SymbolHierarchyEntry[] = [
     relatedSymbolIds: ["wasser", "genesis-1-2"],
   },
   {
+    id: "genesis-1-1",
+    title: "Genesis 1:1",
+    level: "verse_anchor",
+    parentId: "schoepfung-wasser",
+    clusterId: "creation-frame",
+    visibleAtZoom: ["deep"],
+    role: "Versanker fuer den gesetzten Ursprung von Himmel und Erde.",
+    summary: "Der Ursprung wird gesetzt, bevor die sichtbare Ordnung erscheint.",
+    relatedSymbolIds: ["wasser", "licht", "himmel", "erde", "genesis-1-2"],
+  },
+  {
     id: "schilfmeer",
     title: "Schilfmeer",
     level: "story_anchor",
@@ -164,7 +175,7 @@ export const SYMBOL_HIERARCHY: SymbolHierarchyEntry[] = [
     visibleAtZoom: ["deep"],
     role: "Versanker für Wasser der Schöpfung.",
     summary: "Wasser als Ur-Tiefe der Schöpfung.",
-    relatedSymbolIds: ["wasser", "schoepfung-wasser"],
+    relatedSymbolIds: ["wasser", "schoepfung-wasser", "genesis-1-1", "genesis-1-3", "licht"],
   },
   {
     id: "licht",
@@ -185,7 +196,7 @@ export const SYMBOL_HIERARCHY: SymbolHierarchyEntry[] = [
     visibleAtZoom: ["detail"],
     role: "Unterraum von Licht.",
     summary: "Licht des Anfangs.",
-    relatedSymbolIds: ["licht"],
+    relatedSymbolIds: ["licht", "wasser", "genesis-1-2"],
   },
   {
     id: "leuchte",

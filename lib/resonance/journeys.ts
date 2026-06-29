@@ -2,6 +2,23 @@ import type { ResonanceJourney } from "./types";
 
 export const resonanceJourneys: ResonanceJourney[] = [
   {
+    id: "journey-genesis-ursprungspfad",
+    title: "Genesis Ursprungspfad",
+    summary: "Der Ursprung wird gesetzt.\nDie Tiefe wird bewegt.\nWasser und Ruach tragen das Wort.\nLicht macht sichtbar.",
+    nodePath: ["genesis-1-1", "genesis-1-2", "tehom", "wasser", "ruach", "amar", "genesis-1-3", "or", "licht"],
+    connectionIds: [
+      "resonance-genesis-1-1-genesis-1-2",
+      "resonance-genesis-1-2-tehom",
+      "resonance-genesis-1-2-wasser",
+      "resonance-tehom-ruach",
+      "resonance-genesis-1-2-genesis-1-3",
+      "resonance-amar-or",
+      "resonance-genesis-1-3-or",
+      "resonance-genesis-1-3-licht",
+    ],
+    scriptureAnchors: ["genesis-1-1", "genesis-1-2", "genesis-1-3"],
+  },
+  {
     id: "journey-wasser-wueste-brot",
     title: "Vom Ursprung zur Erfüllung",
     summary: "Wasser ist Ursprung.\nDie Wüste ist der Weg.\nDas Brot ist die Erfüllung.",
@@ -64,9 +81,10 @@ export const resonanceJourneys: ResonanceJourney[] = [
   {
     id: "journey-hebraeische-schoepfung",
     title: "Hebräische Schöpfung",
-    summary: "Bara ruft.\nTehom wird bewegt.\nSchamajim und Erez werden Raum.\nOr macht sichtbar.",
-    nodePath: ["bara", "tehom", "ruach", "schamajim", "or", "erez"],
+    summary: "Bereschit öffnet.\nBara ruft.\nTehom wird bewegt.\nSchamajim und Erez werden Raum.\nOr macht sichtbar.",
+    nodePath: ["bereschit", "bara", "tehom", "ruach", "schamajim", "or", "erez"],
     connectionIds: [
+      "resonance-bereschit-tehom",
       "resonance-phase36a-bara-schamajim",
       "resonance-tehom-ruach",
       "resonance-ruach-or",

@@ -299,6 +299,7 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   "schoepfung-wasser": { x: 410, y: 120 },
   schilfmeer: { x: 480, y: 278 },
   felswasser: { x: 390, y: 430 },
+  "genesis-1-1": { x: 300, y: 24 },
   "genesis-1-2": { x: 572, y: 118 },
   morgenlicht: { x: 575, y: -18 },
   leuchte: { x: 827, y: -16 },
@@ -321,6 +322,19 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   mehl: { x: 445, y: 132 },
   teig: { x: 615, y: 208 },
   tisch: { x: 575, y: 430 },
+  bereschit: { x: 198, y: 116 },
+  bara: { x: 360, y: 124 },
+  schamajim: { x: 506, y: 42 },
+  erez: { x: 486, y: 232 },
+  elohim: { x: 232, y: 244 },
+  tohu: { x: 468, y: 260 },
+  vohu: { x: 560, y: 262 },
+  tehom: { x: 642, y: 205 },
+  ruach: { x: 756, y: 154 },
+  majim: { x: 705, y: 300 },
+  amar: { x: 850, y: 54 },
+  wajehi: { x: 924, y: 194 },
+  or: { x: 1000, y: 166 },
 };
 const missingPositionWarnings = new Set<string>();
 const SYMBOL_NODE_SIZE = 176;
@@ -342,6 +356,13 @@ const NUMBER_NODE_PREFIX = "number:";
 const LETTER_RESONANCE_LIMIT = 3;
 const SYMBOL_LENS_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 const CURATED_RESONANCE_JOURNEY_ID = "journey-wasser-wueste-brot";
+const GENESIS_ORIGIN_RESONANCE_JOURNEY_ID = "journey-genesis-ursprungspfad";
+const DISCOVERABLE_RESONANCE_JOURNEY_IDS: Record<string, string> = {
+  wasser: GENESIS_ORIGIN_RESONANCE_JOURNEY_ID,
+  licht: GENESIS_ORIGIN_RESONANCE_JOURNEY_ID,
+  brot: CURATED_RESONANCE_JOURNEY_ID,
+  wueste: CURATED_RESONANCE_JOURNEY_ID,
+};
 const CURATED_RESONANCE_PRIMARY_CONNECTION_IDS = ["resonance-wasser-wueste", "resonance-wueste-brot"];
 const CURATED_RESONANCE_SECONDARY_CONNECTION_IDS = ["resonance-wasser-brot"];
 const CURATED_RESONANCE_INSCRIPTION = "Wasser ist Ursprung. Die Wüste ist der Weg. Das Brot ist die Erfüllung.";
@@ -1015,7 +1036,18 @@ function getSymbolSearchSuggestions(query: string): SymbolSearchSuggestion[] {
 }
 
 function getSymbolLabel(symbolId: string) {
-  return network.nodes.find((node) => node.id === symbolId)?.label ?? symbolId;
+  return network.nodes.find((node) => node.id === symbolId)?.label
+    ?? getCodexEntry(symbolId)?.title
+    ?? getOntologyEntity(symbolId)?.title
+    ?? getHierarchyEntry(symbolId)?.title
+    ?? symbolId;
+}
+
+function getSymbolNetworkNodeSummary(id: string) {
+  return getCodexEntry(id)?.summary
+    ?? getOntologyEntity(id)?.summary
+    ?? getHierarchyEntry(id)?.summary
+    ?? "Ursprungsspur im Symbolnetz.";
 }
 
 function getMeaningNodeLabel(meaningNodeId: string) {
@@ -2771,7 +2803,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const activeResonanceJourney = activeResonanceJourneyId ? getResonanceJourney(activeResonanceJourneyId) : undefined;
   const activeResonanceJourneyNodePathKey = activeResonanceJourney?.nodePath.join("|") ?? "";
   const discoverableResonanceJourney = hasSymbolFocus
-    ? getJourneysForNode(activeSymbolId).find((journey) => journey.id === CURATED_RESONANCE_JOURNEY_ID)
+    ? getJourneysForNode(activeSymbolId).find((journey) => journey.id === (DISCOVERABLE_RESONANCE_JOURNEY_IDS[activeSymbolId] ?? CURATED_RESONANCE_JOURNEY_ID))
     : undefined;
   const showResonanceJourneyOption = Boolean(
     discoverableResonanceJourney
@@ -2788,8 +2820,12 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       return connection ? [connection] : [];
     })
     : [];
-  const activeResonancePrimaryConnections = activeResonanceJourneyConnections.filter((connection) => CURATED_RESONANCE_PRIMARY_CONNECTION_IDS.includes(connection.id));
-  const activeResonanceSecondaryConnections = activeResonanceJourneyConnections.filter((connection) => CURATED_RESONANCE_SECONDARY_CONNECTION_IDS.includes(connection.id));
+  const activeResonancePrimaryConnections = activeResonanceJourney?.id === CURATED_RESONANCE_JOURNEY_ID
+    ? activeResonanceJourneyConnections.filter((connection) => CURATED_RESONANCE_PRIMARY_CONNECTION_IDS.includes(connection.id))
+    : activeResonanceJourneyConnections;
+  const activeResonanceSecondaryConnections = activeResonanceJourney?.id === CURATED_RESONANCE_JOURNEY_ID
+    ? activeResonanceJourneyConnections.filter((connection) => CURATED_RESONANCE_SECONDARY_CONNECTION_IDS.includes(connection.id))
+    : [];
   const activeResonanceJourneySymbolIds = useMemo(
     () => new Set(activeResonanceJourneyNodePathKey ? activeResonanceJourneyNodePathKey.split("|") : []),
     [activeResonanceJourneyNodePathKey],
@@ -3486,6 +3522,29 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         ...(shouldShowDetailHierarchy ? activeDetailHierarchyChildren.map((entry) => ({ entry, isDeepAnchor: false })) : []),
         ...(shouldShowDeepHierarchy ? activeDeepHierarchyAnchors.map((entry) => ({ entry, isDeepAnchor: true })) : []),
       ];
+      const hierarchyNodeIds = new Set(hierarchyNodes.map(({ entry }) => entry.id));
+      const activeJourneyCodexNodes = activeResonanceJourney
+        ? activeResonanceJourney.nodePath
+          .filter((nodeId) => !visibleSymbolIds.has(nodeId) && !hierarchyNodeIds.has(nodeId))
+          .map((nodeId) => {
+            const hierarchyEntry = getHierarchyEntry(nodeId);
+
+            return {
+              id: nodeId,
+              type: "hierarchy" as const,
+              position: getNodePosition(nodeId),
+              selectable: false,
+              data: {
+                kind: "hierarchy" as const,
+                title: getSymbolLabel(nodeId),
+                summary: getSymbolNetworkNodeSummary(nodeId),
+                level: hierarchyEntry?.level ?? "meta",
+                isDeepAnchor: Boolean(hierarchyEntry && DEEP_HIERARCHY_LEVELS.has(hierarchyEntry.level)),
+                isHighlighted: activeJourneyStepId === nodeId,
+              },
+            };
+          })
+        : [];
 
       return [
         ...semanticSymbolNodes.map((node) => {
@@ -3561,6 +3620,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             isHighlighted: activeSubspaceId === entry.id,
           },
         })),
+        ...activeJourneyCodexNodes,
         ...(showMeaningNodes ? network.meaningNodes.map((node) => ({
           id: node.id,
           type: "meaning",
@@ -3607,7 +3667,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         })) : []),
       ];
     },
-    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceJourney, activeResonanceLens, activeLetterId, activeLetterNodeId, activeJourney, activePathId, activeRoomTransition, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, familiarSymbolIds, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode, touchedSymbolIds]
+    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeJourneyStepId, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceJourney, activeResonanceLens, activeLetterId, activeLetterNodeId, activeJourney, activePathId, activeRoomTransition, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, familiarSymbolIds, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode, touchedSymbolIds]
   );
 
   useEffect(() => {
