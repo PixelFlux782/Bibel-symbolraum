@@ -451,7 +451,7 @@ export const hebrewWords: HebrewWord[] = [
     meaningFields: [
       meaningField("jehi-calling", "Ruf", "Jehi markiert den Moment, in dem das Wort Wirklichkeit anspricht.", ["Ruf", "Wort"]),
       meaningField("jehi-becoming", "Werden", "Das Gesagte tritt aus Moeglichkeit in Ereignis.", ["Werden", "Uebergang"]),
-      meaningField("jehi-light", "Lichtwerdung", "In Genesis 1,3 richtet Jehi den Ruf auf Or.", ["Licht", "Offenbarung"]),
+      meaningField("jehi-light", "Lichtwerdung", "Erste Lichtspur: Jehi richtet den Ruf auf Or.", ["Licht", "Offenbarung"]),
     ],
     relatedSymbolSlugs: ["licht", "wort", "offenbarung", "wandlung"],
     biblicalReferences: [
@@ -496,7 +496,7 @@ export const hebrewWords: HebrewWord[] = [
     meaningFields: [
       meaningField("wajehi-event", "Ereignis", "Wajehi macht aus dem Ruf ein Geschehen.", ["Ereignis", "Wirklichkeit"]),
       meaningField("wajehi-transition", "Übergang", "Das Wort markiert den Übergang vom Gesagten zum Gewordenen.", ["Übergang", "Werden"]),
-      meaningField("wajehi-light", "Lichtwerdung", "In Genesis 1,3 bestätigt Wajehi das Erscheinen des Lichts.", ["Licht", "Offenbarung"]),
+      meaningField("wajehi-light", "Lichtwerdung", "Erste Lichtspur: Wajehi bestätigt das Erscheinen des Lichts.", ["Licht", "Offenbarung"]),
     ],
     relatedSymbolSlugs: ["licht", "ordnung", "offenbarung"],
     biblicalReferences: [

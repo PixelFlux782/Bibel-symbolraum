@@ -112,7 +112,7 @@ export const hebrewLetters: HebrewLetter[] = [
     alphabetPosition: 6,
     symbolism: [
       interpretive("vav-connection", "Verbindung", "Vav kann als verbindende Linie gelesen werden, die getrennte Felder zusammenhaelt."),
-      interpretive("vav-and", "Und", "In Genesis 1,2-3 traegt Vav die Bewegung von Zustand zu Ereignis."),
+      interpretive("vav-and", "Und", "Erste Schriftspur: Vav traegt die Bewegung von Zustand zu Ereignis."),
     ],
     archetypalMeanings: ["Verbindung", "Linie", "Vermittlung", "Fortgang"],
     relatedSymbolSlugs: ["wasser", "licht", "uebergang"],
@@ -285,7 +285,7 @@ export const hebrewLetters: HebrewLetter[] = [
     alphabetPosition: 16,
     symbolism: [
       interpretive("ayin-eye", "Auge", "Ayin kann als Auge, Quelle und Wahrnehmung gelesen werden."),
-      interpretive("ayin-surface", "Auf der Flaeche", "In Genesis 1,2 markiert Ayin das Auf-dem-Angesicht: Tiefe wird als Oberflaeche wahrnehmbar."),
+      interpretive("ayin-surface", "Auf der Flaeche", "Erste Schriftspur: Ayin markiert das Auf-dem-Angesicht, an dem Tiefe als Oberflaeche wahrnehmbar wird."),
     ],
     archetypalMeanings: ["Auge", "Quelle", "Wahrnehmung", "Oberflaeche"],
     relatedSymbolSlugs: ["licht", "wasser", "offenbarung"],

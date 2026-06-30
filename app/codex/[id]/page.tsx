@@ -923,6 +923,8 @@ type ScriptureSceneModel = {
   formula: string;
   threshold: string;
   sceneSentences: string[];
+  meaningFields: { id: string; label: string }[];
+  contemplativeTrace?: string;
   foundation: ScriptureFoundationModel | null;
   hebrewKeys: HebrewWord[];
   movementSteps: { id: string; label: string; href?: string }[];
@@ -947,16 +949,18 @@ type ScriptureSceneFormula = {
   movementSteps: { id: string; label: string; href?: string }[];
   symbols: { id: string; label: string; href?: string }[];
   roomNotes?: Record<string, string>;
+  meaningFieldIds?: MeaningNodeId[];
+  contemplativeTrace?: string;
 };
 
 const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   "genesis-1-1": {
     formula: "Ursprung",
-    threshold: "Vor allem steht der Anfang. Himmel und Erde werden als Ursprungsspannung sichtbar.",
+    threshold: "Der Anfang setzt einen Horizont. Himmel und Erde stehen einander gegenueber, noch still, aber nicht leer.",
     sceneSentences: [
-      "Vor allem steht der Anfang.",
-      "Himmel und Erde treten einander gegenueber.",
-      "Noch bewegt sich nichts; aber die erste Setzung ist da.",
+      "Vor der Tiefe steht die erste Setzung.",
+      "Himmel und Erde oeffnen den Raum, in dem alles Weitere lesbar wird.",
+      "Die naechste Schwelle fuehrt hinab in Wasser, Dunkel und schwebenden Geist.",
     ],
     movementSteps: [
       { id: "anfang", label: "Anfang", href: "/codex/anfang" },
@@ -968,18 +972,21 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
       { id: "anfang", label: "Anfang", href: "/codex/anfang" },
       { id: "himmel", label: "Himmel", href: "/codex/himmel" },
       { id: "erde", label: "Erde", href: "/codex/erde" },
+      { id: "ordnung", label: "Ordnung", href: "/codex/ordnung" },
     ],
+    meaningFieldIds: ["birth", "hiddenness", "life"],
+    contemplativeTrace: "Bleib einen Atemzug beim Anfang, bevor du wissen willst, was aus ihm wird.",
     roomNotes: {
       "genesis-1-2": "Aus dem Ursprung oeffnet sich die Tiefe als naechster Moment der Genesis-Achse.",
     },
   },
   "genesis-1-2": {
     formula: "Tiefe",
-    threshold: "Die Tiefe liegt offen. Der Geist schwebt ueber den Wassern. Noch ist nichts geordnet, aber alles ist beruehrt.",
+    threshold: "Die gesetzte Erde liegt noch ungeformt. Wasser, Finsternis und Tehom tragen den Zwischenraum, ueber dem die Ruach schwebt.",
     sceneSentences: [
-      "Die Tiefe liegt offen.",
-      "Wasser, Finsternis und Ungeformtes tragen den Anfang.",
-      "Der Geist schwebt ueber den Wassern: noch ist nichts geordnet, aber alles ist beruehrt.",
+      "Aus der ersten Setzung wird eine Schwelle aus Tiefe.",
+      "Das Ungeformte ist nicht bedeutungslos; es ist beruehrte Moeglichkeit.",
+      "Der naechste Ruf wird Licht sagen, aber noch schweigt die Szene.",
     ],
     movementSteps: [
       { id: "tehom", label: "Tiefe", href: "/codex/tehom" },
@@ -991,7 +998,11 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
       { id: "tehom", label: "Tiefe", href: "/codex/tehom" },
       { id: "majim", label: "Wasser", href: "/codex/majim" },
       { id: "ruach", label: "Geist", href: "/codex/ruach" },
+      { id: "verborgenheit", label: "Verborgenheit", href: "/codex/verborgenheit" },
+      { id: "uebergang", label: "Schwelle", href: "/codex/uebergang" },
     ],
+    meaningFieldIds: ["depth", "chaos", "hiddenness", "transition", "presence", "birth"],
+    contemplativeTrace: "Nimm die Tiefe nicht als Mangel. Hoere, wie ueber ihr schon Bewegung ist.",
     roomNotes: {
       wasser: "Diese Stelle oeffnet den Wasser-Raum: Tiefe, Majim und Ruach werden zur zentralen Bibelwurzel.",
       "genesis-1-3": "Aus dem beruehrten Ungeformten fuehrt die Achse zum gerufenen Licht.",
@@ -999,11 +1010,11 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   },
   "genesis-1-3": {
     formula: "Licht",
-    threshold: "Das Wort ruft Licht. Offenbarung beginnt nicht als Erklaerung, sondern als Ruf.",
+    threshold: "Aus der beruehrten Tiefe tritt das Wort hervor. Licht wird gerufen, und das Erste erscheint.",
     sceneSentences: [
-      "Das Wort ruft Licht.",
-      "Offenbarung beginnt nicht als Erklaerung, sondern als Ruf.",
-      "Die erste Trennung wird moeglich, weil Licht die Tiefe sichtbar macht.",
+      "Die Tiefe bleibt der Herkunftsraum.",
+      "Das Sprechen wird Ereignis: Jehi or, und Licht wird.",
+      "Mit dem Licht beginnt Unterscheidung, Orientierung und Offenbarung.",
     ],
     movementSteps: [
       { id: "davar", label: "Wort", href: "/codex/davar" },
@@ -1015,7 +1026,11 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
       { id: "davar", label: "Wort", href: "/codex/davar" },
       { id: "or", label: "Licht", href: "/codex/or" },
       { id: "offenbarung", label: "Offenbarung", href: "/codex/offenbarung" },
+      { id: "ordnung", label: "Ordnung", href: "/codex/ordnung" },
+      { id: "erkenntnis", label: "Erkenntnis", href: "/codex/erkenntnis" },
     ],
+    meaningFieldIds: ["word", "light", "revelation", "awareness", "guidance", "presence"],
+    contemplativeTrace: "Lass das Licht zuerst erscheinen, bevor du es erklaerst.",
     roomNotes: {
       licht: "Diese Stelle oeffnet den Licht-Raum: Wort, Jehi und Or werden zur zentralen Bibelwurzel.",
     },
@@ -1283,7 +1298,7 @@ function getHebrewKeysForScripture(entry: CodexEntry) {
       (relationOrder.get(left.id) ?? 99) - (relationOrder.get(right.id) ?? 99) ||
       left.transliteration.localeCompare(right.transliteration, "de-DE")
     ))
-    .slice(0, 4);
+    .slice(0, 8);
 }
 
 function getScriptureJourneys(entry: CodexEntry) {
@@ -1345,7 +1360,7 @@ function getScriptureSymbols(entry: CodexEntry, relations: CuratedRelationItem[]
         href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
       };
     }),
-  ]).slice(0, 3);
+  ]).slice(0, 5);
 }
 
 
@@ -1364,7 +1379,7 @@ function getPreparedRoomsForScripture(entry: CodexEntry, journeys: ReturnType<ty
 
   return uniqueById([...fromRoom, ...fromJourney])
     .filter((item) => item.id !== entry.id)
-    .slice(0, 3)
+    .slice(0, 5)
     .map((item) => ({
       ...item,
       note: formula?.roomNotes?.[item.id] ?? `${entry.title} oeffnet diesen Raum als naechste Spur der Szene.`,
@@ -1386,6 +1401,10 @@ function buildScriptureSceneModel(entry: CodexEntry): ScriptureSceneModel | null
     formula: formula?.formula ?? "Szene",
     threshold: formula?.threshold ?? getCodexThresholdText(entry),
     sceneSentences: formula?.sceneSentences ?? getSceneSentences(entry),
+    meaningFields: (formula?.meaningFieldIds ?? entry.meaningFields)
+      .slice(0, 6)
+      .map((id) => ({ id, label: getMeaningFieldLabel(id) })),
+    contemplativeTrace: formula?.contemplativeTrace,
     foundation: buildScriptureFoundationModel(entry),
     hebrewKeys: getHebrewKeysForScripture(entry),
     movementSteps: formula?.movementSteps ?? primaryJourney?.steps.slice(0, 6) ?? relations.slice(0, 4).map((item) => ({
@@ -1396,7 +1415,7 @@ function buildScriptureSceneModel(entry: CodexEntry): ScriptureSceneModel | null
     journeyTitle: primaryJourney?.title,
     symbols: formula?.symbols ?? getScriptureSymbols(entry, relations),
     rooms: getPreparedRoomsForScripture(entry, journeys),
-    verseLetters: verseLayer?.focusLetterIds.map((letterId) => {
+    verseLetters: verseLayer?.focusLetterIds.slice(0, 8).map((letterId) => {
       const letter = hebrewLetters.find((candidate) => candidate.id === letterId);
       const linkedEntry = resolveLinkedCodexEntry(letterId);
 
@@ -2145,7 +2164,7 @@ function LightCodexReferenceSection() {
                     {anchor.label} – Es werde Licht
                   </Link>
                   <p className="symbol-copy mt-3 text-sm italic text-muted-soft">
-                    In Genesis 1,3 wird Licht gerufen: nicht als Dekoration der Welt, sondern als erstes Sichtbarwerden von Ordnung.
+                    Erste Lichtspur: Licht wird gerufen, nicht als Dekoration der Welt, sondern als erstes Sichtbarwerden von Ordnung.
                   </p>
                 </article>
               ))}
@@ -4316,6 +4335,23 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
           </section>
         ) : null}
 
+        {model.meaningFields.length > 0 ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bedeutungsfelder</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {model.meaningFields.map((field) => (
+                <Link
+                  key={field.id}
+                  href={`/codex/${field.id}`}
+                  className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-3 py-2 text-xs uppercase tracking-[0.18em] text-cyan-soft/78 transition-colors duration-500 hover:border-cyan-soft/30 hover:bg-cyan-soft/[0.065] hover:text-cyan-soft"
+                >
+                  {field.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {model.verseLetters.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Zeichen dieses Verses</p>
@@ -4349,6 +4385,15 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
                 );
               })}
             </div>
+          </section>
+        ) : null}
+
+        {model.contemplativeTrace ? (
+          <section className="border-t border-white/[0.06] pt-6">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Kontemplative Spur</p>
+            <p className="symbol-copy mt-3 max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
+              {model.contemplativeTrace}
+            </p>
           </section>
         ) : null}
 
