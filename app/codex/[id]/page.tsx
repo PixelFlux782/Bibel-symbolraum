@@ -109,7 +109,7 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     waysTitle: "Türen in Raum und Pfad",
     relationsTitle: "Drei tragende Beziehungen",
     relationsLead: "Welche Bedeutungen tragen diesen Raum?",
-    scriptureTitle: "Biblische Spuren",
+    scriptureTitle: "Kontextspuren",
     nearbyTitle: "Türen: Raum, Codex, Symbolnetz, Pfad",
   },
   "hebrew-word": {
@@ -120,7 +120,7 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     waysTitle: "Bewegung",
     relationsTitle: "Drei antwortende Sprachkörper",
     relationsLead: "Welche anderen Sprachkörper antworten diesem Wort?",
-    scriptureTitle: "Biblische Klangspuren",
+    scriptureTitle: "Kontextspuren",
     nearbyTitle: "Symbolräume",
   },
   "hebrew-letter": {
@@ -131,7 +131,7 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     waysTitle: "Symbolische Nähe",
     relationsTitle: "Drei tragende Beziehungen",
     relationsLead: "Welche Wörter, Symbole und Zahlen werden von dieser Form berührt?",
-    scriptureTitle: "Biblische Spuren",
+    scriptureTitle: "Erste Schriftspur",
     nearbyTitle: "Nahe Zeichenräume",
   },
   scripture: {
@@ -175,7 +175,7 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     waysTitle: "Bewegung innerhalb des Feldes",
     relationsTitle: "Drei tragende Beziehungen",
     relationsLead: "Welche Symbole, Wörter und Stellen sammeln sich in diesem Feld?",
-    scriptureTitle: "Biblische Spuren",
+    scriptureTitle: "Kontextspuren",
     nearbyTitle: "Nahe Bedeutungsfelder",
   },
   core: {
@@ -414,7 +414,7 @@ function codexEntryFromHebrewWord(word: HebrewWord): CodexEntry {
       ...word.meaningFields.flatMap((field) => [field.label, ...field.experienceFields]),
       ...word.relatedSymbolSlugs,
     ],
-    summary: word.meaningFields.map((field) => field.description).join(" "),
+    summary: word.meaningFields.slice(0, 3).map((field) => field.description).join(" "),
     meaningFields: [],
     relations: [
       ...word.relatedSymbolSlugs.map((targetId) => ({
@@ -1108,6 +1108,10 @@ function compactSentence(value: string) {
   return sentence.length > 150 ? `${sentence.slice(0, 147).trim()}...` : sentence;
 }
 
+function includesMeaningText(container: string | null | undefined, value: string | null | undefined) {
+  return Boolean(container?.trim() && value?.trim() && normalizeText(container).includes(normalizeText(value)));
+}
+
 function formatJourneyMovement(ids: string[]) {
   return ids.map((id) => getOntologyEntityTitle(id)).join(" -> ");
 }
@@ -1550,6 +1554,9 @@ function getLetterResonance(entry: CodexEntry) {
   const symbolRelations = entry.relations.filter((relation) => relation.type === "symbolizes");
   const genesisProfile = getGenesisLetterProfile(letter.id);
   const essence = entry.summary || letter.symbolism[0]?.description || letter.archetypalMeanings.join(", ");
+  const movement = genesisProfile && !includesMeaningText(entry.summary, genesisProfile.deeperMeaning)
+    ? genesisProfile.deeperMeaning
+    : "";
 
   return {
     letter,
@@ -1561,6 +1568,7 @@ function getLetterResonance(entry: CodexEntry) {
     genesisProfile,
     genesisWords,
     essence,
+    movement,
   };
 }
 
@@ -2425,7 +2433,7 @@ function MeaningFieldsSection({
   return (
     <DetailSection title={title} activeContext={activeContext}>
       <div className="flex flex-wrap gap-2">
-        {entry.meaningFields.map((field) => {
+        {entry.meaningFields.slice(0, 6).map((field) => {
           const linkedEntry = resolveLinkedCodexEntry(field);
           const className =
             "border border-gold/15 bg-gold/[0.045] px-3 py-2 text-xs tracking-[0.18em] text-gold/80 transition-colors duration-500";
@@ -3208,22 +3216,15 @@ function MeaningResonanceSection({ entry, activeContext }: { entry: CodexEntry; 
   return (
     <DetailSection title="Bedeutungs-Resonanz" activeContext={activeContext}>
       <div className="grid gap-6">
-        <div>
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Essenz</p>
-          <p className="symbol-copy mt-3 text-lg italic text-foreground-strong">
-            {resonance.essence}
-          </p>
-        </div>
-
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Symbole</p>
-            <MeaningResonanceLinkList items={resonance.symbols} emptyText="Noch keine Symbole verbunden." />
+            <MeaningResonanceLinkList items={resonance.symbols.slice(0, 4)} emptyText="Noch keine Symbole verbunden." />
           </div>
 
           <div>
             <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Hebräische Knoten</p>
-            <MeaningResonanceLinkList items={resonance.hebrewNodes} emptyText="Noch keine hebräischen Knoten verbunden." />
+            <MeaningResonanceLinkList items={resonance.hebrewNodes.slice(0, 4)} emptyText="Noch keine hebräischen Knoten verbunden." />
           </div>
         </div>
 
@@ -3231,7 +3232,7 @@ function MeaningResonanceSection({ entry, activeContext }: { entry: CodexEntry; 
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Thora- und Scripture-Anker</p>
           {resonance.scripture.length > 0 ? (
             <div className="mt-3 grid gap-3">
-              {resonance.scripture.map((anchor) => {
+              {resonance.scripture.slice(0, 4).map((anchor) => {
                 const linkedEntry = anchor.target ? resolveLinkedCodexEntry(anchor.target) : undefined;
 
                 return linkedEntry ? (
@@ -3258,7 +3259,7 @@ function MeaningResonanceSection({ entry, activeContext }: { entry: CodexEntry; 
 
         <div>
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Mögliche Resonanzen</p>
-          <MeaningResonanceLinkList items={resonance.onward} emptyText="Noch keine Resonanzen verbunden." />
+          <MeaningResonanceLinkList items={resonance.onward.slice(0, 6)} emptyText="Noch keine Resonanzen verbunden." />
         </div>
       </div>
     </DetailSection>
@@ -3285,27 +3286,20 @@ function NumberResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
         </div>
 
         <div className="grid gap-5">
-          <div>
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Symbolische Essenz</p>
-            <p className="symbol-copy mt-3 text-base italic text-foreground-strong">
-              {resonance.essence}
-            </p>
-          </div>
-
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Buchstaben</p>
-              <ResonanceLinkList items={resonance.letters} emptyText="Noch keine Buchstaben verbunden." />
+              <ResonanceLinkList items={resonance.letters.slice(0, 4)} emptyText="Noch keine Buchstaben verbunden." />
             </div>
 
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Wörter</p>
-              <ResonanceLinkList items={resonance.words} emptyText="Noch keine Wörter verbunden." />
+              <ResonanceLinkList items={resonance.words.slice(0, 4)} emptyText="Noch keine Wörter verbunden." />
             </div>
 
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Symbole</p>
-              <ResonanceLinkList items={resonance.symbols} emptyText="Noch keine Symbole verbunden." />
+              <ResonanceLinkList items={resonance.symbols.slice(0, 4)} emptyText="Noch keine Symbole verbunden." />
             </div>
           </div>
         </div>
@@ -3357,8 +3351,8 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
             </p>
             {resonance.genesisProfile ? (
               <div className="symbol-copy mt-4 grid gap-2 text-sm italic leading-relaxed text-muted-soft">
-                <p>{resonance.genesisProfile.deeperMeaning}</p>
-                <p>{resonance.genesisProfile.genesisRole}</p>
+                {resonance.movement ? <p>{resonance.movement}</p> : null}
+                <p><span className="text-gold/72">Spur in Genesis 1,1-3:</span> {resonance.genesisProfile.genesisRole}</p>
                 <p className="text-gold/78">{resonance.genesisProfile.contemplative}</p>
               </div>
             ) : null}
@@ -3367,10 +3361,10 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Wörter</p>
-              <p className="mt-2 text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Vorkommen in Genesis 1,1-3</p>
+              <p className="mt-2 text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Erste Schriftspur</p>
               {resonance.words.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {resonance.words.map((word) => {
+                  {resonance.words.slice(0, 4).map((word) => {
                     const linkedEntry = resolveLinkedCodexEntry(word.id);
 
                     return linkedEntry ? (
@@ -3397,7 +3391,7 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Symbole</p>
               {symbolAndRoomRelations.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {symbolAndRoomRelations.map((relation, index) => {
+                  {symbolAndRoomRelations.slice(0, 4).map((relation, index) => {
                     const linkedEntry = resolveLinkedCodexEntry(relation.targetId);
                     const label = linkedEntry?.title ?? relation.targetId;
 
@@ -3425,12 +3419,12 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
             <div className="border-t border-white/[0.06] pt-5">
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Bedeutungsfelder und Nachbarzeichen</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {resonance.genesisProfile.meaningFieldLabels.map((label) => (
+                {resonance.genesisProfile.meaningFieldLabels.slice(0, 3).map((label) => (
                   <span key={label} className="border border-cyan-soft/15 bg-cyan-soft/[0.035] px-3 py-2 text-xs uppercase tracking-[0.16em] text-cyan-soft/78">
                     {label}
                   </span>
                 ))}
-                {resonance.genesisProfile.relatedLetterIds.map((letterId) => {
+                {resonance.genesisProfile.relatedLetterIds.slice(0, Math.max(0, 6 - resonance.genesisProfile.meaningFieldLabels.slice(0, 3).length)).map((letterId) => {
                   const letter = hebrewLetters.find((candidate) => candidate.id === letterId);
                   const linkedEntry = resolveLinkedCodexEntry(letterId);
                   const label = letter?.name ?? humanizeId(letterId);
@@ -3998,7 +3992,7 @@ function CuratedRelationsSection({
         {archiveRelations.length > 0 ? (
           <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:p-5">
             <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Erweiterte Resonanzen und vollständiges Archiv öffnen
+              Weitere Resonanzen öffnen
             </summary>
             <div className="mt-5 grid gap-3">
               {archiveRelations.map((item) => (
@@ -4483,7 +4477,7 @@ function ScriptureAnchorsSection({
   return (
     <DetailSection title={title} activeContext={activeContext}>
       <div className="grid gap-3">
-        {entry.scriptureAnchors.map((anchor, index) => {
+        {entry.scriptureAnchors.slice(0, 4).map((anchor, index) => {
           const linkedEntry =
             resolveLinkedCodexEntry(anchor.id) ??
             resolveLinkedCodexEntry(anchor.reference) ??

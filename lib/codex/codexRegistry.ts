@@ -288,6 +288,115 @@ function uniqueRelations(relations: CodexRelation[]): CodexRelation[] {
   });
 }
 
+function normalizeLookupTerm(term: string): string {
+  return term
+    .trim()
+    .replace(/Ã¤/g, "ae")
+    .replace(/Ã¶/g, "oe")
+    .replace(/Ã¼/g, "ue")
+    .replace(/ÃŸ/g, "ss")
+    .replace(/Ä/g, "Ae")
+    .replace(/Ö/g, "Oe")
+    .replace(/Ü/g, "Ue")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .replace(/ã¤/g, "ae")
+    .replace(/ã¶/g, "oe")
+    .replace(/ã¼/g, "ue")
+    .toLocaleLowerCase("de-DE")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f\u0591-\u05c7]/g, "")
+    .replace(/[\s:_,.;/\\]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function canonicalLookupTerms(terms: string[] | undefined, localSeen: Set<string>, globalOwners: Map<string, string>, entryId: string): string[] | undefined {
+  const canonicalTerms = terms?.filter((term) => {
+    const normalizedTerm = normalizeLookupTerm(term);
+
+    if (!normalizedTerm || localSeen.has(normalizedTerm)) {
+      return false;
+    }
+
+    const ownerId = globalOwners.get(normalizedTerm);
+
+    if (ownerId && ownerId !== entryId) {
+      return false;
+    }
+
+    localSeen.add(normalizedTerm);
+    globalOwners.set(normalizedTerm, entryId);
+    return true;
+  });
+
+  return canonicalTerms && canonicalTerms.length > 0 ? canonicalTerms : undefined;
+}
+
+const SCRIPTURE_ANCHOR_ID_ALIASES: Record<string, string> = {
+  "majim-genesis-1-2": "genesis-1-2",
+  "majim-exodus-14": "exodus-14",
+  "majim-matthew-3": "matthew-3-13-17",
+  "or-genesis-1-3": "genesis-1-3",
+  "or-exodus-13-21": "exodus-13-21",
+  "or-john-1-4-5": "john-1-4-5",
+  "esh-exodus-3": "exodus-3-2",
+  "esh-exodus-13-21": "exodus-13-21",
+  "esh-malachi-3": "malachi-3-2-3",
+  "midbar-exodus-16": "exodus-wilderness",
+  "midbar-deuteronomy-8": "deuteronomy-8",
+  "midbar-matthew-4": "matthew-4",
+  "midbar-exodus-3": "exodus-3-2",
+  "lechem-exodus-16": "exodus-16-4",
+  "lechem-mark-4": "mark-4-26-29",
+  "lechem-deuteronomy-8": "deuteronomy-8-3",
+  "lechem-luke-24": "luke-24-30-31",
+  "lechem-john-6": "john-6-35",
+};
+
+function canonicalizeCodexRegistry(entries: CodexEntry[]): CodexEntry[] {
+  const entryIds = new Set(entries.map((entry) => entry.id));
+  const externalTargetIds = new Set([
+    ...hebrewLetters.map((letter) => letter.id),
+    ...hebrewWords.map((word) => word.id),
+    ...biblicalReferences.map((reference) => reference.id),
+  ]);
+  const symbolSlugs = new Set([
+    ...SYMBOL_NETWORK.map((symbol) => symbol.id),
+    ...SYMBOLS.map((symbol) => symbol.slug),
+  ]);
+  const scriptureReferenceIds = new Set(biblicalReferences.map((reference) => reference.id));
+  const globalLookupOwners = new Map<string, string>();
+
+  return entries.map((entry) => {
+    const localLookupTerms = new Set<string>();
+    const aliases = canonicalLookupTerms(entry.aliases, localLookupTerms, globalLookupOwners, entry.id);
+    const searchTerms = canonicalLookupTerms(entry.searchTerms, localLookupTerms, globalLookupOwners, entry.id);
+
+    return {
+      ...entry,
+      aliases,
+      searchTerms,
+      relations: entry.relations.filter((relation) =>
+        entryIds.has(relation.targetId) ||
+        externalTargetIds.has(relation.targetId) ||
+        symbolSlugs.has(relation.targetId)
+      ),
+      scriptureAnchors: entry.scriptureAnchors.map((anchor) => {
+        const anchorId = anchor.id ? SCRIPTURE_ANCHOR_ID_ALIASES[anchor.id] ?? anchor.id : undefined;
+
+        return {
+          ...anchor,
+          id: anchorId && scriptureReferenceIds.has(anchorId) ? anchorId : undefined,
+        };
+      }),
+      symbolRoomSlug: entry.symbolRoomSlug && symbolSlugs.has(entry.symbolRoomSlug) ? entry.symbolRoomSlug : null,
+    };
+  });
+}
+
 function scriptureAnchorsForSymbol(symbolId: string) {
   const symbol = findSymbol(symbolId);
   const references = symbol.network?.scriptureReferences ?? symbol.legacy?.scriptureReferences ?? [];
@@ -355,7 +464,7 @@ function symbolEntry(symbolId: "wasser" | "licht" | "feuer" | "wueste" | "brot",
       ...carryingLetterIds.map<CodexRelation>((targetId) => ({
         targetId,
         type: "contains-letter",
-        label: `Dieser Buchstabe traegt den ${findSymbolTitle(symbolId)}-Raum in Genesis 1,1-3.`,
+        label: `Dieser Buchstabe beruehrt den ${findSymbolTitle(symbolId)}-Raum als erste Schriftspur.`,
         source: "hebrew-letter",
       })),
       ...(word
@@ -421,7 +530,7 @@ function hebrewWordEntry(wordId: Extract<CodexEntryId, "majim" | "or" | "esch" |
       ...word.relatedSymbolSlugs,
       ...word.meaningFields.flatMap((field) => [field.label, ...field.experienceFields]),
     ],
-    summary: word.meaningFields.map((field) => field.description).join(" "),
+    summary: word.meaningFields.slice(0, 3).map((field) => field.description).join(" "),
     meaningFields: uniqueMeaningFields(hebrewMeaningFields(word.id)),
     relations: uniqueRelations([
       ...(symbolSlug
@@ -644,8 +753,8 @@ function letterEntry(letterId: string): CodexEntry {
     glyph: letter.glyph,
     transliteration: `${letter.transcription} / ${letter.name}`,
     essence: deepProfile
-      ? `${deepProfile.shortEssence} ${deepProfile.deeperMeaning} ${deepProfile.genesisRole} ${deepProfile.contemplative}`
-      : `${letter.name} traegt in Genesis 1,1-3 die Spur ${letter.archetypalMeanings.slice(0, 3).join(", ")}. Der Buchstabe wird ueber seine Woerter, Raeume und Bedeutungsfelder gelesen.`,
+      ? `${deepProfile.shortEssence} ${deepProfile.deeperMeaning}`
+      : `${letter.name} traegt die Spur ${letter.archetypalMeanings.slice(0, 3).join(", ")}. Der Buchstabe wird als Grundbewegung von Zeichen, Klang und Bedeutung gelesen.`,
     meaningFields: [] satisfies CodexEntry["meaningFields"],
     searchTerms: [
       letter.name,
@@ -958,10 +1067,10 @@ function generatedHebrewWordEntry(word: (typeof hebrewWords)[number]): CodexEntr
       ...word.relatedSymbolSlugs,
       ...word.meaningFields.flatMap((field) => [field.label, ...field.experienceFields]),
     ],
-    summary: [
-      word.meaningFields.map((field) => field.description).join(" "),
-      movement?.movement,
-    ].filter(Boolean).join(" "),
+    summary: word.meaningFields
+      .slice(0, 3)
+      .map((field) => field.description)
+      .join(" "),
     meaningFields: uniqueMeaningFields(hebrewMeaningFields(word.id)),
     relations: uniqueRelations([
       ...(symbolSlug
@@ -1794,11 +1903,11 @@ const seededCodexRegistry = [
 
 const seededCodexEntryIds = new Set(seededCodexRegistry.map((entry) => entry.id));
 
-export const codexRegistry = [
+export const codexRegistry = canonicalizeCodexRegistry([
   ...seededCodexRegistry,
   ...hebrewWords
     .filter((word) => !seededCodexEntryIds.has(word.id))
     .map(generatedHebrewWordEntry),
-] satisfies CodexEntry[];
+] satisfies CodexEntry[]);
 
 export const codexEntryIds = CODEX_ENTRY_IDS;

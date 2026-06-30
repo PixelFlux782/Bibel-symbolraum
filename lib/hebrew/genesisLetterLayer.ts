@@ -69,7 +69,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   aleph: {
     id: "aleph",
     shortEssence: "Ursprung, Atem, unsichtbare Einheit.",
-    deeperMeaning: "Aleph ist der Anfang vor dem Klang. Es steht nicht laut am Rand, sondern wie ein Atemraum, aus dem Gott, Erde, Wort und Licht lesbar werden.",
+    deeperMeaning: "Aleph ist der Anfang vor dem Klang. Es steht wie ein stiller Atemraum, aus dem Gegenwart, Wort und Licht hervortreten koennen.",
     genesisRole: "In Genesis 1,1-3 verbindet Aleph Elohim, et, eretz, amar und or: Gott, Erde, Zeichen, Sprechen und Licht.",
     roomIds: ["licht"],
     symbolIds: ["ursprung", "wort", "licht", "offenbarung", "erde"],
@@ -102,7 +102,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   shin: {
     id: "shin",
     shortEssence: "Feuer, Spannung, verwandelnde Energie.",
-    deeperMeaning: "Shin ist bewegte Kraft. In der Genesis-Spur haelt es Himmel und Finsternis in Spannung, bevor Licht die Unterscheidung sichtbar macht.",
+    deeperMeaning: "Shin ist bewegte Kraft. Es haelt Spannung, Feuer und Verwandlung zusammen, bevor neue Unterscheidung sichtbar wird.",
     genesisRole: "Shin erscheint in Bereschit, Schamajim und Choschech: Anfang, Himmel und Dunkel tragen eine noch verborgene Energie.",
     roomIds: ["licht"],
     symbolIds: ["feuer", "himmel", "verborgenheit", "ordnung"],
@@ -135,7 +135,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   lamed: {
     id: "lamed",
     shortEssence: "Lernen, Aufrichtung, empfangende Ausrichtung.",
-    deeperMeaning: "Lamed hebt sich aus dem Schriftband. Es richtet den Blick und macht den Gottesnamen als empfangene Gegenwart lesbar.",
+    deeperMeaning: "Lamed hebt sich aus dem Schriftband. Es richtet den Blick, sammelt Lernen und macht empfangene Gegenwart als Ausrichtung lesbar.",
     genesisRole: "Lamed steht in Elohim und im Versfeld von al; es verbindet Ursprung mit Ausrichtung und die Tiefe mit einem Ueber.",
     roomIds: ["licht"],
     symbolIds: ["offenbarung", "himmel", "wort"],
@@ -146,7 +146,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   he: {
     id: "he",
     shortEssence: "Hauch, Fenster, Erscheinung.",
-    deeperMeaning: "He ist offener Atem. Es laesst Verborgenes nicht ergreifen, sondern erscheinen: Zustand, Leere, Tiefe und Werden bekommen Luft.",
+    deeperMeaning: "He ist offener Atem, Fenster und Erscheinung. Der Buchstabe oeffnet einen Raum, in dem Verborgenes nicht festgehalten, sondern sichtbar werden kann.",
     genesisRole: "He steht in Elohim, Tohu, Bohu, Tehom, Haja und Jehi: Atem und Erscheinung zwischen Formlosigkeit und Werden.",
     roomIds: ["wasser", "licht"],
     symbolIds: ["offenbarung", "wandlung", "tiefe", "licht"],
@@ -157,7 +157,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   mem: {
     id: "mem",
     shortEssence: "Wasser, Tiefe, Mutterraum.",
-    deeperMeaning: "Mem ist der Wasserbuchstabe des Codex. Offen traegt er Bewegung, final sammelt er Tiefe; beide Formen halten sichtbares Wasser und verborgenen Ursprung zusammen.",
+    deeperMeaning: "Mem ist Wasser, Tiefe und bergender Mutterraum. Offen traegt es Bewegung; geschlossen bewahrt es den Ursprung im Inneren.",
     genesisRole: "Mem erscheint in Elohim, Schamajim, Tehom, Majim und Amar; es verbindet Gottes Gegenwart, Himmel, Tiefe, Wasser und gesprochenes Licht.",
     roomIds: ["wasser", "licht"],
     symbolIds: ["wasser", "tiefe", "wort", "leben", "verborgenheit"],
@@ -168,7 +168,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   vav: {
     id: "vav",
     shortEssence: "Verbindung, Linie, Fortgang.",
-    deeperMeaning: "Vav haelt auseinanderliegende Felder zusammen. Es ist die Linie zwischen Zustand und Ereignis, zwischen Tiefe und Licht.",
+    deeperMeaning: "Vav haelt auseinanderliegende Felder zusammen. Es ist Linie, Verbindung und Fortgang: ein leises Und zwischen Ursprung, Weg und Erscheinung.",
     genesisRole: "Vav erscheint in Tohu, Bohu, Tehom, Ruach, Or und Wajehi: es verbindet Formlosigkeit, Atem und Lichtwerdung.",
     roomIds: ["wasser", "licht"],
     symbolIds: ["uebergang", "wasser", "licht", "ruach"],
@@ -179,7 +179,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   tsadi: {
     id: "tsadi",
     shortEssence: "Erde, Gestalt, aufgerichteter Boden.",
-    deeperMeaning: "Tsadi schliesst Erez als finale Gestalt. Erde ist noch nicht geordnet, aber sie ist genannt und als tragender Boden markiert.",
+    deeperMeaning: "Tsadi richtet Gestalt auf und gibt dem Offenen Boden. Es verbindet gebeugte Haltung mit tragender Form.",
     genesisRole: "Tsadi erscheint in Erez; die Erde wird im Anfang genannt, bevor sie bewohnbar geformt ist.",
     roomIds: ["wueste", "brot"],
     symbolIds: ["erde", "wueste", "brot"],
@@ -190,7 +190,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   chet: {
     id: "chet",
     shortEssence: "Lebensraum, Schutz, verborgene Lebendigkeit.",
-    deeperMeaning: "Chet ist eingehegtes Leben. In Finsternis, Ruach und Rachaf bleibt Lebendigkeit verborgen, aber bereits wirksam.",
+    deeperMeaning: "Chet ist eingehegtes Leben. Es bewahrt Lebendigkeit im Inneren, auch wenn sie noch nicht sichtbar hervortritt.",
     genesisRole: "Chet steht in Choschech, Ruach und Rachaf: Dunkel, Atem und schwebende Naehe tragen verborgene Lebendigkeit.",
     roomIds: ["wasser"],
     symbolIds: ["leben", "ruach", "tiefe", "verborgenheit"],
@@ -201,7 +201,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   kaf: {
     id: "kaf",
     shortEssence: "Handflaeche, Gefaess, bedeckte Form.",
-    deeperMeaning: "Kaf fasst und bedeckt. Als Schlussform in Choschech zeigt es die Finsternis wie eine Hand, die Sichtbarkeit noch zurueckhaelt.",
+    deeperMeaning: "Kaf fasst und bedeckt. Es ist Handflaeche und Gefaess: eine Form, die bewahrt, bevor sie freigibt.",
     genesisRole: "Kaf erscheint in Choschech als finale Form; Dunkelheit wird zur bedeckten Schwelle vor dem Licht.",
     roomIds: ["wasser"],
     symbolIds: ["verborgenheit", "licht", "tiefe"],
@@ -212,7 +212,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   ayin: {
     id: "ayin",
     shortEssence: "Auge, Quelle, Wahrnehmung.",
-    deeperMeaning: "Ayin steht an der Oberflaeche der Tiefe. Es ist Blick und Quelle zugleich: Wahrnehmung beginnt dort, wo Tiefe eine Flaeche hat.",
+    deeperMeaning: "Ayin ist Auge, Quelle und Wahrnehmung. Es steht fuer den ersten Blick, der Tiefe nicht aufloest, sondern beruehrbar macht.",
     genesisRole: "Ayin erscheint in al und pnei; Finsternis und Ruach werden ueber dem Angesicht der Tiefe und der Wasser verortet.",
     roomIds: ["wasser"],
     symbolIds: ["auge", "quelle", "offenbarung", "tiefe"],
@@ -223,7 +223,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   pe: {
     id: "pe",
     shortEssence: "Mund, Oeffnung, Ausdruck.",
-    deeperMeaning: "Pe ist die Oeffnung, durch die Inneres nach aussen tritt. In Rachaf und Pnei bereitet es die Schwelle zum spaeteren Sprechen vor.",
+    deeperMeaning: "Pe ist Mund und Oeffnung. Durch Pe kann Inneres nach aussen treten: als Ausdruck, Atem, Stimme oder Antwort.",
     genesisRole: "Pe steht in Rachaf/Merachefet und Pnei: Bewegung und Oberflaeche werden zum Ort, an dem Wort moeglich wird.",
     roomIds: ["wasser"],
     symbolIds: ["wort", "offenbarung", "ruach", "wasser"],
@@ -234,7 +234,7 @@ export const genesisLetterProfiles: Record<GenesisLetterId, GenesisLetterDeepPro
   nun: {
     id: "nun",
     shortEssence: "Keim, Fortgang, verborgenes Leben.",
-    deeperMeaning: "Nun traegt das Leben, das noch unter der Oberflaeche waechst. In Pnei beruehrt es das Angesicht, auf dem Tiefe sichtbar wird.",
+    deeperMeaning: "Nun traegt keimendes Leben und Fortgang. Es bewahrt das Wachsende unter der Oberflaeche, bis es einen Namen bekommt.",
     genesisRole: "Nun erscheint in Pnei; die Oberflaeche der Tiefe wird als Angesicht lesbar, nicht als tote Grenze.",
     roomIds: ["wasser"],
     symbolIds: ["leben", "wasser", "offenbarung"],
