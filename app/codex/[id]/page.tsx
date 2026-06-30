@@ -316,6 +316,7 @@ function normalizeRouteTerm(value: string) {
 }
 
 const CANONICAL_CODEX_ROUTE_IDS: Record<string, string> = {
+  eretz: "erez",
   "chaos-ordnung": "journey-chaos-ordnung",
   "wasser-brot": "journey-wasser-zum-brot",
   "wasser-licht": "bridge-wasser-licht",
@@ -956,7 +957,7 @@ type ScriptureSceneFormula = {
 const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   "genesis-1-1": {
     formula: "Ursprung",
-    threshold: "Der Anfang setzt einen Horizont. Himmel und Erde stehen einander gegenueber, noch still, aber nicht leer.",
+    threshold: "Der Anfang setzt einen Horizont. Himmel und Erde stehen einander gegenueber; die Ordnung ist noch leise.",
     sceneSentences: [
       "Vor der Tiefe steht die erste Setzung.",
       "Himmel und Erde oeffnen den Raum, in dem alles Weitere lesbar wird.",
@@ -982,7 +983,7 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   },
   "genesis-1-2": {
     formula: "Tiefe",
-    threshold: "Die gesetzte Erde liegt noch ungeformt. Wasser, Finsternis und Tehom tragen den Zwischenraum, ueber dem die Ruach schwebt.",
+    threshold: "Die gesetzte Erde liegt noch ungeformt. Ueber Tiefe, Wasser und Dunkel bewegt sich die Ruach.",
     sceneSentences: [
       "Aus der ersten Setzung wird eine Schwelle aus Tiefe.",
       "Das Ungeformte ist nicht bedeutungslos; es ist beruehrte Moeglichkeit.",
@@ -4075,14 +4076,29 @@ function FoundationConnectionGroup({ title, items }: { title: string; items: Scr
     return null;
   }
 
+  const primaryItems = items.slice(0, 3);
+  const archiveItems = items.slice(3);
+
   return (
     <section className="border-t border-white/[0.06] pt-4">
       <p className="text-[0.56rem] uppercase tracking-[0.22em] text-muted-soft">{title}</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        {items.map((item) => (
+        {primaryItems.map((item) => (
           <FoundationPillLink key={`${title}-${item.id}`} item={item} />
         ))}
       </div>
+      {archiveItems.length > 0 ? (
+        <details className="mt-3 border border-white/[0.055] bg-black/[0.08] px-3 py-2">
+          <summary className="cursor-pointer text-[0.54rem] uppercase tracking-[0.18em] text-gold/68">
+            Weitere Spuren
+          </summary>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {archiveItems.map((item) => (
+              <FoundationPillLink key={`${title}-archive-${item.id}`} item={item} />
+            ))}
+          </div>
+        </details>
+      ) : null}
     </section>
   );
 }
@@ -4156,8 +4172,8 @@ function FoundationWordCard({ word }: { word: ScriptureFoundationModel["words"][
       ) : null}
       {[...word.symbols, ...word.rooms, ...word.meaningFields, ...word.numbers].length > 0 ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          {[...word.symbols, ...word.rooms, ...word.meaningFields, ...word.numbers].map((item) => (
-            <FoundationPillLink key={`${word.transliteration}-${item.id}`} item={item} />
+          {[...word.symbols, ...word.rooms, ...word.meaningFields, ...word.numbers].map((item, index) => (
+            <FoundationPillLink key={`${word.transliteration}-${item.id}-${index}`} item={item} />
           ))}
         </div>
       ) : null}
@@ -4168,6 +4184,9 @@ function FoundationWordCard({ word }: { word: ScriptureFoundationModel["words"][
 function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel }) {
   const coreWords = model.words.filter((word) => word.layer === "core");
   const passiveWords = model.words.filter((word) => word.layer === "passive");
+  const symbolNetworkHref = model.id === "genesis-1-3"
+    ? "/symbolnetz?symbol=licht&path=erste-bewegung"
+    : "/symbolnetz?symbol=wasser&path=erste-bewegung";
 
   return (
     <section className="grid gap-8">
@@ -4178,14 +4197,14 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
             {model.foundationTitle}
           </span>
         </div>
-        <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong md:text-3xl">
+        <p className="symbol-copy max-w-3xl font-serif text-xl italic leading-relaxed text-foreground-strong sm:text-2xl md:text-3xl">
           {model.foundationSubtitle}
         </p>
         <div className="grid gap-5 border-t border-gold/15 pt-6">
-          <p className="text-center font-serif text-4xl leading-relaxed text-gold/90 md:text-5xl" lang="he" dir="rtl">
+          <p className="text-center font-serif text-3xl leading-relaxed text-gold/90 sm:text-4xl md:text-5xl" lang="he" dir="rtl">
             {model.hebrewText}
           </p>
-          <p className="symbol-copy mx-auto max-w-3xl text-center font-serif text-2xl italic leading-relaxed text-foreground-strong">
+          <p className="symbol-copy mx-auto max-w-3xl text-center font-serif text-xl italic leading-relaxed text-foreground-strong sm:text-2xl">
             {model.germanText}
           </p>
           <p className="symbol-copy mx-auto max-w-3xl border-t border-gold/10 pt-5 text-center text-sm leading-relaxed text-muted-soft">
@@ -4232,6 +4251,13 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
             </p>
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Link
+              href={symbolNetworkHref}
+              className="block border border-gold/15 bg-gold/[0.035] p-4 transition-colors duration-500 hover:border-gold/30 hover:bg-gold/[0.06]"
+            >
+              <p className="font-serif text-xl italic text-foreground-strong">Im Symbolnetz ansehen</p>
+              <p className="symbol-copy mt-2 text-sm italic text-muted-soft">Zur ersten Bewegung: Ursprung, Tiefe und Licht.</p>
+            </Link>
             {model.growingRooms.map((room) => (
               room.href ? (
                 <Link
@@ -4254,7 +4280,7 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
       ) : null}
 
       <section className="border-t border-white/[0.06] pt-6">
-        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Symbolnetz dieser Stelle</p>
+        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Archivspuren dieser Stelle</p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <FoundationConnectionGroup title="Woerter" items={model.connections.words} />
           <FoundationConnectionGroup title="Raeume" items={model.connections.rooms} />
@@ -4280,12 +4306,14 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
       <div className="grid gap-8">
         {model.foundation ? <ScriptureFoundationSection model={model.foundation} /> : null}
 
-        <section className="grid gap-3">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Der Vers als Ursprungskammer / {model.formula}</p>
-          <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
-            {model.threshold}
-          </p>
-        </section>
+        {!model.foundation ? (
+          <section className="grid gap-3">
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Der Vers als Ursprungskammer / {model.formula}</p>
+            <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
+              {model.threshold}
+            </p>
+          </section>
+        ) : null}
 
         {model.sceneSentences.length > 0 ? (
           <div className="symbol-copy grid max-w-3xl gap-2 border-t border-white/[0.06] pt-6 font-serif text-2xl italic leading-relaxed text-foreground-strong">

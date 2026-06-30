@@ -447,6 +447,7 @@ export default function MeinPfadPage() {
         ) : (
           <>
             <GreatMovementSection movement={greatMovement} />
+            <GenesisFirstMovementSection tracks={symbolTracks} />
 
             {hasWay ? (
               <>
@@ -563,6 +564,55 @@ function GreatMovementSection({ movement }: { movement: SymbolicGreatMovementSte
             <span className="symbol-great-movement__symbol">{step.targetLabel}</span>
             <span className="symbol-great-movement__text">{step.text}</span>
             {step.isNear ? <span className="symbol-great-movement__near">nahe</span> : null}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function GenesisFirstMovementSection({ tracks }: { tracks: PersonalSymbolTrack[] }) {
+  const hasWaterTrace = tracks.find((track) => track.symbolId === "wasser")?.count ?? 0;
+  const hasLightTrace = tracks.find((track) => track.symbolId === "licht")?.count ?? 0;
+
+  const stations = [
+    {
+      id: "genesis-1-1",
+      label: "Ursprung",
+      reference: "Genesis 1,1",
+      text: "Der Anfang wird gesetzt.",
+      href: "/codex/genesis-1-1?from=mein-pfad&path=erste-bewegung",
+    },
+    {
+      id: "genesis-1-2",
+      label: "Tiefe",
+      reference: "Genesis 1,2",
+      text: hasWaterTrace ? "Die Wasser-Spur ist deinem Weg nahe." : "Wasser, Tiefe und Ruach bleiben als Schwelle sichtbar.",
+      href: hasWaterTrace ? "/raeume/wasser?from=mein-pfad&path=erste-bewegung" : "/codex/genesis-1-2?from=mein-pfad&path=erste-bewegung",
+    },
+    {
+      id: "genesis-1-3",
+      label: "Licht",
+      reference: "Genesis 1,3",
+      text: hasLightTrace ? "Die Licht-Spur ist deinem Weg nahe." : "Das Wort oeffnet Licht und erste Unterscheidung.",
+      href: hasLightTrace ? "/raeume/licht?from=mein-pfad&path=erste-bewegung" : "/codex/genesis-1-3?from=mein-pfad&path=erste-bewegung",
+    },
+  ];
+
+  return (
+    <section className="symbol-personal-way" aria-label="Erste Bewegung der Schrift">
+      <div className="symbol-personal-way__head">
+        <p className="symbol-kicker">Erste Bewegung der Schrift</p>
+        <h2>Ursprung - Tiefe - Licht</h2>
+        <p>Genesis 1,1-3 bleibt als erste Wegspur lesbar: gesetzt, bewegt, erhellt.</p>
+      </div>
+
+      <div className="symbol-personal-way__grid">
+        {stations.map((station, index) => (
+          <Link key={station.id} href={station.href} className="symbol-personal-way__area">
+            <h3>{index + 1}. {station.label}</h3>
+            <p className="mt-2 text-[0.62rem] uppercase tracking-[0.18em] text-gold/70">{station.reference}</p>
+            <p>{station.text}</p>
           </Link>
         ))}
       </div>

@@ -235,6 +235,20 @@ type LandscapeDisclosureProfile = {
   movement: string[];
 };
 
+type GenesisStationId = "genesis-1-1" | "genesis-1-2" | "genesis-1-3";
+
+type GenesisStation = {
+  id: GenesisStationId;
+  title: string;
+  movement: string;
+  text: string;
+  traces: string[];
+  codexHref: string;
+  roomHref?: string;
+  roomCta?: string;
+  nextId?: GenesisStationId;
+};
+
 type SymbolNetworkInitialUrlState = {
   symbol?: string;
   lens?: string;
@@ -509,6 +523,43 @@ const LANDSCAPE_DISCLOSURE_PROFILES: Record<string, LandscapeDisclosureProfile> 
   },
 };
 
+const GENESIS_STATIONS: Record<GenesisStationId, GenesisStation> = {
+  "genesis-1-1": {
+    id: "genesis-1-1",
+    title: "Ursprungstor",
+    movement: "Ursprung / Setzung",
+    text: "Die erste Bewegung setzt den Raum. Himmel und Erde stehen im Anfang, bevor Tiefe und Licht sichtbar werden.",
+    traces: ["Anfang", "Himmel", "Erde", "Setzung", "Genesis 1,2"],
+    codexHref: "/codex/genesis-1-1?from=symbolnetz&path=erste-bewegung",
+    nextId: "genesis-1-2",
+  },
+  "genesis-1-2": {
+    id: "genesis-1-2",
+    title: "Tiefe und Hauch",
+    movement: "Tiefe / Wasser / Ruach",
+    text: "Die zweite Bewegung fuehrt nicht sofort zur Form. Sie zeigt die Tiefe, das Wasser und den Geist, der ueber dem Ungewordenen schwebt.",
+    traces: ["Wasser", "Tiefe", "Ruach", "Mem", "Genesis 1,3"],
+    codexHref: "/codex/genesis-1-2?from=symbolnetz&path=erste-bewegung",
+    roomHref: "/raeume/wasser?from=symbolnetz&path=erste-bewegung",
+    roomCta: "Wasser-Raum betreten",
+    nextId: "genesis-1-3",
+  },
+  "genesis-1-3": {
+    id: "genesis-1-3",
+    title: "Wort und Licht",
+    movement: "Wort / Licht / Offenbarung",
+    text: "Die dritte Bewegung laesst das Wort hervortreten. Licht erscheint, und mit ihm beginnt die erste Unterscheidung.",
+    traces: ["Wort", "Licht", "Offenbarung", "Unterscheidung"],
+    codexHref: "/codex/genesis-1-3?from=symbolnetz&path=erste-bewegung",
+    roomHref: "/raeume/licht?from=symbolnetz&path=erste-bewegung",
+    roomCta: "Licht-Raum betreten",
+  },
+};
+
+function isGenesisStationId(id: string): id is GenesisStationId {
+  return id in GENESIS_STATIONS;
+}
+
 const ROOM_TRANSITION_STATION_ORDER: Record<string, string[]> = {
   wasser: ["majim", "tehom", "ruach", "genesis-1-2"],
   licht: ["or", "panim", "kavod", "genesis-1-3"],
@@ -741,11 +792,17 @@ function getInitialSymbolNetworkState(initialUrlState: SymbolNetworkInitialUrlSt
       activeResonanceLens: null,
       activeJourneyStepId: null,
       activeResonanceJourneyId: null,
+      activeGenesisStationId: null,
     };
   }
 
   const activeResonanceLens = normalizeSymbolNetworkLensParam(initialUrlState.lens ?? null);
   const resonanceJourney = initialUrlState.path ? getResonanceJourney(initialUrlState.path) : undefined;
+  const activeGenesisStationId: GenesisStationId | null = initialUrlState.path === "erste-bewegung"
+    ? symbolId === "licht"
+      ? "genesis-1-3"
+      : "genesis-1-2"
+    : null;
 
   return {
     activeSymbolId: symbolId,
@@ -759,6 +816,7 @@ function getInitialSymbolNetworkState(initialUrlState: SymbolNetworkInitialUrlSt
         ? symbolId
         : null,
     activeResonanceJourneyId: resonanceJourney?.id ?? null,
+    activeGenesisStationId,
   };
 }
 
@@ -1453,9 +1511,13 @@ function getDetailHierarchyChildren(symbolId: string) {
 
 function getExistingDeepHierarchyAnchors(symbolId: string) {
   const detailChildIds = getDetailHierarchyChildren(symbolId).map((entry) => entry.id);
+  const storyAnchorIds = getChildrenOf(symbolId)
+    .filter((entry) => entry.level === "story_anchor")
+    .map((entry) => entry.id);
   const candidates = [
     ...getChildrenOf(symbolId),
     ...detailChildIds.flatMap((childId) => getChildrenOf(childId)),
+    ...storyAnchorIds.flatMap((storyId) => getChildrenOf(storyId)),
   ];
 
   return candidates.filter((entry) => DEEP_HIERARCHY_LEVELS.has(entry.level) && Boolean(getCodexEntry(entry.id)));
@@ -2718,6 +2780,128 @@ function MobileSymbolJourney({
   );
 }
 
+function GenesisStationDetail({
+  station,
+  onSelectStation,
+}: {
+  station: GenesisStation;
+  onSelectStation: (stationId: GenesisStationId) => void;
+}) {
+  const nextStation = station.nextId ? GENESIS_STATIONS[station.nextId] : undefined;
+
+  return (
+    <div className="symbol-disclosure" aria-label="Erste Bewegung">
+      <div className="symbol-disclosure__voice">
+        <p className="symbol-kicker text-cyan-soft">Erste Bewegung</p>
+        <h2>{station.title}</h2>
+        <p className="symbol-disclosure__response">{station.text}</p>
+      </div>
+
+      <div className="symbol-disclosure__layer symbol-disclosure__movement">
+        <p className="symbol-kicker text-cyan-soft">{station.movement}</p>
+        <div>
+          {(["genesis-1-1", "genesis-1-2", "genesis-1-3"] as const).map((stationId, index) => (
+            <Fragment key={stationId}>
+              {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
+              <button
+                type="button"
+                onClick={() => onSelectStation(stationId)}
+                className={station.id === stationId ? "text-gold" : undefined}
+              >
+                {stationId === "genesis-1-1" ? "Ursprung" : stationId === "genesis-1-2" ? "Tiefe" : "Licht"}
+              </button>
+            </Fragment>
+          ))}
+        </div>
+      </div>
+
+      <div className="symbol-disclosure__layer">
+        <p className="symbol-kicker text-cyan-soft">Nahe Spuren</p>
+        <div className="symbol-disclosure__relations">
+          {station.traces.slice(0, 5).map((trace) => (
+            <span key={trace}>
+              <span>{trace}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="symbol-disclosure__layer">
+        <p className="symbol-kicker text-cyan-soft">Weitergehen</p>
+        <div className="symbol-disclosure__doors">
+          <Link href={station.codexHref} className="symbol-cta w-full">
+            Im Codex vertiefen
+          </Link>
+          {station.roomHref && station.roomCta ? (
+            <RoomTransitionButton href={station.roomHref} className="symbol-cta symbol-cta-secondary w-full">
+              {station.roomCta}
+            </RoomTransitionButton>
+          ) : null}
+          {nextStation ? (
+            <button type="button" onClick={() => onSelectStation(nextStation.id)} className="symbol-archive-action">
+              Zur ersten Bewegung
+            </button>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileGenesisStation({
+  station,
+  onSelectStation,
+}: {
+  station: GenesisStation;
+  onSelectStation: (stationId: GenesisStationId) => void;
+}) {
+  return (
+    <section className="symbol-mobile-focus md:hidden" aria-label="Erste Bewegung">
+      <p className="symbol-kicker text-cyan-soft">Erste Bewegung</p>
+      <div className="symbol-mobile-focus__head">
+        <div>
+          <h2>{station.title}</h2>
+          <p>{station.movement}</p>
+        </div>
+      </div>
+      <p className="symbol-mobile-focus__essence">{station.text}</p>
+      <div className="symbol-mobile-movement">
+        <p>Ursprung / Tiefe / Licht</p>
+        <div>
+          {(["genesis-1-1", "genesis-1-2", "genesis-1-3"] as const).map((stationId, index) => (
+            <Fragment key={stationId}>
+              {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
+              <button type="button" onClick={() => onSelectStation(stationId)}>
+                <strong>{stationId === "genesis-1-1" ? "Ursprung" : stationId === "genesis-1-2" ? "Tiefe" : "Licht"}</strong>
+              </button>
+            </Fragment>
+          ))}
+        </div>
+      </div>
+      <div className="symbol-mobile-relations">
+        <p>Nahe Spuren</p>
+        <ul>
+          {station.traces.slice(0, 5).map((trace) => (
+            <li key={trace}>
+              <span>{trace}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="symbol-mobile-actions">
+        <Link href={station.codexHref} className="symbol-cta">
+          Im Codex vertiefen
+        </Link>
+        {station.roomHref && station.roomCta ? (
+          <RoomTransitionButton href={station.roomHref} className="symbol-cta symbol-cta-secondary">
+            {station.roomCta}
+          </RoomTransitionButton>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlState?: SymbolNetworkInitialUrlState }) {
   const initialSymbolNetworkState = getInitialSymbolNetworkState(initialUrlState);
   const [activeSymbolId, setActiveSymbolId] = useState(initialSymbolNetworkState.activeSymbolId);
@@ -2739,7 +2923,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const [activeJourneyStepId, setActiveJourneyStepId] = useState<string | null>(initialSymbolNetworkState.activeJourneyStepId);
   const [activeResonanceJourneyId, setActiveResonanceJourneyId] = useState<string | null>(initialSymbolNetworkState.activeResonanceJourneyId);
   const [activeSubspaceId, setActiveSubspaceId] = useState<string | null>(null);
-  const [symbolViewportMode, setSymbolViewportMode] = useState<SymbolViewportMode>("overview");
+  const [activeGenesisStationId, setActiveGenesisStationId] = useState<GenesisStationId | null>(initialSymbolNetworkState.activeGenesisStationId);
+  const [symbolViewportMode, setSymbolViewportMode] = useState<SymbolViewportMode>(initialSymbolNetworkState.activeGenesisStationId ? "deep" : "overview");
   const [flowViewport, setFlowViewport] = useState({ x: 0, y: 0, zoom: 1 });
   const [personalWay, setPersonalWay] = useState<PersonalWay | null>(null);
   const reactFlowRef = useRef<ReactFlowInstance | null>(null);
@@ -2791,6 +2976,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const activeDeepHierarchyAnchors = useMemo(() => getExistingDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
   const activeStoryDeepHierarchyAnchors = useMemo(() => getStoryDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
   const activeVerseDeepHierarchyAnchors = useMemo(() => getVerseDeepHierarchyAnchors(activeSymbolId), [activeSymbolId]);
+  const activeGenesisStation = activeGenesisStationId ? GENESIS_STATIONS[activeGenesisStationId] : undefined;
   const activePath = network.paths.find((path) => path.id === activePathId);
   const activePathFrom = activePath?.from;
   const activePathTo = activePath?.to;
@@ -3500,10 +3686,17 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       ]);
       const shouldShowDetailHierarchy = activeDetailHierarchyChildren.length > 0
         && (symbolViewportMode === "detail" || symbolViewportMode === "deep")
+        && !activeGenesisStation
         && (!activeResonanceLens || activeResonanceLens === "meaning");
       const shouldShowDeepHierarchy = shouldShowDetailHierarchy
         && symbolViewportMode === "deep"
         && activeDeepHierarchyAnchors.length > 0;
+      const genesisHierarchyNodes = activeGenesisStation
+        ? (["genesis-1-1", "genesis-1-2", "genesis-1-3"] as const).flatMap((stationId) => {
+            const entry = getHierarchyEntry(stationId);
+            return entry ? [{ entry, isDeepAnchor: true }] : [];
+          })
+        : [];
       const visibleSymbolIds = new Set(
         symbolViewportMode === "overview"
           ? overviewSymbolIds
@@ -3519,6 +3712,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         && Boolean(activePathId || isJourneyFocus || activeLensMeaningIds.size > 0);
       const shouldStageArrival = !hasGraphDisclosure && symbolViewportMode === "overview";
       const hierarchyNodes = [
+        ...genesisHierarchyNodes,
         ...(shouldShowDetailHierarchy ? activeDetailHierarchyChildren.map((entry) => ({ entry, isDeepAnchor: false })) : []),
         ...(shouldShowDeepHierarchy ? activeDeepHierarchyAnchors.map((entry) => ({ entry, isDeepAnchor: true })) : []),
       ];
@@ -3617,7 +3811,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             summary: entry.summary,
             level: entry.level,
             isDeepAnchor,
-            isHighlighted: activeSubspaceId === entry.id,
+            isHighlighted: activeSubspaceId === entry.id || activeGenesisStationId === entry.id,
           },
         })),
         ...activeJourneyCodexNodes,
@@ -3667,7 +3861,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         })) : []),
       ];
     },
-    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeJourneyStepId, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceJourney, activeResonanceLens, activeLetterId, activeLetterNodeId, activeJourney, activePathId, activeRoomTransition, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, familiarSymbolIds, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode, touchedSymbolIds]
+    [activeCodexLetter, activeDeepHierarchyAnchors, activeDetailHierarchyChildren, activeGenesisStation, activeGenesisStationId, activeJourneyStepId, activeLensHebrewLetters, activeLensHebrewSymbolIds, activeLensMeaningIds, activeLensNumbers, activeLensStoryPathKeys, activeResonanceJourney, activeResonanceLens, activeLetterId, activeLetterNodeId, activeJourney, activePathId, activeRoomTransition, activeSubspaceId, activeSymbolId, activeSymbolLensData, connectedPaths, disclosureSymbolId, familiarSymbolIds, hasGraphDisclosure, hasSymbolFocus, isJourneyFocus, isLetterResonanceOpen, isSymbolLensVisible, journeyFocusMeaningIds, journeyFocusSymbolIds, letterMeaningIds, letterResonances, letterSymbolIds, letterSymbols, relatedIds, relationSymbolIds, symbolViewportMode, touchedSymbolIds]
   );
 
   useEffect(() => {
@@ -3901,7 +4095,36 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         }];
       }),
     ] : []),
-    ...(!activeLetterId ? activeDetailHierarchyChildren.flatMap((entry, index) => {
+    ...(activeGenesisStation ? ([
+      ["genesis-1-1", "genesis-1-2"],
+      ["genesis-1-2", "genesis-1-3"],
+    ] as const).flatMap(([sourceId, targetId], index) => {
+      if (!renderedNodeIds.has(sourceId) || !renderedNodeIds.has(targetId)) return [];
+
+      const ports = getConnectionPorts(sourceId, targetId);
+
+      return [{
+        id: `genesis-axis:${sourceId}-${targetId}`,
+        source: sourceId,
+        target: targetId,
+        sourceHandle: ports.sourceHandle,
+        targetHandle: ports.targetHandle,
+        type: "living",
+        className: "is-journey-path",
+        style: {
+          stroke: "rgba(189,160,109,0.42)",
+          strokeWidth: 1.4,
+          strokeDasharray: "5 8",
+        },
+        data: {
+          isTraveling: false,
+          relationType: "journey" as const,
+          routeIndex: index,
+          routeOffset: getRouteOffset(index, "journey"),
+        },
+      }];
+    }) : []),
+    ...(!activeLetterId && !activeGenesisStation ? activeDetailHierarchyChildren.flatMap((entry, index) => {
       if (!renderedNodeIds.has(entry.id) || !renderedNodeIds.has(activeSymbolId)) return [];
 
       const ports = getConnectionPorts(activeSymbolId, entry.id);
@@ -3927,7 +4150,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         },
       }];
     }) : []),
-    ...(!activeLetterId ? activeDeepHierarchyAnchors.flatMap((entry, index) => {
+    ...(!activeLetterId && !activeGenesisStation ? activeDeepHierarchyAnchors.flatMap((entry, index) => {
       const sourceId = entry.parentId && renderedNodeIds.has(entry.parentId) ? entry.parentId : activeSymbolId;
       if (!renderedNodeIds.has(entry.id) || !renderedNodeIds.has(sourceId)) return [];
 
@@ -4065,6 +4288,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     setSearchFocusSymbolId(null);
     setActiveJourneyStepId(null);
     setActiveSubspaceId(null);
+    setActiveGenesisStationId(null);
     setHasSymbolFocus(true);
     setActivePathId(null);
     setActiveJourneyId(null);
@@ -4115,6 +4339,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   function activateSymbolLens(nodeId: SymbolLensMode) {
     const nextLens = nodeId === "journey" ? "story" : nodeId;
     setActiveSubspaceId(null);
+    setActiveGenesisStationId(null);
     setActiveResonanceLens(nextLens);
     setActiveInspectorFocus(nextLens);
     setLandscapeDisclosureLevel(4);
@@ -4136,6 +4361,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     if (nextFocus !== "subspaces") {
       setActiveSubspaceId(null);
     }
+    setActiveGenesisStationId(null);
     setActiveInspectorFocus(nextFocus);
     setLandscapeDisclosureLevel(4);
     setHasSymbolFocus(true);
@@ -4167,6 +4393,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     if (!path.joint) return;
 
     setActiveSubspaceId(null);
+    setActiveGenesisStationId(null);
     const didRecordLetter = recordActivatedLetter({
       letterId: path.joint.letterId,
       pathId: path.id,
@@ -4193,6 +4420,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
   function previewPath(path: SymbolMeaningPath) {
     setActiveSubspaceId(null);
+    setActiveGenesisStationId(null);
     setActiveResonanceLens(null);
     setActiveInspectorFocus(null);
     setActiveJourneyStepId(null);
@@ -4213,6 +4441,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     if (!journey) return;
 
     setActiveSubspaceId(null);
+    setActiveGenesisStationId(null);
     setActiveResonanceJourneyId(journey.id);
     setActiveJourneyStepId(journey.nodePath[0] ?? null);
     setHasSymbolFocus(true);
@@ -4228,11 +4457,44 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     setActiveInspectorFocus(null);
   }
 
+  function selectGenesisStation(stationId: GenesisStationId) {
+    const station = GENESIS_STATIONS[stationId];
+    const symbolId = stationId === "genesis-1-3" ? "licht" : "wasser";
+
+    setActiveSymbolId(symbolId);
+    setSearchFocusSymbolId(null);
+    setActiveGenesisStationId(station.id);
+    setActiveSubspaceId(null);
+    setHasSymbolFocus(true);
+    setActiveInspectorFocus(null);
+    setActiveResonanceLens(null);
+    setActiveJourneyStepId(null);
+    setActivePathId(null);
+    setActiveJourneyId(null);
+    setActiveResonanceJourneyId(null);
+    setPendingPathId(null);
+    setTravelingPathId(null);
+    setActiveLetterId(null);
+    setIsLetterResonanceOpen(false);
+    setActiveLetterResonanceId(null);
+    setActiveLetterSourcePathId(null);
+    setSymbolViewport("deep");
+    setLandscapeDisclosureLevel(4);
+
+    const center = getNodeCenter(station.id);
+    reactFlowRef.current?.setCenter(center.x, center.y, { zoom: 1.02, duration: 560 });
+    window.setTimeout(() => {
+      const instance = reactFlowRef.current;
+      if (instance) setFlowViewport(instance.getViewport());
+    }, 32);
+  }
+
   function focusSubspace(entryId: string) {
     const entry = getHierarchyEntry(entryId);
     if (!entry) return;
 
     setActiveSubspaceId(entry.id);
+    setActiveGenesisStationId(null);
     setHasSymbolFocus(true);
     setActiveInspectorFocus("subspaces");
     setActiveResonanceLens(null);
@@ -4343,17 +4605,24 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             <span>Wasser liegt nah. Brot wartet in der Mitte. Die anderen Räume stehen in der Ferne.</span>
           </div>
 
-          <MobileSymbolJourney
-            activeSymbol={activeSymbol}
-            hasSymbolFocus={hasSymbolFocus}
-            connectedPaths={connectedPaths}
-            activeCodexEntry={activeCodexEntry}
-            codexHref={activeCodexHref}
-            roomHref={activeRoomHref}
-            transitionWay={activeRoomTransitionWay}
-            disclosureLevel={landscapeDisclosureLevel}
-            onFocusSymbol={focusSymbol}
-          />
+          {activeGenesisStation ? (
+            <MobileGenesisStation
+              station={activeGenesisStation}
+              onSelectStation={selectGenesisStation}
+            />
+          ) : (
+            <MobileSymbolJourney
+              activeSymbol={activeSymbol}
+              hasSymbolFocus={hasSymbolFocus}
+              connectedPaths={connectedPaths}
+              activeCodexEntry={activeCodexEntry}
+              codexHref={activeCodexHref}
+              roomHref={activeRoomHref}
+              transitionWay={activeRoomTransitionWay}
+              disclosureLevel={landscapeDisclosureLevel}
+              onFocusSymbol={focusSymbol}
+            />
+          )}
 
           <div className={`${hasSymbolFocus ? "symbol-symbol-strip" : "hidden"} max-md:hidden`} aria-label="Symbol fokussieren">
             {network.nodes.map((node) => (
@@ -4497,6 +4766,11 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
                 if (node.type === "meaning" && activeLetterId) {
                   setActiveLetterResonanceId(node.id as MeaningNodeId);
+                  return;
+                }
+
+                if (node.type === "hierarchy" && isGenesisStationId(node.id)) {
+                  selectGenesisStation(node.id);
                   return;
                 }
 
@@ -4653,7 +4927,12 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
               <span>Die Räume sind schon da. Wasser ist der erste stille Nahepunkt.</span>
             </div>
           ) : null}
-          {activeResonanceJourney ? (
+          {activeGenesisStation ? (
+            <GenesisStationDetail
+              station={activeGenesisStation}
+              onSelectStation={selectGenesisStation}
+            />
+          ) : activeResonanceJourney ? (
             <ResonanceJourneyDetail
               journey={activeResonanceJourney}
               connections={activeResonanceJourneyConnections}

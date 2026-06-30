@@ -94,6 +94,7 @@ export type ScriptureFoundationWord = {
 };
 
 export type ScriptureFoundationModel = {
+  id: ScriptureFoundationEntry["id"];
   label: string;
   foundationTitle: string;
   foundationSubtitle: string;
@@ -452,6 +453,7 @@ export function buildScriptureFoundationModel(entry: CodexEntry): ScriptureFound
     .sort((left, right) => left.word.order - right.word.order);
 
   return {
+    id: foundation.id,
     label: foundation.label,
     foundationTitle: foundation.foundationTitle,
     foundationSubtitle: foundation.foundationSubtitle,

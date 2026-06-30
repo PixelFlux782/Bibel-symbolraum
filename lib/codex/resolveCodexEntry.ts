@@ -35,6 +35,7 @@ const CANONICAL_CODEX_LOOKUP_IDS: Record<string, string> = {
   licht: "or",
   feuer: "esch",
   esh: "esch",
+  eretz: "erez",
   wueste: "midbar",
   wuste: "midbar",
   brot: "lechem",

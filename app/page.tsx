@@ -62,6 +62,10 @@ export default function StartPage() {
             Der Wasser-Raum öffnet die Tiefe. Was dort sichtbar wird, darf als Spur bleiben.
           </p>
 
+          <p className="symbol-copy mx-auto mt-5 max-w-[18rem] text-xs uppercase tracking-[0.18em] text-gold/60 sm:max-w-2xl">
+            Erste Bewegung: Ursprung / Tiefe / Licht
+          </p>
+
           <div className="mt-16 flex flex-col items-center gap-6">
             <Link href="/raeume/wasser" className="symbol-portal-entry group">
               <span className="symbol-portal-entry-mark" aria-hidden="true" />

@@ -112,6 +112,58 @@ function RoomPreparationBlock({ symbolSlug }: { symbolSlug: string }) {
   );
 }
 
+const genesisRoomAnchors: Record<string, {
+  title: string;
+  text: string;
+  traces: string[];
+  codexHref: string;
+  networkHref: string;
+  onwardHref?: string;
+  onwardLabel?: string;
+}> = {
+  wasser: {
+    title: "Erste Schriftspur: Genesis 1,2",
+    text: "Wasser erscheint als Tiefe vor der Form. Ruach schwebt ueber den Wassern; Mem haelt die verborgene Tiefe.",
+    traces: ["Tiefe", "Wasser", "Ruach", "Mem"],
+    codexHref: "/codex/genesis-1-2?from=raum&symbol=wasser",
+    networkHref: "/symbolnetz?symbol=wasser&path=erste-bewegung",
+    onwardHref: "/raeume/licht?from=wasser&path=erste-bewegung",
+    onwardLabel: "Weiter zum Licht",
+  },
+  licht: {
+    title: "Erste Schriftspur: Genesis 1,3",
+    text: "Das Wort oeffnet Sichtbarkeit. Licht erscheint als erstes Erscheinen und beginnt die Unterscheidung.",
+    traces: ["Wort", "Licht", "Offenbarung", "Unterscheidung"],
+    codexHref: "/codex/genesis-1-3?from=raum&symbol=licht",
+    networkHref: "/symbolnetz?symbol=licht&path=erste-bewegung",
+  },
+};
+
+function GenesisRoomAnchor({ symbolSlug }: { symbolSlug: string }) {
+  const anchor = genesisRoomAnchors[symbolSlug];
+
+  if (!anchor) {
+    return null;
+  }
+
+  return (
+    <aside className="symbol-engine__prepares-room" aria-label={anchor.title}>
+      <p className="symbol-engine__prepares-room-title">{anchor.title}</p>
+      <p className="symbol-engine__prepares-room-copy">{anchor.text}</p>
+      <p className="mt-3 text-[0.62rem] uppercase tracking-[0.16em] text-gold/70">
+        {anchor.traces.slice(0, 4).join(" / ")}
+      </p>
+      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+        <Link href={anchor.codexHref} className="symbol-archive-action">Im Codex vertiefen</Link>
+        <Link href={anchor.networkHref} className="symbol-archive-action">Im Symbolnetz ansehen</Link>
+        {anchor.onwardHref && anchor.onwardLabel ? (
+          <Link href={anchor.onwardHref} className="symbol-archive-action">{anchor.onwardLabel}</Link>
+        ) : null}
+      </div>
+    </aside>
+  );
+}
+
 const nextRoomNotices: Record<string, {
   blockedBySymbol: string;
   buttonLabel: string;
@@ -292,6 +344,7 @@ export function SymbolEngineRoom({ data, initialStateId, roomContext }: SymbolEn
         {roomContext ? <RoomEntryTrace context={roomContext} /> : null}
         {!roomContext ? <WaterFirstEntryNotice symbolSlug={data.slug} /> : null}
         <RoomPersonalTraceCard symbolSlug={data.slug} roomContext={roomContext} />
+        <GenesisRoomAnchor symbolSlug={data.slug} />
         <RoomPreparationBlock symbolSlug={data.slug} />
         <NextRoomNotice symbolSlug={data.slug} />
         <p className="symbol-engine__eyebrow">
