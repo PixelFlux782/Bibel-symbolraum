@@ -152,7 +152,7 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
       { id: "licht", label: "Licht", note: "Himmel und Anfang bereiten Sichtbarkeit vor, ohne das Licht schon auszusprechen." },
       { id: "wasser", label: "Wasser", note: "Schamajim beruehrt den Wasserklang, der im naechsten Vers zur Tiefe wird." },
       { id: "brot", label: "Erde", note: "Erde wird der spaetere Raum von Boden, Nahrung und bewohnbarer Gestalt." },
-      { id: "genesis-1-2", label: "Weiter in die Tiefe", note: "Der gesetzte Ursprung fuehrt in den ungeformten Raum von Wasser, Dunkel und Ruach." },
+      { id: "genesis-1-2", label: "Weiter in die Tiefe", note: "Der Anfang ist beruehrt. Aus ihm fuehrt die Bewegung in Wasser, Dunkel und Ruach." },
     ],
   },
   {
@@ -187,12 +187,12 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
     openedPatterns: ["pattern-schwelle-durch-wasser", "pattern-chaos-ordnung-offenbarung"],
     openedNumbers: ["zahl-40", "zahl-90"],
     growingRooms: [
-      { id: "genesis-1-1", label: "Zurueck zum gesetzten Ursprung", note: "Die Tiefe ist nicht losgeloest; sie antwortet auf Himmel und Erde aus Genesis 1,1." },
-      { id: "wasser", label: "Wasser", note: "Diese Stelle oeffnet den Wasser-Raum: Tiefe, Majim und Ruach werden hier zur zentralen Bibelwurzel." },
+      { id: "genesis-1-1", label: "Zurueck zum Anfang", note: "Die Tiefe ist nicht losgeloest; sie antwortet auf Himmel und Erde aus Genesis 1,1." },
+      { id: "wasser", label: "Wasser-Raum", note: "Beginne im Wasser: Tiefe, Majim und Ruach werden hier zur beruehrbaren Schwelle." },
       { id: "tiefe", label: "Tiefe", note: "Tehom macht den Raum unter der sichtbaren Oberflaeche lesbar." },
       { id: "ruach", label: "Geist / Ruach", note: "Die Bewegung des Geistes beruehrt die Wasser, bevor Licht gerufen wird." },
       { id: "licht", label: "Licht", note: "Licht ist noch nicht da, aber die Ruach bereitet den Rueckweg in Sichtbarkeit vor." },
-      { id: "genesis-1-3", label: "Weiter zum gesprochenen Licht", note: "Aus Tiefe, Wasser und Geist fuehrt die Genesis-Achse zum Wort: Licht werde." },
+      { id: "genesis-1-3", label: "Weiter zum Licht", note: "Aus Tiefe, Wasser und Geist fuehrt die erste Bewegung zum Wort: Licht werde." },
     ],
   },
   {
@@ -223,7 +223,7 @@ export const scriptureFoundationEntries: ScriptureFoundationEntry[] = [
     openedNumbers: ["zahl-1", "zahl-40"],
     growingRooms: [
       { id: "genesis-1-2", label: "Rueckweg in die Tiefe", note: "Das Licht verliert seine Herkunft nicht: Es antwortet auf Tiefe, Wasser und Ruach." },
-      { id: "licht", label: "Licht", note: "Diese Stelle oeffnet den Licht-Raum: Wort, Jehi und Or werden zur zentralen Bibelwurzel." },
+      { id: "licht", label: "Weiter zum Licht-Raum", note: "Das Wort oeffnet Licht. Jehi und Or werden im Licht-Raum zur beruehrbaren Schwelle." },
       { id: "wort", label: "Wort", note: "Der Raum des Wortes wurzelt im ersten Ruf." },
       { id: "davar-qol-or", label: "Wort wird Licht", note: "Die kleine Journey macht die Bewegung von Wort, Stimme und Licht begehbar." },
       { id: "offenbarung", label: "Offenbarung", note: "Sichtbarkeit waechst aus dem gesprochenen Anfang." },

@@ -11,15 +11,17 @@ const jiti = createJiti(__filename, {
 
 const { validateOntology } = jiti("../lib/ontology/validateOntology.ts") as typeof import("../lib/ontology/validateOntology");
 const { validateScriptureFoundationData } = jiti("../lib/codex/scriptureFoundation.ts") as typeof import("../lib/codex/scriptureFoundation");
+const { validateGenesisCompletenessMatrix } = jiti("../lib/codex/genesisCompletenessMatrix.ts") as typeof import("../lib/codex/genesisCompletenessMatrix");
 
 const result = validateOntology();
 const scriptureResult = validateScriptureFoundationData();
+const completenessResult = validateGenesisCompletenessMatrix();
 
 console.log("");
 console.log("SYMBOLRAUM Ontology Validation");
 console.log("--------------------------------");
 
-if (result.errors.length === 0 && scriptureResult.errors.length === 0) {
+if (result.errors.length === 0 && scriptureResult.errors.length === 0 && completenessResult.errors.length === 0) {
   console.log("Ontology validation passed.");
 } else {
   console.error("Ontology validation failed.");
@@ -28,6 +30,7 @@ if (result.errors.length === 0 && scriptureResult.errors.length === 0) {
 console.log(`${result.errors.length} errors`);
 console.log(`${result.warnings.length} warnings`);
 console.log(`${scriptureResult.errors.length} scripture foundation errors`);
+console.log(`${completenessResult.errors.length} genesis completeness errors`);
 
 if (result.errors.length > 0) {
   console.log("");
@@ -56,4 +59,20 @@ if (scriptureResult.errors.length > 0) {
   }
 }
 
-process.exit(result.errors.length > 0 || scriptureResult.errors.length > 0 ? 1 : 0);
+if (completenessResult.errors.length > 0) {
+  console.log("");
+  console.log("Genesis Completeness Errors:");
+  for (const error of completenessResult.errors) {
+    console.error(`- ${error}`);
+  }
+}
+
+if (completenessResult.warnings.length > 0) {
+  console.log("");
+  console.log("Genesis Completeness Warnings:");
+  for (const warning of completenessResult.warnings) {
+    console.warn(`- ${warning}`);
+  }
+}
+
+process.exit(result.errors.length > 0 || scriptureResult.errors.length > 0 || completenessResult.errors.length > 0 ? 1 : 0);

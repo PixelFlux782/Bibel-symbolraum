@@ -65,6 +65,16 @@ export const hebrewRoots: HebrewRoot[] = [
     notes: "Die Beziehung zwischen מדבר und דבר wird später philologisch genauer belegt.",
     sources: [],
   },
+  {
+    id: "root-r-a-h",
+    radicals: ["\u05e8", "\u05d0", "\u05d4"],
+    letterIds: ["resh", "aleph", "he"],
+    rootType: "triliteral",
+    coreSemanticField: "sehen, wahrnehmen und erkennen",
+    meaningFields: [],
+    relatedRootIds: [],
+    sources: [],
+  },
 ];
 
 export const hebrewWords: HebrewWord[] = [
@@ -501,6 +511,49 @@ export const hebrewWords: HebrewWord[] = [
     relatedSymbolSlugs: ["licht", "ordnung", "offenbarung"],
     biblicalReferences: [
       reference("wajehi-genesis-1-3", "Genesis 1,3", "Und es wurde Licht.", "Das gesprochene Licht wird Ereignis"),
+    ],
+  },
+  {
+    id: "tov",
+    slug: "tov",
+    hebrew: "\u05d8\u05d5\u05d1",
+    transliteration: "tov",
+    germanMeaning: "gut",
+    meaningThreshold: "Tov benennt die Gutheit, die nach dem ersten Licht ausgesprochen wird: Sichtbarkeit wird als tragfaehige Ordnung erkannt.",
+    gematria: 17,
+    category: "word",
+    letterIds: ["tet", "vav", "bet"],
+    possibleRootIds: [],
+    rootNote: "Tov wird als Anschlusswort von Genesis 1,4 gefuehrt: nicht flache Moral, sondern stimmige, lebensfaehige und von Gott erkannte Qualitaet.",
+    meaningFields: [
+      meaningField("tov-goodness", "Gutheit", "Tov bezeichnet eine stimmige Guete, die nicht nur behauptet, sondern erkannt wird.", ["Gutheit", "Bejahung", "Erkennen"]),
+      meaningField("tov-order", "Tragfaehige Ordnung", "Das Gute wird sichtbar, nachdem Licht Wahrnehmung und Unterscheidung ermoeglicht.", ["Ordnung", "Licht", "Wahrnehmung"]),
+      meaningField("tov-life", "Lebensdienlichkeit", "Gut ist, was Leben, Orientierung und Bestand traegt.", ["Leben", "Orientierung", "Bestand"]),
+    ],
+    relatedSymbolSlugs: ["licht", "ordnung", "offenbarung"],
+    biblicalReferences: [
+      reference("tov-genesis-1-4", "Genesis 1,4", "Gott sieht, dass das Licht gut ist.", "Gutheit als erste Antwort auf das Licht"),
+    ],
+  },
+  {
+    id: "raah",
+    slug: "raah",
+    hebrew: "\u05e8\u05d0\u05d4",
+    transliteration: "raah",
+    germanMeaning: "sehen",
+    meaningThreshold: "Raah bereitet Genesis 1,4 vor: Licht wird nicht nur erschaffen, sondern gesehen und als traegende Guete erkannt.",
+    category: "word",
+    letterIds: ["resh", "aleph", "he"],
+    possibleRootIds: ["root-r-a-h"],
+    rootNote: "Raah wird als Folgeschwelle des Lichts gefuehrt; in Genesis 1,3 bleibt das Sehen vorbereitet und nicht dominant.",
+    meaningFields: [
+      meaningField("raah-seeing", "Sehen", "Raah benennt Wahrnehmung: Licht tritt vor einen Blick und wird lesbar.", ["Sehen", "Wahrnehmung", "Licht"]),
+      meaningField("raah-recognition", "Erkenntnis", "Sehen wird zur Erkenntnis, wenn das Sichtbare als bedeutungsvoll erkannt wird.", ["Erkenntnis", "Deutung"]),
+      meaningField("raah-revelation", "Offenbarung", "Was gesehen wird, ist nicht mehr nur verborgen, sondern erscheint im Raum der Offenbarung.", ["Offenbarung", "Sichtbarkeit"]),
+    ],
+    relatedSymbolSlugs: ["licht", "auge", "erkenntnis", "offenbarung"],
+    biblicalReferences: [
+      reference("raah-genesis-1-4", "Genesis 1,4", "Gott sah das Licht.", "Sehen als erste Pruefung des erschaffenen Lichts"),
     ],
   },
   {

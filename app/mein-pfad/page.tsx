@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
+  FIRST_MOVEMENT_COMPLETION_EVENT_ID,
   getPersonalPathEvents,
   getPersonalPathEventSentence,
   migrateLegacyPathState,
@@ -87,7 +88,31 @@ function getMovementLabels(events: PersonalPathEvent[]) {
   return labels.slice(-6);
 }
 
+function hasEvent(events: PersonalPathEvent[], predicate: (event: PersonalPathEvent) => boolean) {
+  return events.some(predicate);
+}
+
+function hasEnteredRoom(events: PersonalPathEvent[], roomId: string) {
+  return hasEvent(events, (event) => event.type === "room_entered" && event.roomId === roomId);
+}
+
+function hasFirstMovementReachedLight(events: PersonalPathEvent[]) {
+  return hasEvent(events, (event) =>
+    event.id === FIRST_MOVEMENT_COMPLETION_EVENT_ID ||
+    event.targetId === "erste-bewegung" ||
+    event.targetId === "genesis-1-3"
+  );
+}
+
 function getNextThreshold(events: PersonalPathEvent[]) {
+  if (hasFirstMovementReachedLight(events) && !hasEnteredRoom(events, "licht")) {
+    return {
+      label: "Licht-Raum",
+      href: "/raeume/licht?from=mein-pfad&path=erste-bewegung&symbol=licht",
+      text: "Deine erste Bewegung fuehrt weiter. Aus der Tiefe oeffnet sich das Licht.",
+    };
+  }
+
   const touchedSymbols = new Set(
     events
       .flatMap((event) => [event.roomId, event.targetId])
@@ -193,7 +218,7 @@ export default function MeinPfadPage() {
               <section className="symbol-personal-way" aria-label="Letzte Bewegung">
                 <div className="symbol-personal-way__head">
                   <p className="symbol-kicker">Letzte Bewegung</p>
-                  <h2>{movementLabels.join(" -> ")}</h2>
+                  <h2>{movementLabels.join(" / ")}</h2>
                   <p>Diese Bewegung entsteht nur aus Orten, die du betreten oder beruehrt hast.</p>
                 </div>
               </section>

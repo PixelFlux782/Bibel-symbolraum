@@ -140,6 +140,9 @@ export const symbolPathConfigs = {
     },
     codexGates: {
       meaningFields: [
+        { id: "or", meaningNodeId: "light", label: "Or / Licht", href: "/codex/or" },
+        { id: "raah", meaningNodeId: "awareness", label: "Raah / Sehen", href: "/codex/raah" },
+        { id: "tov", meaningNodeId: "life", label: "Tov / Gut", href: "/codex/tov" },
         { id: "offenbarung", meaningNodeId: "revelation", label: "Offenbarung", href: "/codex/offenbarung" },
         { id: "ordnung", meaningNodeId: "guidance", label: "Ordnung", href: "/codex/ordnung" },
         { id: "erkenntnis", meaningNodeId: "awareness", label: "Erkenntnis", href: "/codex/erkenntnis" },
@@ -149,11 +152,15 @@ export const symbolPathConfigs = {
       ],
       scriptureAnchors: [
         { id: "genesis-1-3", reference: "Genesis 1,3", label: "Genesis 1,3", href: "/codex/genesis-1-3" },
+        { id: "genesis-1-4", reference: "Genesis 1,4", label: "Genesis 1,4", href: "/codex/genesis-1-4" },
       ],
     },
     codexAnchorBridge: {
       anchorIds: [
         "licht",
+        "or",
+        "raah",
+        "tov",
         "offenbarung",
         "ordnung",
         "erkenntnis",
@@ -161,10 +168,15 @@ export const symbolPathConfigs = {
         "auge",
         "himmel",
         "genesis-1-3",
+        "genesis-1-4",
       ],
       defaultContextLabel: "Teil der Lichtspur",
       contextLabels: {
         "genesis-1-3": "Licht als erstes Sichtbarwerden",
+        "genesis-1-4": "Licht als leise Schwelle von Sehen und Gut",
+        or: "Licht als hebraeischer Klang",
+        raah: "Sehen als Folgeschwelle des Lichts",
+        tov: "Gut als erkannte Qualitaet",
       },
       returnLabel: "Zum Licht-Codex zurückkehren",
       roomLabel: "Den Lichtraum betreten",
@@ -434,11 +446,15 @@ export type ConfiguredSymbolId = keyof typeof symbolPathConfigs;
 
 export const knownSymbolPathLabels: Record<string, string> = {
   "genesis-1-3": "Genesis 1,3",
+  "genesis-1-4": "Genesis 1,4",
   "genesis-1-2": "Genesis 1,2",
   "exodus-3": "Exodus 3",
   "exodus-3-2": "Exodus 3,2",
   wasser: "Wasser",
   licht: "Licht",
+  or: "Or",
+  raah: "Raah",
+  tov: "Tov",
   feuer: "Feuer",
   esch: "Esch",
   flamme: "Flamme",

@@ -88,7 +88,7 @@ function WaterFirstEntryNotice({ symbolSlug }: { symbolSlug: string }) {
     <aside className="symbol-engine__first-entry" aria-label="Erster Eintritt">
       <p className="symbol-engine__first-entry-title">Erster Eintritt</p>
       <p className="symbol-engine__first-entry-copy">
-        Der Wasser-Raum öffnet sich in der Tiefe. Wenn du antwortest, bleibt hier dein erster Nachklang.
+        Beginne im Wasser. Der Anfang ist beruehrt, die Tiefe ist nicht leer, und deine Spur entsteht leise.
       </p>
     </aside>
   );
@@ -122,17 +122,17 @@ const genesisRoomAnchors: Record<string, {
   onwardLabel?: string;
 }> = {
   wasser: {
-    title: "Erste Schriftspur: Genesis 1,2",
-    text: "Wasser erscheint als Tiefe vor der Form. Ruach schwebt ueber den Wassern; Mem haelt die verborgene Tiefe.",
-    traces: ["Tiefe", "Wasser", "Ruach", "Mem"],
+    title: "Erste Bewegung",
+    text: "Der Anfang ist beruehrt. Die Tiefe ist nicht leer. Der Geist schwebt ueber dem Wasser, bevor das Wort Licht oeffnet.",
+    traces: ["Ursprung", "Tiefe", "Ruach", "Wort", "Licht"],
     codexHref: "/codex/genesis-1-2?from=raum&symbol=wasser",
     networkHref: "/symbolnetz?symbol=wasser&path=erste-bewegung",
     onwardHref: "/raeume/licht?from=wasser&path=erste-bewegung",
-    onwardLabel: "Weiter zum Licht",
+    onwardLabel: "Aus der Tiefe oeffnet sich das Licht",
   },
   licht: {
     title: "Erste Schriftspur: Genesis 1,3",
-    text: "Das Wort oeffnet Sichtbarkeit. Licht erscheint als erstes Erscheinen und beginnt die Unterscheidung.",
+    text: "Das Wort oeffnet Licht. Was aus der Tiefe kam, wird sichtbar und beginnt zu unterscheiden.",
     traces: ["Wort", "Licht", "Offenbarung", "Unterscheidung"],
     codexHref: "/codex/genesis-1-3?from=raum&symbol=licht",
     networkHref: "/symbolnetz?symbol=licht&path=erste-bewegung",
@@ -151,7 +151,7 @@ function GenesisRoomAnchor({ symbolSlug }: { symbolSlug: string }) {
       <p className="symbol-engine__prepares-room-title">{anchor.title}</p>
       <p className="symbol-engine__prepares-room-copy">{anchor.text}</p>
       <p className="mt-3 text-[0.62rem] uppercase tracking-[0.16em] text-gold/70">
-        {anchor.traces.slice(0, 4).join(" / ")}
+        {anchor.traces.join(" / ")}
       </p>
       <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
         <Link href={anchor.codexHref} className="symbol-archive-action">Im Codex vertiefen</Link>

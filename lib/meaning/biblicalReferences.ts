@@ -29,6 +29,12 @@ export const biblicalReferences: BiblicalReference[] = [
     aliases: ["Genesis 1", "Es werde Licht"],
   },
   {
+    id: "genesis-1-4",
+    reference: "Genesis 1,4",
+    label: "Genesis 1,4",
+    aliases: ["Gott sah das Licht", "Licht gut", "Und Gott sah"],
+  },
+  {
     id: "john-1-4-5",
     reference: "Johannes 1,4-5",
     label: "Johannes 1",

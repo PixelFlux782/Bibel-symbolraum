@@ -138,6 +138,20 @@ export const hebrewMeaningLinks: HebrewMeaningLink[] = [
     nodeIds: ["transition", "revelation", "light", "word"],
   },
   {
+    id: "hebrew-tov",
+    hebrewWordId: "tov",
+    hebrew: "\u05d8\u05d5\u05d1",
+    transliteration: "tov",
+    nodeIds: ["goodness", "light", "awareness", "revelation", "life", "guidance"],
+  },
+  {
+    id: "hebrew-raah",
+    hebrewWordId: "raah",
+    hebrew: "\u05e8\u05d0\u05d4",
+    transliteration: "raah",
+    nodeIds: ["awareness", "light", "revelation", "guidance", "goodness"],
+  },
+  {
     id: "hebrew-bara",
     hebrewWordId: "bara",
     hebrew: "\u05d1\u05e8\u05d0",
@@ -384,6 +398,13 @@ export const biblicalMeaningLinks: BiblicalMeaningLink[] = [
     label: "Genesis 1 Licht",
     aliases: ["Genesis 1"],
     nodeIds: ["light", "word", "revelation", "guidance", "awareness", "transition"],
+  },
+  {
+    id: "biblical-genesis-1-4",
+    biblicalReferenceId: "genesis-1-4",
+    label: "Genesis 1,4",
+    aliases: ["Gott sah das Licht", "Licht gut"],
+    nodeIds: ["light", "awareness", "goodness", "revelation", "guidance", "life"],
   },
   {
     id: "biblical-john-1",

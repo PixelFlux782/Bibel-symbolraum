@@ -5,6 +5,7 @@ export type MeaningNodeId =
   | "transition"
   | "purification"
   | "life"
+  | "goodness"
   | "hiddenness"
   | "light"
   | "revelation"

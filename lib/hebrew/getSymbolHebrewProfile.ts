@@ -20,7 +20,7 @@ export interface SymbolHebrewProfile {
 
 const ROOM_HEBREW_PRIORITIES: Record<string, string[]> = {
   wasser: ["majim", "mem", "tehom", "ruach", "mikwe", "jordan", "jam"],
-  licht: ["or", "aleph", "panim", "kavod", "chokma", "bina", "schamajim"],
+  licht: ["or", "raah", "tov", "aleph", "panim", "kavod", "chokma", "bina", "schamajim"],
   feuer: ["esch", "aleph", "mizbeach", "korban", "ruach"],
   wueste: ["midbar", "mem", "derech", "nes", "sinai", "manna"],
   brot: ["lechem", "mem", "manna", "dagan", "shever", "seudah"],

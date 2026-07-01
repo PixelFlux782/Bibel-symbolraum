@@ -38,6 +38,18 @@ export const meaningRelations: MeaningRelation[] = [
     description: "Was sichtbar wird, kann zu innerem Bewusstsein werden.",
   },
   {
+    id: "awareness-goodness",
+    fromNodeId: "awareness",
+    toNodeId: "goodness",
+    description: "Erkanntes Licht kann als stimmige und lebensfaehige Guete benannt werden.",
+  },
+  {
+    id: "goodness-life",
+    fromNodeId: "goodness",
+    toNodeId: "life",
+    description: "Guete zeigt sich als tragende Qualitaet, die Leben ermoeglicht.",
+  },
+  {
     id: "revelation-life",
     fromNodeId: "revelation",
     toNodeId: "life",

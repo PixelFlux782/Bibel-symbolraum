@@ -32,6 +32,11 @@ export const meaningNodes: MeaningNode[] = [
     description: "Lebendigkeit, Wachstum und tragende Versorgung.",
   },
   {
+    id: "goodness",
+    label: "Guete",
+    description: "Stimmige, lebensfaehige Qualitaet, die als tragende Ordnung erkannt wird.",
+  },
+  {
     id: "hiddenness",
     label: "Verborgenheit",
     description: "Eine Wirklichkeit, die gegenwärtig ist, ohne ganz sichtbar zu sein.",
@@ -149,7 +154,7 @@ export const meaningFields: MeaningField[] = [
     id: "light",
     label: "Licht",
     description: "Archetypische Bedeutungsräume, die sich im Symbol Licht verdichten.",
-    nodeIds: ["light", "revelation", "awareness", "guidance", "life"],
+    nodeIds: ["light", "revelation", "awareness", "guidance", "life", "goodness"],
   },
   {
     id: "fire",

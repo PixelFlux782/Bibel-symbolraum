@@ -33,6 +33,8 @@ export const symbolHebrewMappings: HebrewSymbolMapping[] = [
       "amar",
       "haja",
       "wajehi",
+      "raah",
+      "tov",
       "choschech",
       "panim",
       "kavod",

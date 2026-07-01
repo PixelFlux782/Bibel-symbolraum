@@ -19,6 +19,14 @@ const CURRENT_ROOMS = [
   "Brot",
 ];
 
+const FIRST_MOVEMENT = [
+  "Ursprung",
+  "Tiefe",
+  "Ruach",
+  "Wort",
+  "Licht",
+];
+
 export default function StartPage() {
   return (
     <div className="symbol-page">
@@ -59,11 +67,11 @@ export default function StartPage() {
           </p>
 
           <p className="symbol-copy mx-auto mt-7 max-w-[20rem] text-sm text-muted-soft sm:max-w-2xl sm:text-lg">
-            Der Wasser-Raum öffnet die Tiefe. Was dort sichtbar wird, darf als Spur bleiben.
+            Beginne im Wasser. Beruehre den Anfang, geh durch Tiefe, Ruach und Wort, bis Licht sich oeffnet.
           </p>
 
           <p className="symbol-copy mx-auto mt-5 max-w-[18rem] text-xs uppercase tracking-[0.18em] text-gold/60 sm:max-w-2xl">
-            Erste Bewegung: Ursprung / Tiefe / Licht
+            Erste Bewegung: {FIRST_MOVEMENT.join(" / ")}
           </p>
 
           <div className="mt-16 flex flex-col items-center gap-6">
@@ -72,8 +80,8 @@ export default function StartPage() {
               <span>Wasser-Raum betreten</span>
             </Link>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
-              <Link href="/symbolnetz" className="symbol-cta">
-                Symbolnetz öffnen
+              <Link href="/symbolnetz?symbol=wasser&path=erste-bewegung" className="symbol-cta">
+                Erste Bewegung ansehen
               </Link>
               <Link href="/mein-pfad" className="symbol-cta symbol-cta-secondary">
                 Mein Pfad ansehen

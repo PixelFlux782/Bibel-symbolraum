@@ -49,14 +49,14 @@ export const waterEngineData: SymbolEngineData = {
     {
       id: "genesis-1-1",
       reference: "Genesis 1,1",
-      title: "Ursprungsschwelle",
-      text: "Im Anfang werden Himmel und Erde genannt. Noch ist die Geschichte kaum geöffnet, aber der Raum ist gesetzt.",
+      title: "Der Anfang ist beruehrt.",
+      text: "Im Anfang werden Himmel und Erde genannt. Noch ist die Geschichte kaum geoeffnet, aber der Raum ist gesetzt.",
       meaning: "Genesis 1,1 bleibt die Schwelle, aus der die Tiefe von Genesis 1,2 hervortritt.",
     },
     {
       id: "genesis-1-2",
       reference: "Genesis 1,2",
-      title: "Tiefe vor der Form",
+      title: "Die Tiefe ist nicht leer.",
       text: "Die Erde ist tohu wa-vohu. Finsternis liegt auf Tehom, und die Ruach Gottes schwebt über den Wassern.",
       meaning: "Wasser ist hier kein fertiges Element. Es ist Tiefe vor der Form, von Geist berührt und noch ungeordnet offen.",
     },
@@ -106,11 +106,11 @@ export const waterEngineData: SymbolEngineData = {
   states: [
     {
       id: "before-order",
-      navigationLabel: "Vor der Ordnung",
+      navigationLabel: "Ursprung",
       eyebrow: "Genesis 1,2",
-      title: "Noch ist nichts getrennt.",
-      text: "Aus der Ursprungsschwelle von Genesis 1,1 öffnet sich der ungeformte Raum: Tehom, Majim und Ruach stehen vor jeder klaren Grenze.",
-      inscription: "Bereschit / Tehom / Ruach",
+      title: "Der Anfang fuehrt in die Tiefe.",
+      text: "Aus Genesis 1,1 oeffnet sich der ungeformte Raum. Tehom, Majim und Ruach stehen vor jeder klaren Grenze.",
+      inscription: "Ursprung / Tiefe / Ruach",
       visual: {
         image: visualAssets.wasserCinema,
         backgroundImage: visualAssets.wasserInterface,
@@ -128,7 +128,7 @@ export const waterEngineData: SymbolEngineData = {
     },
     {
       id: "depth",
-      navigationLabel: "Tiefe",
+      navigationLabel: "Tiefe / Ruach",
       eyebrow: "Offenes Mem",
       title: "Die Tiefe öffnet sich.",
       text: "Das offene Mem ist keine Antwort. Es ist ein Raum, in dem Tohu wa-vohu, Ursprung und Geburt nebeneinander liegen dürfen.",

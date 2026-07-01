@@ -67,6 +67,7 @@ const CODEX_ENTRY_IDS = [
   "genesis-1-1",
   "genesis-1-2",
   "genesis-1-3",
+  "genesis-1-4",
   "exodus-14",
   "schoepfung-wasser",
   "schilfmeer",
@@ -136,6 +137,7 @@ const CODEX_ALIASES = {
   "genesis-1-1": ["Genesis 1,1", "1 Mose 1,1", "Bereschit 1:1", "Im Anfang"],
   "genesis-1-2": ["Genesis 1,2", "1 Mose 1,2", "Bereschit 1:2", "Tohu wabohu", "Ruach"],
   "genesis-1-3": ["Genesis 1,3", "1 Mose 1,3", "Bereschit 1:3", "Es werde Licht", "Jehi or"],
+  "genesis-1-4": ["Genesis 1,4", "1 Mose 1,4", "Bereschit 1:4", "Gott sah das Licht", "Licht gut"],
   "exodus-14": ["Exodus 14", "2 Mose 14", "Schilfmeer", "Meer als Durchgang", "Rettung am Meer"],
   "schoepfung-wasser": ["Wasser der Schöpfung", "Anfangswasser", "Geist über den Wassern"],
   schilfmeer: ["Schilfmeer", "Meer als Durchgang", "Exodus Wasser"],
@@ -346,6 +348,8 @@ const SCRIPTURE_ANCHOR_ID_ALIASES: Record<string, string> = {
   "or-genesis-1-3": "genesis-1-3",
   "or-exodus-13-21": "exodus-13-21",
   "or-john-1-4-5": "john-1-4-5",
+  "tov-genesis-1-4": "genesis-1-4",
+  "raah-genesis-1-4": "genesis-1-4",
   "esh-exodus-3": "exodus-3-2",
   "esh-exodus-13-21": "exodus-13-21",
   "esh-malachi-3": "malachi-3-2-3",
@@ -853,7 +857,7 @@ function letterEntry(letterId: string): CodexEntry {
   };
 }
 
-function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2" | "genesis-1-3" | "exodus-14"): CodexEntry {
+function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2" | "genesis-1-3" | "genesis-1-4" | "exodus-14"): CodexEntry {
   const reference = biblicalReferences.find((entry) => entry.id === referenceId);
   const base = {
     "genesis-1": {
@@ -922,6 +926,24 @@ function scriptureEntry(referenceId: "genesis-1" | "genesis-1-1" | "genesis-1-2"
         { targetId: "davar", type: "anchors-scripture", label: "Das Wort ruft, bevor die Szene erklaert wird.", source: "meaning-graph" },
         { targetId: "offenbarung", type: "anchors-scripture", label: "Offenbarung tritt als Ruf aus der Verborgenheit hervor.", source: "meaning-graph" },
         { targetId: "aleph", type: "contains-letter", label: "Aleph steht im Lichtwort or als stiller Ursprung.", source: "hebrew-letter" },
+      ] satisfies CodexRelation[],
+      symbolRoomSlug: "licht",
+    },
+    "genesis-1-4": {
+      title: "Genesis 1,4",
+      subtitle: "Das Licht wird gesehen",
+      reference: reference?.reference ?? "Genesis 1,4",
+      label: "Gott sah das Licht",
+      searchTerms: ["Bereshit 1:4", "Gott sah", "Raah", "Or", "Tov", "Licht gut"],
+      summary:
+        "Genesis 1,4 ist Folgeschwelle. Das Licht wird gesehen und als gut erkannt. Sehen, Licht und Gut treten zusammen, ohne die erste Bewegung von Genesis 1,1-3 zu ueberladen.",
+      meaningFields: biblicalMeaningFields(referenceId),
+      relations: [
+        { targetId: "genesis-1-3", type: "related", label: "Genesis 1,3 bleibt der Prototyp: Licht wird zuerst gerufen.", source: "scripture-reference" },
+        { targetId: "or", type: "anchors-scripture", label: "Das Licht wird nicht nur erschaffen, sondern gesehen.", source: "meaning-graph" },
+        { targetId: "raah", type: "has-hebrew-word", label: "Raah benennt das Sehen als erste Wahrnehmung des Lichts.", source: "hebrew-word" },
+        { targetId: "tov", type: "has-hebrew-word", label: "Tov benennt Guete als erkannte Qualitaet.", source: "hebrew-word" },
+        { targetId: "erkenntnis", type: "shares-meaning", label: "Sehen wird zur Erkenntnis, weil Licht als gut erkannt wird.", source: "meaning-graph" },
       ] satisfies CodexRelation[],
       symbolRoomSlug: "licht",
     },
@@ -1817,6 +1839,7 @@ const seededCodexRegistry = [
   scriptureEntry("genesis-1-1"),
   scriptureEntry("genesis-1-2"),
   scriptureEntry("genesis-1-3"),
+  scriptureEntry("genesis-1-4"),
   scriptureEntry("exodus-14"),
   storyAnchorEntry({
     id: "schoepfung-wasser",

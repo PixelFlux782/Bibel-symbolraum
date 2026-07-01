@@ -332,7 +332,9 @@ function getDefaultSymbolRoomPath(entry: CodexEntry) {
     return undefined;
   }
 
-  const scriptureAnchors = getSymbolPathConfig(entry.symbolRoomSlug)?.codexGates?.scriptureAnchors ?? [];
+  const scriptureAnchors: Array<{ id: string }> = [
+    ...(getSymbolPathConfig(entry.symbolRoomSlug)?.codexGates?.scriptureAnchors ?? []),
+  ];
 
   return scriptureAnchors.length === 1 ? scriptureAnchors[0].id : undefined;
 }
@@ -963,9 +965,9 @@ type ScriptureSceneFormula = {
 const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   "genesis-1-1": {
     formula: "Ursprung",
-    threshold: "Der Anfang setzt einen Horizont. Himmel und Erde stehen einander gegenueber; die Ordnung ist noch leise.",
+    threshold: "Der Anfang ist beruehrt. Himmel und Erde stehen einander gegenueber; die Ordnung ist noch leise.",
     sceneSentences: [
-      "Vor der Tiefe steht die erste Setzung.",
+      "Vor der Tiefe steht der beruehrte Anfang.",
       "Himmel und Erde oeffnen den Raum, in dem alles Weitere lesbar wird.",
       "Die naechste Schwelle fuehrt hinab in Wasser, Dunkel und schwebenden Geist.",
     ],
@@ -989,7 +991,7 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
   },
   "genesis-1-2": {
     formula: "Tiefe",
-    threshold: "Die gesetzte Erde liegt noch ungeformt. Ueber Tiefe, Wasser und Dunkel bewegt sich die Ruach.",
+    threshold: "Die Tiefe ist nicht leer. Ueber Wasser und Dunkel bewegt sich die Ruach.",
     sceneSentences: [
       "Aus der ersten Setzung wird eine Schwelle aus Tiefe.",
       "Das Ungeformte ist nicht bedeutungslos; es ist beruehrte Moeglichkeit.",
@@ -1012,12 +1014,12 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
     contemplativeTrace: "Nimm die Tiefe nicht als Mangel. Hoere, wie ueber ihr schon Bewegung ist.",
     roomNotes: {
       wasser: "Diese Stelle oeffnet den Wasser-Raum: Tiefe, Majim und Ruach werden zur zentralen Bibelwurzel.",
-      "genesis-1-3": "Aus dem beruehrten Ungeformten fuehrt die Achse zum gerufenen Licht.",
+      "genesis-1-3": "Aus dem beruehrten Ungeformten fuehrt die Bewegung zum gerufenen Licht.",
     },
   },
   "genesis-1-3": {
     formula: "Licht",
-    threshold: "Aus der beruehrten Tiefe tritt das Wort hervor. Licht wird gerufen, und das Erste erscheint.",
+    threshold: "Das Wort oeffnet Licht. Aus der beruehrten Tiefe tritt Sichtbarkeit hervor.",
     sceneSentences: [
       "Die Tiefe bleibt der Herkunftsraum.",
       "Das Sprechen wird Ereignis: Jehi or, und Licht wird.",
@@ -1040,6 +1042,31 @@ const SCRIPTURE_SCENE_FORMULAS: Record<string, ScriptureSceneFormula> = {
     contemplativeTrace: "Lass das Licht zuerst erscheinen, bevor du es erklaerst.",
     roomNotes: {
       licht: "Diese Stelle oeffnet den Licht-Raum: Wort, Jehi und Or werden zur zentralen Bibelwurzel.",
+    },
+  },
+  "genesis-1-4": {
+    formula: "Gesehen",
+    threshold: "Das Licht wird gesehen und als gut erkannt.",
+    sceneSentences: [
+      "Das Licht bleibt nicht nur Ereignis.",
+      "Gott sieht das Licht.",
+      "Gut erscheint als erkannte, tragfaehige Qualitaet.",
+    ],
+    movementSteps: [
+      { id: "or", label: "Licht", href: "/codex/or" },
+      { id: "raah", label: "Sehen", href: "/codex/raah" },
+      { id: "tov", label: "Gut", href: "/codex/tov" },
+    ],
+    symbols: [
+      { id: "or", label: "Licht", href: "/codex/or" },
+      { id: "raah", label: "Sehen", href: "/codex/raah" },
+      { id: "tov", label: "Gut", href: "/codex/tov" },
+      { id: "erkenntnis", label: "Erkenntnis", href: "/codex/erkenntnis" },
+    ],
+    meaningFieldIds: ["light", "awareness", "goodness", "revelation", "life"],
+    contemplativeTrace: "Lass das Licht gesehen werden, bevor du das Gute erklaerst.",
+    roomNotes: {
+      licht: "Diese Stelle bereitet im Licht-Raum die Folgeschwelle vor: Licht wird sichtbar, gesehen und gut genannt.",
     },
   },
   "exodus-14": {

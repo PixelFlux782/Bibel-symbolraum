@@ -350,6 +350,9 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   amar: { x: 850, y: 54 },
   wajehi: { x: 924, y: 194 },
   or: { x: 1000, y: 166 },
+  raah: { x: 1088, y: 250 },
+  tov: { x: 1168, y: 338 },
+  "genesis-1-4": { x: 1150, y: 116 },
 };
 const missingPositionWarnings = new Set<string>();
 const SYMBOL_NODE_SIZE = 176;
@@ -527,18 +530,18 @@ const LANDSCAPE_DISCLOSURE_PROFILES: Record<string, LandscapeDisclosureProfile> 
 const GENESIS_STATIONS: Record<GenesisStationId, GenesisStation> = {
   "genesis-1-1": {
     id: "genesis-1-1",
-    title: "Ursprungstor",
-    movement: "Ursprung / Setzung",
-    text: "Die erste Bewegung setzt den Raum. Himmel und Erde stehen im Anfang, bevor Tiefe und Licht sichtbar werden.",
+    title: "Der Anfang ist beruehrt.",
+    movement: "Ursprung / Anfang",
+    text: "Im Anfang wird der Raum gesetzt. Noch ist nichts erklaert, aber Himmel und Erde sind genannt.",
     traces: ["Anfang", "Himmel", "Erde", "Setzung", "Genesis 1,2"],
     codexHref: "/codex/genesis-1-1?from=symbolnetz&path=erste-bewegung",
     nextId: "genesis-1-2",
   },
   "genesis-1-2": {
     id: "genesis-1-2",
-    title: "Tiefe und Hauch",
+    title: "Die Tiefe ist nicht leer.",
     movement: "Tiefe / Wasser / Ruach",
-    text: "Die zweite Bewegung fuehrt nicht sofort zur Form. Sie zeigt die Tiefe, das Wasser und den Geist, der ueber dem Ungewordenen schwebt.",
+    text: "Wasser, Dunkel und Ruach stehen vor der Form. Der Geist schwebt ueber dem Wasser.",
     traces: ["Wasser", "Tiefe", "Ruach", "Mem", "Genesis 1,3"],
     codexHref: "/codex/genesis-1-2?from=symbolnetz&path=erste-bewegung",
     roomHref: "/raeume/wasser?from=symbolnetz&path=erste-bewegung",
@@ -547,15 +550,23 @@ const GENESIS_STATIONS: Record<GenesisStationId, GenesisStation> = {
   },
   "genesis-1-3": {
     id: "genesis-1-3",
-    title: "Wort und Licht",
+    title: "Das Wort oeffnet Licht.",
     movement: "Wort / Licht / Offenbarung",
-    text: "Die dritte Bewegung laesst das Wort hervortreten. Licht erscheint, und mit ihm beginnt die erste Unterscheidung.",
+    text: "Das Sprechen wird Ereignis. Licht erscheint, und deine erste Bewegung fuehrt weiter.",
     traces: ["Wort", "Licht", "Offenbarung", "Unterscheidung"],
     codexHref: "/codex/genesis-1-3?from=symbolnetz&path=erste-bewegung",
     roomHref: "/raeume/licht?from=symbolnetz&path=erste-bewegung",
-    roomCta: "Licht-Raum betreten",
+    roomCta: "Weiter zum Licht",
   },
 };
+
+const FIRST_MOVEMENT_SEQUENCE = [
+  { id: "genesis-1-1", label: "Ursprung" },
+  { id: "genesis-1-2", label: "Tiefe" },
+  { id: "ruach", label: "Ruach" },
+  { id: "wort", label: "Wort" },
+  { id: "genesis-1-3", label: "Licht" },
+] as const;
 
 function isGenesisStationId(id: string): id is GenesisStationId {
   return id in GENESIS_STATIONS;
@@ -802,7 +813,7 @@ function getInitialSymbolNetworkState(initialUrlState: SymbolNetworkInitialUrlSt
   const activeGenesisStationId: GenesisStationId | null = initialUrlState.path === "erste-bewegung"
     ? symbolId === "licht"
       ? "genesis-1-3"
-      : "genesis-1-2"
+      : "genesis-1-1"
     : null;
 
   return {
@@ -2801,16 +2812,20 @@ function GenesisStationDetail({
       <div className="symbol-disclosure__layer symbol-disclosure__movement">
         <p className="symbol-kicker text-cyan-soft">{station.movement}</p>
         <div>
-          {(["genesis-1-1", "genesis-1-2", "genesis-1-3"] as const).map((stationId, index) => (
-            <Fragment key={stationId}>
+          {FIRST_MOVEMENT_SEQUENCE.map((step, index) => (
+            <Fragment key={step.id}>
               {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
-              <button
-                type="button"
-                onClick={() => onSelectStation(stationId)}
-                className={station.id === stationId ? "text-gold" : undefined}
-              >
-                {stationId === "genesis-1-1" ? "Ursprung" : stationId === "genesis-1-2" ? "Tiefe" : "Licht"}
-              </button>
+              {step.id !== "ruach" && step.id !== "wort" ? (
+                <button
+                  type="button"
+                  onClick={() => onSelectStation(step.id)}
+                  className={station.id === step.id ? "text-gold" : undefined}
+                >
+                  {step.label}
+                </button>
+              ) : (
+                <span className="symbol-disclosure__movement-note">{step.label}</span>
+              )}
             </Fragment>
           ))}
         </div>
@@ -2840,8 +2855,12 @@ function GenesisStationDetail({
           ) : null}
           {nextStation ? (
             <button type="button" onClick={() => onSelectStation(nextStation.id)} className="symbol-archive-action">
-              Zur ersten Bewegung
+              {nextStation.id === "genesis-1-2" ? "Hinab zur Tiefe" : "Zum Wort und Licht"}
             </button>
+          ) : station.roomHref ? (
+            <RoomTransitionButton href={station.roomHref} className="symbol-archive-action">
+              Aus der Tiefe oeffnet sich das Licht
+            </RoomTransitionButton>
           ) : null}
         </div>
       </div>
@@ -2867,14 +2886,18 @@ function MobileGenesisStation({
       </div>
       <p className="symbol-mobile-focus__essence">{station.text}</p>
       <div className="symbol-mobile-movement">
-        <p>Ursprung / Tiefe / Licht</p>
+        <p>{FIRST_MOVEMENT_SEQUENCE.map((step) => step.label).join(" / ")}</p>
         <div>
-          {(["genesis-1-1", "genesis-1-2", "genesis-1-3"] as const).map((stationId, index) => (
-            <Fragment key={stationId}>
+          {FIRST_MOVEMENT_SEQUENCE.map((step, index) => (
+            <Fragment key={step.id}>
               {index > 0 ? <span aria-hidden="true">&darr;</span> : null}
-              <button type="button" onClick={() => onSelectStation(stationId)}>
-                <strong>{stationId === "genesis-1-1" ? "Ursprung" : stationId === "genesis-1-2" ? "Tiefe" : "Licht"}</strong>
-              </button>
+              {step.id !== "ruach" && step.id !== "wort" ? (
+                <button type="button" onClick={() => onSelectStation(step.id)}>
+                  <strong>{step.label}</strong>
+                </button>
+              ) : (
+                <span>{step.label}</span>
+              )}
             </Fragment>
           ))}
         </div>
