@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexPersonalTraceCard } from "@/components/CodexPersonalTraceCard";
 import { CodexReflectionCard } from "@/components/CodexReflectionCard";
+import { CodexVisitTracker } from "@/components/CodexVisitTracker";
 import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
 import { getSymbolCodexAnchorBridge, getSymbolCodexChipLinks, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
@@ -76,7 +77,7 @@ type ResolvedPathContext = {
   returnLabel: string;
 };
 
-type ReflectionSourceType = "symbol" | "pattern" | "journey" | "core" | "letter";
+type ReflectionSourceType = "symbol" | "pattern" | "journey" | "core" | "letter" | "scripture";
 type CodexGenre =
   | "symbol"
   | "hebrew-word"
@@ -767,6 +768,7 @@ function resolveReflectionSourceType(entry: CodexEntry, entity?: OntologyEntity)
   if (entity && isCoreConceptId(entity.id)) return "core";
   if (entry.type === "journey") return "journey";
   if (entry.type === "hebrew-letter") return "letter";
+  if (entry.type === "scripture" && ["genesis-1-1", "genesis-1-2", "genesis-1-3"].includes(entry.id)) return "scripture";
   if (entry.type === "symbol" && ["wasser", "licht", "feuer", "wueste"].includes(entry.id)) return "symbol";
 
   return null;
@@ -781,6 +783,10 @@ function resolveCodexGenre(entry: CodexEntry, entity?: OntologyEntity): CodexGen
 }
 
 function getReflectionQuestionForEntry(sourceType: ReflectionSourceType) {
+  if (sourceType === "scripture") {
+    return "Was beruehrt dich am Anfang dieser Bewegung?";
+  }
+
   if (sourceType === "pattern" || sourceType === "journey") {
     return "Was bewegt sich in dir auf diesem Weg?";
   }
@@ -2660,6 +2666,12 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
         <div className="mt-14 grid gap-5">
           <div className="grid gap-5">
+            <CodexVisitTracker
+              entryId={entry.id}
+              entryType={entry.type}
+              label={entry.title}
+              roomId={entry.symbolRoomSlug}
+            />
             {isWaterEntry ? <WaterCodexReferenceSection /> : null}
             {isLightEntry ? <LightCodexReferenceSection /> : null}
             {isFireEntry ? <FireCodexReferenceSection /> : null}

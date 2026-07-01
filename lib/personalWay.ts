@@ -6,6 +6,10 @@ import {
   type StoredPathActivity,
 } from "@/lib/pathActivity";
 import {
+  getPersonalPathEvents,
+  type PersonalPathEvent,
+} from "@/lib/personalPathState";
+import {
   readStoredReflections,
   type StoredReflection,
 } from "@/lib/reflections";
@@ -48,6 +52,7 @@ export type PersonalWay = {
 export type DerivePersonalWayInput = {
   reflections?: StoredReflection[];
   pathActivity?: StoredPathActivity;
+  pathEvents?: PersonalPathEvent[];
 };
 
 type SymbolTouches = Map<string, Set<PersonalWayOpeningSource>>;
@@ -62,6 +67,14 @@ function readExistingPathActivity(): StoredPathActivity {
     return parseStoredPathActivity(storage?.getItem(PATH_ACTIVITY_STORAGE_KEY) ?? null);
   } catch {
     return parseStoredPathActivity(null);
+  }
+}
+
+function readExistingPersonalPathEvents(): PersonalPathEvent[] {
+  try {
+    return typeof window !== "undefined" ? getPersonalPathEvents() : [];
+  } catch {
+    return [];
   }
 }
 
@@ -283,6 +296,7 @@ function deriveNextOpenings(personalWay: Omit<PersonalWay, "nextOpenings">) {
 export function derivePersonalWay(input: DerivePersonalWayInput = {}): PersonalWay {
   const reflections = input.reflections ?? readStoredReflections();
   const pathActivity = input.pathActivity ?? readExistingPathActivity();
+  const pathEvents = input.pathEvents ?? readExistingPersonalPathEvents();
   const touches: SymbolTouches = new Map();
   const touchedSymbols: string[] = [];
   const visitedRooms: string[] = [];
@@ -309,6 +323,36 @@ export function derivePersonalWay(input: DerivePersonalWayInput = {}): PersonalW
       addTouch(touches, roomId, "room");
       pushUnique(visitedRooms, roomId);
       pushUnique(touchedSymbols, roomId);
+    }
+  }
+
+  for (const event of pathEvents) {
+    if (event.type === "room_entered") {
+      addTouch(touches, event.roomId ?? event.targetId, "room");
+      pushUnique(visitedRooms, event.roomId ?? event.targetId);
+      pushUnique(touchedSymbols, event.roomId ?? event.targetId);
+    }
+
+    if (event.type === "codex_visited") {
+      addTouch(touches, event.roomId ?? event.targetId, "codex");
+      pushUnique(touchedSymbols, event.roomId ?? event.targetId);
+
+      if (isAnchorId(event.codexId ?? event.targetId)) {
+        pushUnique(reflectedAnchors, event.codexId ?? event.targetId);
+      }
+    }
+
+    if (event.type === "question_answered" || event.type === "resonance_saved") {
+      addTouch(touches, event.roomId ?? event.targetId, "reflection");
+      pushUnique(touchedSymbols, event.roomId ?? event.targetId);
+
+      if (isAnchorId(event.codexId ?? event.targetId)) {
+        pushUnique(reflectedAnchors, event.codexId ?? event.targetId);
+      }
+    }
+
+    if (event.targetType === "journey") {
+      pushUnique(activeJourneys, event.targetId);
     }
   }
 

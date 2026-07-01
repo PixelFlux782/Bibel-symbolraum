@@ -3,33 +3,23 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
-  persistStoredReflections,
-  getJourneyReflectionForStep,
-  getReflectionContextLabel,
-  getReflectionPreview,
-  readStoredReflections,
-  resolveReflectionReturnLinks,
-  type ReflectionReturnLink,
-  type StoredReflection,
-} from "@/lib/reflections";
-import {
-  buildSymbolRoomHref,
-  getKnownSymbolPathLabel,
-  getSymbolPathConfig,
-  getSymbolPathConfigFromReflectionLike,
-  symbolPathConfigs,
-  type ConfiguredSymbolId,
-  type SymbolPathConfig,
-} from "@/lib/symbols/symbolPathConfig";
-import {
-  getGreatMovement,
-  symbolJourneys,
-  type SymbolicGreatMovementStep,
-  type SymbolJourney,
-} from "@/lib/symbols/symbolJourneys";
-import { getRoomTransition, getRoomTransitionHref, getRoomTransitionLabels, roomTransitions } from "@/lib/symbols/roomTransitions";
-import { getRoomHebrewMovement } from "@/lib/hebrew/roomHebrewMovements";
-import { derivePersonalWay, type PersonalWay, type PersonalWayOpening } from "@/lib/personalWay";
+  getPersonalPathEvents,
+  getPersonalPathEventSentence,
+  migrateLegacyPathState,
+  type PersonalPathEvent,
+  type PersonalPathEventType,
+} from "@/lib/personalPathState";
+import { getSymbolPathConfig, symbolPathConfigs } from "@/lib/symbols/symbolPathConfig";
+
+const eventTypeLabels: Record<PersonalPathEventType, string> = {
+  room_entered: "Hier warst du",
+  codex_visited: "Codex beruehrt",
+  question_answered: "Beantwortete Frage",
+  resonance_saved: "Gespeicherte Resonanz",
+  marker_added: "Wegmarke gesetzt",
+};
+
+const symbolMovement = ["wasser", "licht", "feuer", "wueste", "brot"];
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -40,382 +30,110 @@ function formatDate(value: string) {
 
   return new Intl.DateTimeFormat("de-DE", {
     dateStyle: "medium",
+    timeStyle: "short",
   }).format(date);
 }
 
-function normalizeTraceText(value: string) {
-  return value.toLocaleLowerCase("de-DE").replace(/\s+/g, " ").trim();
+function getEventHref(event: PersonalPathEvent) {
+  if (event.type === "room_entered" && event.roomId) {
+    return getSymbolPathConfig(event.roomId)?.roomHref ?? `/raeume/${event.roomId}`;
+  }
+
+  if (event.codexId) {
+    return `/codex/${event.codexId}`;
+  }
+
+  if (event.roomId) {
+    return getSymbolPathConfig(event.roomId)?.roomHref ?? `/raeume/${event.roomId}`;
+  }
+
+  return event.sourceRoute || undefined;
 }
 
-function cleanTraceLabel(value: string | undefined) {
-  return value?.split(/[?#]/, 1)[0].replace(/\s*->\s*/g, " in ").trim();
+function getEventSentence(event: PersonalPathEvent) {
+  return getPersonalPathEventSentence(event);
 }
 
-function isTechnicalTraceLabel(value: string | undefined) {
-  return Boolean(value && (/_|->/.test(value) || /^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(value)));
-}
+function getUniqueEvents(events: PersonalPathEvent[], predicate: (event: PersonalPathEvent) => boolean) {
+  const seen = new Set<string>();
 
-function getSafeTraceLabel(value: string | undefined, fallback = "Symbolzeichen") {
-  const label = cleanTraceLabel(value);
+  return events.filter((event) => {
+    if (!predicate(event)) return false;
 
-  return label && !isTechnicalTraceLabel(label) ? label : fallback;
-}
+    const key = `${event.targetType}:${event.targetId}`;
 
-function getTraceBaseTitle(reflection: StoredReflection) {
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-
-  if (bridge) {
-    return bridge.label;
-  }
-
-  return getSafeTraceLabel(reflection.title || reflection.symbol);
-}
-
-function getTouchedLabel(reflection: StoredReflection) {
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-
-  return bridge?.label || getSafeTraceLabel(reflection.title || reflection.symbol);
-}
-
-function getRoomContextLabel(reflection: StoredReflection) {
-  const title = getTraceBaseTitle(reflection);
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-
-  if (bridge && (reflection.sourceType === "room" || reflection.roomHref === bridge.roomHref)) {
-    return bridge.reflectionSource.contextLabel;
-  }
-
-  if (reflection.sourceType === "room") {
-    return `Aus dem ${title}-Raum`;
-  }
-
-  if (reflection.roomHref) {
-    return `Aus dem ${title}-Raum`;
-  }
-
-  return undefined;
-}
-
-function getTraceContext(reflection: StoredReflection) {
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-
-  if (isConfiguredRoomReflection(reflection)) {
-    const configuredBridge = getSymbolPathConfigFromReflectionLike(reflection);
-    const pathLabel = cleanTraceLabel(reflection.pathLabel);
-
-    return pathLabel || configuredBridge?.label || "Symbolzeichen";
-  }
-
-  const roomContext = getRoomContextLabel(reflection);
-
-  if (roomContext) {
-    return reflection.stateTitle ? `${roomContext} / ${reflection.stateTitle}` : roomContext;
-  }
-
-  if (reflection.sourceType === "symbol") {
-    return "Aus dem Symbolnetz";
-  }
-
-  if (
-    reflection.sourceType === "pattern" ||
-    reflection.sourceType === "journey" ||
-    reflection.sourceType === "core" ||
-    reflection.sourceType === "letter" ||
-    reflection.codexHref
-  ) {
-    return "Aus dem Codex";
-  }
-
-  if (bridge) {
-    return bridge.traceLabel;
-  }
-
-  return "Frühere Wegstelle";
-}
-
-function getTraceTitle(reflection: StoredReflection) {
-  if (isConfiguredRoomReflection(reflection)) {
-    const configuredBridge = getSymbolPathConfigFromReflectionLike(reflection);
-
-    return configuredBridge?.reflectionSource.label ?? "Spur aus dem Raum";
-  }
-
-  const title = getTraceBaseTitle(reflection);
-  const pathLabel = getSafeTraceLabel(reflection.pathLabel, "");
-
-  if (pathLabel) {
-    return normalizeTraceText(pathLabel).includes(normalizeTraceText(title))
-      ? pathLabel
-      : `${title} in ${pathLabel}`;
-  }
-
-  if (reflection.stateTitle) {
-    return `${title} / ${reflection.stateTitle}`;
-  }
-
-  return title;
-}
-
-function isConfiguredRoomReflection(reflection: StoredReflection) {
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-
-  return Boolean(bridge && (reflection.sourceType === "room" || reflection.roomHref === bridge.roomHref));
-}
-
-type ReflectionGroupKey = "rooms" | "codex" | "network" | "older";
-
-type ReflectionGroup = {
-  key: ReflectionGroupKey;
-  label: string;
-  reflections: StoredReflection[];
-};
-
-type SymbolFilterKey = "all" | ConfiguredSymbolId;
-
-type PersonalSymbolTrack = {
-  symbolId: ConfiguredSymbolId;
-  config: SymbolPathConfig;
-  reflections: StoredReflection[];
-  count: number;
-  lastPathLabel?: string;
-  href: string;
-  ctaLabel: string;
-};
-
-const personalSymbolOrder = ["wasser", "licht", "feuer", "wueste", "brot"] as const satisfies ConfiguredSymbolId[];
-const MAX_WAY_MEMORY_ITEMS = 4;
-const MAX_WAY_FAMILIAR_ITEMS = 5;
-const MAX_WAY_OPENINGS = 3;
-
-const groupOrder: Array<{ key: ReflectionGroupKey; label: string }> = [
-  { key: "rooms", label: "Aus den Räumen" },
-  { key: "codex", label: "Aus dem Codex" },
-  { key: "network", label: "Aus dem Symbolnetz" },
-  { key: "older", label: "Frühere Wegstellen" },
-];
-
-function getReflectionGroupKey(reflection: StoredReflection): ReflectionGroupKey {
-  if (reflection.sourceType === "room" || reflection.roomHref) return "rooms";
-  if (reflection.sourceType === "symbol") return "network";
-  if (
-    reflection.sourceType === "pattern" ||
-    reflection.sourceType === "journey" ||
-    reflection.sourceType === "core" ||
-    reflection.sourceType === "letter" ||
-    reflection.codexHref
-  ) {
-    return "codex";
-  }
-
-  return "older";
-}
-
-function buildReflectionGroups(reflections: StoredReflection[]): ReflectionGroup[] {
-  return groupOrder
-    .map(({ key, label }) => ({
-      key,
-      label,
-      reflections: reflections.filter((reflection) => getReflectionGroupKey(reflection) === key),
-    }))
-    .filter((group) => group.reflections.length > 0);
-}
-
-function getRepeatedTouches(reflections: StoredReflection[]) {
-  const counts = new Map<string, { label: string; count: number }>();
-
-  reflections.forEach((reflection) => {
-    const label = getTouchedLabel(reflection);
-    if (!label) return;
-
-    const key = normalizeTraceText(label);
-    const current = counts.get(key);
-
-    counts.set(key, { label, count: current ? current.count + 1 : 1 });
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
   });
-
-  return [...counts.values()]
-    .filter((item) => item.count > 1)
-    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "de-DE"))
-    .slice(0, 3)
-    .map((item) => item.label);
 }
 
-function getTouchedSummary(reflections: StoredReflection[]) {
+function getMovementLabels(events: PersonalPathEvent[]) {
   const labels: string[] = [];
   const seen = new Set<string>();
 
-  reflections.forEach((reflection) => {
-    const label = getTouchedLabel(reflection);
-    if (!label) return;
+  for (const event of [...events].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())) {
+    const id = event.roomId ?? event.targetId;
+    const label = getSymbolPathConfig(id)?.label ?? event.label;
+    const key = `${event.targetType}:${id}`;
 
-    const key = normalizeTraceText(label);
-    if (seen.has(key)) return;
+    if (seen.has(key)) continue;
+    if (event.type !== "room_entered" && event.type !== "codex_visited" && event.type !== "question_answered" && event.targetId !== "erste-bewegung") continue;
 
     seen.add(key);
-    labels.push(label);
-  });
-
-  return labels.slice(0, 3);
-}
-
-function getTraceCountLabel(count: number) {
-  return count === 1 ? "Eine Wegstelle" : `${count} Wegstellen`;
-}
-
-function getReflectionSymbolId(reflection: StoredReflection): ConfiguredSymbolId | undefined {
-  return getSymbolPathConfigFromReflectionLike(reflection)?.symbolId as ConfiguredSymbolId | undefined;
-}
-
-function getReflectionPathId(reflection: StoredReflection) {
-  return (reflection.pathContext?.path ?? reflection.path)?.split(/[?#]/, 1)[0];
-}
-
-function getReflectionKnownPathLabel(reflection: StoredReflection) {
-  const bridge = getSymbolPathConfigFromReflectionLike(reflection);
-  const pathLabel = getSafeTraceLabel(reflection.pathLabel, "");
-  const stateTitle = getSafeTraceLabel(reflection.stateTitle, "");
-
-  if (pathLabel) return pathLabel;
-  if (stateTitle) return stateTitle;
-
-  return bridge?.traceLabel;
-}
-
-function getTrackCtaLabel(config: SymbolPathConfig, hasTrace: boolean) {
-  if (!hasTrace) {
-    return `Den ${config.roomLabel} betreten`;
+    labels.push(event.targetId === "erste-bewegung" ? event.label : label);
   }
 
-  return `In den ${config.roomLabel} zurückkehren`;
+  return labels.slice(-6);
 }
 
-function buildPersonalSymbolTracks(reflections: StoredReflection[]): PersonalSymbolTrack[] {
-  return personalSymbolOrder.map((symbolId) => {
-    const config = symbolPathConfigs[symbolId];
-    const symbolReflections = reflections.filter((reflection) => getReflectionSymbolId(reflection) === symbolId);
-    const lastReflection = symbolReflections[0];
-    const pathId = lastReflection ? getReflectionPathId(lastReflection) : undefined;
-    const hasTrace = symbolReflections.length > 0;
+function getNextThreshold(events: PersonalPathEvent[]) {
+  const touchedSymbols = new Set(
+    events
+      .flatMap((event) => [event.roomId, event.targetId])
+      .filter((id): id is string => Boolean(id && symbolMovement.includes(id)))
+  );
+  const nextSymbol = symbolMovement.find((symbolId) => !touchedSymbols.has(symbolId));
+  const config = nextSymbol ? symbolPathConfigs[nextSymbol as keyof typeof symbolPathConfigs] : undefined;
 
+  if (!config) {
     return {
-      symbolId,
-      config,
-      reflections: symbolReflections,
-      count: symbolReflections.length,
-      lastPathLabel: lastReflection ? getReflectionKnownPathLabel(lastReflection) : undefined,
-      href: hasTrace
-        ? buildSymbolRoomHref(symbolId, { from: "mein-pfad", path: pathId, symbol: symbolId })
-        : config.roomHref,
-      ctaLabel: getTrackCtaLabel(config, hasTrace),
+      label: "Deine Spur ist offen",
+      href: "/symbolnetz",
+      text: "Du hast die bekannten Raeume bereits beruehrt. Von hier darf das Symbolnetz die naechste Schwelle zeigen.",
     };
-  });
-}
-
-function getTouchedSymbolSet(reflections: StoredReflection[]) {
-  return new Set(
-    reflections
-      .map((reflection) => getReflectionSymbolId(reflection))
-      .filter((symbolId): symbolId is ConfiguredSymbolId => Boolean(symbolId))
-  );
-}
-
-function filterReflectionsBySymbol(reflections: StoredReflection[], filter: SymbolFilterKey) {
-  if (filter === "all") {
-    return reflections;
   }
 
-  return reflections.filter((reflection) => getReflectionSymbolId(reflection) === filter);
-}
-
-function hasPersonalWay(personalWay: PersonalWay | null) {
-  return Boolean(
-    personalWay &&
-      (
-        personalWay.visitedRooms.length > 0 ||
-        personalWay.reflectedAnchors.length > 0 ||
-        personalWay.familiarSymbols.length > 0 ||
-        personalWay.nextOpenings.length > 0
-      )
-  );
-}
-
-function getWaySymbolLabel(symbolId: string) {
-  return getSymbolPathConfig(symbolId)?.label ?? getKnownSymbolPathLabel(symbolId);
-}
-
-function getWayRoomLabel(symbolId: string) {
-  return getSymbolPathConfig(symbolId)?.roomLabel ?? getWaySymbolLabel(symbolId);
-}
-
-function getWayAnchorLabel(anchorId: string) {
-  return getKnownSymbolPathLabel(anchorId) ?? getSymbolPathConfig(anchorId)?.label;
-}
-
-function buildWayMemoryItems(personalWay: PersonalWay) {
-  const roomItems = personalWay.visitedRooms
-    .map((symbolId) => getWayRoomLabel(symbolId))
-    .filter(Boolean)
-    .map((label) => `${label} liegt hinter dir und nimmt deine Spur auf.`);
-
-  const anchorItems = personalWay.reflectedAnchors
-    .map((anchorId) => getWayAnchorLabel(anchorId))
-    .filter(Boolean)
-    .map((label) => `${label} bleibt als berührter Anker nahe.`);
-
-  return [...roomItems, ...anchorItems].slice(0, MAX_WAY_MEMORY_ITEMS);
-}
-
-function buildWayFamiliarItems(personalWay: PersonalWay) {
-  return personalWay.familiarSymbols
-    .map((symbolId) => getWaySymbolLabel(symbolId))
-    .filter(Boolean)
-    .slice(0, MAX_WAY_FAMILIAR_ITEMS)
-    .map((label) => `${label} ist dir vertraut geworden.`);
+  return {
+    label: config.roomLabel,
+    href: config.roomHref,
+    text: `Noch offen: ${config.roomLabel}. Diese Schwelle ist noch nicht Teil deiner sichtbaren Spur.`,
+  };
 }
 
 export default function MeinPfadPage() {
-  const [reflections, setReflections] = useState<StoredReflection[] | null>(null);
-  const [activeSymbolFilter, setActiveSymbolFilter] = useState<SymbolFilterKey>("all");
+  const [events, setEvents] = useState<PersonalPathEvent[] | null>(null);
 
   useEffect(() => {
-    const storedReflections = readStoredReflections();
-
-    persistStoredReflections(storedReflections);
-    window.queueMicrotask(() => setReflections(storedReflections));
+    migrateLegacyPathState();
+    window.queueMicrotask(() => setEvents(getPersonalPathEvents()));
   }, []);
 
-  const sortedReflections = useMemo(
-    () => [...(reflections ?? [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
-    [reflections]
+  const sortedEvents = useMemo(
+    () => [...(events ?? [])].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
+    [events]
   );
-  const personalWay = useMemo(
-    () => (reflections === null ? null : derivePersonalWay({ reflections: sortedReflections })),
-    [reflections, sortedReflections]
+  const touchedPlaces = useMemo(
+    () => getUniqueEvents(sortedEvents, (event) => event.type === "room_entered" || event.type === "codex_visited").slice(0, 8),
+    [sortedEvents]
   );
-  const greatMovement = useMemo(
-    () => getGreatMovement(getTouchedSymbolSet(sortedReflections)),
-    [sortedReflections]
+  const answeredQuestions = useMemo(
+    () => sortedEvents.filter((event) => event.type === "question_answered").slice(0, 4),
+    [sortedEvents]
   );
-  const hasWay = hasPersonalWay(personalWay);
-  const symbolTracks = useMemo(() => buildPersonalSymbolTracks(sortedReflections), [sortedReflections]);
-  const filteredReflections = useMemo(
-    () => filterReflectionsBySymbol(sortedReflections, activeSymbolFilter),
-    [activeSymbolFilter, sortedReflections]
-  );
-  const reflectionGroups = useMemo(() => buildReflectionGroups(filteredReflections), [filteredReflections]);
-  const showGroups = filteredReflections.length >= 4 && reflectionGroups.length > 1;
-  const repeatedTouches = useMemo(() => getRepeatedTouches(sortedReflections), [sortedReflections]);
-  const touchedSummary = useMemo(() => getTouchedSummary(sortedReflections), [sortedReflections]);
-  const waterToBreadJourney = symbolJourneys[0];
-
-  function handleRemoveReflection(id: string) {
-    setReflections((current) => {
-      const next = (current ?? []).filter((reflection) => reflection.id !== id);
-
-      persistStoredReflections(next);
-      return next;
-    });
-  }
+  const movementLabels = useMemo(() => getMovementLabels(sortedEvents), [sortedEvents]);
+  const nextThreshold = useMemo(() => getNextThreshold(sortedEvents), [sortedEvents]);
+  const latestEvent = sortedEvents[0];
 
   return (
     <div className="symbol-page symbol-section min-h-screen py-36 md:py-40">
@@ -428,515 +146,165 @@ export default function MeinPfadPage() {
 
       <div className="relative z-10 mx-auto max-w-5xl">
         <header className="symbol-fade-in mb-14 text-center">
-          <p className="symbol-kicker mb-7">Der Weg</p>
+          <p className="symbol-kicker mb-7">Deine Spur</p>
           <h1 className="mx-auto max-w-4xl font-serif text-5xl italic leading-[0.98] text-foreground-strong md:text-7xl">
-            Dein Weg durch den SYMBOLRAUM
+            Dein Pfad zeigt nur, wo du wirklich warst
           </h1>
           <p className="symbol-copy mx-auto mt-8 max-w-2xl text-xl italic md:text-2xl">
-            Hier bleiben die Orte lesbar, an denen ein Zeichen in dir nachgeklungen hat.
+            Hier bleiben betretene Raeume, beruehrte Codex-Seiten, beantwortete Fragen und gesetzte Wegmarken sichtbar.
           </p>
         </header>
 
-        {reflections === null ? (
-          <div className="symbol-path-empty mx-auto max-w-3xl text-center">
-            <p className="symbol-kicker">Der Weg wird still</p>
+        {events === null ? (
+          <section className="symbol-path-empty mx-auto max-w-3xl text-center">
+            <p className="symbol-kicker">Deine Spur wird gelesen</p>
             <p className="mt-6 font-serif text-3xl italic text-foreground-strong">
-              Deine Wegstellen öffnen sich gerade.
+              Die letzten Orte treten hervor.
             </p>
-          </div>
+          </section>
+        ) : sortedEvents.length === 0 ? (
+          <section className="symbol-path-empty mx-auto max-w-3xl text-center">
+            <p className="symbol-kicker">Noch keine Spur</p>
+            <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
+              Sobald du einen Raum betrittst oder eine Frage beantwortest, erscheint hier deine erste Wegstelle.
+            </p>
+            <div className="symbol-path-empty__entries mt-9">
+              <Link href="/raeume/wasser" className="symbol-archive-action">
+                Den Wasser-Raum betreten
+              </Link>
+              <Link href="/codex/wasser" className="symbol-archive-action symbol-archive-action--quiet">
+                Wasser im Codex beruehren
+              </Link>
+            </div>
+          </section>
         ) : (
-          <>
-            <GreatMovementSection movement={greatMovement} />
-            <GenesisFirstMovementSection tracks={symbolTracks} />
-
-            {hasWay ? (
-              <>
-                <PersonalSymbolMap tracks={symbolTracks} />
-                {personalWay ? <PersonalWaySection personalWay={personalWay} /> : null}
-                <PersonalJourneyCard journey={waterToBreadJourney} reflections={sortedReflections} />
-              </>
+          <div className="grid gap-10">
+            {latestEvent ? (
+              <section className="symbol-path-summary mx-auto max-w-3xl text-center" aria-label="Deine letzte Spur">
+                <p className="symbol-kicker text-cyan-soft">Deine letzte Spur</p>
+                <p className="symbol-copy mt-5 text-xl italic md:text-2xl">
+                  {getEventSentence(latestEvent)}
+                </p>
+                <p className="symbol-path-summary__meta mt-5">{formatDate(latestEvent.timestamp)}</p>
+              </section>
             ) : null}
 
-            {!hasWay ? (
-              <div className="symbol-path-empty mx-auto mt-12 max-w-3xl text-center">
-                <p className="symbol-kicker">Der Weg ist noch still</p>
-                <p className="mt-6 font-serif text-3xl italic leading-tight text-foreground-strong md:text-4xl">
-                  Im Wasser-Raum kann der erste Nachklang sichtbar werden.
-                </p>
-                <div className="symbol-path-empty__entries mt-9">
-                  <Link href="/raeume/wasser" className="symbol-archive-action">
-                    Den Wasser-Raum betreten
-                  </Link>
-                  <Link href="/symbolnetz" className="symbol-archive-action symbol-archive-action--quiet">
-                    Symbolnetz öffnen
-                  </Link>
+            {movementLabels.length > 0 ? (
+              <section className="symbol-personal-way" aria-label="Letzte Bewegung">
+                <div className="symbol-personal-way__head">
+                  <p className="symbol-kicker">Letzte Bewegung</p>
+                  <h2>{movementLabels.join(" -> ")}</h2>
+                  <p>Diese Bewegung entsteht nur aus Orten, die du betreten oder beruehrt hast.</p>
                 </div>
+              </section>
+            ) : null}
+
+            <section className="symbol-personal-way" aria-label="Noch offene Schwelle">
+              <div className="symbol-personal-way__head">
+                <p className="symbol-kicker">Noch offene Schwelle</p>
+                <h2>{nextThreshold.label}</h2>
+                <p>{nextThreshold.text}</p>
               </div>
-            ) : null}
+              <Link href={nextThreshold.href} className="symbol-archive-action">
+                Diese Schwelle ansehen
+              </Link>
+            </section>
 
-            {sortedReflections.length > 0 ? (
-              <section className="symbol-path-summary mx-auto mb-10 max-w-3xl text-center" aria-label="Pfadverdichtung">
-                <p className="symbol-copy text-xl italic md:text-2xl">
-                  Dein Weg sammelt keine Antworten.
-                  <br />
-                  Er bewahrt die Stellen, an denen etwas in dir nachklang.
-                </p>
-                <p className="symbol-path-summary__meta mt-5">
-                  {sortedReflections.length === 1
-                    ? touchedSummary.length > 0
-                      ? `${touchedSummary[0]} bewahrt`
-                      : "Eine Wegstelle"
-                    : [getTraceCountLabel(sortedReflections.length), ...touchedSummary].join(" / ")}
-                </p>
-                {repeatedTouches.length > 0 ? (
-                  <p className="symbol-path-resonance mt-4">
-                    Wiederkehrend nahe: {repeatedTouches.join(", ")}
-                  </p>
-                ) : null}
+            {touchedPlaces.length > 0 ? (
+              <section className="symbol-personal-map" aria-label="Beruehrte Orte">
+                <div className="symbol-personal-map__head">
+                  <p className="symbol-kicker">Beruehrte Orte</p>
+                  <h2>Hier warst du</h2>
+                </div>
+                <div className="symbol-personal-map__grid">
+                  {touchedPlaces.map((event) => {
+                    const href = getEventHref(event);
+
+                    return (
+                      <article key={event.id} className="symbol-personal-track">
+                        <div className="symbol-personal-track__top">
+                          <p className="symbol-personal-track__status">{eventTypeLabels[event.type]}</p>
+                        </div>
+                        <h3>{event.label}</h3>
+                        <p className="symbol-personal-track__last">{formatDate(event.timestamp)}</p>
+                        {href ? (
+                          <Link href={href} className="symbol-archive-action">
+                            Ort wieder oeffnen
+                          </Link>
+                        ) : null}
+                      </article>
+                    );
+                  })}
+                </div>
               </section>
             ) : null}
 
-            {sortedReflections.length > 0 ? (
-              <SymbolPathFilters
-                tracks={symbolTracks}
-                activeFilter={activeSymbolFilter}
-                onSelectFilter={setActiveSymbolFilter}
-              />
-            ) : null}
-
-            {sortedReflections.length === 0 ? null : filteredReflections.length === 0 ? (
-              <section className="symbol-path-empty mx-auto max-w-3xl text-center" aria-label="Keine Wegstelle in diesem Zeichen">
-                <p className="symbol-kicker">Noch still</p>
-                <p className="mt-5 font-serif text-2xl italic text-foreground-strong">
-                  Dieses Zeichen wartet noch auf seinen ersten Nachklang.
-                </p>
-              </section>
-            ) : showGroups ? (
-              <div className="grid gap-10" aria-label="Wegstellen">
-                {reflectionGroups.map((group) => (
-                  <section key={group.key} className="symbol-path-group">
-                    <h2 className="symbol-path-group__title">{group.label}</h2>
-                    <div className="symbol-path-list grid gap-5">
-                      {group.reflections.map((reflection) => (
-                        <ReflectionArticle
-                          key={reflection.id}
-                          reflection={reflection}
-                          returnLinks={resolveReflectionReturnLinks(reflection)}
-                          onRemove={handleRemoveReflection}
-                        />
-                      ))}
+            {answeredQuestions.length > 0 ? (
+              <section className="symbol-path-list grid gap-5" aria-label="Beantwortete Fragen">
+                <div className="symbol-personal-map__head">
+                  <p className="symbol-kicker">Beantwortete Fragen</p>
+                  <h2>Diese Fragen hast du mitgenommen</h2>
+                </div>
+                {answeredQuestions.map((event) => (
+                  <article key={event.id} className="symbol-path-fragment px-5 py-5 sm:px-6 sm:py-6">
+                    <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-start">
+                      <div>
+                        <p className="symbol-kicker text-cyan-soft">{event.label}</p>
+                        <h3 className="mt-4 font-serif text-2xl italic leading-tight text-foreground-strong md:text-3xl">
+                          {getEventSentence(event)}
+                        </h3>
+                        {event.answer ? (
+                          <p className="symbol-copy mt-5 whitespace-pre-line break-words text-lg italic">
+                            {event.answer}
+                          </p>
+                        ) : null}
+                      </div>
+                      <p className="symbol-copy text-xs uppercase tracking-[0.2em] text-muted-soft sm:text-right">
+                        {formatDate(event.timestamp)}
+                      </p>
                     </div>
-                  </section>
-                ))}
-              </div>
-            ) : (
-              <section className="symbol-path-list grid gap-5" aria-label="Wegstellen">
-                {filteredReflections.map((reflection) => (
-                  <ReflectionArticle
-                    key={reflection.id}
-                    reflection={reflection}
-                    returnLinks={resolveReflectionReturnLinks(reflection)}
-                    onRemove={handleRemoveReflection}
-                  />
+                  </article>
                 ))}
               </section>
-            )}
-          </>
+            ) : null}
+
+            <section className="symbol-path-list grid gap-5" aria-label="Deine Spur">
+              {sortedEvents.map((event) => {
+                const href = getEventHref(event);
+
+                return (
+                  <article key={event.id} className="symbol-path-fragment px-5 py-5 sm:px-6 sm:py-6">
+                    <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-start">
+                      <div>
+                        <p className="symbol-kicker text-cyan-soft">{eventTypeLabels[event.type]}</p>
+                        <h3 className="mt-4 font-serif text-2xl italic leading-tight text-foreground-strong md:text-3xl">
+                          {event.label}
+                        </h3>
+                        <p className="symbol-copy mt-3 text-base italic text-gold/75">
+                          {getEventSentence(event)}
+                        </p>
+                        {event.context ? (
+                          <p className="symbol-copy mt-3 text-sm italic text-muted-soft">{event.context}</p>
+                        ) : null}
+                      </div>
+                      <p className="symbol-copy text-xs uppercase tracking-[0.2em] text-muted-soft sm:text-right">
+                        {formatDate(event.timestamp)}
+                      </p>
+                    </div>
+                    {href ? (
+                      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] pt-4">
+                        <Link href={href} className="symbol-archive-action">
+                          Zur Wegstelle
+                        </Link>
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </section>
+          </div>
         )}
       </div>
     </div>
-  );
-}
-
-function GreatMovementSection({ movement }: { movement: SymbolicGreatMovementStep[] }) {
-  return (
-    <section className="symbol-great-movement" aria-labelledby="great-movement-title">
-      <h2 id="great-movement-title">Die große Bewegung</h2>
-      <div className="symbol-great-movement__lines">
-        {movement.map((step) => (
-          <Link
-            key={`${step.symbol}-${step.targetSymbol ?? "room"}`}
-            href={step.href}
-            className={`symbol-great-movement__line${step.isNear ? " is-near" : ""}`}
-          >
-            <span className="symbol-great-movement__symbol">{step.label}</span>
-            <span aria-hidden="true" className="symbol-great-movement__dash">-&gt;</span>
-            <span className="symbol-great-movement__symbol">{step.targetLabel}</span>
-            <span className="symbol-great-movement__text">{step.text}</span>
-            {step.isNear ? <span className="symbol-great-movement__near">nahe</span> : null}
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function GenesisFirstMovementSection({ tracks }: { tracks: PersonalSymbolTrack[] }) {
-  const hasWaterTrace = tracks.find((track) => track.symbolId === "wasser")?.count ?? 0;
-  const hasLightTrace = tracks.find((track) => track.symbolId === "licht")?.count ?? 0;
-
-  const stations = [
-    {
-      id: "genesis-1-1",
-      label: "Ursprung",
-      reference: "Genesis 1,1",
-      text: "Der Anfang wird gesetzt.",
-      href: "/codex/genesis-1-1?from=mein-pfad&path=erste-bewegung",
-    },
-    {
-      id: "genesis-1-2",
-      label: "Tiefe",
-      reference: "Genesis 1,2",
-      text: hasWaterTrace ? "Die Wasser-Spur ist deinem Weg nahe." : "Wasser, Tiefe und Ruach bleiben als Schwelle sichtbar.",
-      href: hasWaterTrace ? "/raeume/wasser?from=mein-pfad&path=erste-bewegung" : "/codex/genesis-1-2?from=mein-pfad&path=erste-bewegung",
-    },
-    {
-      id: "genesis-1-3",
-      label: "Licht",
-      reference: "Genesis 1,3",
-      text: hasLightTrace ? "Die Licht-Spur ist deinem Weg nahe." : "Das Wort oeffnet Licht und erste Unterscheidung.",
-      href: hasLightTrace ? "/raeume/licht?from=mein-pfad&path=erste-bewegung" : "/codex/genesis-1-3?from=mein-pfad&path=erste-bewegung",
-    },
-  ];
-
-  return (
-    <section className="symbol-personal-way" aria-label="Erste Bewegung der Schrift">
-      <div className="symbol-personal-way__head">
-        <p className="symbol-kicker">Erste Bewegung der Schrift</p>
-        <h2>Ursprung - Tiefe - Licht</h2>
-        <p>Genesis 1,1-3 bleibt als erste Wegspur lesbar: gesetzt, bewegt, erhellt.</p>
-      </div>
-
-      <div className="symbol-personal-way__grid">
-        {stations.map((station, index) => (
-          <Link key={station.id} href={station.href} className="symbol-personal-way__area">
-            <h3>{index + 1}. {station.label}</h3>
-            <p className="mt-2 text-[0.62rem] uppercase tracking-[0.18em] text-gold/70">{station.reference}</p>
-            <p>{station.text}</p>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function getJourneyStepCtaLabel(hasTrace: boolean) {
-  return hasTrace ? "In diesen Raum zurückkehren" : "Diesen Raum betreten";
-}
-
-function PersonalWaySection({ personalWay }: { personalWay: PersonalWay }) {
-  const memoryItems = buildWayMemoryItems(personalWay);
-  const familiarItems = buildWayFamiliarItems(personalWay);
-  const openings = personalWay.nextOpenings.slice(0, MAX_WAY_OPENINGS);
-  const hasWayContent = memoryItems.length > 0 || familiarItems.length > 0 || openings.length > 0;
-
-  if (!hasWayContent) {
-    return null;
-  }
-
-  return (
-    <section className="symbol-personal-way" aria-label="Der Weg">
-      <div className="symbol-personal-way__head">
-        <p className="symbol-kicker">Der Weg</p>
-        <h2>Der Weg</h2>
-        <p>
-          Nicht alles, was du berührt hast, liegt hinter dir. Manche Zeichen bleiben nahe und öffnen von hier aus
-          einen nächsten Raum.
-        </p>
-      </div>
-
-      <div className="symbol-personal-way__grid">
-        <WayQuietArea
-          title="Was hinter dir liegt"
-          emptyText="Noch liegt der Weg still vor dir."
-          items={memoryItems}
-        />
-        <WayQuietArea
-          title="Was vertraut geworden ist"
-          emptyText="Manches Zeichen wartet noch darauf, vertraut zu werden."
-          items={familiarItems}
-        />
-        <WayOpeningsArea openings={openings} />
-      </div>
-    </section>
-  );
-}
-
-function WayQuietArea({
-  title,
-  emptyText,
-  items,
-}: {
-  title: string;
-  emptyText: string;
-  items: string[];
-}) {
-  return (
-    <article className="symbol-personal-way__area">
-      <h3>{title}</h3>
-      {items.length > 0 ? (
-        <ul>
-          {items.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>{emptyText}</p>
-      )}
-    </article>
-  );
-}
-
-function WayOpeningsArea({ openings }: { openings: PersonalWayOpening[] }) {
-  return (
-    <article className="symbol-personal-way__area symbol-personal-way__area--openings">
-      <h3>Was sich leise öffnet</h3>
-      {openings.length > 0 ? (
-        <div className="symbol-personal-way__openings">
-          {openings.map((opening) => (
-            <Link key={opening.id} href={opening.href} className="symbol-personal-way__opening">
-              <span>{opening.label}</span>
-              <small>{opening.reason}</small>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        <p>Der nächste Raum muss sich nicht drängen. Dein Weg bleibt lesbar.</p>
-      )}
-    </article>
-  );
-}
-
-function PersonalJourneyCard({
-  journey,
-  reflections,
-}: {
-  journey: SymbolJourney;
-  reflections: StoredReflection[];
-}) {
-  const reflectionByStep = new Map(
-    journey.steps.map((step) => [step.symbol, getJourneyReflectionForStep(reflections, step)])
-  );
-  const hasAnyTrace = [...reflectionByStep.values()].some(Boolean);
-
-  return (
-    <section className="symbol-journey-card" aria-label="Weg vom Wasser zum Brot">
-      <div className="symbol-journey-card__head">
-        <p className="symbol-kicker">Verbundener Weg</p>
-        <h2>{journey.title}</h2>
-        <p className="symbol-journey-card__subtitle">Geschlossene symbolische Bewegung</p>
-        <p className="symbol-copy">
-          Wasser, Licht, Feuer, Wüste und Brot bilden zusammen eine Bewegung: Ursprung, Offenbarung, Wandlung,
-          Läuterung und Gabe. Das Brot erinnert wieder an Wasser.
-        </p>
-      </div>
-
-      {!hasAnyTrace ? (
-        <div className="symbol-journey-empty">
-          <p className="symbol-kicker">Der Weg ist noch still</p>
-          <p>Wasser kann sich zuerst öffnen, oder ein anderer Raum ruft leise.</p>
-          <div>
-            <Link href={journey.steps[0]?.roomHref ?? "/raeume/wasser"} className="symbol-archive-action">
-              Den Wasser-Raum betreten
-            </Link>
-            {journey.steps.slice(1).map((step) => (
-              <Link key={step.symbol} href={step.roomHref} className="symbol-archive-action">
-                {step.label}-Raum betreten
-              </Link>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      <ol className="symbol-journey-steps">
-        {journey.steps.map((step, index) => {
-          const reflection = reflectionByStep.get(step.symbol);
-          const hasTrace = Boolean(reflection);
-          const reflectionContext = reflection ? getReflectionContextLabel(reflection) : undefined;
-          const hebrewMovement = getRoomHebrewMovement(step.symbol);
-          const transition = getRoomTransition(step.symbol);
-          const transitionLabels = transition ? getRoomTransitionLabels(transition) : undefined;
-
-          return (
-            <li key={step.symbol} className="symbol-journey-step">
-              <article>
-                <span className="symbol-journey-step__index">{String(index + 1).padStart(2, "0")}</span>
-                <h3>{step.label}</h3>
-                <p className="symbol-journey-step__status">
-                  {hasTrace ? "Auf deinem Weg" : "Noch still"}
-                </p>
-                <p>{step.text}</p>
-                {transition && transitionLabels ? (
-                  <div className="symbol-journey-step__transition">
-                    <p>{transitionLabels.source} -&gt; {transitionLabels.target}</p>
-                    <span>{transition.title}</span>
-                  </div>
-                ) : null}
-                {hebrewMovement ? (
-                  <div className="symbol-journey-step__hebrew-flow" aria-label={hebrewMovement.title}>
-                    <p>{hebrewMovement.summary}</p>
-                    <span>
-                      {hebrewMovement.stations.map((station) => station.label).join(" -> ")}
-                    </span>
-                  </div>
-                ) : null}
-                {reflection ? (
-                  <div className="symbol-journey-step__reflection">
-                    <p className="symbol-journey-step__reflection-title">Dein Nachklang</p>
-                    {reflectionContext ? (
-                      <p className="symbol-journey-step__reflection-context">{reflectionContext}</p>
-                    ) : null}
-                    <p className="symbol-journey-step__reflection-preview">
-                      {getReflectionPreview(reflection) || "Ein Nachklang ist bereits hier."}
-                    </p>
-                  </div>
-                ) : (
-                  <p className="symbol-journey-step__still">Dieser Raum ist noch still.</p>
-                )}
-                <div className="symbol-journey-step__actions">
-                  <Link href={step.roomHref} className="symbol-archive-action">
-                    {getJourneyStepCtaLabel(hasTrace)}
-                  </Link>
-                  <Link href={step.codexHref} className="symbol-archive-action symbol-archive-action--quiet">
-                    {hasTrace ? "Im Codex vertiefen" : "Im Codex ansehen"}
-                  </Link>
-                </div>
-              </article>
-            </li>
-          );
-        })}
-      </ol>
-      <div className="symbol-journey-cycle" aria-label="Geschlossene Bewegung">
-        {roomTransitions.map((transition) => {
-          const labels = getRoomTransitionLabels(transition);
-
-          return (
-            <Link key={`${transition.sourceRoom}-${transition.targetRoom}`} href={getRoomTransitionHref(transition)}>
-              <span>{labels.source} -&gt; {labels.target}</span>
-              <small>{transition.title}</small>
-            </Link>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function PersonalSymbolMap({ tracks }: { tracks: PersonalSymbolTrack[] }) {
-  return (
-    <section className="symbol-personal-map" aria-label="Persönlicher Weg">
-      <div className="symbol-personal-map__head">
-        <p className="symbol-kicker">Wegzeichen</p>
-        <h2>Fünf innere Zeichen</h2>
-      </div>
-
-      <div className="symbol-personal-map__grid">
-        {tracks.map((track) => (
-          <article key={track.symbolId} className="symbol-personal-track">
-            <div className="symbol-personal-track__top">
-              <p className="symbol-personal-track__hebrew" aria-hidden="true">
-                {track.config.hebrew}
-              </p>
-              <p className="symbol-personal-track__status">
-                {track.count > 0 ? "Auf deinem Weg" : "Noch still"}
-              </p>
-            </div>
-
-            <h3>{track.config.label}</h3>
-            <p className="symbol-personal-track__count">
-              {track.count > 0 ? getTraceCountLabel(track.count) : "Noch unberührt"}
-            </p>
-            <p className="symbol-personal-track__last">
-              {track.lastPathLabel ? `Zuletzt nahe: ${track.lastPathLabel}` : "Dieses Zeichen wartet still."}
-            </p>
-
-            <Link href={track.href} className="symbol-archive-action">
-              {track.ctaLabel}
-            </Link>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function SymbolPathFilters({
-  tracks,
-  activeFilter,
-  onSelectFilter,
-}: {
-  tracks: PersonalSymbolTrack[];
-  activeFilter: SymbolFilterKey;
-  onSelectFilter: (filter: SymbolFilterKey) => void;
-}) {
-  return (
-    <div className="symbol-path-filters" aria-label="Wegzeichen ansehen">
-      <button
-        type="button"
-        className={activeFilter === "all" ? "is-active" : undefined}
-        aria-pressed={activeFilter === "all"}
-        onClick={() => onSelectFilter("all")}
-      >
-        Alle
-      </button>
-      {tracks.map((track) => (
-        <button
-          key={track.symbolId}
-          type="button"
-          className={activeFilter === track.symbolId ? "is-active" : undefined}
-          aria-pressed={activeFilter === track.symbolId}
-          onClick={() => onSelectFilter(track.symbolId)}
-        >
-          {track.config.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function ReflectionArticle({
-  reflection,
-  returnLinks,
-  onRemove,
-}: {
-  reflection: StoredReflection;
-  returnLinks: ReflectionReturnLink[];
-  onRemove: (id: string) => void;
-}) {
-  return (
-    <article className="symbol-path-fragment px-5 py-5 sm:px-6 sm:py-6">
-      <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-start">
-        <div>
-          <p className="symbol-kicker text-cyan-soft">{getTraceContext(reflection)}</p>
-          <h3 className="mt-4 font-serif text-2xl italic leading-tight text-foreground-strong md:text-3xl">
-            {getTraceTitle(reflection)}
-          </h3>
-          <p className="symbol-copy mt-3 text-base italic text-gold/75">
-            {reflection.question}
-          </p>
-          <p className="symbol-copy mt-5 whitespace-pre-line break-words text-lg italic">
-            {reflection.answer}
-          </p>
-        </div>
-        <p className="symbol-copy text-xs uppercase tracking-[0.2em] text-muted-soft sm:text-right">
-          {formatDate(reflection.createdAt)}
-        </p>
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] pt-4">
-        {returnLinks.map((link) => (
-          <Link key={`${link.key}-${link.href}`} href={link.href} className="symbol-archive-action">
-            {link.label}
-          </Link>
-        ))}
-        <button
-          type="button"
-          onClick={() => onRemove(reflection.id)}
-          className="symbol-archive-action"
-        >
-          Wegstelle lösen
-        </button>
-      </div>
-    </article>
   );
 }

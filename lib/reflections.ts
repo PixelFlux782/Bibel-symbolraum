@@ -1,6 +1,7 @@
 import { getCodexEntry } from "@/lib/codex/getCodexEntry";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { buildRoomHref } from "@/lib/rooms/roomContext";
+import { addPersonalPathEvent } from "@/lib/personalPathState";
 import { getSymbolJourney } from "@/lib/symbols/symbolJourneys";
 import {
   getCodexHref,
@@ -22,7 +23,7 @@ export type StoredReflection = {
   room?: string;
   hebrew: string;
   title?: string;
-  sourceType?: "symbol" | "room" | "pattern" | "journey" | "core" | "letter";
+  sourceType?: "symbol" | "room" | "pattern" | "journey" | "core" | "letter" | "scripture";
   sourceId?: string;
   source?: string;
   sourceLabel?: string;
@@ -207,7 +208,8 @@ function normalizeSourceType(value: unknown): StoredReflection["sourceType"] {
     value === "pattern" ||
     value === "journey" ||
     value === "core" ||
-    value === "letter"
+    value === "letter" ||
+    value === "scripture"
   ) {
     return value;
   }
@@ -500,6 +502,20 @@ export function saveStoredReflection(reflection: StoredReflection) {
   const next = [reflection, ...reflections.filter((item) => item.id !== reflection.id)];
 
   persistStoredReflections(next);
+  addPersonalPathEvent({
+    id: reflection.id,
+    type: "question_answered",
+    targetId: reflection.sourceId ?? reflection.symbolSlug ?? reflection.room ?? reflection.symbol,
+    targetType: reflection.room ? "room" : reflection.sourceType === "scripture" ? "scripture" : "symbol",
+    label: reflection.title ?? reflection.symbol,
+    sourceRoute: reflection.roomHref ?? reflection.codexHref ?? "",
+    timestamp: reflection.createdAt,
+    context: reflection.stateTitle ?? reflection.pathLabel,
+    answer: getReflectionPreview(reflection),
+    questionId: reflection.question,
+    roomId: reflection.room,
+    codexId: reflection.codexHref?.replace(/^\/codex\//, ""),
+  });
   dispatchStoredReflectionsUpdated();
 }
 

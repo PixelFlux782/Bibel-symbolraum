@@ -1,3 +1,10 @@
+import {
+  addPersonalPathEvent,
+  markArchiveDiscovered,
+  markArchiveRead,
+} from "@/lib/personalPathState";
+import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
+
 export const PATH_ACTIVITY_STORAGE_KEY = "bibel-symbolraum-path-activity";
 
 const DEDUPE_WINDOW_MS = 5000;
@@ -259,6 +266,16 @@ export function recordRoomVisit(input: { symbolId: string; roomHref: string }): 
       ...activity.roomVisits,
     ],
   });
+  addPersonalPathEvent({
+    type: "room_entered",
+    targetId: input.symbolId,
+    targetType: "room",
+    label: getSymbolPathConfig(input.symbolId)?.roomLabel ?? input.symbolId,
+    sourceRoute: input.roomHref,
+    timestamp: createdAt,
+    roomId: input.symbolId,
+  });
+  markArchiveRead(input.symbolId, "room", createdAt);
 
   return true;
 }
@@ -292,6 +309,15 @@ export function recordJourneyStart(journeyId: string): boolean {
       ...activity.journeyStarts,
     ],
   });
+  addPersonalPathEvent({
+    type: "marker_added",
+    targetId: journeyId,
+    targetType: "journey",
+    label: journeyId,
+    sourceRoute: "/symbolnetz",
+    timestamp: createdAt,
+  });
+  markArchiveDiscovered(journeyId, "journey", createdAt);
 
   return true;
 }
@@ -317,6 +343,17 @@ export function recordActivatedLetter(input: { letterId: string; symbolId?: stri
       ...activity.activatedLetters,
     ],
   });
+  addPersonalPathEvent({
+    type: "marker_added",
+    targetId: input.letterId,
+    targetType: "letter",
+    label: input.letterId,
+    sourceRoute: input.pathId ? `/codex/${input.pathId}` : "/symbolnetz",
+    timestamp: createdAt,
+    context: input.pathId,
+    roomId: input.symbolId,
+  });
+  markArchiveDiscovered(input.letterId, "letter", createdAt);
 
   return true;
 }

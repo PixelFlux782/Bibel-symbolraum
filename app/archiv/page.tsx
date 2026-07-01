@@ -4,106 +4,170 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { LetterOverlay } from "@/components/rooms/engine/LetterOverlay";
-import { getSymbolHebrewProfile } from "@/lib/hebrew/getSymbolHebrewProfile";
+import { codexRegistry } from "@/lib/codex/codexRegistry";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
-import { buildSymbolMeaningNetwork } from "@/lib/meaning/buildSymbolMeaningNetwork";
+import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import {
-  parseStoredPathActivity,
-  PATH_ACTIVITY_STORAGE_KEY,
-  type StoredPathActivity,
-} from "@/lib/pathActivity";
-import {
-  parseStoredReflections,
-  REFLECTION_STORAGE_KEY,
-  type StoredReflection,
-} from "@/lib/reflections";
+  getArchiveDiscoveryState,
+  migrateLegacyPathState,
+  type ArchiveDiscoveryState,
+  type ArchiveDiscoveryStatus,
+  type PersonalPathTargetType,
+} from "@/lib/personalPathState";
+import { symbolPathConfigs } from "@/lib/symbols/symbolPathConfig";
 import { visualAssets } from "@/lib/visualAssets";
 
-const emptyActivity: StoredPathActivity = {
-  roomVisits: [],
-  journeyStarts: [],
-  activatedLetters: [],
+type ArchiveFilter = "all" | PersonalPathTargetType;
+
+type ArchiveEntity = {
+  id: string;
+  type: PersonalPathTargetType;
+  label: string;
+  href?: string;
+  meta?: string;
 };
 
-const network = buildSymbolMeaningNetwork();
+const filterLabels: Array<{ key: ArchiveFilter; label: string }> = [
+  { key: "all", label: "Alle" },
+  { key: "letter", label: "Buchstaben" },
+  { key: "word", label: "Woerter" },
+  { key: "scripture", label: "Bibelstellen" },
+  { key: "symbol", label: "Symbole" },
+  { key: "meaning", label: "Bedeutung" },
+  { key: "journey", label: "Wege" },
+];
 
-function formatDate(value: string) {
-  const date = new Date(value);
+const statusLabels: Record<ArchiveDiscoveryStatus, string> = {
+  undiscovered: "unentdeckt",
+  discovered: "entdeckt",
+  read: "gelesen",
+};
 
-  if (Number.isNaN(date.getTime())) {
-    return "Ohne Datum";
+function getStatusRank(status: ArchiveDiscoveryStatus) {
+  if (status === "read") return 2;
+  if (status === "discovered") return 1;
+  return 0;
+}
+
+function getDiscoveryMap(states: ArchiveDiscoveryState[]) {
+  return new Map(states.map((state) => [`${state.entityType}:${state.entityId}`, state]));
+}
+
+function getStateForEntity(entity: ArchiveEntity, discoveryMap: Map<string, ArchiveDiscoveryState>): ArchiveDiscoveryState {
+  return discoveryMap.get(`${entity.type}:${entity.id}`) ?? {
+    entityId: entity.id,
+    entityType: entity.type,
+    status: "undiscovered",
+  };
+}
+
+function getCodexType(type: string): PersonalPathTargetType {
+  if (type === "hebrew-letter") return "letter";
+  if (type === "hebrew-word") return "word";
+  if (type === "scripture") return "scripture";
+  if (type === "journey") return "journey";
+  if (type === "meaning" || type === "meaning-field") return "meaning";
+
+  return "symbol";
+}
+
+function buildArchiveEntities(): ArchiveEntity[] {
+  const entities = new Map<string, ArchiveEntity>();
+
+  function add(entity: ArchiveEntity) {
+    entities.set(`${entity.type}:${entity.id}`, entity);
   }
 
-  return new Intl.DateTimeFormat("de-DE", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  Object.values(symbolPathConfigs).forEach((config) => {
+    add({
+      id: config.symbolId,
+      type: "symbol",
+      label: config.label,
+      href: config.codexHref,
+      meta: config.roomLabel,
+    });
+  });
+
+  hebrewLetters.forEach((letter) => {
+    add({
+      id: letter.id,
+      type: "letter",
+      label: letter.name,
+      href: `/codex/${letter.id}`,
+      meta: `Zahlenwert ${letter.numericValue}`,
+    });
+  });
+
+  hebrewWords.forEach((word) => {
+    add({
+      id: word.id,
+      type: "word",
+      label: word.germanMeaning,
+      href: `/codex/${word.id}`,
+      meta: `${word.hebrew} / ${word.transliteration}`,
+    });
+  });
+
+  biblicalReferences.forEach((reference) => {
+    add({
+      id: reference.id,
+      type: "scripture",
+      label: reference.label,
+      href: `/codex/${reference.id}`,
+      meta: reference.reference,
+    });
+  });
+
+  codexRegistry.forEach((entry) => {
+    add({
+      id: entry.id,
+      type: getCodexType(entry.type),
+      label: entry.title,
+      href: `/codex/${entry.id}`,
+      meta: entry.subtitle ?? undefined,
+    });
+  });
+
+  return Array.from(entities.values()).sort((a, b) => {
+    const typeCompare = a.type.localeCompare(b.type, "de-DE");
+
+    return typeCompare || a.label.localeCompare(b.label, "de-DE");
+  });
 }
 
-function getLetterWords(letterId: string) {
-  return hebrewWords.filter((word) => word.letterIds.includes(letterId));
+function getProgress(entities: ArchiveEntity[], discoveryMap: Map<string, ArchiveDiscoveryState>, type: ArchiveFilter) {
+  const scoped = type === "all" ? entities : entities.filter((entity) => entity.type === type);
+  const discovered = scoped.filter((entity) => getStatusRank(getStateForEntity(entity, discoveryMap).status) > 0).length;
+  const read = scoped.filter((entity) => getStateForEntity(entity, discoveryMap).status === "read").length;
+
+  return { total: scoped.length, discovered, read };
 }
 
-function getLetterRooms(letterId: string) {
-  return network.nodes.filter((symbol) =>
-    getSymbolHebrewProfile(symbol.id).letters.some((letter) => letter.id === letterId)
-  );
-}
-
-function getDiscoveryLetterIds(activity: StoredPathActivity) {
-  return Array.from(new Set(activity.activatedLetters.map((activation) => activation.letterId)))
-    .filter((letterId) => hebrewLetters.some((letter) => letter.id === letterId));
-}
-
-function getLastDiscovery(activity: StoredPathActivity, letterId: string) {
-  return [...activity.activatedLetters]
-    .filter((activation) => activation.letterId === letterId)
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-}
-
-function getDiscoveryContext(activity: StoredPathActivity, letterId: string) {
-  const activation = getLastDiscovery(activity, letterId);
-
-  if (!activation) return "Noch verborgen";
-
-  const path = network.paths.find((item) => item.id === activation.pathId);
-  if (path) {
-    const from = network.nodes.find((node) => node.id === path.from)?.label ?? path.from;
-    const to = network.nodes.find((node) => node.id === path.to)?.label ?? path.to;
-
-    return `Letter Bridge: ${from} / ${to}`;
-  }
-
-  const symbol = network.nodes.find((node) => node.id === activation.symbolId);
-
-  return symbol ? `LetterOverlay: ${symbol.label}` : "Im Hebrew Codex geöffnet";
+function getVisibleLetterIds(discoveryMap: Map<string, ArchiveDiscoveryState>) {
+  return hebrewLetters
+    .filter((letter) => getStatusRank(getStateForEntity({ id: letter.id, type: "letter", label: letter.name }, discoveryMap).status) > 0)
+    .map((letter) => letter.id);
 }
 
 export default function ArchivPage() {
-  const [activity, setActivity] = useState<StoredPathActivity | null>(null);
-  const [reflections, setReflections] = useState<StoredReflection[] | null>(null);
+  const [discovery, setDiscovery] = useState<ArchiveDiscoveryState[] | null>(null);
+  const [activeFilter, setActiveFilter] = useState<ArchiveFilter>("all");
   const [overlayLetterId, setOverlayLetterId] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedActivity = parseStoredPathActivity(window.localStorage.getItem(PATH_ACTIVITY_STORAGE_KEY));
-    const storedReflections = parseStoredReflections(window.localStorage.getItem(REFLECTION_STORAGE_KEY));
-
-    window.queueMicrotask(() => {
-      setActivity(storedActivity);
-      setReflections(storedReflections);
-    });
+    migrateLegacyPathState();
+    window.queueMicrotask(() => setDiscovery(getArchiveDiscoveryState()));
   }, []);
 
-  const discoveredLetterIds = useMemo(
-    () => getDiscoveryLetterIds(activity ?? emptyActivity),
-    [activity]
+  const entities = useMemo(() => buildArchiveEntities(), []);
+  const discoveryMap = useMemo(() => getDiscoveryMap(discovery ?? []), [discovery]);
+  const visibleEntities = useMemo(
+    () => (activeFilter === "all" ? entities : entities.filter((entity) => entity.type === activeFilter)),
+    [activeFilter, entities]
   );
-  const discoveredLetterSet = useMemo(() => new Set(discoveredLetterIds), [discoveredLetterIds]);
-  const sortedReflections = useMemo(
-    () => [...(reflections ?? [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
-    [reflections]
-  );
+  const progress = useMemo(() => getProgress(entities, discoveryMap, activeFilter), [activeFilter, discoveryMap, entities]);
+  const visibleLetterIds = useMemo(() => getVisibleLetterIds(discoveryMap), [discoveryMap]);
 
   return (
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-40 md:py-36">
@@ -124,174 +188,104 @@ export default function ArchivPage() {
         <header className="symbol-fade-in mb-16 max-w-5xl">
           <p className="symbol-kicker mb-8 text-gold/75">Archivraum</p>
           <h1 className="max-w-5xl font-serif text-6xl italic leading-[0.96] text-foreground-strong md:text-8xl">
-            Entdeckter Hebrew Codex
+            Fortschritt und Entdeckung
           </h1>
           <p className="symbol-copy mt-9 max-w-3xl text-xl italic md:text-2xl">
-            Mein Pfad erzählt die persönliche Reise. Der Archivraum sammelt, was sich im Codex bereits geöffnet hat.
+            Das Archiv zeigt, welche Buchstaben, Woerter, Bibelstellen, Symbole und Bedeutungsfelder unentdeckt, entdeckt oder gelesen sind.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/mein-pfad" className="symbol-archive-action">
               Mein Pfad
             </Link>
-            <Link href="/symbolnetz" className="symbol-archive-action">
-              Symbolnetz
+            <Link href="/codex" className="symbol-archive-action">
+              Codex
             </Link>
           </div>
         </header>
 
-        {activity === null || reflections === null ? (
+        {discovery === null ? (
           <section className="symbol-path-empty scroll-reveal mx-auto max-w-3xl text-center">
             <p className="symbol-kicker">Archiv wird gelesen</p>
             <p className="mt-6 font-serif text-3xl italic text-foreground-strong">
-              Die Buchstaben treten aus der Dunkelheit.
+              Der Entdeckungsstatus tritt hervor.
             </p>
           </section>
         ) : (
-          <div className="grid gap-12">
+          <div className="grid gap-10">
             <section className="symbol-path-section">
               <div className="flex flex-wrap items-end justify-between gap-6">
                 <div>
-                  <p className="symbol-kicker text-cyan-soft">Hebräisches Alphabet</p>
+                  <p className="symbol-kicker text-cyan-soft">Fortschritt</p>
                   <h2 className="mt-4 font-serif text-4xl italic leading-tight text-foreground-strong md:text-5xl">
-                    {discoveredLetterIds.length} von 22 Buchstaben entdeckt
+                    {progress.discovered} von {progress.total} entdeckt
                   </h2>
+                  <p className="symbol-copy mt-4 max-w-xl text-sm">
+                    Davon {progress.read} gelesen. Der Status entsteht durch Besuche, geoeffnete Buchstaben und bewusste Markierungen.
+                  </p>
                 </div>
-                <p className="symbol-copy max-w-xl text-sm">
-                  Entdeckt bedeutet: im LetterOverlay geöffnet, als Letter Bridge aktiviert oder im persönlichen Pfad als activatedLetters gespeichert.
-                </p>
-              </div>
-
-              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {hebrewLetters.map((letter) => {
-                  const isDiscovered = discoveredLetterSet.has(letter.id);
-                  const words = getLetterWords(letter.id);
-                  const rooms = getLetterRooms(letter.id);
-                  const primarySymbolism = letter.symbolism[0];
-
-                  return (
-                    <article
-                      key={letter.id}
-                      className={`symbol-archive-fragment p-5 transition-opacity duration-700 ${
-                        isDiscovered ? "opacity-100" : "opacity-[0.38]"
-                      }`}
+                <div className="symbol-path-filters" aria-label="Archiv filtern">
+                  {filterLabels.map((filter) => (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      className={activeFilter === filter.key ? "is-active" : undefined}
+                      aria-pressed={activeFilter === filter.key}
+                      onClick={() => setActiveFilter(filter.key)}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <button
-                          type="button"
-                          onClick={() => isDiscovered ? setOverlayLetterId(letter.id) : undefined}
-                          disabled={!isDiscovered}
-                          aria-label={isDiscovered ? `${letter.name} im Hebrew Codex öffnen` : `${letter.name} ist noch verborgen`}
-                          className={`font-serif text-6xl leading-none transition-colors ${
-                            isDiscovered ? "text-gold/90 hover:text-gold" : "text-gold/25"
-                          }`}
-                          lang="he"
-                          dir="rtl"
-                        >
-                          {letter.glyph}
-                        </button>
-                        <div className="text-right">
-                          <p className="text-[10px] uppercase tracking-[0.24em] text-muted-soft">
-                            {String(letter.alphabetPosition).padStart(2, "0")} / 22
-                          </p>
-                          <p className={isDiscovered ? "mt-2 text-[10px] uppercase tracking-[0.22em] text-gold/70" : "mt-2 text-[10px] uppercase tracking-[0.22em] text-muted-soft/55"}>
-                            {isDiscovered ? "entdeckt" : "noch verborgen"}
-                          </p>
-                        </div>
-                      </div>
-
-                      <h3 className="mt-5 font-serif text-2xl italic text-foreground-strong">
-                        {letter.name}
-                      </h3>
-                      <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-cyan-soft/75">
-                        Zahlenwert {letter.numericValue}
-                      </p>
-
-                      {isDiscovered ? (
-                        <>
-                          <p className="symbol-copy mt-4 text-sm">
-                            {primarySymbolism?.description ?? (letter.archetypalMeanings.join(", ") || "Für diesen Buchstaben ist noch keine Kurzdeutung im Codex hinterlegt.")}
-                          </p>
-                          <p className="mt-4 text-[10px] uppercase tracking-[0.18em] text-gold/65">
-                            {getDiscoveryContext(activity, letter.id)}
-                          </p>
-
-                          <div className="mt-5 grid gap-4 border-t border-white/[0.055] pt-5">
-                            <div>
-                              <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">Wörter</p>
-                              <div className="mt-2 flex flex-wrap gap-2">
-                                {words.length > 0 ? words.map((word) => (
-                                  <span key={word.id} className="border border-white/[0.07] bg-white/[0.025] px-3 py-2">
-                                    <span className="block font-serif text-xl text-gold/80" lang="he" dir="rtl">{word.hebrew}</span>
-                                    <span className="mt-1 block text-[10px] uppercase tracking-[0.16em] text-muted-soft">
-                                      {word.transliteration} / {word.germanMeaning}
-                                    </span>
-                                  </span>
-                                )) : <span className="symbol-copy text-sm">Noch keine verknüpften Wörter.</span>}
-                              </div>
-                            </div>
-
-                            <div>
-                              <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-soft/70">Räume</p>
-                              <div className="mt-2 flex flex-wrap gap-2">
-                                {rooms.length > 0 ? rooms.map((room) => (
-                                  <Link key={room.id} href={room.roomHref} className="symbol-archive-action">
-                                    {room.label}
-                                  </Link>
-                                )) : <span className="symbol-copy text-sm">Noch keine verknüpften Räume.</span>}
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <p className="symbol-copy mt-4 text-sm text-muted-soft/55">
-                          Details bleiben im Archiv geschlossen, bis dieser Buchstabe im Symbolraum auftaucht.
-                        </p>
-                      )}
-                    </article>
-                  );
-                })}
+                      {filter.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </section>
 
             <section className="symbol-path-section">
-              <div className="flex flex-wrap items-end justify-between gap-6">
-                <div>
-                  <p className="symbol-kicker text-cyan-soft">Reflexionen</p>
-                  <h2 className="mt-4 font-serif text-4xl italic text-foreground-strong">
-                    Persönliche Notizen bleiben darunter
-                  </h2>
-                </div>
-                <p className="symbol-copy max-w-xl text-sm">
-                  Sie gehören weiter zum Archiv, aber der Raum wird zuerst vom entdeckten Codex getragen.
-                </p>
-              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {visibleEntities.map((entity) => {
+                  const state = getStateForEntity(entity, discoveryMap);
+                  const statusRank = getStatusRank(state.status);
+                  const isLetter = entity.type === "letter";
 
-              <div className="mt-7 grid gap-4 md:grid-cols-2">
-                {sortedReflections.length > 0 ? sortedReflections.map((reflection) => (
-                  <article key={reflection.id} className="symbol-path-fragment px-5 py-5">
-                    <p className="symbol-kicker text-cyan-soft">
-                      {reflection.symbol}{reflection.stateTitle ? ` / ${reflection.stateTitle}` : ""}
-                    </p>
-                    <h3 className="mt-3 font-serif text-2xl italic leading-tight text-foreground-strong">
-                      {reflection.question}
-                    </h3>
-                    <p className="symbol-copy mt-4 whitespace-pre-line break-words text-lg italic">
-                      {reflection.answer}
-                    </p>
-                    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.05] pt-4">
-                      <p className="symbol-copy text-xs uppercase tracking-[0.2em] text-muted-soft">
-                        {formatDate(reflection.createdAt)}
-                      </p>
-                      {reflection.roomHref ? (
-                        <Link href={reflection.roomHref} className="symbol-archive-action">
-                          Raum öffnen
-                        </Link>
+                  return (
+                    <article
+                      key={`${entity.type}-${entity.id}`}
+                      className={`symbol-archive-fragment p-5 transition-opacity duration-700 ${
+                        statusRank > 0 ? "opacity-100" : "opacity-[0.38]"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <p className="text-[10px] uppercase tracking-[0.24em] text-muted-soft">
+                          {entity.type}
+                        </p>
+                        <p className={state.status === "read" ? "text-[10px] uppercase tracking-[0.22em] text-gold/75" : "text-[10px] uppercase tracking-[0.22em] text-muted-soft/65"}>
+                          {statusLabels[state.status]}
+                        </p>
+                      </div>
+
+                      <h3 className="mt-5 font-serif text-2xl italic text-foreground-strong">
+                        {entity.label}
+                      </h3>
+                      {entity.meta ? (
+                        <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-cyan-soft/75">
+                          {entity.meta}
+                        </p>
                       ) : null}
-                    </div>
-                  </article>
-                )) : (
-                  <p className="symbol-copy">Noch keine Reflexion gespeichert.</p>
-                )}
+
+                      <div className="mt-5 flex flex-wrap gap-2 border-t border-white/[0.055] pt-5">
+                        {entity.href ? (
+                          <Link href={entity.href} className="symbol-archive-action">
+                            Im Codex oeffnen
+                          </Link>
+                        ) : null}
+                        {isLetter && statusRank > 0 ? (
+                          <button type="button" onClick={() => setOverlayLetterId(entity.id)} className="symbol-archive-action">
+                            Buchstabe ansehen
+                          </button>
+                        ) : null}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </section>
           </div>
@@ -301,7 +295,7 @@ export default function ArchivPage() {
       {overlayLetterId ? (
         <LetterOverlay
           initialLetterId={overlayLetterId}
-          visibleLetterIds={discoveredLetterIds}
+          visibleLetterIds={visibleLetterIds}
           onActiveLetterChange={setOverlayLetterId}
           onClose={() => setOverlayLetterId(null)}
         />

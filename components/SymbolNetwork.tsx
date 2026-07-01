@@ -29,6 +29,7 @@ import { visualAssets } from "@/lib/visualAssets";
 import { getBridgeBySourceAndTarget } from "@/lib/meaning-bridges";
 import type { MeaningBridge } from "@/lib/meaning-bridges";
 import { derivePersonalWay, type PersonalWay } from "@/lib/personalWay";
+import { addFirstMovementCompletionEvent, addFirstMovementStationEvent } from "@/lib/personalPathState";
 import { recordActivatedLetter } from "@/lib/pathActivity";
 import { STORED_REFLECTIONS_UPDATED_EVENT } from "@/lib/reflections";
 import { meaningNodes as allMeaningNodes } from "@/lib/meaning/meaningNodes";
@@ -4461,6 +4462,11 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     const station = GENESIS_STATIONS[stationId];
     const symbolId = stationId === "genesis-1-3" ? "licht" : "wasser";
 
+    addFirstMovementStationEvent(stationId);
+    if (stationId === "genesis-1-3") {
+      addFirstMovementCompletionEvent();
+    }
+    setPersonalWay(derivePersonalWay());
     setActiveSymbolId(symbolId);
     setSearchFocusSymbolId(null);
     setActiveGenesisStationId(station.id);
