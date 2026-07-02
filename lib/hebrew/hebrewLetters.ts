@@ -14,7 +14,7 @@ const interpretive = (
 const genesisReference = (id: string, relation: string) => ({
   id,
   reference: "Genesis 1,1-3",
-  context: "Die Prototypbewegung Ursprung, Tiefe/Wasser/Ruach und Wort/Licht.",
+  context: "Der biblische Anfangsanker zeigt Ursprung, Tiefe/Wasser/Ruach und Wort/Licht als erste gemeinsame Schriftbewegung.",
   relation,
   provenance: "canonical" as const,
 });
@@ -46,7 +46,7 @@ export const hebrewLetters: HebrewLetter[] = [
     alphabetPosition: 2,
     symbolism: [
       interpretive("bet-house", "Haus", "Bet kann als Haus, Innenraum und erste bergende Form gelesen werden."),
-      interpretive("bet-beginning", "Anfangsraum", "Genesis beginnt mit Bet: Der Anfang wird als betretbarer Raum geoeffnet."),
+      interpretive("bet-beginning", "Anfangsraum", "Bet kann Anfang als bergenden Innenraum lesbar machen."),
     ],
     archetypalMeanings: ["Haus", "Innenraum", "Empfang", "Anfangsraum"],
     relatedSymbolSlugs: ["ursprung", "schoepfung", "wueste"],
@@ -112,7 +112,7 @@ export const hebrewLetters: HebrewLetter[] = [
     alphabetPosition: 6,
     symbolism: [
       interpretive("vav-connection", "Verbindung", "Vav kann als verbindende Linie gelesen werden, die getrennte Felder zusammenhaelt."),
-      interpretive("vav-and", "Und", "Erste Schriftspur: Vav traegt die Bewegung von Zustand zu Ereignis."),
+      interpretive("vav-and", "Und", "Vav traegt die Bewegung von Zustand zu Ereignis."),
     ],
     archetypalMeanings: ["Verbindung", "Linie", "Vermittlung", "Fortgang"],
     relatedSymbolSlugs: ["wasser", "licht", "uebergang"],
@@ -285,7 +285,7 @@ export const hebrewLetters: HebrewLetter[] = [
     alphabetPosition: 16,
     symbolism: [
       interpretive("ayin-eye", "Auge", "Ayin kann als Auge, Quelle und Wahrnehmung gelesen werden."),
-      interpretive("ayin-surface", "Auf der Flaeche", "Erste Schriftspur: Ayin markiert das Auf-dem-Angesicht, an dem Tiefe als Oberflaeche wahrnehmbar wird."),
+      interpretive("ayin-surface", "Auf der Flaeche", "Ayin markiert das Auf-dem-Angesicht, an dem Tiefe als Oberflaeche wahrnehmbar wird."),
     ],
     archetypalMeanings: ["Auge", "Quelle", "Wahrnehmung", "Oberflaeche"],
     relatedSymbolSlugs: ["licht", "wasser", "offenbarung"],

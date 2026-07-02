@@ -8,6 +8,8 @@ import { codexRegistry } from "@/lib/codex/codexRegistry";
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
+import { meaningJourneys } from "@/lib/meaning/meaningJourneys";
+import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import {
   getArchiveDiscoveryState,
   migrateLegacyPathState,
@@ -26,22 +28,43 @@ type ArchiveEntity = {
   label: string;
   href?: string;
   meta?: string;
+  hint?: string;
 };
+
+type StatusFilter = "all" | ArchiveDiscoveryStatus;
 
 const filterLabels: Array<{ key: ArchiveFilter; label: string }> = [
   { key: "all", label: "Alle" },
-  { key: "letter", label: "Buchstaben" },
-  { key: "word", label: "Woerter" },
-  { key: "scripture", label: "Bibelstellen" },
+  { key: "room", label: "Raeume" },
   { key: "symbol", label: "Symbole" },
-  { key: "meaning", label: "Bedeutung" },
-  { key: "journey", label: "Wege" },
+  { key: "word", label: "Woerter" },
+  { key: "letter", label: "Buchstaben" },
+  { key: "scripture", label: "Bibelstellen" },
+  { key: "meaning", label: "Bedeutungsfelder" },
+  { key: "journey", label: "Bewegungen" },
+];
+
+const statusFilterLabels: Array<{ key: StatusFilter; label: string }> = [
+  { key: "all", label: "Alle Status" },
+  { key: "read", label: "Gelesen" },
+  { key: "discovered", label: "Entdeckt" },
+  { key: "undiscovered", label: "Noch verborgen" },
 ];
 
 const statusLabels: Record<ArchiveDiscoveryStatus, string> = {
-  undiscovered: "unentdeckt",
-  discovered: "entdeckt",
-  read: "gelesen",
+  undiscovered: "Noch verborgen",
+  discovered: "Entdeckt",
+  read: "Gelesen",
+};
+
+const typeLabels: Record<PersonalPathTargetType, string> = {
+  room: "Raum",
+  symbol: "Symbol",
+  word: "Hebraeisches Wort",
+  letter: "Hebraeischer Buchstabe",
+  scripture: "Bibelstelle",
+  meaning: "Bedeutungsfeld",
+  journey: "Bewegung",
 };
 
 function getStatusRank(status: ArchiveDiscoveryStatus) {
@@ -72,20 +95,44 @@ function getCodexType(type: string): PersonalPathTargetType {
   return "symbol";
 }
 
+function capitalize(value: string) {
+  return value ? `${value.charAt(0).toLocaleUpperCase("de-DE")}${value.slice(1)}` : value;
+}
+
 function buildArchiveEntities(): ArchiveEntity[] {
   const entities = new Map<string, ArchiveEntity>();
+  const codexIds = new Set(codexRegistry.map((entry) => entry.id));
 
   function add(entity: ArchiveEntity) {
-    entities.set(`${entity.type}:${entity.id}`, entity);
+    const key = `${entity.type}:${entity.id}`;
+    const current = entities.get(key);
+
+    entities.set(key, {
+      ...current,
+      ...entity,
+      label: current?.label ?? entity.label,
+      href: entity.href ?? current?.href,
+      meta: current?.meta ?? entity.meta,
+      hint: current?.hint ?? entity.hint,
+    });
   }
 
   Object.values(symbolPathConfigs).forEach((config) => {
+    add({
+      id: config.symbolId,
+      type: "room",
+      label: config.roomLabel,
+      href: config.codexHref,
+      meta: "Raum",
+      hint: config.label,
+    });
     add({
       id: config.symbolId,
       type: "symbol",
       label: config.label,
       href: config.codexHref,
       meta: config.roomLabel,
+      hint: "Symbol im SYMBOLRAUM",
     });
   });
 
@@ -94,8 +141,9 @@ function buildArchiveEntities(): ArchiveEntity[] {
       id: letter.id,
       type: "letter",
       label: letter.name,
-      href: `/codex/${letter.id}`,
+      href: codexIds.has(letter.id) ? `/codex/${letter.id}` : undefined,
       meta: `Zahlenwert ${letter.numericValue}`,
+      hint: letter.glyph,
     });
   });
 
@@ -103,9 +151,10 @@ function buildArchiveEntities(): ArchiveEntity[] {
     add({
       id: word.id,
       type: "word",
-      label: word.germanMeaning,
-      href: `/codex/${word.id}`,
-      meta: `${word.hebrew} / ${word.transliteration}`,
+      label: capitalize(word.transliteration),
+      href: codexIds.has(word.id) ? `/codex/${word.id}` : undefined,
+      meta: word.germanMeaning,
+      hint: word.hebrew,
     });
   });
 
@@ -114,34 +163,70 @@ function buildArchiveEntities(): ArchiveEntity[] {
       id: reference.id,
       type: "scripture",
       label: reference.label,
-      href: `/codex/${reference.id}`,
+      href: codexIds.has(reference.id) ? `/codex/${reference.id}` : undefined,
       meta: reference.reference,
+      hint: "Bibelstelle",
+    });
+  });
+
+  meaningNodes.forEach((node) => {
+    add({
+      id: node.id,
+      type: "meaning",
+      label: node.label,
+      href: codexIds.has(node.id) ? `/codex/${node.id}` : undefined,
+      meta: "Bedeutungsfeld",
+      hint: node.description,
+    });
+  });
+
+  meaningJourneys.forEach((journey) => {
+    add({
+      id: journey.id,
+      type: "journey",
+      label: journey.title,
+      href: codexIds.has(journey.id) ? `/codex/${journey.id}` : undefined,
+      meta: "Bewegung",
+      hint: `${journey.symbolPath.length} Stationen`,
     });
   });
 
   codexRegistry.forEach((entry) => {
+    const type = getCodexType(entry.type);
+
     add({
       id: entry.id,
-      type: getCodexType(entry.type),
+      type,
       label: entry.title,
       href: `/codex/${entry.id}`,
       meta: entry.subtitle ?? undefined,
+      hint: type === "meaning" ? "Bedeutungsfeld im Codex" : undefined,
     });
   });
 
   return Array.from(entities.values()).sort((a, b) => {
-    const typeCompare = a.type.localeCompare(b.type, "de-DE");
+    const typeOrder: Record<PersonalPathTargetType, number> = {
+      room: 0,
+      symbol: 1,
+      word: 2,
+      letter: 3,
+      scripture: 4,
+      meaning: 5,
+      journey: 6,
+    };
+    const typeCompare = typeOrder[a.type] - typeOrder[b.type];
 
     return typeCompare || a.label.localeCompare(b.label, "de-DE");
   });
 }
 
-function getProgress(entities: ArchiveEntity[], discoveryMap: Map<string, ArchiveDiscoveryState>, type: ArchiveFilter) {
+function getProgress(entities: ArchiveEntity[], discoveryMap: Map<string, ArchiveDiscoveryState>, type: ArchiveFilter, status: StatusFilter) {
   const scoped = type === "all" ? entities : entities.filter((entity) => entity.type === type);
+  const statusScoped = status === "all" ? scoped : scoped.filter((entity) => getStateForEntity(entity, discoveryMap).status === status);
   const discovered = scoped.filter((entity) => getStatusRank(getStateForEntity(entity, discoveryMap).status) > 0).length;
   const read = scoped.filter((entity) => getStateForEntity(entity, discoveryMap).status === "read").length;
 
-  return { total: scoped.length, discovered, read };
+  return { total: scoped.length, visible: statusScoped.length, discovered, read };
 }
 
 function getVisibleLetterIds(discoveryMap: Map<string, ArchiveDiscoveryState>) {
@@ -153,6 +238,7 @@ function getVisibleLetterIds(discoveryMap: Map<string, ArchiveDiscoveryState>) {
 export default function ArchivPage() {
   const [discovery, setDiscovery] = useState<ArchiveDiscoveryState[] | null>(null);
   const [activeFilter, setActiveFilter] = useState<ArchiveFilter>("all");
+  const [activeStatus, setActiveStatus] = useState<StatusFilter>("all");
   const [overlayLetterId, setOverlayLetterId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -163,11 +249,28 @@ export default function ArchivPage() {
   const entities = useMemo(() => buildArchiveEntities(), []);
   const discoveryMap = useMemo(() => getDiscoveryMap(discovery ?? []), [discovery]);
   const visibleEntities = useMemo(
-    () => (activeFilter === "all" ? entities : entities.filter((entity) => entity.type === activeFilter)),
-    [activeFilter, entities]
+    () =>
+      entities.filter((entity) => {
+        const matchesType = activeFilter === "all" || entity.type === activeFilter;
+        const matchesStatus = activeStatus === "all" || getStateForEntity(entity, discoveryMap).status === activeStatus;
+
+        return matchesType && matchesStatus;
+      }),
+    [activeFilter, activeStatus, discoveryMap, entities]
   );
-  const progress = useMemo(() => getProgress(entities, discoveryMap, activeFilter), [activeFilter, discoveryMap, entities]);
+  const progress = useMemo(() => getProgress(entities, discoveryMap, activeFilter, activeStatus), [activeFilter, activeStatus, discoveryMap, entities]);
   const visibleLetterIds = useMemo(() => getVisibleLetterIds(discoveryMap), [discoveryMap]);
+  const groupedEntities = useMemo(
+    () =>
+      filterLabels
+        .filter((filter) => filter.key !== "all")
+        .map((filter) => ({
+          ...filter,
+          entities: visibleEntities.filter((entity) => entity.type === filter.key),
+        }))
+        .filter((group) => group.entities.length > 0),
+    [visibleEntities]
+  );
 
   return (
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-40 md:py-36">
@@ -188,15 +291,12 @@ export default function ArchivPage() {
         <header className="symbol-fade-in mb-16 max-w-5xl">
           <p className="symbol-kicker mb-8 text-gold/75">Archivraum</p>
           <h1 className="max-w-5xl font-serif text-6xl italic leading-[0.96] text-foreground-strong md:text-8xl">
-            Fortschritt und Entdeckung
+            Entdeckungen im SYMBOLRAUM
           </h1>
           <p className="symbol-copy mt-9 max-w-3xl text-xl italic md:text-2xl">
-            Das Archiv zeigt, welche Buchstaben, Woerter, Bibelstellen, Symbole und Bedeutungsfelder unentdeckt, entdeckt oder gelesen sind.
+            Ein ruhiger Ueberblick ueber Raeume, Symbole, Woerter, Buchstaben, Bibelstellen und Bedeutungsfelder.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/mein-pfad" className="symbol-archive-action">
-              Mein Pfad
-            </Link>
             <Link href="/codex" className="symbol-archive-action">
               Codex
             </Link>
@@ -220,28 +320,49 @@ export default function ArchivPage() {
                     {progress.discovered} von {progress.total} entdeckt
                   </h2>
                   <p className="symbol-copy mt-4 max-w-xl text-sm">
-                    Davon {progress.read} gelesen. Der Status entsteht durch Besuche, geoeffnete Buchstaben und bewusste Markierungen.
+                    Davon {progress.read} gelesen. Sichtbar im aktuellen Filter: {progress.visible}.
                   </p>
                 </div>
-                <div className="symbol-path-filters" aria-label="Archiv filtern">
-                  {filterLabels.map((filter) => (
-                    <button
-                      key={filter.key}
-                      type="button"
-                      className={activeFilter === filter.key ? "is-active" : undefined}
-                      aria-pressed={activeFilter === filter.key}
-                      onClick={() => setActiveFilter(filter.key)}
-                    >
-                      {filter.label}
-                    </button>
-                  ))}
+                <div className="symbol-archive-filter-stack">
+                  <div className="symbol-path-filters" aria-label="Archiv nach Kategorie filtern">
+                    {filterLabels.map((filter) => (
+                      <button
+                        key={filter.key}
+                        type="button"
+                        className={activeFilter === filter.key ? "is-active" : undefined}
+                        aria-pressed={activeFilter === filter.key}
+                        onClick={() => setActiveFilter(filter.key)}
+                      >
+                        {filter.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="symbol-path-filters symbol-path-filters--status" aria-label="Archiv nach Status filtern">
+                    {statusFilterLabels.map((filter) => (
+                      <button
+                        key={filter.key}
+                        type="button"
+                        className={activeStatus === filter.key ? "is-active" : undefined}
+                        aria-pressed={activeStatus === filter.key}
+                        onClick={() => setActiveStatus(filter.key)}
+                      >
+                        {filter.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </section>
 
-            <section className="symbol-path-section">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {visibleEntities.map((entity) => {
+            <section className="grid gap-8">
+              {(activeFilter === "all" ? groupedEntities : [{ key: activeFilter, label: filterLabels.find((filter) => filter.key === activeFilter)?.label ?? "Archiv", entities: visibleEntities }]).map((group) => (
+                <div key={group.key} className="symbol-archive-category">
+                  <div className="symbol-archive-category__head">
+                    <p className="symbol-kicker text-cyan-soft">{group.label}</p>
+                    <p>{group.entities.length} Eintraege</p>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {group.entities.map((entity) => {
                   const state = getStateForEntity(entity, discoveryMap);
                   const statusRank = getStatusRank(state.status);
                   const isLetter = entity.type === "letter";
@@ -255,14 +376,14 @@ export default function ArchivPage() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <p className="text-[10px] uppercase tracking-[0.24em] text-muted-soft">
-                          {entity.type}
+                          {typeLabels[entity.type]}
                         </p>
-                        <p className={state.status === "read" ? "text-[10px] uppercase tracking-[0.22em] text-gold/75" : "text-[10px] uppercase tracking-[0.22em] text-muted-soft/65"}>
+                        <p className={state.status === "read" ? "text-[10px] uppercase tracking-[0.22em] text-gold/75" : state.status === "discovered" ? "text-[10px] uppercase tracking-[0.22em] text-cyan-soft/75" : "text-[10px] uppercase tracking-[0.22em] text-muted-soft/65"}>
                           {statusLabels[state.status]}
                         </p>
                       </div>
 
-                      <h3 className="mt-5 font-serif text-2xl italic text-foreground-strong">
+                      <h3 className="mt-4 font-serif text-2xl italic leading-tight text-foreground-strong">
                         {entity.label}
                       </h3>
                       {entity.meta ? (
@@ -270,23 +391,30 @@ export default function ArchivPage() {
                           {entity.meta}
                         </p>
                       ) : null}
+                      {entity.hint ? (
+                        <p className="symbol-copy mt-3 line-clamp-2 text-sm italic">
+                          {entity.hint}
+                        </p>
+                      ) : null}
 
-                      <div className="mt-5 flex flex-wrap gap-2 border-t border-white/[0.055] pt-5">
+                      <div className="mt-4 flex flex-wrap gap-2 border-t border-white/[0.055] pt-4">
                         {entity.href ? (
                           <Link href={entity.href} className="symbol-archive-action">
-                            Im Codex oeffnen
+                            Codex
                           </Link>
                         ) : null}
                         {isLetter && statusRank > 0 ? (
                           <button type="button" onClick={() => setOverlayLetterId(entity.id)} className="symbol-archive-action">
-                            Buchstabe ansehen
+                            Ansehen
                           </button>
                         ) : null}
                       </div>
                     </article>
                   );
-                })}
-              </div>
+                    })}
+                  </div>
+                </div>
+              ))}
             </section>
           </div>
         )}

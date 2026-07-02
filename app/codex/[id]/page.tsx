@@ -104,36 +104,36 @@ type GenreCopy = {
 const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
   symbol: {
     formula: "Ort der Bedeutung",
-    threshold: "Dieses Symbol wird als Raum betreten. Erst kommt die Atmosphaere, dann der hebräische Körper, dann die Beziehungen, die diesen Ort tragen.",
+    threshold: "Dieses Symbol sammelt Bedeutung. Seine Form, seine hebräische Nähe und seine Beziehungen bleiben offen für verschiedene biblische Zusammenhänge.",
     essenceTitle: "Essenz",
     meaningFieldsTitle: "Bedeutungsraum",
-    waysTitle: "Türen in Raum und Pfad",
-    relationsTitle: "Drei tragende Beziehungen",
-    relationsLead: "Welche Bedeutungen tragen diesen Raum?",
-    scriptureTitle: "Kontextspuren",
-    nearbyTitle: "Türen: Raum, Codex, Symbolnetz, Pfad",
+    waysTitle: "Nahe Räume und Bewegungen",
+    relationsTitle: "Tragende Beziehungen",
+    relationsLead: "Wichtige Verbindungen",
+    scriptureTitle: "Biblische Anker",
+    nearbyTitle: "Nahe Einträge",
   },
   "hebrew-word": {
-    formula: "Sprachkörper",
-    threshold: "Dieses hebräische Wort wird zuerst gehört. Klang, Schriftbild und Zahlkörper tragen die Bedeutung, bevor sie in Symbolräume weitergeht.",
-    essenceTitle: "Bedeutungsschwelle",
+    formula: "Hebräisches Wort",
+    threshold: "Dieses hebräische Wort wird über Klang, Schriftbild, Bedeutung und biblische Anker gelesen.",
+    essenceTitle: "Essenz",
     meaningFieldsTitle: "Innere Wortbedeutung",
-    waysTitle: "Bewegung",
-    relationsTitle: "Drei antwortende Sprachkörper",
-    relationsLead: "Welche anderen Sprachkörper antworten diesem Wort?",
-    scriptureTitle: "Kontextspuren",
-    nearbyTitle: "Symbolräume",
+    waysTitle: "Nahe Bewegungen",
+    relationsTitle: "Beziehungen",
+    relationsLead: "Wichtige Verbindungen",
+    scriptureTitle: "Biblische Anker",
+    nearbyTitle: "Nahe Einträge",
   },
   "hebrew-letter": {
     formula: "Urzeichen",
-    threshold: "Dieser Buchstabe wird angeschaut wie eine Urform. Zeichen, Name und Zahlenwert kommen vor den weiteren Resonanzen.",
+    threshold: "Dieser Buchstabe wird als Zeichenkörper gelesen: Form, Name, Zahlenwert, Wörter und Symbole klingen zusammen.",
     essenceTitle: "Urbild / Grundbewegung",
     meaningFieldsTitle: "Bedeutungsnähe",
     waysTitle: "Symbolische Nähe",
-    relationsTitle: "Drei tragende Beziehungen",
-    relationsLead: "Welche Wörter, Symbole und Zahlen werden von dieser Form berührt?",
-    scriptureTitle: "Erste Schriftspur",
-    nearbyTitle: "Nahe Zeichenräume",
+    relationsTitle: "Beziehungen",
+    relationsLead: "Wichtige Verbindungen",
+    scriptureTitle: "Biblische Anker",
+    nearbyTitle: "Nahe Zeichen",
   },
   scripture: {
     formula: "Szene",
@@ -147,22 +147,22 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     nearbyTitle: "Weitere Szenentüren",
   },
   journey: {
-    formula: "Weg",
-    threshold: "Diese Journey will gegangen werden. Bedeutung entsteht nicht auf einmal, sondern von Station zu Station.",
+    formula: "Bedeutungsbewegung",
+    threshold: "Diese Bewegung ordnet Bedeutung in einer Folge. Jeder Schritt bleibt als eigener Eintrag lesbar.",
     essenceTitle: "Ausgangspunkt",
     meaningFieldsTitle: "Was dieser Weg sammelt",
-    waysTitle: "Verwandte Räume / Symbole",
-    relationsTitle: "Wegbeziehungen",
-    relationsLead: "Welche Stationen und Räume halten diesen Weg zusammen?",
-    scriptureTitle: "Biblische Wegspuren",
-    nearbyTitle: "Nahe Wege",
+    waysTitle: "Verwandte Räume und Symbole",
+    relationsTitle: "Beziehungen",
+    relationsLead: "Wichtige Verbindungen",
+    scriptureTitle: "Biblische Anker",
+    nearbyTitle: "Nahe Bewegungen",
   },
   pattern: {
     formula: "Wiederkehrende Bewegung",
     threshold: "Dieses Muster zeigt Bedeutung als wiederkehrende Bewegung. Es fragt nicht nur, was etwas ist, sondern wo es immer wieder geschieht.",
     essenceTitle: "Musterformel",
     meaningFieldsTitle: "Musterfelder",
-    waysTitle: "Verwandte Journeys",
+    waysTitle: "Verwandte Bewegungen",
     relationsTitle: "Wo diese Bewegung wiederkehrt",
     relationsLead: "Wo kehrt diese Bewegung wieder?",
     scriptureTitle: "Biblische Beispiele",
@@ -174,9 +174,9 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     essenceTitle: "Kurze innere Definition",
     meaningFieldsTitle: "Bedeutungsfeld",
     waysTitle: "Bewegung innerhalb des Feldes",
-    relationsTitle: "Drei tragende Beziehungen",
-    relationsLead: "Welche Symbole, Wörter und Stellen sammeln sich in diesem Feld?",
-    scriptureTitle: "Kontextspuren",
+    relationsTitle: "Beziehungen",
+    relationsLead: "Wichtige Verbindungen",
+    scriptureTitle: "Biblische Anker",
     nearbyTitle: "Nahe Bedeutungsfelder",
   },
   core: {
@@ -185,8 +185,8 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     essenceTitle: "Achse benennen",
     meaningFieldsTitle: "Achsenfelder",
     waysTitle: "Bewegungen durch diese Achse",
-    relationsTitle: "Achsenbeziehungen",
-    relationsLead: "Welche Bewegungen laufen durch diese Achse?",
+    relationsTitle: "Beziehungen",
+    relationsLead: "Wichtige Verbindungen",
     scriptureTitle: "Verdichtende Bibelstellen",
     nearbyTitle: "Nahe Achsen",
   },
@@ -196,8 +196,8 @@ const GENRE_COPY: Record<CodexGenre, GenreCopy> = {
     essenceTitle: "Symbolischer Rhythmus",
     meaningFieldsTitle: "Rhythmusfelder",
     waysTitle: "Welche Bewegung diese Zahl trägt",
-    relationsTitle: "Drei tragende Beziehungen",
-    relationsLead: "Welche Buchstaben, Wörter und Symbole werden durch diese Zahl geordnet?",
+    relationsTitle: "Beziehungen",
+    relationsLead: "Wichtige Verbindungen",
     scriptureTitle: "Biblische Zahlenspuren",
     nearbyTitle: "Nahe Rhythmen",
   },
@@ -207,7 +207,7 @@ function formatType(type: CodexEntryType) {
   const labels: Record<CodexEntryType, string> = {
     "hebrew-letter": "Hebräischer Buchstabe",
     "hebrew-word": "Hebräisches Wort",
-    journey: "Bedeutungspfad",
+    journey: "Bedeutungsbewegung",
     meaning: "Bedeutungsfeld",
     "meaning-field": "Bedeutungsfeld",
     number: "Zahl",
@@ -220,34 +220,34 @@ function formatType(type: CodexEntryType) {
 
 function formatRelationType(type: CodexRelation["type"]) {
   const labels: Record<CodexRelation["type"], string> = {
-    "anchors-scripture": "Bibelanker",
+    "anchors-scripture": "Verankert biblisch",
     "contains-letter": "Trägt den Buchstaben",
-    "continues-journey": "Führt weiter zu",
+    "continues-journey": "Bereitet vor",
     contrasts: "Steht im Gegenüber zu",
-    "carried-by": "getragen von",
-    "moves-over": "bewegt sich über",
-    "hovers-over": "schwebt über",
-    carries: "trägt",
-    "gives-voice-to": "gibt Stimme",
-    "opens-to": "öffnet zu",
-    "breathes-into": "haucht Atem in",
-    "stirred-by": "bewegt durch",
-    "moves-through": "bewegt sich durch",
+    "carried-by": "Wird getragen von",
+    "moves-over": "Bewegt sich über",
+    "hovers-over": "Schwebt über",
+    carries: "Trägt",
+    "gives-voice-to": "Gibt Stimme",
+    "opens-to": "Öffnet Raum",
+    "breathes-into": "Belebt",
+    "stirred-by": "Wird bewegt durch",
+    "moves-through": "Geht hindurch",
     expresses: "Drückt aus",
-    "expressed-through": "ausgedrückt durch",
+    "expressed-through": "Drückt sich aus durch",
     "echoes-within": "Erinnert an",
-    "gives-rise-to": "Entspringt",
-    "heard-within": "hörbar in",
-    "has-hebrew-word": "Klingt hebräisch mit",
-    "hidden-within": "verborgen in",
+    "gives-rise-to": "Bringt hervor",
+    "heard-within": "Wird hörbar in",
+    "has-hebrew-word": "Hat hebräische Nähe",
+    "hidden-within": "Bleibt verborgen in",
     "leads-to": "Führt weiter zu",
-    "nourishes-as": "nährt als",
+    "nourishes-as": "Nährt als",
     precedes: "Bereitet vor",
     related: "Gehört zusammen",
-    "revealed-at": "offenbart an",
-    reveals: "Öffnet",
+    "revealed-at": "Wird sichtbar an",
+    reveals: "Macht sichtbar",
     "shares-meaning": "Gehört zusammen",
-    "source-of": "Entspringt aus",
+    "source-of": "Ist Ursprung von",
     symbolizes: "Macht sichtbar",
     transforms: "Führt weiter zu",
   };
@@ -491,7 +491,7 @@ function codexEntryFromKnownPathLabel(id: string, label: string): CodexEntry {
     id,
     type: isScriptureLike ? "scripture" : "meaning",
     title: label,
-    subtitle: isScriptureLike ? "Bibelanker" : "Wüsten-Spur",
+    subtitle: isScriptureLike ? "Bibelanker" : "Bedeutungsanker",
     hebrew: null,
     transliteration: null,
     aliases: [label],
@@ -728,7 +728,7 @@ function resolvePathContext({
       labels,
       note: symbolLabel
         ? `Vom ${symbolLabel} aus öffnet sich diese Bewegung.`
-        : `Du vertiefst jetzt die Spur von ${entry.title}.`,
+        : `${entry.title} wird hier als naheliegender Bedeutungsraum vertieft.`,
       returnHref: symbol ? buildSymbolNetworkReturnHref({ symbol, lens: "story", path }) : "/symbolnetz",
       returnLabel: "Zum Symbolnetz zurückkehren",
     };
@@ -794,7 +794,7 @@ function getReflectionQuestionForEntry(sourceType: ReflectionSourceType) {
   }
 
   if (sourceType === "core") {
-    return "Welche Spur führt dich zu dieser Achse?";
+    return "Welche Beziehung führt dich zu dieser Achse?";
   }
 
   return "Welche Frage öffnet sich dir hier?";
@@ -1169,7 +1169,7 @@ function getJourneyHintForRelation(sourceId: string, targetId: string) {
   const resonanceJourney = getJourneysForNode(sourceId).find((journey) => journey.nodePath.includes(targetId));
 
   if (resonanceJourney) {
-    return `Teil der Bewegung ${formatJourneyMovement(resonanceJourney.nodePath)}`;
+    return `In derselben Bewegung: ${formatJourneyMovement(resonanceJourney.nodePath)}`;
   }
 
   const codexJourney = codexRegistry
@@ -1180,7 +1180,7 @@ function getJourneyHintForRelation(sourceId: string, targetId: string) {
     });
 
   if (codexJourney?.steps?.length) {
-    return `Teil der Bewegung ${codexJourney.steps.map((step) => step.label).join(" -> ")}`;
+    return `In derselben Bewegung: ${codexJourney.steps.map((step) => step.label).join(" -> ")}`;
   }
 
   return undefined;
@@ -1284,7 +1284,7 @@ function buildCuratedRelationItems(
       endpointLabel: targetLabel,
       endpointHref: linkedEntry ? `/codex/${linkedEntry.id}` : undefined,
       relationLabel: formatRelationType(relation.type),
-      markerLabel: relation.source === "journey" ? "Wegspur" : relation.source === "hebrew-letter" || relation.source === "hebrew-word" ? "Hebräisch" : "Resonanz",
+      markerLabel: relation.source === "journey" ? "Bewegung" : relation.source === "hebrew-letter" || relation.source === "hebrew-word" ? "Hebräisch" : "Resonanz",
       sentence: compactSentence(relationNote || relation.label || `${entry.title} gehört mit ${targetLabel} zusammen.`),
       explanation: "",
       journeyHint: getJourneyHintForRelation(entry.id, target),
@@ -1778,7 +1778,7 @@ function getCodexThresholdText(entry: CodexEntry, entity?: OntologyEntity) {
   const texts: Record<CodexEntryType, string> = {
     "hebrew-letter": "Dieser Buchstabe ist klein, aber nicht schmal. Wer ihn betritt, begegnet einem Zeichenkörper, in dem Zahl, Wort und Symbol leise zusammenklingen.",
     "hebrew-word": "Dieses hebräische Wort öffnet einen Bedeutungsraum, der Klang, Schrift und Erfahrung zusammenführt.",
-    journey: "Diese Spur will nicht erklären, sondern führen. Wer eintritt, geht von Station zu Station und merkt, welche Bedeutung unterwegs Gestalt gewinnt.",
+    journey: "Diese Bewegung ordnet Bedeutung Schritt für Schritt. Jede Station bleibt eigenständig und zugleich Teil einer größeren Folge.",
     meaning: "Dieses Bedeutungsfeld ist ein stiller Sammlungsraum. Wer eintritt, sieht, welche Symbole, Worte und Stellen hier aufeinander antworten.",
     "meaning-field": "Dieses Bedeutungsfeld ist ein stiller Sammlungsraum. Wer eintritt, sieht, welche Symbole, Worte und Stellen hier aufeinander antworten.",
     number: "Diese Zahl ist hier kein Rechenwert, sondern ein Resonanzkörper. Wer eintritt, sieht, welche Buchstaben, Worte und Symbole durch sie berührt werden.",
@@ -1860,7 +1860,7 @@ function PathContextCard({ context }: { context: ResolvedPathContext | null }) {
 
   return (
     <section className="mt-8 max-w-3xl border border-gold/[0.16] bg-gold/[0.035] px-4 py-4 backdrop-blur-md sm:px-5">
-      <p className="symbol-kicker text-cyan-soft">Pfadspur</p>
+      <p className="symbol-kicker text-cyan-soft">Übergang</p>
       <p className="mt-3 flex flex-wrap items-center gap-2 font-serif text-xl italic leading-snug text-foreground-strong sm:text-2xl">
         {context.labels.map((label, index) => (
           <span key={`${label}-${index}`} className="inline-flex items-center gap-2">
@@ -1937,17 +1937,17 @@ function SymbolJourneyNoticeSection({
   step: SymbolJourneyStep;
 }) {
   return (
-    <DetailSection title="Teil einer Spur">
+    <DetailSection title="Teil einer Bewegung">
       <div className="grid gap-4">
         <p className="symbol-copy text-base italic text-muted-soft">
-          Dieses Symbol liegt in der Spur: {journey.title}.
+          Dieses Symbol gehört zu dieser Bewegung: {journey.title}.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href={SYMBOL_JOURNEY_OVERVIEW_HREF} className="symbol-archive-action">
             In Mein Pfad ansehen
           </Link>
           <Link href={step.roomHref} className="symbol-archive-action symbol-archive-action--quiet">
-            Den Raum dieser Spur betreten
+            Diese Bewegung ansehen
           </Link>
         </div>
       </div>
@@ -2073,7 +2073,7 @@ function WaterCodexReferenceSection() {
         </section>
 
         <section className="border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Biblische Spur</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Biblischer Anker</p>
           <div className="mt-4 grid gap-3">
             {WATER_SCRIPTURE_TRACE.map((anchor) => {
               const href = resolveScriptureAnchorHref(anchor.id, "wasser");
@@ -2095,7 +2095,7 @@ function WaterCodexReferenceSection() {
           <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Aus dieser Tiefe</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href={waterRoomHref} className="symbol-cta">Den Wasser-Raum betreten</Link>
-            <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Erzählspur Wasser – Wüste – Brot ansehen</Link>
+            <Link href={journeyHref} className="symbol-cta symbol-cta-secondary">Bewegung Wasser – Wüste – Brot ansehen</Link>
             <a href="#spur-aufnehmen" className="symbol-cta symbol-cta-secondary">Diese Spur bewahren</a>
           </div>
         </section>
@@ -2621,7 +2621,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
 
         {isFromSymbolNetwork && activePathLabel ? (
           <p className="mt-5 max-w-2xl border-l border-gold/35 pl-4 text-[0.62rem] uppercase tracking-[0.22em] text-gold/70">
-            Resonanzspur: {activePathLabel}
+            Resonanz: {activePathLabel}
           </p>
         ) : null}
 
@@ -2827,7 +2827,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
           </div>
 
           <aside className="grid content-start gap-5 md:grid-cols-2">
-            <DetailSection title="Archiv">
+            <DetailSection title="Einordnung">
               <dl>
                 <FieldRow label="Typ" value={isPatternEntity ? "Bewegungsmuster" : isCoreConceptEntity ? "Bedeutungsachse" : formatType(entry.type)} />
                 {codexRoomHref && codexRoomLabel ? (
@@ -2844,7 +2844,7 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
                   />
                 ) : null}
                 {entry.journeyIds.length > 0 ? (
-                  <FieldRow label="Pfadbezug" value="Kuratiert" />
+                  <FieldRow label="Bewegung" value="Kuratiert" />
                 ) : null}
               </dl>
             </DetailSection>
@@ -2981,17 +2981,17 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
   const relatedPatterns = getRelatedPatternsForJourney(entry);
 
   return (
-    <DetailSection title="Spur" activeContext={activeContext}>
+    <DetailSection title="Bewegung" activeContext={activeContext}>
       {entryStep ? (
         <div className="mb-5 border border-gold/15 bg-gold/[0.035] px-4 py-4">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Eintritt</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Anfang</p>
           <p className="mt-3 font-serif text-2xl italic text-foreground-strong">{entryStep.label}</p>
           {entryStep.description ? <p className="symbol-copy mt-2 text-sm italic text-muted-soft">{entryStep.description}</p> : null}
         </div>
       ) : null}
 
       <div className="mb-5 border border-white/[0.065] bg-black/10 px-4 py-4">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Spurenfolge</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Folge</p>
         <ol className="mt-3 grid gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
           {entry.steps.map((step, index) => (
             <li key={`trail-${step.id}`} className="flex items-center gap-2">
@@ -3068,7 +3068,7 @@ function JourneyStepsSection({ entry, activeContext }: { entry: CodexEntry; acti
 
       {exitCore ? (
         <div className="mt-6 border-t border-white/[0.06] pt-6">
-          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Spur öffnet sich zu</p>
+          <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Diese Bewegung öffnet sich zu</p>
           <WayLinkCard
             href={withPathContext(`/codex/${exitCore.id}`, { path: entry.id })}
             title={exitCore.title}
@@ -3411,7 +3411,7 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
             {resonance.genesisProfile ? (
               <div className="symbol-copy mt-4 grid gap-2 text-sm italic leading-relaxed text-muted-soft">
                 {resonance.movement ? <p>{resonance.movement}</p> : null}
-                <p><span className="text-gold/72">Spur in Genesis 1,1-3:</span> {resonance.genesisProfile.genesisRole}</p>
+                <p><span className="text-gold/72">Genesis 1,1-3:</span> {resonance.genesisProfile.genesisRole}</p>
                 <p className="text-gold/78">{resonance.genesisProfile.contemplative}</p>
               </div>
             ) : null}
@@ -3420,7 +3420,7 @@ function LetterResonanceSection({ entry, activeContext }: { entry: CodexEntry; a
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbundene Wörter</p>
-              <p className="mt-2 text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Erste Schriftspur</p>
+              <p className="mt-2 text-[0.58rem] uppercase tracking-[0.24em] text-gold/70">Erste Schrift</p>
               {resonance.words.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {resonance.words.slice(0, 4).map((word) => {
@@ -3524,7 +3524,7 @@ function SymbolicTrailSection({ entry, activeContext }: { entry: CodexEntry; act
   }
 
   return (
-    <DetailSection title="Symbolische Spur" activeContext={activeContext}>
+    <DetailSection title="Symbolische Verbindungen" activeContext={activeContext}>
       <div className="grid gap-5">
         {trail.fields.length > 0 ? (
           <div>
@@ -3600,7 +3600,7 @@ function WaysBeginningSection({
   }
 
   return (
-    <DetailSection title="Spuren, die sich hier öffnen" activeContext={activeContext}>
+    <DetailSection title="Weitere Bewegungen" activeContext={activeContext}>
       <div className="grid gap-3 sm:grid-cols-2">
         {patternWays.slice(0, 3).map((way, index) => (
           <WayProjectionCard
@@ -3835,7 +3835,7 @@ function PatternCodexSection({
                 <WayLinkCard
                   key={journey.id}
                   href={withPathContext(`/codex/${journey.id}`, { from: entity.id })}
-                  title="Spur öffnen"
+                  title="Bewegung öffnen"
                   note={journey.steps?.map((step) => step.label).join(" -> ") ?? journey.summary}
                   movementSteps={journey.steps?.map((step) => step.label) ?? []}
                 />
@@ -3880,7 +3880,7 @@ function PatternCodexSection({
               {archiveResonance.length > 0 ? (
                 <details className="border border-gold/15 bg-gold/[0.025] p-4">
                   <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-                    Weitere Resonanzen öffnen
+                    Weitere Beziehungen öffnen
                   </summary>
                   <div className="mt-4 grid gap-3">
                     {archiveResonance.map(({ relation, endpoint, label, markerLabel, note, explanation }) => (
@@ -4051,7 +4051,7 @@ function CuratedRelationsSection({
         {archiveRelations.length > 0 ? (
           <details className="border border-gold/15 bg-gold/[0.025] p-4 sm:p-5">
             <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Weitere Resonanzen öffnen
+              Weitere Beziehungen öffnen
             </summary>
             <div className="mt-5 grid gap-3">
               {archiveRelations.map((item) => (
@@ -4129,7 +4129,7 @@ function FoundationConnectionGroup({ title, items }: { title: string; items: Scr
       {archiveItems.length > 0 ? (
         <details className="mt-3 border border-white/[0.055] bg-black/[0.08] px-3 py-2">
           <summary className="cursor-pointer text-[0.54rem] uppercase tracking-[0.18em] text-gold/68">
-            Weitere Spuren
+            Weitere Verbindungen
           </summary>
           <div className="mt-3 flex flex-wrap gap-2">
             {archiveItems.map((item) => (
@@ -4270,7 +4270,7 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
               Leise Tiefen dieser Stelle
             </summary>
             <p className="symbol-copy mt-3 max-w-2xl text-sm italic leading-relaxed text-muted-soft">
-              Diese Spuren bleiben bewusst vorbereitet: sichtbar genug zum Wandern, aber noch nicht als eigene Hauptraeume ausgebaut.
+              Diese Spuren bleiben vorbereitet: sichtbar genug als Verbindung, aber noch nicht als eigene Haupträume ausgebaut.
             </p>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               {passiveWords.map((word) => (
@@ -4284,7 +4284,7 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
       {model.growingRooms.length > 0 ? (
         <section className="border-t border-white/[0.06] pt-6">
           <div className="grid gap-2">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Rueckwege und naechste Raeume</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Nahe Räume und Verbindungen</p>
             <p className="symbol-copy max-w-2xl text-sm italic leading-relaxed text-muted-soft">
               Die Stelle bleibt kein Endpunkt: sie fuehrt zurueck in den Codex, hinein in Raeume und weiter entlang der Genesis-Bewegung.
             </p>
@@ -4319,14 +4319,14 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
       ) : null}
 
       <section className="border-t border-white/[0.06] pt-6">
-        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Archivspuren dieser Stelle</p>
+        <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verbindungen dieser Stelle</p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <FoundationConnectionGroup title="Woerter" items={model.connections.words} />
           <FoundationConnectionGroup title="Raeume" items={model.connections.rooms} />
           <FoundationConnectionGroup title="Symbole" items={model.connections.symbols} />
           <FoundationConnectionGroup title="Buchstaben" items={model.connections.letters} />
           <FoundationConnectionGroup title="Bedeutungsfelder" items={model.connections.meaningFields} />
-          <FoundationConnectionGroup title="Journeys" items={model.connections.journeys} />
+          <FoundationConnectionGroup title="Bewegungen" items={model.connections.journeys} />
           <FoundationConnectionGroup title="Pattern" items={model.connections.patterns} />
           <FoundationConnectionGroup title="Zahlen" items={model.connections.numbers} />
         </div>
@@ -4457,7 +4457,7 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
 
         {model.contemplativeTrace ? (
           <section className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Kontemplative Spur</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Kontemplativer Nachklang</p>
             <p className="symbol-copy mt-3 max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong">
               {model.contemplativeTrace}
             </p>
@@ -4514,7 +4514,7 @@ function ScriptureSceneSection({ model }: { model: ScriptureSceneModel }) {
 
         {primaryRelations.length > 0 ? (
           <section className="border-t border-white/[0.06] pt-6">
-            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verwandte Journeys / Pattern</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.24em] text-muted-soft">Verwandte Bewegungen / Muster</p>
             <div className="mt-4 grid gap-4 md:grid-cols-3">
               {primaryRelations.map((item) => (
                 <CuratedRelationCard key={item.key} item={item} spacious />
@@ -4629,7 +4629,7 @@ function ScriptureAnchorsSection({
   );
 }
 
-function NearbyEntriesSection({ entry, title = "Weitere TÃ¼ren" }: { entry: CodexEntry; title?: string }) {
+function NearbyEntriesSection({ entry, title = "Nahe Einträge" }: { entry: CodexEntry; title?: string }) {
   const nearbyEntries = getNearbyEntries(entry);
   const primaryEntries = nearbyEntries.slice(0, 3);
   const archiveEntries = nearbyEntries.slice(3);
@@ -4655,7 +4655,7 @@ function NearbyEntriesSection({ entry, title = "Weitere TÃ¼ren" }: { entry: Co
         {archiveEntries.length > 0 ? (
           <details className="border border-gold/15 bg-gold/[0.025] p-4">
             <summary className="cursor-pointer text-[0.58rem] uppercase tracking-[0.2em] text-gold/80">
-              Weitere Resonanzen öffnen
+              Weitere Beziehungen öffnen
             </summary>
             <div className="mt-4 grid gap-3">
               {archiveEntries.map((nearbyEntry) => (
