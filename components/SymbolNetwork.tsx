@@ -129,6 +129,7 @@ type HierarchyNodeData = {
   level: SymbolHierarchyLevel;
   isDeepAnchor: boolean;
   isHighlighted?: boolean;
+  landscapeWeight?: "primary" | "strong" | "quiet";
 };
 
 type LivingConnectionData = {
@@ -196,6 +197,7 @@ type OntologyResonanceRow = {
   endpointLabel: string;
   endpointHref?: string;
   relationLabel: string;
+  relationPhrase: string;
   deepeningText: string;
   markerLabel: string;
 };
@@ -248,6 +250,15 @@ type GenesisStation = {
   roomHref?: string;
   roomCta?: string;
   nextId?: GenesisStationId;
+};
+
+type LandscapeHierarchyNode = {
+  id: string;
+  title: string;
+  summary: string;
+  level: SymbolHierarchyLevel;
+  isDeepAnchor: boolean;
+  landscapeWeight?: HierarchyNodeData["landscapeWeight"];
 };
 
 type SymbolNetworkInitialUrlState = {
@@ -346,6 +357,7 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   vohu: { x: 560, y: 262 },
   tehom: { x: 642, y: 205 },
   ruach: { x: 756, y: 154 },
+  wort: { x: 880, y: 74 },
   majim: { x: 705, y: 300 },
   amar: { x: 850, y: 54 },
   wajehi: { x: 924, y: 194 },
@@ -553,7 +565,7 @@ const GENESIS_STATIONS: Record<GenesisStationId, GenesisStation> = {
     title: "Das Wort oeffnet Licht.",
     movement: "Wort / Licht / Offenbarung",
     text: "Das Sprechen wird Ereignis. Licht erscheint, und deine erste Bewegung fuehrt weiter.",
-    traces: ["Wort", "Licht", "Offenbarung", "Unterscheidung"],
+    traces: ["Wort", "Licht", "Offenbarung", "Raah / Sehen", "Tov / Gut", "Genesis 1,4"],
     codexHref: "/codex/genesis-1-3?from=symbolnetz&path=erste-bewegung",
     roomHref: "/raeume/licht?from=symbolnetz&path=erste-bewegung",
     roomCta: "Weiter zum Licht",
@@ -567,6 +579,76 @@ const FIRST_MOVEMENT_SEQUENCE = [
   { id: "wort", label: "Wort" },
   { id: "genesis-1-3", label: "Licht" },
 ] as const;
+
+const STRONG_LANDSCAPE_NODE_IDS = new Set(["wasser", "licht", "ursprung", "tiefe", "tehom", "ruach", "wort", "davar", "or", "genesis-1-1", "genesis-1-2", "genesis-1-3"]);
+const FIRST_MOVEMENT_GRAPH_NODES: LandscapeHierarchyNode[] = [
+  {
+    id: "genesis-1-1",
+    title: "Ursprung",
+    summary: "Genesis 1,1",
+    level: "verse_anchor",
+    isDeepAnchor: true,
+    landscapeWeight: "primary",
+  },
+  {
+    id: "genesis-1-2",
+    title: "Tiefe",
+    summary: "Wasser und Ruach",
+    level: "verse_anchor",
+    isDeepAnchor: true,
+    landscapeWeight: "primary",
+  },
+  {
+    id: "ruach",
+    title: "Ruach",
+    summary: "bewegte Gegenwart",
+    level: "meta",
+    isDeepAnchor: false,
+    landscapeWeight: "strong",
+  },
+  {
+    id: "wort",
+    title: "Wort",
+    summary: "der Ruf vor dem Licht",
+    level: "meta",
+    isDeepAnchor: false,
+    landscapeWeight: "strong",
+  },
+  {
+    id: "genesis-1-3",
+    title: "Licht",
+    summary: "Genesis 1,3",
+    level: "verse_anchor",
+    isDeepAnchor: true,
+    landscapeWeight: "primary",
+  },
+];
+const FIRST_MOVEMENT_FOLLOW_NODES: LandscapeHierarchyNode[] = [
+  {
+    id: "raah",
+    title: "Raah",
+    summary: "Sehen",
+    level: "meta",
+    isDeepAnchor: false,
+    landscapeWeight: "quiet",
+  },
+  {
+    id: "tov",
+    title: "Tov",
+    summary: "Gut",
+    level: "meta",
+    isDeepAnchor: false,
+    landscapeWeight: "quiet",
+  },
+  {
+    id: "genesis-1-4",
+    title: "Genesis 1,4",
+    summary: "leise Folgeschwelle",
+    level: "verse_anchor",
+    isDeepAnchor: true,
+    landscapeWeight: "quiet",
+  },
+];
 
 function isGenesisStationId(id: string): id is GenesisStationId {
   return id in GENESIS_STATIONS;
@@ -1142,6 +1224,39 @@ function getOntologyCodexHref(id: string) {
   return getCodexEntry(id) || getOntologyEntity(id) ? `/codex/${id}?from=symbolnetz&focus=overview` : undefined;
 }
 
+function getQuietOntologyRelationPhrase(type: OntologyRelationType): string {
+  const labels: Partial<Record<OntologyRelationType, string>> = {
+    belongs_to: "gehört zu",
+    resonates_with: "klingt mit",
+    emerges_from: "kommt aus",
+    transforms_into: "wandelt sich zu",
+    opposes: "steht gegenüber",
+    fulfills: "erfüllt",
+    reveals: "macht sichtbar",
+    opens_into: "öffnet",
+    source_of: "trägt",
+    gives_rise_to: "führt zu",
+    echoes_within: "klingt nach in",
+    precedes: "bereitet vor",
+    expressed_through: "spricht durch",
+    is_expression_of: "gehört zu",
+    is_threshold_to: "öffnet",
+    contrasts_with: "steht in Spannung zu",
+    contains_pattern: "trägt",
+    fulfills_pattern_of: "vertieft",
+    has_polarity: "trägt Spannung",
+    structures_journey: "ordnet den Weg",
+    passes_through: "führt durch",
+    nourishes: "nährt",
+    tests: "prüft",
+    shares_letter: "teilt Buchstaben",
+    shares_number: "teilt Zahl",
+    appears_in_story: "ankert in",
+  };
+
+  return labels[type] ?? getOntologyRelationLabel(type).toLocaleLowerCase("de-DE");
+}
+
 function getOntologyRelationDeepeningText(relation: OntologyRelation) {
   const source = getOntologyEntity(relation.sourceId);
   const target = getOntologyEntity(relation.targetId);
@@ -1230,6 +1345,7 @@ function getInspectorOntologyRows(symbolId: string): OntologyResonanceRow[] {
         endpointLabel: getOntologyDisplayLabel(endpointId),
         endpointHref: getOntologyCodexHref(endpointId),
         relationLabel: getOntologyRelationLabel(relation.type),
+        relationPhrase: getQuietOntologyRelationPhrase(relation.type),
         deepeningText: getOntologyRelationDeepeningText(relation),
         markerLabel: getOntologyRelationMarkerLabel(relation.type),
       };
@@ -1891,7 +2007,7 @@ function NumberGraphNode({ data }: NodeProps<NumberNodeData>) {
 function HierarchySatelliteNode({ data }: NodeProps<HierarchyNodeData>) {
   return (
     <div
-      className={`hierarchy-satellite-node ${data.isDeepAnchor ? "hierarchy-satellite-node--deep" : ""} ${data.isHighlighted ? "is-highlighted" : ""}`}
+      className={`hierarchy-satellite-node ${data.isDeepAnchor ? "hierarchy-satellite-node--deep" : ""} ${data.landscapeWeight ? `hierarchy-satellite-node--${data.landscapeWeight}` : ""} ${data.isHighlighted ? "is-highlighted" : ""}`}
       tabIndex={0}
       aria-label={`${data.title}: ${data.summary}`}
     >
@@ -2011,7 +2127,7 @@ function OntologyResonanceRows({
   if (rows.length === 0) return null;
 
   return (
-    <div className="symbol-ontology-resonances" aria-label="Ontologie-Resonanzen">
+    <div className="symbol-ontology-resonances" aria-label="Wesentliche Verbindungen">
       {rows.map((row) => {
         const isActive = activeOntologyRelationId === row.relation.id;
 
@@ -2023,12 +2139,12 @@ function OntologyResonanceRows({
               onClick={() => onToggleRelation(row.relation.id)}
               aria-expanded={isActive}
             >
-              <span className="symbol-ontology-resonance__marker">{row.markerLabel}</span>
+              <span className="symbol-ontology-resonance__marker">{row.relationPhrase}</span>
               <OntologyResonanceToken label={row.endpointLabel} />
             </button>
             {isActive ? (
               <div className="symbol-ontology-resonance__deepening">
-                <p className="symbol-ontology-resonance__relation-label">{row.relationLabel}</p>
+                <p className="symbol-ontology-resonance__relation-label">{row.markerLabel}</p>
                 <p>{row.deepeningText}</p>
                 {row.endpointHref ? (
                   <Link href={row.endpointHref} className="symbol-ontology-resonance__codex-link">
@@ -2800,6 +2916,7 @@ function GenesisStationDetail({
   onSelectStation: (stationId: GenesisStationId) => void;
 }) {
   const nextStation = station.nextId ? GENESIS_STATIONS[station.nextId] : undefined;
+  const visibleTraces = station.id === "genesis-1-3" ? station.traces.slice(0, 6) : station.traces.slice(0, 5);
 
   return (
     <div className="symbol-disclosure" aria-label="Erste Bewegung">
@@ -2834,7 +2951,7 @@ function GenesisStationDetail({
       <div className="symbol-disclosure__layer">
         <p className="symbol-kicker text-cyan-soft">Nahe Spuren</p>
         <div className="symbol-disclosure__relations">
-          {station.traces.slice(0, 5).map((trace) => (
+          {visibleTraces.map((trace) => (
             <span key={trace}>
               <span>{trace}</span>
             </span>
@@ -2875,6 +2992,8 @@ function MobileGenesisStation({
   station: GenesisStation;
   onSelectStation: (stationId: GenesisStationId) => void;
 }) {
+  const visibleTraces = station.id === "genesis-1-3" ? station.traces.slice(0, 6) : station.traces.slice(0, 5);
+
   return (
     <section className="symbol-mobile-focus md:hidden" aria-label="Erste Bewegung">
       <p className="symbol-kicker text-cyan-soft">Erste Bewegung</p>
@@ -2905,7 +3024,7 @@ function MobileGenesisStation({
       <div className="symbol-mobile-relations">
         <p>Nahe Spuren</p>
         <ul>
-          {station.traces.slice(0, 5).map((trace) => (
+          {visibleTraces.map((trace) => (
             <li key={trace}>
               <span>{trace}</span>
             </li>
@@ -3716,10 +3835,10 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         && symbolViewportMode === "deep"
         && activeDeepHierarchyAnchors.length > 0;
       const genesisHierarchyNodes = activeGenesisStation
-        ? (["genesis-1-1", "genesis-1-2", "genesis-1-3"] as const).flatMap((stationId) => {
-            const entry = getHierarchyEntry(stationId);
-            return entry ? [{ entry, isDeepAnchor: true }] : [];
-          })
+        ? [
+            ...FIRST_MOVEMENT_GRAPH_NODES,
+            ...(activeGenesisStation.id === "genesis-1-3" ? FIRST_MOVEMENT_FOLLOW_NODES : []),
+          ]
         : [];
       const visibleSymbolIds = new Set(
         symbolViewportMode === "overview"
@@ -3735,12 +3854,26 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       const showMeaningNodes = symbolViewportMode !== "overview"
         && Boolean(activePathId || isJourneyFocus || activeLensMeaningIds.size > 0);
       const shouldStageArrival = !hasGraphDisclosure && symbolViewportMode === "overview";
-      const hierarchyNodes = [
+      const hierarchyNodes: LandscapeHierarchyNode[] = [
         ...genesisHierarchyNodes,
-        ...(shouldShowDetailHierarchy ? activeDetailHierarchyChildren.map((entry) => ({ entry, isDeepAnchor: false })) : []),
-        ...(shouldShowDeepHierarchy ? activeDeepHierarchyAnchors.map((entry) => ({ entry, isDeepAnchor: true })) : []),
+        ...(shouldShowDetailHierarchy ? activeDetailHierarchyChildren.map((entry): LandscapeHierarchyNode => ({
+          id: entry.id,
+          title: entry.title,
+          summary: entry.summary,
+          level: entry.level,
+          isDeepAnchor: false,
+          landscapeWeight: STRONG_LANDSCAPE_NODE_IDS.has(entry.id) ? "strong" : undefined,
+        })) : []),
+        ...(shouldShowDeepHierarchy ? activeDeepHierarchyAnchors.map((entry): LandscapeHierarchyNode => ({
+          id: entry.id,
+          title: entry.title,
+          summary: entry.summary,
+          level: entry.level,
+          isDeepAnchor: true,
+          landscapeWeight: STRONG_LANDSCAPE_NODE_IDS.has(entry.id) ? "strong" : undefined,
+        })) : []),
       ];
-      const hierarchyNodeIds = new Set(hierarchyNodes.map(({ entry }) => entry.id));
+      const hierarchyNodeIds = new Set(hierarchyNodes.map(({ id }) => id));
       const activeJourneyCodexNodes = activeResonanceJourney
         ? activeResonanceJourney.nodePath
           .filter((nodeId) => !visibleSymbolIds.has(nodeId) && !hierarchyNodeIds.has(nodeId))
@@ -3824,18 +3957,19 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
             },
           };
         }),
-        ...hierarchyNodes.map(({ entry, isDeepAnchor }) => ({
-          id: entry.id,
+        ...hierarchyNodes.map(({ id, title, summary, level, isDeepAnchor, landscapeWeight }) => ({
+          id,
           type: "hierarchy",
-          position: getNodePosition(entry.id),
+          position: getNodePosition(id),
           selectable: false,
           data: {
             kind: "hierarchy" as const,
-            title: entry.title,
-            summary: entry.summary,
-            level: entry.level,
+            title,
+            summary,
+            level,
             isDeepAnchor,
-            isHighlighted: activeSubspaceId === entry.id || activeGenesisStationId === entry.id,
+            landscapeWeight: landscapeWeight ?? (STRONG_LANDSCAPE_NODE_IDS.has(id) ? "strong" : undefined),
+            isHighlighted: activeSubspaceId === id || activeGenesisStationId === id,
           },
         })),
         ...activeJourneyCodexNodes,
@@ -4120,12 +4254,18 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       }),
     ] : []),
     ...(activeGenesisStation ? ([
-      ["genesis-1-1", "genesis-1-2"],
-      ["genesis-1-2", "genesis-1-3"],
-    ] as const).flatMap(([sourceId, targetId], index) => {
+      ["genesis-1-1", "genesis-1-2", "primary"],
+      ["genesis-1-2", "ruach", "primary"],
+      ["ruach", "wort", "primary"],
+      ["wort", "genesis-1-3", "primary"],
+      ["genesis-1-3", "raah", "quiet"],
+      ["raah", "tov", "quiet"],
+      ["genesis-1-3", "genesis-1-4", "quiet"],
+    ] as const).flatMap(([sourceId, targetId, weight], index) => {
       if (!renderedNodeIds.has(sourceId) || !renderedNodeIds.has(targetId)) return [];
 
       const ports = getConnectionPorts(sourceId, targetId);
+      const isQuiet = weight === "quiet";
 
       return [{
         id: `genesis-axis:${sourceId}-${targetId}`,
@@ -4134,11 +4274,11 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         sourceHandle: ports.sourceHandle,
         targetHandle: ports.targetHandle,
         type: "living",
-        className: "is-journey-path",
+        className: `is-journey-path ${isQuiet ? "is-follow-threshold" : "is-first-movement"}`,
         style: {
-          stroke: "rgba(189,160,109,0.42)",
-          strokeWidth: 1.4,
-          strokeDasharray: "5 8",
+          stroke: isQuiet ? "rgba(189,160,109,0.22)" : "rgba(221,194,128,0.74)",
+          strokeWidth: isQuiet ? 0.8 : 2.5,
+          strokeDasharray: isQuiet ? "3 11" : undefined,
         },
         data: {
           isTraveling: false,
