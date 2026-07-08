@@ -195,7 +195,7 @@ function createFocusData() {
       summary: symbol.shortMeaning,
       hebrew: symbol.hebrew,
       transliteration: symbol.transliteration,
-      codexHref: config?.codexHref ?? `/codex/${symbol.id}`,
+      codexHref: `${config?.codexHref ?? `/codex/${symbol.id}`}?from=symbolnetz&symbol=${encodeURIComponent(symbol.id)}`,
       roomHref: config?.roomHref ?? symbol.roomHref,
       terms: [config?.pathLabel ?? "", ...(config?.codexGates?.meaningFields.map((field) => field.label) ?? [])],
     }));
@@ -211,7 +211,7 @@ function createFocusData() {
       summary: codex?.summary ?? word.meaningThreshold,
       hebrew: word.hebrew,
       transliteration: word.transliteration,
-      codexHref: `/codex/${word.id}`,
+      codexHref: `/codex/${word.id}?from=symbolnetz&symbol=${encodeURIComponent(word.id)}`,
       scriptureAnchors: word.biblicalReferences.map((reference) => reference.reference),
       terms: [
         word.slug,
@@ -232,7 +232,7 @@ function createFocusData() {
       summary: letter.symbolism[0]?.description ?? letter.archetypalMeanings.join(", "),
       hebrew: letter.glyph,
       transliteration: letter.transcription,
-      codexHref: `/codex/${letter.id}`,
+      codexHref: `/codex/${letter.id}?from=symbolnetz&symbol=${encodeURIComponent(letter.id)}`,
       scriptureAnchors: letter.biblicalReferences.map((reference) => reference.reference),
       terms: [
         letter.glyph,
@@ -252,7 +252,9 @@ function createFocusData() {
       label: meaning.label,
       detail: "Bedeutungsfeld",
       summary: meaning.description,
-      codexHref: resolveCodexEntry(meaning.id) ? `/codex/${meaning.id}` : `/codex?meaning=${meaning.id}`,
+      codexHref: resolveCodexEntry(meaning.id)
+        ? `/codex/${meaning.id}?from=symbolnetz&symbol=${encodeURIComponent(meaning.id)}`
+        : `/codex?meaning=${meaning.id}`,
       terms: [meaning.description],
     }));
   }
@@ -265,7 +267,7 @@ function createFocusData() {
       label: codex?.title ?? scripture.label,
       detail: "Bibelanker",
       summary: codex?.summary ?? scripture.nodeIds.map((id) => meaningNodes.find((node) => node.id === id)?.label ?? id).join(", "),
-      codexHref: `/codex/${scripture.biblicalReferenceId}`,
+      codexHref: `/codex/${scripture.biblicalReferenceId}?from=symbolnetz&symbol=${encodeURIComponent(scripture.id)}`,
       scriptureAnchors: [scripture.label],
       terms: [scripture.label, ...(scripture.aliases ?? [])],
     }));

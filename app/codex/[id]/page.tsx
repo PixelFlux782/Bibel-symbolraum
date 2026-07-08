@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexPersonalTraceCard } from "@/components/CodexPersonalTraceCard";
@@ -2511,6 +2512,280 @@ function MeaningFieldsSection({
   );
 }
 
+type CalmRelationGroup = {
+  title: "Wörter" | "Bedeutungsfelder" | "Buchstaben" | "Schriftanker" | "Räume";
+  items: Array<{ id: string; label: string; note?: string; href?: string }>;
+};
+
+function getCalmRelationGroups(entry: CodexEntry): CalmRelationGroup[] {
+  const seen = new Set<string>();
+  const relations = getVisibleCodexRelations(entry).flatMap((relation) => {
+    const id = relationTarget(relation);
+    const linkedEntry = resolveLinkedCodexEntry(id);
+
+    if (!linkedEntry || linkedEntry.id === entry.id || seen.has(linkedEntry.id)) return [];
+    seen.add(linkedEntry.id);
+
+    return [{
+      id: linkedEntry.id,
+      label: linkedEntry.title,
+      note: getDisplayRelationNote(relation, linkedEntry.title),
+      href: `/codex/${linkedEntry.id}`,
+      type: linkedEntry.type,
+    }];
+  });
+
+  const meaningFields = entry.meaningFields.flatMap((id) => {
+    const linkedEntry = resolveLinkedCodexEntry(id);
+    if (seen.has(id)) return [];
+    seen.add(id);
+    return [{ id, label: linkedEntry?.title ?? getMeaningFieldLabel(id), href: linkedEntry ? `/codex/${linkedEntry.id}` : undefined }];
+  });
+
+  const groups: CalmRelationGroup[] = [
+    {
+      title: "Wörter",
+      items: relations.filter((item) => item.type === "hebrew-word"),
+    },
+    {
+      title: "Bedeutungsfelder",
+      items: [
+        ...meaningFields,
+        ...relations.filter((item) => item.type === "meaning" || item.type === "meaning-field"),
+      ],
+    },
+    {
+      title: "Buchstaben",
+      items: relations.filter((item) => item.type === "hebrew-letter"),
+    },
+    {
+      title: "Schriftanker",
+      items: relations.filter((item) => item.type === "scripture"),
+    },
+    {
+      title: "Räume",
+      items: hasSymbolRoom(entry.symbolRoomSlug)
+        ? [{
+            id: `raum-${entry.symbolRoomSlug}`,
+            label: `${getOntologyEntityTitle(entry.symbolRoomSlug)}-Raum`,
+            href: buildCodexRoomHref(entry),
+          }]
+        : [],
+    },
+  ];
+
+  return groups.filter((group) => group.items.length > 0);
+}
+
+function CalmSection({
+  eyebrow,
+  children,
+}: {
+  eyebrow: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="border-t border-white/[0.07] py-9 sm:py-12">
+      <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/68">{eyebrow}</p>
+      <div className="mt-5">{children}</div>
+    </section>
+  );
+}
+
+function CalmRelationCard({ item }: { item: CalmRelationGroup["items"][number] }) {
+  const content = (
+    <>
+      <p className="font-serif text-xl italic text-foreground-strong">{item.label}</p>
+      {item.note ? <p className="symbol-copy mt-2 line-clamp-2 text-sm leading-relaxed text-muted-soft">{item.note}</p> : null}
+    </>
+  );
+
+  return item.href ? (
+    <Link
+      href={item.href}
+      className="block min-w-0 border-l border-gold/20 bg-white/[0.018] px-4 py-3 transition-colors duration-500 hover:border-gold/45 hover:bg-gold/[0.035]"
+    >
+      {content}
+    </Link>
+  ) : (
+    <div className="min-w-0 border-l border-white/[0.08] px-4 py-3">{content}</div>
+  );
+}
+
+function CalmHebrewBody({ entry, entity }: { entry: CodexEntry; entity?: OntologyEntity }) {
+  if (!entry.hebrew || (entry.type !== "hebrew-word" && entry.type !== "hebrew-letter")) return null;
+
+  const breakdown = entry.type === "hebrew-word" ? breakdownHebrewWord(entry.hebrew) : undefined;
+  const word = entry.type === "hebrew-word" ? hebrewWords.find((candidate) => candidate.id === entry.id) : undefined;
+  const nuances = word?.meaningFields.flatMap((field) => [field.label, ...field.experienceFields]).slice(0, 4) ?? [];
+
+  return (
+    <CalmSection eyebrow="Hebräischer Körper">
+      <div className="grid gap-7 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] sm:items-center">
+        <div>
+          <p className="font-serif text-6xl leading-none text-gold/88 sm:text-7xl" lang="he" dir="rtl">{entry.hebrew}</p>
+          {entry.transliteration ? <p className="mt-4 text-xs tracking-[0.2em] text-cyan-soft/72">{entry.transliteration}</p> : null}
+          {breakdown?.value || entity?.gematria ? (
+            <p className="mt-4 text-xs uppercase tracking-[0.18em] text-muted-soft">Gematria {breakdown?.value ?? entity?.gematria}</p>
+          ) : null}
+        </div>
+        <div>
+          {nuances.length > 0 ? (
+            <>
+              <p className="font-serif text-xl italic text-foreground-strong">Bedeutungsnuancen</p>
+              <p className="symbol-copy mt-3 max-w-xl leading-relaxed text-muted-soft">{nuances.join(" · ")}</p>
+            </>
+          ) : (
+            <p className="symbol-copy max-w-xl font-serif text-xl italic leading-relaxed text-muted-soft">
+              {entity?.archetypalRole ?? entry.summary}
+            </p>
+          )}
+        </div>
+      </div>
+    </CalmSection>
+  );
+}
+
+function CalmCodexDetail({
+  entry,
+  entity,
+  roomHref,
+  roomLabel,
+  personalTraceSymbolSlug,
+  personalTraceRoomHref,
+  journeyTitle,
+  reflectionSourceType,
+}: {
+  entry: CodexEntry;
+  entity?: OntologyEntity;
+  roomHref?: string;
+  roomLabel?: string;
+  personalTraceSymbolSlug?: string;
+  personalTraceRoomHref?: string;
+  journeyTitle?: string;
+  reflectionSourceType?: ReflectionSourceType;
+}) {
+  const groups = getCalmRelationGroups(entry);
+  const typeLabel = formatType(entry.type);
+  const returnHref = `/symbolnetz?symbol=${encodeURIComponent(entry.id)}`;
+  const essence = entity?.summary ?? entry.summary;
+
+  return (
+    <main className="symbol-page relative min-h-screen overflow-x-hidden bg-[#030812] px-5 pb-24 pt-24 sm:px-8 sm:pt-28">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(189,160,109,0.10),transparent_34%),radial-gradient(ellipse_at_88%_24%,rgba(83,164,184,0.045),transparent_26%),linear-gradient(180deg,#07101d_0%,#030812_48%,#02060d_100%)]" />
+      <div className="relative mx-auto max-w-4xl">
+        <nav className="flex flex-wrap items-center justify-between gap-4">
+          <Link href="/codex" className="text-[0.6rem] uppercase tracking-[0.22em] text-muted-soft transition-colors hover:text-gold">
+            Codex
+          </Link>
+          <Link href={returnHref} className="text-[0.6rem] uppercase tracking-[0.22em] text-gold/72 transition-colors hover:text-gold">
+            Zurück zum Symbolnetz
+          </Link>
+        </nav>
+
+        <header className="pb-12 pt-12 sm:pb-16 sm:pt-16">
+          <p className="text-[0.6rem] uppercase tracking-[0.26em] text-cyan-soft/72">{typeLabel}</p>
+          {entry.hebrew ? (
+            <p className="mt-7 font-serif text-5xl leading-none text-gold/88 sm:text-6xl" lang="he" dir="rtl">{entry.hebrew}</p>
+          ) : null}
+          <h1 className="mt-5 max-w-3xl font-serif text-5xl italic leading-[1.02] text-foreground-strong sm:text-7xl">{entry.title}</h1>
+          {entry.transliteration ? <p className="mt-4 text-xs tracking-[0.22em] text-gold/65">{entry.transliteration}</p> : null}
+          {entry.subtitle && entry.subtitle !== entry.transliteration ? (
+            <p className="symbol-copy mt-5 max-w-2xl font-serif text-xl italic leading-relaxed text-muted-soft sm:text-2xl">{entry.subtitle}</p>
+          ) : null}
+          <p className="symbol-copy mt-7 max-w-2xl text-lg leading-relaxed text-foreground-strong/82">{essence}</p>
+        </header>
+
+        <CalmSection eyebrow="Bedeutung">
+          <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong sm:text-3xl">
+            {entity?.archetypalRole ?? essence}
+          </p>
+        </CalmSection>
+
+        <CalmHebrewBody entry={entry} entity={entity} />
+
+        {groups.length > 0 ? (
+          <CalmSection eyebrow="Beziehungen">
+            <div className="grid gap-8 sm:grid-cols-2">
+              {groups.map((group) => {
+                const visible = group.items.slice(0, 4);
+                const hidden = group.items.slice(4);
+                return (
+                  <section key={group.title} className="min-w-0">
+                    <h2 className="text-xs uppercase tracking-[0.2em] text-cyan-soft/68">{group.title}</h2>
+                    <div className="mt-3 grid gap-2">{visible.map((item) => <CalmRelationCard key={item.id} item={item} />)}</div>
+                    {hidden.length > 0 ? (
+                      <details className="mt-3">
+                        <summary className="cursor-pointer text-xs tracking-[0.14em] text-gold/68">Mehr anzeigen</summary>
+                        <div className="mt-3 grid gap-2">{hidden.map((item) => <CalmRelationCard key={item.id} item={item} />)}</div>
+                      </details>
+                    ) : null}
+                  </section>
+                );
+              })}
+            </div>
+          </CalmSection>
+        ) : null}
+
+        {entry.scriptureAnchors.length > 0 ? (
+          <CalmSection eyebrow="Schriftanker">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {entry.scriptureAnchors.slice(0, 4).map((anchor, index) => {
+                const linked = resolveLinkedCodexEntry(anchor.id) ?? resolveLinkedCodexEntry(anchor.reference);
+                return (
+                  <article key={`${anchor.reference}-${index}`} className="border-l border-gold/18 px-4 py-2">
+                    {linked ? <Link href={`/codex/${linked.id}`} className="font-serif text-xl italic text-gold/82 hover:text-gold">{anchor.reference}</Link> : <p className="font-serif text-xl italic text-gold/82">{anchor.reference}</p>}
+                    {anchor.note ? <p className="symbol-copy mt-2 line-clamp-3 text-sm leading-relaxed text-muted-soft">{anchor.note}</p> : null}
+                  </article>
+                );
+              })}
+            </div>
+          </CalmSection>
+        ) : null}
+
+        {roomHref && roomLabel ? (
+          <CalmSection eyebrow="Raum-Schwelle">
+            <Link href={roomHref} className="group inline-flex items-center gap-4 font-serif text-2xl italic text-foreground-strong transition-colors hover:text-gold">
+              Den {roomLabel}-Raum betreten <span className="text-gold/55 transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          </CalmSection>
+        ) : null}
+
+        {reflectionSourceType ? (
+          <div id="spur-aufnehmen" className="border-t border-white/[0.07] py-9 sm:py-12">
+            <CodexReflectionCard
+              title={entry.title}
+              hebrew={entry.hebrew}
+              question={getReflectionQuestionForEntry(reflectionSourceType)}
+              sourceType={reflectionSourceType}
+              sourceId={entry.id}
+              codexHref={`/codex/${entry.id}`}
+              roomHref={roomHref}
+            />
+          </div>
+        ) : null}
+        <div className="pb-10">
+          <CodexPersonalTraceCard
+            entryId={entry.id}
+            symbolSlug={personalTraceSymbolSlug}
+            roomHref={personalTraceRoomHref}
+            journeyTitle={journeyTitle}
+          />
+        </div>
+
+        <Link href={returnHref} className="inline-flex border-t border-gold/18 pt-5 font-serif text-xl italic text-gold/78 transition-colors hover:text-gold">
+          Zurück zur Karte · {entry.title}
+        </Link>
+        <CodexVisitTracker entryId={entry.id} entryType={entry.type} label={entry.title} roomId={entry.symbolRoomSlug} />
+      </div>
+    </main>
+  );
+}
+
+function shouldUseCalmCodexLayout() {
+  return true;
+}
+
 export function generateStaticParams() {
   return Array.from(new Set([
     ...codexEntryIds,
@@ -2593,6 +2868,21 @@ export default async function CodexDetailPage({ params, searchParams }: CodexDet
   });
   const showGenericSections = !isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity;
   const showMeaningFieldSection = !isCuratedSymbolEntry && !isScriptureEntry && !isPatternEntity && !isCoreConceptEntity;
+
+  if (shouldUseCalmCodexLayout()) {
+    return (
+      <CalmCodexDetail
+        entry={entry}
+        entity={ontologyEntity}
+        roomHref={codexRoomHref}
+        roomLabel={codexRoomLabel}
+        personalTraceSymbolSlug={personalTraceSymbolSlug}
+        personalTraceRoomHref={personalTraceSymbolConfig?.roomHref}
+        journeyTitle={symbolJourney?.title}
+        reflectionSourceType={reflectionSourceType ?? undefined}
+      />
+    );
+  }
 
   return (
     <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-28 md:py-36">
