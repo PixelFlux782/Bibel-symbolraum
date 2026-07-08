@@ -123,17 +123,17 @@ const genesisRoomAnchors: Record<string, {
 }> = {
   wasser: {
     title: "Erste Bewegung",
-    text: "Der Anfang ist beruehrt. Die Tiefe ist nicht leer. Der Geist schwebt ueber dem Wasser, bevor das Wort Licht oeffnet.",
+    text: "Der Anfang fuehrt in die Tiefe. Ueber den Wassern bewegt sich Atem; aus dem Wasser oeffnet sich das Wort.",
     traces: ["Ursprung", "Tiefe", "Ruach", "Wort", "Licht"],
     codexHref: "/codex/genesis-1-2?from=raum&symbol=wasser",
     networkHref: "/symbolnetz?symbol=wasser&path=erste-bewegung",
     onwardHref: "/raeume/licht?from=wasser&path=erste-bewegung",
-    onwardLabel: "Aus der Tiefe oeffnet sich das Licht",
+    onwardLabel: "Dem Licht leise folgen",
   },
   licht: {
-    title: "Erste Schriftspur: Genesis 1,3",
-    text: "Das Wort oeffnet Licht. Was aus der Tiefe kam, wird sichtbar und beginnt zu unterscheiden.",
-    traces: ["Wort", "Licht", "Offenbarung", "Unterscheidung"],
+    title: "Genesis 1,3",
+    text: "Das Wort oeffnet Licht. Was sichtbar wird, kann erkannt werden; Genesis 1,4 bleibt die leise Schwelle von Sehen und Gut.",
+    traces: ["Wort", "Licht", "Sehen", "Gut"],
     codexHref: "/codex/genesis-1-3?from=raum&symbol=licht",
     networkHref: "/symbolnetz?symbol=licht&path=erste-bewegung",
   },
@@ -154,8 +154,8 @@ function GenesisRoomAnchor({ symbolSlug }: { symbolSlug: string }) {
         {anchor.traces.join(" / ")}
       </p>
       <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
-        <Link href={anchor.codexHref} className="symbol-archive-action">Im Codex vertiefen</Link>
-        <Link href={anchor.networkHref} className="symbol-archive-action">Im Symbolnetz ansehen</Link>
+        <Link href={anchor.codexHref} className="symbol-archive-action">Zum Schriftanker</Link>
+        <Link href={anchor.networkHref} className="symbol-archive-action">Die Bewegung ansehen</Link>
         {anchor.onwardHref && anchor.onwardLabel ? (
           <Link href={anchor.onwardHref} className="symbol-archive-action">{anchor.onwardLabel}</Link>
         ) : null}
@@ -174,7 +174,7 @@ const nextRoomNotices: Record<string, {
   wasser: {
     blockedBySymbol: "licht",
     buttonLabel: "Den Licht-Raum betreten",
-    copy: "Aus der Tiefe hebt sich Licht. Eine leise Spur öffnet den Raum des Lichtes.",
+    copy: "Aus der Tiefe hebt sich Licht. Der naechste Raum draengt nicht; er wartet als erste Sichtbarkeit.",
     fallbackHref: "/raeume/licht",
     nextSymbol: "licht",
   },

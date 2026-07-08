@@ -131,8 +131,8 @@ export const lightEngineData: SymbolEngineData = {
       id: "let-there-be-light",
       navigationLabel: "Es werde Licht",
       eyebrow: "Genesis 1,3",
-      title: "Das Gesprochene wird sichtbar.",
-      text: "Amar ruft Or. Wajehi bestaetigt das Geschehen: Licht ueberstrahlt die Tiefe nicht. Es macht sichtbar und laesst den ersten Unterschied lesbar werden.",
+      title: "Licht macht nicht nur hell. Es macht sichtbar.",
+      text: "Amar ruft Or. Wajehi bestaetigt das Geschehen. Licht ueberstrahlt die Tiefe nicht; es macht sichtbar, was erkannt werden kann.",
       inscription: "Amar / Or / Wajehi",
       visual: {
         image: visualAssets.lichtHero,
@@ -154,7 +154,7 @@ export const lightEngineData: SymbolEngineData = {
       navigationLabel: "Sehen / Gut",
       eyebrow: "Genesis 1,4 / Folgeschwelle",
       title: "Hier beginnt das Sehen.",
-      text: "Licht macht nicht nur hell. Es wird wahrnehmbar, ordnet die Tiefe und wird gesehen. Das Gute erscheint als stimmige Qualitaet des Lebens.",
+      text: "Was sichtbar wird, kann erkannt werden. Genesis 1,4 bleibt eine leise Folgeschwelle: Licht wird gesehen, und Gut erscheint als Qualitaet, die Leben traegt.",
       inscription: "or / raah / tov",
       visual: {
         image: visualAssets.lichtOrderLine,
@@ -169,7 +169,7 @@ export const lightEngineData: SymbolEngineData = {
       hebrewSummary: "Resh schliesst Or als bewusste Sichtbarkeit: Das Licht tritt vor den Blick und bereitet raah und tov vor.",
       biblicalSceneIds: ["genesis-light-seen"],
       connectionIds: ["or-raah", "seeing", "raah-tov", "goodness", "awareness"],
-      reflection: { kicker: "Innere Erfahrung", question: "Wo erkennst du etwas als gut, nicht weil es perfekt ist, sondern weil es Leben traegt?" },
+      reflection: { kicker: "Innere Erfahrung", question: "Wo erkennst du etwas als gut, weil es Leben traegt?" },
     },
     {
       id: "light-on-the-way",
@@ -215,5 +215,5 @@ export const lightEngineData: SymbolEngineData = {
       connectionIds: ["awareness", "presence", "life"],
       reflection: { kicker: "Innere Erfahrung", question: "Wo will etwas in dir leuchten?" },
     },
-  ],
+  ].slice(1, 3),
 };

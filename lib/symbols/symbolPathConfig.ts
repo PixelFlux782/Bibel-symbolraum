@@ -79,20 +79,20 @@ export const symbolPathConfigs = {
     },
     codexGates: {
       meaningFields: [
-        { id: "tiefe", meaningNodeId: "depth", label: "Tiefe", href: "/codex/tiefe" },
-        { id: "uebergang", meaningNodeId: "transition", label: "Übergang" },
-        { id: "reinigung", meaningNodeId: "purification", label: "Reinigung", href: "/codex/reinigung" },
-        { id: "geburt", meaningNodeId: "birth", label: "Geburt" },
-        { id: "verborgenheit", meaningNodeId: "hiddenness", label: "Verborgenheit" },
+        { id: "majim", meaningNodeId: "depth", label: "Majim", href: "/codex/majim" },
+        { id: "tehom", meaningNodeId: "depth", label: "Tehom", href: "/codex/tehom" },
+        { id: "ruach", meaningNodeId: "presence", label: "Ruach", href: "/codex/ruach" },
       ],
       scriptureAnchors: [
         { id: "genesis-1-2", reference: "Genesis 1,2", label: "Genesis 1,2", href: "/codex/genesis-1-2" },
-        { id: "exodus-14", reference: "Exodus 14", label: "Exodus 14", href: "/codex/exodus-14" },
       ],
     },
     codexAnchorBridge: {
       anchorIds: [
         "wasser",
+        "majim",
+        "tehom",
+        "ruach",
         "tiefe",
         "reinigung",
         "uebergang",
@@ -103,6 +103,9 @@ export const symbolPathConfigs = {
       ],
       defaultContextLabel: "Teil der Wasserspur",
       contextLabels: {
+        majim: "Wasser als getragene Tiefe",
+        tehom: "Tiefe vor der Form",
+        ruach: "Atem ueber den Wassern",
         "genesis-1-2": "Wasser vor der Ordnung",
         "exodus-14": "Wasser als Schwelle",
       },
@@ -140,15 +143,9 @@ export const symbolPathConfigs = {
     },
     codexGates: {
       meaningFields: [
-        { id: "or", meaningNodeId: "light", label: "Or / Licht", href: "/codex/or" },
-        { id: "raah", meaningNodeId: "awareness", label: "Raah / Sehen", href: "/codex/raah" },
-        { id: "tov", meaningNodeId: "life", label: "Tov / Gut", href: "/codex/tov" },
-        { id: "offenbarung", meaningNodeId: "revelation", label: "Offenbarung", href: "/codex/offenbarung" },
-        { id: "ordnung", meaningNodeId: "guidance", label: "Ordnung", href: "/codex/ordnung" },
-        { id: "erkenntnis", meaningNodeId: "awareness", label: "Erkenntnis", href: "/codex/erkenntnis" },
-        { id: "glanz", meaningNodeId: "light", label: "Glanz", href: "/codex/glanz" },
-        { id: "auge", meaningNodeId: "awareness", label: "Auge", href: "/codex/auge" },
-        { id: "himmel", meaningNodeId: "guidance", label: "Himmel", href: "/codex/himmel" },
+        { id: "or", meaningNodeId: "light", label: "Or", href: "/codex/or" },
+        { id: "raah", meaningNodeId: "awareness", label: "Raah", href: "/codex/raah" },
+        { id: "tov", meaningNodeId: "life", label: "Tov", href: "/codex/tov" },
       ],
       scriptureAnchors: [
         { id: "genesis-1-3", reference: "Genesis 1,3", label: "Genesis 1,3", href: "/codex/genesis-1-3" },

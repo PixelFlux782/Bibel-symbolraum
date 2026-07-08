@@ -2949,6 +2949,16 @@ body {
   align-items: stretch;
 }
 
+.symbol-network-page.is-first-movement-mode .symbol-network-shell {
+  max-width: 96rem;
+}
+
+@media (min-width: 1024px) {
+  .symbol-network-page.is-first-movement-mode .symbol-network-shell {
+    grid-template-columns: minmax(0, 1fr) minmax(16.5rem, 19rem);
+  }
+}
+
 .symbol-network-main {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
@@ -3321,6 +3331,22 @@ body {
 
 .symbol-network-flow .react-flow__edge.is-journey-path {
   opacity: 0.86;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-network-flow .react-flow__nodes {
+  z-index: 6;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-network-flow .react-flow__node:has(.symbol-constellation-node) {
+  z-index: 3;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-network-flow .react-flow__node:has(.hierarchy-satellite-node--primary, .hierarchy-satellite-node--strong) {
+  z-index: 8;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-network-flow .react-flow__node:has(.hierarchy-satellite-node.is-highlighted) {
+  z-index: 10;
 }
 
 .symbol-viewport-controls {
@@ -3844,6 +3870,16 @@ body {
     inset 0 0 24px rgba(var(--gold-rgb), 0.04);
 }
 
+.symbol-network-page.is-first-movement-mode .hierarchy-satellite-node--primary {
+  width: 5.05rem;
+  height: 5.05rem;
+  border-color: rgba(var(--gold-rgb), 0.34);
+  box-shadow:
+    0 0 30px rgba(var(--gold-rgb), 0.12),
+    0 0 58px rgba(var(--gold-rgb), 0.045),
+    inset 0 0 22px rgba(var(--gold-rgb), 0.04);
+}
+
 .hierarchy-satellite-node--primary span {
   color: rgba(var(--gold-rgb), 0.92);
   font-size: 0.92rem;
@@ -3858,6 +3894,18 @@ body {
   background:
     radial-gradient(circle at 50% 30%, rgba(var(--gold-rgb), 0.075), transparent 42%),
     rgba(5, 6, 10, 0.22);
+}
+
+.symbol-network-page.is-first-movement-mode .hierarchy-satellite-node--strong {
+  width: 4.95rem;
+  height: 4.95rem;
+  border-color: rgba(var(--gold-rgb), 0.24);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(var(--gold-rgb), 0.07), transparent 44%),
+    rgba(3, 5, 8, 0.24);
+  box-shadow:
+    0 0 22px rgba(var(--gold-rgb), 0.07),
+    inset 0 0 18px rgba(var(--gold-rgb), 0.024);
 }
 
 .hierarchy-satellite-node--strong span {
@@ -3895,6 +3943,10 @@ body {
   box-shadow:
     0 0 34px rgba(var(--gold-rgb), 0.12),
     inset 0 0 24px rgba(var(--gold-rgb), 0.045);
+}
+
+.symbol-network-page.is-first-movement-mode .hierarchy-satellite-node.is-highlighted {
+  transform: scale(1.03);
 }
 
 .hierarchy-satellite-node.is-highlighted span {
@@ -4671,15 +4723,22 @@ body {
 }
 
 .symbol-network-flow .react-flow__edge.is-first-movement .react-flow__edge-path {
-  opacity: 0.76;
+  opacity: 0.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   filter:
-    drop-shadow(0 0 11px rgba(221, 194, 128, 0.2))
-    drop-shadow(0 0 25px rgba(127, 184, 201, 0.05));
+    drop-shadow(0 0 7px rgba(221, 194, 128, 0.24))
+    drop-shadow(0 0 18px rgba(221, 194, 128, 0.13))
+    drop-shadow(0 0 34px rgba(127, 184, 201, 0.035));
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-network-flow .react-flow__edge.is-first-movement .react-flow__edge-path {
+  opacity: 0.94;
 }
 
 .symbol-network-flow .react-flow__edge.is-follow-threshold .react-flow__edge-path {
-  opacity: 0.3;
-  filter: drop-shadow(0 0 5px rgba(189, 160, 109, 0.05));
+  opacity: 0.2;
+  filter: drop-shadow(0 0 4px rgba(189, 160, 109, 0.035));
 }
 
 .symbol-network-flow .react-flow__edge.is-room-transition-path.is-selected-path .react-flow__edge-path {
@@ -4724,6 +4783,17 @@ body {
   text-shadow:
     0 0 12px rgba(var(--gold-rgb), 0.16),
     0 1px 14px rgba(0, 0, 0, 0.76);
+}
+
+.symbol-connection-resonance--first-movement {
+  z-index: 4;
+  max-width: min(24rem, 68vw);
+  color: rgba(var(--gold-rgb), 0.54);
+  font-size: clamp(0.9rem, 1.25vw, 1.12rem);
+  line-height: 1.35;
+  text-shadow:
+    0 0 12px rgba(var(--gold-rgb), 0.11),
+    0 1px 16px rgba(0, 0, 0, 0.82);
 }
 
 .symbol-connection-resonance--cycle {
@@ -5030,6 +5100,12 @@ body {
   scrollbar-gutter: stable;
 }
 
+.symbol-network-page.is-first-movement-mode .symbol-detail-panel {
+  max-height: calc(100dvh - 5.9rem);
+  padding: 1.15rem;
+  opacity: 0.88;
+}
+
 .symbol-detail-panel--arrival {
   opacity: 0.46;
   transform: translateY(0.35rem);
@@ -5194,6 +5270,11 @@ body {
   margin-top: 1.15rem;
 }
 
+.symbol-network-page.is-first-movement-mode .symbol-disclosure {
+  gap: 0.82rem;
+  margin-top: 0.82rem;
+}
+
 .symbol-disclosure__voice,
 .symbol-disclosure__layer {
   animation: symbol-fade-in 1080ms ease both;
@@ -5205,6 +5286,10 @@ body {
     radial-gradient(circle at 0% 0%, rgba(var(--gold-rgb), 0.052), transparent 46%),
     linear-gradient(90deg, rgba(255, 255, 255, 0.016), transparent);
   padding: 1rem 0 0.75rem 1rem;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-disclosure__voice {
+  padding: 0.76rem 0 0.55rem 0.78rem;
 }
 
 .symbol-disclosure__glyph {
@@ -5223,6 +5308,11 @@ body {
   line-height: 1.05;
 }
 
+.symbol-network-page.is-first-movement-mode .symbol-disclosure h2 {
+  margin-top: 0.62rem;
+  font-size: 1.78rem;
+}
+
 .symbol-disclosure__response {
   margin-top: 1.1rem;
   max-width: 17rem;
@@ -5233,9 +5323,20 @@ body {
   line-height: 1.35;
 }
 
+.symbol-network-page.is-first-movement-mode .symbol-disclosure__response {
+  margin-top: 0.72rem;
+  max-width: 15rem;
+  color: rgba(var(--gold-rgb), 0.72);
+  font-size: 1.04rem;
+}
+
 .symbol-disclosure__layer {
   border-top: 1px solid rgba(255, 255, 255, 0.055);
   padding-top: 1rem;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-disclosure__layer {
+  padding-top: 0.78rem;
 }
 
 .symbol-disclosure__movement div {
@@ -5247,6 +5348,18 @@ body {
   font-size: 1.15rem;
   font-style: italic;
   line-height: 1.2;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-disclosure__movement div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem 0.42rem;
+  align-items: center;
+  font-size: 0.98rem;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-disclosure__movement div > span[aria-hidden="true"] {
+  color: rgba(var(--gold-rgb), 0.28);
 }
 
 .symbol-disclosure__movement span {
@@ -5266,6 +5379,21 @@ body {
   display: grid;
   gap: 0.55rem;
   margin-top: 0.8rem;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-disclosure__relations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.36rem;
+}
+
+.symbol-network-page.is-first-movement-mode .symbol-disclosure__relations span span {
+  display: inline-flex;
+  border-left: 1px solid rgba(var(--cyan-rgb), 0.12);
+  background: rgba(255, 255, 255, 0.012);
+  padding: 0.34rem 0.5rem;
+  color: rgba(216, 209, 194, 0.58);
+  font-size: 0.82rem;
 }
 
 .symbol-disclosure__relations button {

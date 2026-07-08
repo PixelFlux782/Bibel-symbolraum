@@ -366,6 +366,23 @@ const hierarchySatellitePositions: Record<string, { x: number; y: number }> = {
   tov: { x: 1168, y: 338 },
   "genesis-1-4": { x: 1150, y: 116 },
 };
+const firstMovementHierarchyPositions: Record<string, { x: number; y: number }> = {
+  "genesis-1-1": { x: 120, y: 118 },
+  "genesis-1-2": { x: 315, y: 150 },
+  ruach: { x: 510, y: 126 },
+  wort: { x: 705, y: 150 },
+  "genesis-1-3": { x: 900, y: 118 },
+  raah: { x: 965, y: 268 },
+  tov: { x: 1078, y: 338 },
+  "genesis-1-4": { x: 1104, y: 164 },
+};
+const firstMovementSymbolPositions: Partial<Record<string, { x: number; y: number }>> = {
+  wasser: { x: 58, y: 344 },
+  brot: { x: 430, y: 442 },
+  licht: { x: 905, y: 308 },
+  feuer: { x: 724, y: 568 },
+  wueste: { x: 232, y: 566 },
+};
 const missingPositionWarnings = new Set<string>();
 const SYMBOL_NODE_SIZE = 176;
 const MEANING_NODE_SIZE = 96;
@@ -767,6 +784,16 @@ function getNodePosition(nodeId: string) {
   return position ?? fallbackPosition;
 }
 
+function getNodeRenderPosition(nodeId: string, isFirstMovementMode = false) {
+  if (isFirstMovementMode) {
+    return firstMovementHierarchyPositions[nodeId]
+      ?? firstMovementSymbolPositions[nodeId]
+      ?? getNodePosition(nodeId);
+  }
+
+  return getNodePosition(nodeId);
+}
+
 function buildSymbolNetworkCodexHref({
   entryId,
   symbolId,
@@ -854,9 +881,9 @@ function getNodeSize(nodeId: string) {
   return SYMBOL_NODE_SIZE;
 }
 
-function getNodeCenter(nodeId: string) {
+function getNodeCenter(nodeId: string, isFirstMovementMode = false) {
   const size = getNodeSize(nodeId);
-  const position = getNodePosition(nodeId);
+  const position = getNodeRenderPosition(nodeId, isFirstMovementMode);
 
   return {
     x: position.x + size / 2,
@@ -935,9 +962,9 @@ function pickPortForVector(dx: number, dy: number): SymbolPort {
   return "top-left";
 }
 
-function getConnectionPorts(sourceId: string, targetId: string) {
-  const sourceCenter = getNodeCenter(sourceId);
-  const targetCenter = getNodeCenter(targetId);
+function getConnectionPorts(sourceId: string, targetId: string, isFirstMovementMode = false) {
+  const sourceCenter = getNodeCenter(sourceId, isFirstMovementMode);
+  const targetCenter = getNodeCenter(targetId, isFirstMovementMode);
   const dx = targetCenter.x - sourceCenter.x;
   const dy = targetCenter.y - sourceCenter.y;
 
@@ -1430,6 +1457,14 @@ function getRoomTransitionWay(symbolId: string): RoomTransitionWay | null {
     isCycleReturn: transition.sourceRoom === "brot" && transition.targetRoom === "wasser",
     stations,
   };
+}
+
+function getFirstMovementConnectionPorts(sourceId: string, targetId: string) {
+  if (sourceId === "genesis-1-3" && (targetId === "raah" || targetId === "genesis-1-4")) {
+    return { sourceHandle: "bottom" as const, targetHandle: "top" as const };
+  }
+
+  return { sourceHandle: "right" as const, targetHandle: "left" as const };
 }
 
 function normalizeResonanceDisplayText(value: string) {
@@ -3076,8 +3111,8 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const hasSearchInput = normalizeSymbolSearchTerm(searchQuery).length > 0;
   const showSearchSuggestions = isSearchSuggestionsOpen && hasSearchInput;
   const activeSymbol = network.nodes.find((node) => node.id === activeSymbolId) ?? network.nodes[0];
-  const activeRoomTransition = hasSymbolFocus ? getRoomTransition(activeSymbolId) : undefined;
-  const activeRoomTransitionWay = hasSymbolFocus ? getRoomTransitionWay(activeSymbolId) : null;
+  const activeRoomTransition = hasSymbolFocus && !activeGenesisStationId ? getRoomTransition(activeSymbolId) : undefined;
+  const activeRoomTransitionWay = hasSymbolFocus && !activeGenesisStationId ? getRoomTransitionWay(activeSymbolId) : null;
   const activeRoomTransitionPathKey = activeRoomTransition
     ? getPathKey(activeRoomTransition.sourceRoom, activeRoomTransition.targetRoom)
     : null;
@@ -3195,7 +3230,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   const activeResonanceJourneyInscriptionPosition = useMemo(() => {
     if (!activeResonanceJourneyNodePathKey) return null;
 
-    const centers = activeResonanceJourneyNodePathKey.split("|").map(getNodeCenter);
+    const centers = activeResonanceJourneyNodePathKey.split("|").map((nodeId) => getNodeCenter(nodeId));
     const average = centers.reduce(
       (sum, center) => ({ x: sum.x + center.x, y: sum.y + center.y }),
       { x: 0, y: 0 },
@@ -3217,6 +3252,17 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
       y: (((sourceCenter.y + targetCenter.y) / 2) - 54) * flowViewport.zoom + flowViewport.y,
     };
   }, [activeJourney, activeLetterId, activePath, activeResonanceJourney, activeResonanceLens, activeRoomTransition, flowViewport.x, flowViewport.y, flowViewport.zoom]);
+  const activeGenesisInscriptionPosition = useMemo(() => {
+    if (!activeGenesisStation) return null;
+
+    const sourceCenter = getNodeCenter("genesis-1-2", true);
+    const targetCenter = getNodeCenter("genesis-1-3", true);
+
+    return {
+      x: ((sourceCenter.x + targetCenter.x) / 2) * flowViewport.zoom + flowViewport.x,
+      y: (((sourceCenter.y + targetCenter.y) / 2) + 104) * flowViewport.zoom + flowViewport.y,
+    };
+  }, [activeGenesisStation, flowViewport.x, flowViewport.y, flowViewport.zoom]);
   const connectedPaths = useMemo(
     () => network.paths.filter((path) => path.from === activeSymbolId || path.to === activeSymbolId),
     [activeSymbolId],
@@ -3583,11 +3629,42 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     if (!instance) return;
 
     if (mode === "overview") {
+      if (activeGenesisStation) {
+        instance.fitView({
+          nodes: [
+            ...FIRST_MOVEMENT_GRAPH_NODES.map(({ id }) => ({ id })),
+            { id: "wasser" },
+            { id: "licht" },
+          ],
+          padding: 0.22,
+          minZoom: 0.48,
+          maxZoom: 0.82,
+          duration,
+        });
+        return;
+      }
+
       instance.fitView({
         nodes: MAIN_SYMBOL_IDS.map((id) => ({ id })),
         padding: 0.24,
         minZoom: 0.46,
         maxZoom: 0.78,
+        duration,
+      });
+      return;
+    }
+
+    if (mode === "focus" && activeGenesisStation) {
+      instance.fitView({
+        nodes: [
+          ...FIRST_MOVEMENT_GRAPH_NODES.map(({ id }) => ({ id })),
+          ...(activeGenesisStation.id === "genesis-1-3" ? FIRST_MOVEMENT_FOLLOW_NODES.map(({ id }) => ({ id })) : []),
+          { id: "wasser" },
+          { id: "licht" },
+        ],
+        padding: 0.24,
+        minZoom: 0.46,
+        maxZoom: 0.86,
         duration,
       });
       return;
@@ -3659,7 +3736,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
     const center = getNodeCenter(activeSymbolId);
     instance.setCenter(center.x, center.y, { zoom: mode === "deep" ? 1.18 : isSymbolLensVisible ? 1.12 : 0.98, duration });
-  }, [activeLensMeaningIds, activeLetterId, activeLetterNodeId, activePathFrom, activePathTo, activeRoomTransition, activeSymbolId, connectedPaths, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, journeyStepId, letterSymbolIds]);
+  }, [activeGenesisStation, activeLensMeaningIds, activeLetterId, activeLetterNodeId, activePathFrom, activePathTo, activeRoomTransition, activeSymbolId, connectedPaths, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, journeyStepId, letterSymbolIds]);
 
   useEffect(() => {
     if (!isJourneyFocus || !initialJourneyStepId) return;
@@ -3683,6 +3760,11 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
 
     const frameId = window.requestAnimationFrame(() => {
       if (isJourneyFocus && journeyFocusNodeIds.size > 0) {
+        setSymbolViewport("focus", 760);
+        return;
+      }
+
+      if (activeGenesisStation) {
         setSymbolViewport("focus", 760);
         return;
       }
@@ -3725,7 +3807,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     });
 
     return () => window.cancelAnimationFrame(frameId);
-  }, [activeLetterId, activeLetterNodeId, activePathFrom, activePathTo, activeSymbolId, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, letterSymbolIds, setSymbolViewport]);
+  }, [activeGenesisStation, activeLetterId, activeLetterNodeId, activePathFrom, activePathTo, activeSymbolId, graphViewMode, isJourneyFocus, isSymbolLensVisible, journeyFocusNodeIds, letterSymbolIds, setSymbolViewport]);
 
   const relatedIds = useMemo(
     () => isJourneyFocus
@@ -3923,19 +4005,23 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           return {
             id: node.id,
             type: "symbol",
-            position: activeLetterId && letterSymbolIds.has(node.id)
+            position: activeGenesisStation
+              ? getNodeRenderPosition(node.id, true)
+              : activeLetterId && letterSymbolIds.has(node.id)
               ? letterEmergencePositions[letterSymbols.findIndex((symbol) => symbol.id === node.id) % letterEmergencePositions.length]
               : getNodePosition(node.id),
             data: {
               ...node,
               kind: "symbol" as const,
-              isActive: isActiveSymbol,
+              isActive: activeGenesisStation ? false : isActiveSymbol,
               isPreviewed: isPreviewedSymbol,
               isRelated: activeLetterId
                 ? letterSymbolIds.has(node.id)
                 : isSymbolLensVisible
                   ? activeLensSymbolIds.has(node.id)
-                  : Boolean(transitionRole) || relatedIds.has(node.id),
+                  : activeGenesisStation
+                    ? node.id === "wasser" || node.id === "licht"
+                    : Boolean(transitionRole) || relatedIds.has(node.id),
               isDimmed: activeLetterId
                 ? !letterSymbolIds.has(node.id)
                 : isJourneyFocus
@@ -3944,8 +4030,10 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                     ? !relationSymbolIds.has(node.id)
                   : isSymbolLensVisible
                     ? !activeLensSymbolIds.has(node.id)
-                    : hasGraphDisclosure && node.id !== disclosureSymbolId && !transitionRole && !relatedIds.has(node.id),
-              showActions: (isActiveSymbol || isPreviewedSymbol) && !isSymbolLensVisible,
+                    : activeGenesisStation
+                      ? node.id !== "wasser"
+                      : hasGraphDisclosure && node.id !== disclosureSymbolId && !transitionRole && !relatedIds.has(node.id),
+              showActions: (isActiveSymbol || isPreviewedSymbol) && !isSymbolLensVisible && !activeGenesisStation,
               activeLens: isSymbolLensVisible && node.id === activeSymbolId ? activeResonanceLens : null,
               lensLabel,
               lensNote: undefined,
@@ -3960,7 +4048,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
         ...hierarchyNodes.map(({ id, title, summary, level, isDeepAnchor, landscapeWeight }) => ({
           id,
           type: "hierarchy",
-          position: getNodePosition(id),
+          position: getNodeRenderPosition(id, Boolean(activeGenesisStation)),
           selectable: false,
           data: {
             kind: "hierarchy" as const,
@@ -4264,7 +4352,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     ] as const).flatMap(([sourceId, targetId, weight], index) => {
       if (!renderedNodeIds.has(sourceId) || !renderedNodeIds.has(targetId)) return [];
 
-      const ports = getConnectionPorts(sourceId, targetId);
+      const ports = getFirstMovementConnectionPorts(sourceId, targetId);
       const isQuiet = weight === "quiet";
 
       return [{
@@ -4284,7 +4372,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
           isTraveling: false,
           relationType: "journey" as const,
           routeIndex: index,
-          routeOffset: getRouteOffset(index, "journey"),
+          routeOffset: isQuiet ? getRouteOffset(index, "journey") : 0,
         },
       }];
     }) : []),
@@ -4650,7 +4738,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
     setSymbolViewport("deep");
     setLandscapeDisclosureLevel(4);
 
-    const center = getNodeCenter(station.id);
+    const center = getNodeCenter(station.id, true);
     reactFlowRef.current?.setCenter(center.x, center.y, { zoom: 1.02, duration: 560 });
     window.setTimeout(() => {
       const instance = reactFlowRef.current;
@@ -4761,7 +4849,7 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
   }
 
   return (
-    <section className={`symbol-page symbol-section symbol-network-page relative min-h-[100svh] ${isArrivalMoment ? "is-arrival-moment" : ""}`}>
+    <section className={`symbol-page symbol-section symbol-network-page relative min-h-[100svh] ${isArrivalMoment ? "is-arrival-moment" : ""} ${activeGenesisStation ? "is-first-movement-mode" : ""}`}>
       <div className="symbol-network-backdrop fixed inset-0 h-screen min-h-[100svh]">
         <Image src={visualAssets.symbolnetzHero} alt="" fill priority sizes="100vw" className="sacred-drift object-cover opacity-[0.18]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_24%,rgba(0,0,0,0.78)_78%,rgba(0,0,0,0.95)_100%)]" />
@@ -4992,6 +5080,17 @@ export default function SymbolNetwork({ initialUrlState = {} }: { initialUrlStat
                 }}
               >
                 {activeRoomTransitionWay.title}
+              </p>
+            ) : null}
+            {activeGenesisInscriptionPosition ? (
+              <p
+                className="symbol-connection-resonance symbol-connection-resonance--first-movement"
+                style={{
+                  left: `${activeGenesisInscriptionPosition.x}px`,
+                  top: `${activeGenesisInscriptionPosition.y}px`,
+                }}
+              >
+                Aus der Tiefe hebt sich Licht
               </p>
             ) : null}
             <div className="symbol-viewport-controls" aria-label="Kartentiefe wählen">
