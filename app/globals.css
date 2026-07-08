@@ -21,6 +21,331 @@
   --visual-symbolnetz-hero: url("/Visuals/symbolnetz_backround.png");
 }
 
+.symbol-focus-net {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 24% 16%, rgba(var(--cyan-rgb), 0.12), transparent 28rem),
+    radial-gradient(circle at 74% 20%, rgba(var(--gold-rgb), 0.08), transparent 24rem),
+    linear-gradient(180deg, rgba(3, 8, 13, 0.94), rgba(3, 6, 10, 0.98));
+}
+
+.symbol-focus-search,
+.symbol-focus-inspector,
+.symbol-focus-results,
+.symbol-focus-toolbar,
+.symbol-focus-mobile .symbol-focus-card {
+  border: 1px solid rgba(var(--gold-rgb), 0.12);
+  background: rgba(5, 10, 16, 0.74);
+  box-shadow: 0 1.8rem 4rem rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.symbol-focus-search {
+  padding: clamp(1.2rem, 3vw, 2rem);
+}
+
+.symbol-focus-search__input {
+  min-height: 3.25rem;
+  flex: 1;
+  border: 1px solid rgba(var(--cyan-rgb), 0.18);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 0 1rem;
+  color: rgba(var(--foreground-rgb), 0.92);
+  outline: none;
+}
+
+.symbol-focus-search__input:focus-visible {
+  border-color: rgba(var(--gold-rgb), 0.45);
+  box-shadow: 0 0 0 1px rgba(var(--gold-rgb), 0.12);
+}
+
+.symbol-focus-search__button,
+.symbol-focus-tabs button,
+.symbol-focus-toolbar button,
+.symbol-focus-results button,
+.symbol-focus-mobile__connections button,
+.symbol-focus-inspector__connections button {
+  border: 1px solid rgba(var(--gold-rgb), 0.15);
+  color: rgba(var(--foreground-rgb), 0.78);
+  transition: border-color 220ms ease, background 220ms ease, color 220ms ease;
+}
+
+.symbol-focus-search__button {
+  min-height: 3.25rem;
+  padding: 0 1.2rem;
+  color: rgba(var(--gold-rgb), 0.86);
+}
+
+.symbol-focus-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.symbol-focus-tabs button,
+.symbol-focus-toolbar button {
+  min-height: 2.35rem;
+  padding: 0 0.8rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-tabs button.is-active,
+.symbol-focus-toolbar button.is-active,
+.symbol-focus-search__button:hover,
+.symbol-focus-results button:hover,
+.symbol-focus-mobile__connections button:hover,
+.symbol-focus-inspector__connections button:hover {
+  border-color: rgba(var(--gold-rgb), 0.42);
+  background: rgba(var(--gold-rgb), 0.055);
+  color: rgba(var(--foreground-rgb), 0.94);
+}
+
+.symbol-focus-results {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.85rem;
+}
+
+.symbol-focus-results button {
+  display: grid;
+  grid-template-columns: 6rem 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+}
+
+.symbol-focus-results span,
+.symbol-focus-node__kind,
+.symbol-focus-inspector__type,
+.symbol-focus-inspector__connections p {
+  color: rgba(var(--cyan-rgb), 0.72);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-results strong {
+  color: rgba(var(--foreground-rgb), 0.9);
+  font-family: var(--font-serif), serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.symbol-focus-results i {
+  color: rgba(var(--gold-rgb), 0.68);
+  font-family: var(--font-serif), serif;
+  font-size: 0.9rem;
+}
+
+.symbol-focus-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.75rem 0.9rem;
+}
+
+.symbol-focus-toolbar > span {
+  color: rgba(var(--gold-rgb), 0.78);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-toolbar div {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.symbol-focus-graph {
+  height: min(68vh, 43rem);
+  min-height: 34rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(var(--cyan-rgb), 0.1);
+  background:
+    linear-gradient(rgba(var(--cyan-rgb), 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--cyan-rgb), 0.025) 1px, transparent 1px),
+    rgba(2, 6, 11, 0.72);
+  background-size: 4rem 4rem;
+}
+
+.symbol-focus-node {
+  display: grid;
+  width: 10.5rem;
+  min-height: 8.5rem;
+  place-items: center;
+  border: 1px solid rgba(var(--gold-rgb), 0.18);
+  background: rgba(5, 11, 18, 0.86);
+  padding: 0.85rem;
+  text-align: center;
+  box-shadow: 0 1.2rem 2.6rem rgba(0, 0, 0, 0.28);
+}
+
+.symbol-focus-node.is-focus {
+  border-color: rgba(var(--gold-rgb), 0.58);
+  background: rgba(var(--gold-rgb), 0.075);
+}
+
+.symbol-focus-node.is-soft {
+  opacity: 0.46;
+}
+
+.symbol-focus-node__hebrew {
+  color: rgba(var(--gold-rgb), 0.9);
+  font-family: var(--font-serif), serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.symbol-focus-node strong {
+  color: rgba(var(--foreground-rgb), 0.92);
+  font-family: var(--font-serif), serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.symbol-focus-node i {
+  color: rgba(var(--foreground-rgb), 0.54);
+  font-family: var(--font-serif), serif;
+  font-size: 0.8rem;
+}
+
+.symbol-focus-edge {
+  stroke: rgba(var(--gold-rgb), 0.28);
+  stroke-width: 1.25;
+}
+
+.symbol-focus-edge__label {
+  fill: rgba(var(--gold-rgb), 0.66);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-inspector {
+  position: sticky;
+  top: 6.5rem;
+  padding: clamp(1.2rem, 2vw, 1.6rem);
+}
+
+.symbol-focus-inspector h2,
+.symbol-focus-card h2 {
+  margin-top: 1rem;
+  color: rgba(var(--foreground-rgb), 0.94);
+  font-family: var(--font-serif), serif;
+  font-size: 2.3rem;
+  font-style: italic;
+  line-height: 1.05;
+}
+
+.symbol-focus-inspector__visible {
+  margin-top: 1.2rem;
+  border-left: 1px solid rgba(var(--gold-rgb), 0.2);
+  padding-left: 0.9rem;
+  color: rgba(var(--gold-rgb), 0.72);
+  font-family: var(--font-serif), serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.symbol-focus-inspector__connections {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 1.5rem;
+}
+
+.symbol-focus-inspector__connections button,
+.symbol-focus-mobile__connections button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.8rem;
+  text-align: left;
+}
+
+.symbol-focus-inspector__connections span,
+.symbol-focus-mobile__connections span {
+  color: rgba(var(--cyan-rgb), 0.62);
+  font-size: 0.52rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-inspector__actions {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.6rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.1);
+  padding-top: 1rem;
+}
+
+.symbol-focus-inspector__actions a,
+.symbol-focus-inspector__actions span {
+  color: rgba(var(--gold-rgb), 0.78);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-mobile {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.symbol-focus-card {
+  padding: 1.2rem;
+}
+
+.symbol-focus-card p {
+  color: rgba(var(--cyan-rgb), 0.7);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-card span {
+  display: block;
+  margin-top: 1rem;
+  color: rgba(var(--foreground-rgb), 0.68);
+  font-family: var(--font-serif), serif;
+  line-height: 1.5;
+}
+
+.symbol-focus-mobile__connections {
+  display: grid;
+  gap: 0.5rem;
+}
+
+@media (max-width: 767px) {
+  .symbol-focus-search,
+  .symbol-focus-inspector,
+  .symbol-focus-results {
+    padding: 1rem;
+  }
+
+  .symbol-focus-results button {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .symbol-focus-inspector {
+    position: static;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   scrollbar-color: rgba(var(--gold-rgb), 0.18) rgba(2, 5, 12, 0.92);
