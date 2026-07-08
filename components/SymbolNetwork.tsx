@@ -77,6 +77,13 @@ const KIND_LABELS: Record<FocusKind, string> = {
   meaning: "Bedeutung",
   scripture: "Bibelstelle",
 };
+const KIND_GROUP_LABELS: Record<FocusKind, string> = {
+  word: "Wörter",
+  meaning: "Bedeutungsfelder",
+  letter: "Buchstaben",
+  scripture: "Schriftanker",
+  symbol: "Räume",
+};
 const OVERVIEW_POSITIONS: Record<string, { x: number; y: number }> = {
   wasser: { x: 80, y: 245 },
   licht: { x: 680, y: 80 },
@@ -318,15 +325,15 @@ function scoreNode(node: FocusNode, query: string): number {
   let score = 0;
   for (const term of node.terms) {
     const normalizedTerm = normalize(term);
-    if (normalizedTerm === normalizedQuery) score = Math.max(score, 120);
-    else if (normalizedTerm.startsWith(normalizedQuery)) score = Math.max(score, 80);
-    else if (normalizedTerm.includes(normalizedQuery)) score = Math.max(score, 45);
+    if (normalizedTerm === normalizedQuery) score = Math.max(score, 300);
+    else if (normalizedTerm.startsWith(normalizedQuery)) score = Math.max(score, 120);
+    else if (normalizedTerm.includes(normalizedQuery)) score = Math.max(score, 55);
   }
 
-  if (normalize(node.label) === normalizedQuery) score += 50;
-  if (node.transliteration && normalize(node.transliteration) === normalizedQuery) score += 35;
-  if (node.hebrew && normalize(node.hebrew) === normalizedQuery) score += 35;
-  if (normalize(node.id) === normalizedQuery) score += 40;
+  if (normalize(node.label) === normalizedQuery) score += 180;
+  if (node.transliteration && normalize(node.transliteration) === normalizedQuery) score += 160;
+  if (node.hebrew && normalize(node.hebrew) === normalizedQuery) score += 160;
+  if (normalize(node.id) === normalizedQuery) score += 170;
   if (node.kind === "symbol") score += 6;
   if (node.kind === "word") score += 5;
   if (node.kind === "scripture") score += 4;
@@ -484,6 +491,7 @@ function getInitialFocus(initialUrlState?: SymbolNetworkInitialUrlState) {
 
 export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: SymbolNetworkInitialUrlState }) {
   const [query, setQuery] = useState("");
+  const [searchedTerm, setSearchedTerm] = useState("");
   const [focusId, setFocusId] = useState<string | null>(() => getInitialFocus(initialUrlState));
   const [depth, setDepth] = useState<FocusDepth>("direct");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -520,19 +528,20 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     [depth, focusId, visibleIds],
   );
 
-  const focusNodeById = useCallback((id: string) => {
+  const focusNodeById = useCallback((id: string, searchTerm?: string) => {
     const node = focusData.nodes.get(id);
     if (!node) return;
 
     setFocusId(id);
     setFocusTrace((trace) => [...trace.filter((traceId) => traceId !== id), id].slice(-5));
+    setSearchedTerm(searchTerm?.trim() ?? "");
     setQuery("");
   }, []);
 
   function submitSearch() {
     const suggestion = suggestions[0];
     if (suggestion) {
-      focusNodeById(suggestion.node.id);
+      focusNodeById(suggestion.node.id, query);
     }
   }
 
@@ -571,6 +580,11 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     return groups;
   }, {});
   const groupOrder: FocusKind[] = ["meaning", "letter", "word", "scripture", "symbol"];
+  const furtherConnections = visibleNodes.filter((node) => node.id !== focusId && !directIds.has(node.id));
+  const groupedFurtherConnections = furtherConnections.reduce<Partial<Record<FocusKind, FocusNode[]>>>((groups, node) => {
+    (groups[node.kind] ??= []).push(node);
+    return groups;
+  }, {});
   const traceNodes = focusTrace.map((id) => focusData.nodes.get(id)).filter((node): node is FocusNode => Boolean(node));
 
   return (
@@ -601,12 +615,12 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 <button type="submit" className="symbol-focus-search__button">Fokussieren</button>
               </form>
 
-              {traceNodes.length > 1 ? (
-                <nav className="symbol-focus-trace" aria-label="Temporäre Fokusspur">
-                  <span>Fokusspur</span>
+              {traceNodes.length ? (
+                <nav className="symbol-focus-trace" aria-label="Zuletzt berührte Zeichen">
+                  <span>Zuletzt berührte Zeichen</span>
                   {traceNodes.map((node, index) => (
                     <span key={`${node.id}-${index}`}>
-                      {index ? <i aria-hidden="true">→</i> : null}
+                      {index ? <i aria-hidden="true">·</i> : null}
                       <button type="button" onClick={() => focusNodeById(node.id)}>{node.label}</button>
                     </span>
                   ))}
@@ -633,14 +647,19 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
 
             {query.trim() ? (
               <div className="symbol-focus-results" aria-label="Suchergebnisse">
-                {suggestions.length ? suggestions.map(({ node }) => (
-                  <button key={node.id} type="button" onClick={() => focusNodeById(node.id)}>
+                <p className="symbol-focus-results__query">Gesucht: <strong>{query.trim()}</strong></p>
+                {suggestions.length ? suggestions.map(({ node }, index) => (
+                  <button key={node.id} type="button" onClick={() => focusNodeById(node.id, query)}>
                     <span>{KIND_LABELS[node.kind]}</span>
                     <strong>{node.label}</strong>
                     <i>{node.transliteration ?? node.detail}</i>
+                    {index === 0 ? <em>stärkster Bezug</em> : null}
                   </button>
                 )) : (
-                  <p>Kein direkter Knoten gefunden. Der Codex bleibt für die Vollsuche offen.</p>
+                  <div className="symbol-focus-empty">
+                    <strong>Dieses Zeichen ist im Archiv noch nicht geöffnet.</strong>
+                    <span>Versuche Wasser, Licht, Ruach, Wort, Tiefe oder Brot.</span>
+                  </div>
                 )}
               </div>
             ) : null}
@@ -655,7 +674,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
               </div>
               {groupOrder.map((kind) => groupedConnections[kind]?.length ? (
                 <section className="symbol-focus-mobile__group" key={kind}>
-                  <h3>{KIND_LABELS[kind]}</h3>
+                  <h3>{KIND_GROUP_LABELS[kind]}</h3>
                   <div className="symbol-focus-mobile__connections">
                     {groupedConnections[kind]!.slice(0, 8).map((node) => (
                       <button key={node.id} type="button" onClick={() => focusNodeById(node.id)}>
@@ -676,7 +695,9 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
             </div>
 
             <div className="symbol-focus-toolbar max-md:hidden">
-              <span>{focusNode ? `${focusNode.label}-Fokus` : "Startfokus"}</span>
+              <span>
+                {searchedTerm ? <>Gesucht: <strong>{searchedTerm}</strong> · Fokus: <strong>{focusNode?.label}</strong></> : focusNode ? `${focusNode.label}-Fokus` : "Startfokus"}
+              </span>
               <div aria-label="Beziehungstiefe">
                 {(["direct", "near", "deep"] as const).map((value) => (
                   <button key={value} type="button" className={depth === value ? "is-active" : ""} onClick={() => setDepth(value)}>
@@ -717,8 +738,9 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
 
           <aside className="symbol-focus-inspector">
             <p className="symbol-kicker text-cyan-soft">{focusNode ? "Fokus" : "Erster Blick"}</p>
-            {focusNode?.hebrew ? <div className="symbol-focus-inspector__hebrew" lang="he" dir="rtl">{focusNode.hebrew}</div> : null}
             <h2>{focusNode?.label ?? "Berühre ein Zeichen"}</h2>
+            {searchedTerm ? <p className="symbol-focus-inspector__searched">Gesucht: {searchedTerm}</p> : null}
+            {focusNode?.hebrew ? <div className="symbol-focus-inspector__hebrew" lang="he" dir="rtl">{focusNode.hebrew}</div> : null}
             {focusNode?.transliteration ? <p className="symbol-focus-inspector__transliteration">{focusNode.transliteration}</p> : null}
             <p className="symbol-focus-inspector__type">{focusNode ? KIND_LABELS[focusNode.kind] : "Symbolnetz"}</p>
             <p className="symbol-copy mt-5">{focusNode?.summary ?? "Fünf ruhige Portale öffnen das Netz. Suche oder wähle frei einen Raum."}</p>
@@ -727,7 +749,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
               <div className="symbol-focus-inspector__connections">
                 {groupOrder.map((kind) => groupedConnections[kind]?.length ? (
                   <section key={kind}>
-                    <p>{KIND_LABELS[kind]}</p>
+                    <p>{KIND_GROUP_LABELS[kind]}</p>
                     {groupedConnections[kind]!.map((node) => (
                       <button key={node.id} type="button" onClick={() => focusNodeById(node.id)}>
                         <span>{node.hebrew ?? node.transliteration ?? KIND_LABELS[node.kind]}</span>
@@ -738,11 +760,24 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 ) : null)}
               </div>
             ) : null}
+            {focusNode && furtherConnections.length ? (
+              <div className="symbol-focus-inspector__further">
+                <p>Weitere Nähe / Tiefe</p>
+                {groupOrder.map((kind) => groupedFurtherConnections[kind]?.length ? (
+                  <section key={kind}>
+                    <span>{KIND_GROUP_LABELS[kind]}</span>
+                    {groupedFurtherConnections[kind]!.slice(0, 4).map((node) => (
+                      <button key={node.id} type="button" onClick={() => focusNodeById(node.id)}>{node.label}</button>
+                    ))}
+                  </section>
+                ) : null)}
+              </div>
+            ) : null}
 
             <div className="symbol-focus-inspector__actions">
-              <span>Schwellen</span>
+              <span>Codex-Schwelle</span>
               {focusNode?.codexHref ? <Link href={focusNode.codexHref}>Im Codex öffnen <i>↗</i></Link> : <Link href="/codex">Zum Codex <i>↗</i></Link>}
-              {focusNode?.roomHref ? <Link href={focusNode.roomHref}>{focusNode.label}-Raum betreten <i>→</i></Link> : null}
+              {focusNode?.roomHref ? <><span>Raum-Schwelle</span><Link href={focusNode.roomHref}>{focusNode.label}-Raum betreten <i>→</i></Link></> : null}
             </div>
           </aside>
         </div>

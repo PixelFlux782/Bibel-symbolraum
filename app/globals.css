@@ -377,13 +377,19 @@
 }
 
 /* Phase 41C: the focus network is an observatory, not a route map. */
-.symbol-focus-net::before { position: absolute; inset: 0; background-image: radial-gradient(rgba(var(--foreground-rgb), .16) .5px, transparent .7px); background-size: 5rem 5rem; content: ""; opacity: .08; pointer-events: none; }
+.symbol-focus-net::before { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%,rgba(var(--cyan-rgb),.025),transparent 34%),radial-gradient(circle at 50% 58%,rgba(var(--gold-rgb),.025),transparent 42%); content: ""; pointer-events: none; }
 .symbol-focus-search, .symbol-focus-inspector { border-color: rgba(var(--gold-rgb), .1); background: linear-gradient(145deg, rgba(8,15,23,.88), rgba(3,8,14,.8)); }
 .symbol-focus-trace { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin-top: .9rem; color: rgba(var(--foreground-rgb),.4); font-size: .58rem; letter-spacing: .1em; }
 .symbol-focus-trace > span:first-child { margin-right: .25rem; color: rgba(var(--cyan-rgb),.55); text-transform: uppercase; }
 .symbol-focus-trace span, .symbol-focus-trace button { display: inline-flex; align-items: center; gap: .45rem; }
 .symbol-focus-trace button { color: rgba(var(--foreground-rgb),.62); }
 .symbol-focus-trace button:hover { color: rgba(var(--gold-rgb),.9); }
+.symbol-focus-results__query { grid-column: 1 / -1; padding: .25rem .2rem .45rem; color: rgba(var(--foreground-rgb),.45); font-size: .65rem; letter-spacing: .06em; }
+.symbol-focus-results__query strong { color: rgba(var(--gold-rgb),.76); font-weight: normal; }
+.symbol-focus-results button em { color: rgba(var(--cyan-rgb),.48); font-size: .5rem; font-style: normal; letter-spacing: .08em; text-transform: uppercase; }
+.symbol-focus-empty { grid-column: 1 / -1; display: grid; gap: .45rem; min-height: 7rem; place-content: center; padding: 1.5rem; text-align: center; }
+.symbol-focus-empty strong { color: rgba(var(--gold-rgb),.82); font-family: var(--font-serif),serif; font-size: 1.05rem; font-weight: normal; }
+.symbol-focus-empty span { color: rgba(var(--foreground-rgb),.44); font-size: .78rem; }
 .symbol-focus-tabs { gap: .7rem; margin-top: 1.25rem; }
 .symbol-focus-tabs button { display: inline-flex; align-items: center; gap: .5rem; border-radius: 999px; background: radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb),.07), transparent 70%); }
 .symbol-focus-tabs button span { color: rgba(var(--gold-rgb),.75); font-family: var(--font-serif),serif; font-size: 1rem; letter-spacing: 0; }
@@ -406,8 +412,8 @@
 .symbol-focus-node.is-focus .symbol-focus-node__hebrew { font-size: 3rem; text-shadow: 0 0 1.5rem rgba(var(--gold-rgb),.17); }
 .symbol-focus-node--meaning strong { font-size: 1rem; font-style: normal; }
 .symbol-focus-node i { max-width: 100%; overflow: hidden; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
-.symbol-focus-edge .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.14); stroke-width: .85; transition: stroke 240ms ease,stroke-width 240ms ease,opacity 240ms ease; }
-.symbol-focus-edge.strength-near .react-flow__edge-path, .symbol-focus-edge.strength-deep .react-flow__edge-path { opacity: .35; }
+.symbol-focus-edge .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.1); stroke-width: .75; transition: stroke 240ms ease,stroke-width 240ms ease,opacity 240ms ease; }
+.symbol-focus-edge.strength-near .react-flow__edge-path, .symbol-focus-edge.strength-deep .react-flow__edge-path { opacity: .18; }
 .symbol-focus-edge.relation-buchstabe .react-flow__edge-path { stroke: rgba(var(--cyan-rgb),.18); }
 .symbol-focus-edge.relation-bibelanker .react-flow__edge-path, .symbol-focus-edge[class*="relation-genesis"] .react-flow__edge-path { stroke: rgba(var(--foreground-rgb),.1); stroke-dasharray: 2 6; }
 .symbol-focus-edge.relation-symbol .react-flow__edge-path, .symbol-focus-edge.relation-raum .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.24); }
@@ -418,10 +424,16 @@
 .symbol-focus-cluster-labels .is-meaning { right: 5%; top: 12%; }.symbol-focus-cluster-labels .is-word { right: 4%; bottom: 24%; }.symbol-focus-cluster-labels .is-scripture { bottom: 5%; left: 48%; }.symbol-focus-cluster-labels .is-letter { bottom: 14%; left: 5%; }.symbol-focus-cluster-labels .is-symbol { left: 5%; top: 18%; }
 .symbol-focus-inspector__hebrew { margin-top: 1.35rem; color: rgba(var(--gold-rgb),.88); font-family: var(--font-serif),serif; font-size: 2.6rem; line-height: 1; }
 .symbol-focus-inspector__transliteration { margin-top: .4rem; color: rgba(var(--gold-rgb),.56); font-family: var(--font-serif),serif; font-size: .85rem; font-style: italic; }
+.symbol-focus-inspector__searched { margin-top: .45rem; color: rgba(var(--cyan-rgb),.48); font-size: .58rem; letter-spacing: .08em; }
 .symbol-focus-inspector__essence { margin-top: 1rem; border-left: 1px solid rgba(var(--gold-rgb),.2); padding-left: .8rem; color: rgba(var(--foreground-rgb),.5); font-family: var(--font-serif),serif; font-size: .82rem; line-height: 1.55; }
 .symbol-focus-inspector__connections section { display: grid; gap: .35rem; padding-top: .8rem; }
 .symbol-focus-inspector__connections section + section { border-top: 1px solid rgba(var(--gold-rgb),.07); }
 .symbol-focus-inspector__connections button { border-color: transparent; border-bottom-color: rgba(var(--gold-rgb),.07); }
+.symbol-focus-inspector__further { display: grid; gap: .55rem; margin-top: 1rem; border-top: 1px solid rgba(var(--gold-rgb),.08); padding-top: 1rem; }
+.symbol-focus-inspector__further > p { color: rgba(var(--cyan-rgb),.48); font-size: .54rem; letter-spacing: .12em; text-transform: uppercase; }
+.symbol-focus-inspector__further section { display: flex; flex-wrap: wrap; gap: .35rem; }
+.symbol-focus-inspector__further section span { flex-basis: 100%; color: rgba(var(--foreground-rgb),.34); font-size: .52rem; }
+.symbol-focus-inspector__further button { color: rgba(var(--foreground-rgb),.48); font-family: var(--font-serif),serif; font-size: .72rem; }
 .symbol-focus-inspector__actions > span { color: rgba(var(--cyan-rgb),.5); font-size: .52rem; }
 .symbol-focus-inspector__actions a { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(var(--gold-rgb),.1); padding: .65rem 0; }
 .symbol-focus-inspector__actions a i { font-style: normal; opacity: .55; }
