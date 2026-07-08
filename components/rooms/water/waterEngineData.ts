@@ -279,5 +279,5 @@ export const waterEngineData: SymbolEngineData = {
       connectionIds: ["tehom", "merachefet", "life"],
       reflection: { kicker: "Innere Erfahrung", question: "Was nimmst du aus der Tiefe mit zurück an die Oberfläche?" },
     },
-  ].slice(0, 2),
+  ].slice(0, 4),
 };

@@ -8,7 +8,6 @@ export function SymbolConnectionPanel({ connections }: { connections: SymbolConn
         {connections.map((connection) => (
           <li key={connection.id}>
             <span>{connection.label}</span>
-            <i>{connection.relation}</i>
             <p>{connection.detail}</p>
           </li>
         ))}

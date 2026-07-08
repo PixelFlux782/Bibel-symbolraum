@@ -225,7 +225,6 @@ export function resolveRoomContext(
 ): RoomContext | undefined {
   const from = getSingleSearchParam(searchParams.from);
   const path = getSingleSearchParam(searchParams.path);
-  const lens = getSingleSearchParam(searchParams.lens);
   const symbol = getSingleSearchParam(searchParams.symbol) ?? fallbackSymbolId;
   const symbolId = hasSymbolRoom(symbol) ? symbol : fallbackSymbolId;
   const symbolLabel = getRoomLabel(symbolId);
@@ -236,9 +235,6 @@ export function resolveRoomContext(
 
   if (from === "symbolnetz") {
     const returnParams = new URLSearchParams({ symbol: symbolId });
-
-    if (lens) returnParams.set("lens", lens);
-    if (path) returnParams.set("path", path);
 
     return {
       source: "symbolnetz",

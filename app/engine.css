@@ -788,6 +788,143 @@
 .symbol-engine__connections span { color: rgba(var(--foreground-rgb), 0.76); }
 .symbol-engine__connections i { margin-top: 0.12rem; color: rgba(var(--cyan-rgb), 0.62); }
 .symbol-engine__connections p { max-width: 16rem; margin-top: 0.28rem; color: rgba(var(--foreground-rgb), 0.56); font-family: var(--font-serif), serif; font-size: 0.74rem; line-height: 1.35; }
+
+/* Phase 41H: rooms are freely explorable interiors, not linear journeys. */
+.symbol-engine {
+  min-height: 100svh;
+  overflow-x: clip;
+  overflow-y: auto;
+  background: #020711;
+}
+
+.symbol-engine__veil {
+  background:
+    linear-gradient(90deg, rgba(1, 5, 13, 0.94), rgba(1, 5, 13, 0.74) 48%, rgba(1, 5, 13, 0.32) 78%, rgba(1, 5, 13, 0.68)),
+    linear-gradient(180deg, rgba(1, 5, 13, 0.62), transparent 30%, rgba(1, 5, 13, 0.92));
+}
+
+.symbol-engine__navigation {
+  position: relative;
+  inset: auto;
+  max-width: 70rem;
+  padding: clamp(5.5rem, 9vh, 7rem) clamp(1.25rem, 5vw, 5rem) 0;
+}
+
+.symbol-engine__navigation-step.is-active .symbol-engine__navigation-mark {
+  box-shadow: 0 0 0.8rem rgba(var(--gold-rgb), 0.28);
+}
+
+.symbol-engine__content {
+  min-height: auto;
+  max-width: min(50rem, 62vw);
+  justify-content: flex-start;
+  padding-top: clamp(3.5rem, 7vh, 6rem);
+  padding-bottom: clamp(5rem, 10vh, 8rem);
+}
+
+.symbol-engine__room-label,
+.symbol-engine__thresholds > p {
+  color: rgba(var(--gold-rgb), 0.76);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.symbol-engine__content h1 {
+  margin-top: 0.7rem;
+}
+
+.symbol-engine__essence {
+  max-width: 35rem;
+  margin-top: 1.2rem;
+  color: rgba(var(--foreground-rgb), 0.82);
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.symbol-engine__first-experience {
+  display: grid;
+  max-width: 34rem;
+  gap: 0.45rem;
+  margin: 2.2rem 0;
+  border-left: 1px solid rgba(var(--cyan-rgb), 0.16);
+  padding-left: 1rem;
+}
+
+.symbol-engine__first-experience p {
+  color: rgba(var(--foreground-rgb), 0.66);
+  font-family: var(--font-serif), serif;
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.symbol-engine__active-axis {
+  max-width: 39rem;
+  margin-top: 2.7rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.12);
+  padding-top: 1.7rem;
+}
+
+.symbol-engine__active-axis h2 {
+  max-width: 36rem;
+  margin-top: 0.55rem;
+  color: rgba(var(--foreground-rgb), 0.92);
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-style: italic;
+  line-height: 1.08;
+}
+
+.symbol-engine__thresholds {
+  display: grid;
+  max-width: 36rem;
+  gap: 0.8rem;
+  margin-top: 2.5rem;
+  border-top: 1px solid rgba(var(--gold-rgb), 0.12);
+  padding-top: 1.2rem;
+}
+
+.symbol-engine__thresholds div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.1rem;
+}
+
+.symbol-engine__thresholds a,
+.symbol-engine__map-return {
+  color: rgba(var(--gold-rgb), 0.78);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 400ms ease;
+}
+
+.symbol-engine__map-return {
+  width: fit-content;
+  margin-top: 1.6rem;
+}
+
+.symbol-engine__thresholds a:hover,
+.symbol-engine__thresholds a:focus-visible,
+.symbol-engine__map-return:hover,
+.symbol-engine__map-return:focus-visible {
+  color: rgba(var(--gold-rgb), 0.98);
+}
+
+.symbol-engine__layers {
+  position: fixed;
+  max-height: calc(100svh - 9rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.symbol-engine__connections i {
+  display: none;
+}
 .symbol-engine__reflection blockquote { margin-top: 0.5rem; color: rgba(var(--foreground-rgb), 0.84); font-family: var(--font-serif), serif; font-size: 1rem; font-style: italic; line-height: 1.42; }
 .symbol-engine__reflection-hint {
   display: block;
@@ -907,4 +1044,105 @@
   .symbol-engine__letter-alphabet { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .symbol-engine__letter-detail { grid-template-columns: 1fr; }
   .symbol-engine__letter-intro { grid-row: auto; }
+}
+
+@media (max-width: 1023px) {
+  .symbol-engine__content {
+    max-width: 44rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .symbol-engine__layers {
+    position: relative;
+    inset: auto;
+    grid-template-columns: 1fr 1fr;
+    width: auto;
+    max-height: none;
+    margin: 0 1.25rem 4rem;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  .symbol-engine__navigation {
+    inset: auto;
+    padding-top: 5.25rem;
+  }
+
+  .symbol-engine__navigation ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem 0.8rem;
+  }
+
+  .symbol-engine__navigation-step {
+    min-width: 0;
+    font-size: 0.52rem;
+    letter-spacing: 0.15em;
+  }
+
+  .symbol-engine__content {
+    width: 100%;
+    max-width: none;
+    padding: 2.8rem 1.25rem 3rem;
+  }
+
+  .symbol-engine__glyph {
+    margin: 0.8rem 0 -0.8rem;
+    font-size: 4rem;
+  }
+
+  .symbol-engine__content h1 {
+    font-size: clamp(2.6rem, 13vw, 3.5rem);
+  }
+
+  .symbol-engine__essence {
+    margin-top: 0.9rem;
+    font-size: 1.03rem;
+  }
+
+  .symbol-engine__first-experience {
+    margin: 1.6rem 0;
+  }
+
+  .symbol-engine__first-experience p {
+    font-size: 0.9rem;
+  }
+
+  .symbol-engine__active-axis {
+    margin-top: 2rem;
+  }
+
+  .symbol-engine__active-axis h2 {
+    font-size: 1.85rem;
+  }
+
+  .symbol-engine__text {
+    display: block;
+    margin-top: 0.8rem;
+    overflow: visible;
+    font-size: 0.95rem;
+    -webkit-line-clamp: unset;
+  }
+
+  .symbol-engine__layers {
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0 1.25rem 3rem;
+  }
+
+  .symbol-engine__dimension-bar {
+    grid-column: auto;
+  }
+
+  .symbol-engine__dimension-bar div {
+    gap: 0.55rem 0.8rem;
+  }
+
+  .symbol-engine__living-codex {
+    max-height: 12rem;
+  }
+
+  .symbol-engine__thresholds div {
+    display: grid;
+  }
 }
