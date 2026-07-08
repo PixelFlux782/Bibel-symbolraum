@@ -171,10 +171,8 @@
   margin-top: 1rem;
   border: 1px solid rgba(var(--cyan-rgb), 0.1);
   background:
-    linear-gradient(rgba(var(--cyan-rgb), 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--cyan-rgb), 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 50% 48%, rgba(var(--cyan-rgb), 0.045), transparent 20rem),
     rgba(2, 6, 11, 0.72);
-  background-size: 4rem 4rem;
 }
 
 .symbol-focus-node {
@@ -187,6 +185,7 @@
   padding: 0.85rem;
   text-align: center;
   box-shadow: 0 1.2rem 2.6rem rgba(0, 0, 0, 0.28);
+  transition: border-color 180ms ease, background 180ms ease, opacity 180ms ease;
 }
 
 .symbol-focus-node.is-focus {
@@ -245,17 +244,6 @@
   font-size: 2.3rem;
   font-style: italic;
   line-height: 1.05;
-}
-
-.symbol-focus-inspector__visible {
-  margin-top: 1.2rem;
-  border-left: 1px solid rgba(var(--gold-rgb), 0.2);
-  padding-left: 0.9rem;
-  color: rgba(var(--gold-rgb), 0.72);
-  font-family: var(--font-serif), serif;
-  font-size: 0.95rem;
-  font-style: italic;
-  line-height: 1.45;
 }
 
 .symbol-focus-inspector__connections {
@@ -329,9 +317,29 @@
   gap: 0.5rem;
 }
 
+.symbol-focus-mobile__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.symbol-focus-mobile__actions a {
+  min-height: 2.8rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.16);
+  padding: 0.8rem;
+  color: rgba(var(--gold-rgb), 0.82);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 @media (max-width: 767px) {
+  .symbol-focus-net {
+    overflow: visible;
+  }
+
   .symbol-focus-search,
-  .symbol-focus-inspector,
   .symbol-focus-results {
     padding: 1rem;
   }
@@ -342,7 +350,29 @@
   }
 
   .symbol-focus-inspector {
-    position: static;
+    display: none;
+  }
+
+  .symbol-focus-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .symbol-focus-tabs button {
+    width: 100%;
+    padding-inline: 0.45rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .symbol-focus-node,
+  .symbol-focus-search__button,
+  .symbol-focus-tabs button,
+  .symbol-focus-toolbar button,
+  .symbol-focus-results button,
+  .symbol-focus-mobile__connections button,
+  .symbol-focus-inspector__connections button {
+    transition: none;
   }
 }
 

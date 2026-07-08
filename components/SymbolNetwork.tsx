@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
@@ -18,7 +18,6 @@ import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { biblicalMeaningLinks, hebrewMeaningLinks, symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { buildSymbolMeaningNetwork } from "@/lib/meaning/buildSymbolMeaningNetwork";
-import { markArchiveDiscovered, type PersonalPathTargetType } from "@/lib/personalPathState";
 import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 
 type SymbolNetworkInitialUrlState = {
@@ -42,7 +41,6 @@ type FocusNode = {
   roomHref?: string;
   scriptureAnchors?: string[];
   terms: string[];
-  archiveType: PersonalPathTargetType;
 };
 
 type FocusRelation = {
@@ -78,14 +76,6 @@ const KIND_LABELS: Record<FocusKind, string> = {
   meaning: "Bedeutung",
   scripture: "Bibelstelle",
 };
-const ARCHIVE_TYPE_BY_KIND: Record<FocusKind, PersonalPathTargetType> = {
-  symbol: "room",
-  word: "word",
-  letter: "letter",
-  meaning: "meaning",
-  scripture: "scripture",
-};
-
 const OVERVIEW_POSITIONS: Record<string, { x: number; y: number }> = {
   wasser: { x: 80, y: 245 },
   licht: { x: 680, y: 80 },
@@ -124,10 +114,9 @@ function unique<T>(items: T[]) {
   return Array.from(new Set(items));
 }
 
-function buildFocusNode(input: Omit<FocusNode, "archiveType" | "terms"> & { terms?: string[] }): FocusNode {
+function buildFocusNode(input: Omit<FocusNode, "terms"> & { terms?: string[] }): FocusNode {
   return {
     ...input,
-    archiveType: ARCHIVE_TYPE_BY_KIND[input.kind],
     terms: unique([
       input.id,
       input.label,
@@ -154,7 +143,14 @@ function createFocusData() {
     if (!nodes.has(from) || !nodes.has(to)) return;
 
     const id = [from, to].sort().join("__");
-    if (relations.some((relation) => relation.id === id)) return;
+    const existing = relations.find((relation) => relation.id === id);
+    if (existing) {
+      if (strength === "direct" && existing.strength !== "direct") {
+        existing.strength = "direct";
+        existing.label = label;
+      }
+      return;
+    }
 
     relations.push({ id, from, to, label, strength });
   }
@@ -326,6 +322,9 @@ function scoreNode(node: FocusNode, query: string): number {
     else if (normalizedTerm.includes(normalizedQuery)) score = Math.max(score, 45);
   }
 
+  if (normalize(node.label) === normalizedQuery) score += 50;
+  if (node.transliteration && normalize(node.transliteration) === normalizedQuery) score += 35;
+  if (node.hebrew && normalize(node.hebrew) === normalizedQuery) score += 35;
   if (normalize(node.id) === normalizedQuery) score += 40;
   if (node.kind === "symbol") score += 6;
   if (node.kind === "word") score += 5;
@@ -355,9 +354,9 @@ function getSuggestions(query: string): SearchSuggestion[] {
     .slice(0, 8);
 }
 
-function getDirectRelationIds(id: string) {
+function getRelationIds(id: string, strengths: FocusRelation["strength"][] = ["direct"]) {
   return focusData.relations
-    .filter((relation) => relation.from === id || relation.to === id)
+    .filter((relation) => strengths.includes(relation.strength) && (relation.from === id || relation.to === id))
     .map((relation) => relation.from === id ? relation.to : relation.from);
 }
 
@@ -365,15 +364,24 @@ function getVisibleNodeIds(focusId: string | null, depth: FocusDepth) {
   if (!focusId) return new Set(MAIN_SYMBOL_IDS);
 
   const visible = new Set<string>([focusId]);
-  const direct = getDirectRelationIds(focusId);
+  const direct = getRelationIds(focusId);
   direct.forEach((id) => visible.add(id));
 
-  if (depth === "near" || depth === "deep") {
-    direct.flatMap(getDirectRelationIds).forEach((id) => visible.add(id));
+  if (depth === "near") {
+    getRelationIds(focusId, ["direct", "near"]).forEach((id) => visible.add(id));
+    direct.flatMap((id) => getRelationIds(id)).forEach((id) => visible.add(id));
   }
 
   if (depth === "deep") {
-    Array.from(visible).flatMap(getDirectRelationIds).forEach((id) => visible.add(id));
+    const queue = [...getRelationIds(focusId, ["direct", "near"])];
+    while (queue.length && visible.size < 18) {
+      const current = queue.shift();
+      if (!current || visible.has(current)) continue;
+      visible.add(current);
+      getRelationIds(current, ["direct", "near"]).forEach((id) => {
+        if (!visible.has(id) && !queue.includes(id)) queue.push(id);
+      });
+    }
   }
 
   return visible;
@@ -383,7 +391,19 @@ function getNodePosition(id: string, index: number, focusId: string | null) {
   if (!focusId) return OVERVIEW_POSITIONS[id] ?? ORBIT_POSITIONS[index % ORBIT_POSITIONS.length];
   if (id === focusId) return FOCUS_CENTER;
 
-  return ORBIT_POSITIONS[index % ORBIT_POSITIONS.length];
+  const orbitIndex = index > 0 ? index - 1 : index;
+  const firstRingSize = 8;
+  const isOuterRing = orbitIndex >= firstRingSize;
+  const ringIndex = isOuterRing ? orbitIndex - firstRingSize : orbitIndex;
+  const ringSize = isOuterRing ? 9 : firstRingSize;
+  const angle = (ringIndex / ringSize) * Math.PI * 2 - Math.PI / 2;
+  const radiusX = isOuterRing ? 390 : 265;
+  const radiusY = isOuterRing ? 285 : 205;
+
+  return {
+    x: FOCUS_CENTER.x + Math.cos(angle) * radiusX,
+    y: FOCUS_CENTER.y + Math.sin(angle) * radiusY,
+  };
 }
 
 function FocusGraphNode({ data }: NodeProps<FocusGraphNodeData>) {
@@ -436,18 +456,6 @@ function getInitialFocus(initialUrlState?: SymbolNetworkInitialUrlState) {
   return null;
 }
 
-function describeVisibleSet(focus: FocusNode | undefined, visibleNodes: FocusNode[]) {
-  if (!focus) return "Wasser, Licht, Feuer, Wueste und Brot stehen als ruhige Einstiege bereit.";
-
-  const direct = visibleNodes
-    .filter((node) => node.id !== focus.id)
-    .slice(0, 6)
-    .map((node) => node.label)
-    .join(", ");
-
-  return direct ? `Direkt sichtbar: ${direct}.` : "Noch keine direkten Knoten fuer diesen Fokus.";
-}
-
 export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: SymbolNetworkInitialUrlState }) {
   const [query, setQuery] = useState("");
   const [focusId, setFocusId] = useState<string | null>(() => getInitialFocus(initialUrlState));
@@ -461,8 +469,19 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     [visibleIds],
   );
   const visibleRelations = useMemo(
-    () => focusData.relations.filter((relation) => visibleIds.has(relation.from) && visibleIds.has(relation.to)),
-    [visibleIds],
+    () => focusData.relations.filter((relation) => {
+      if (!visibleIds.has(relation.from) || !visibleIds.has(relation.to)) return false;
+      if (!focusId) return false;
+      if (depth === "direct") return relation.strength === "direct" && (relation.from === focusId || relation.to === focusId);
+      if (depth === "near") {
+        return relation.from === focusId
+          || relation.to === focusId
+          || getRelationIds(focusId).includes(relation.from)
+          || getRelationIds(focusId).includes(relation.to);
+      }
+      return true;
+    }),
+    [depth, focusId, visibleIds],
   );
 
   const focusNodeById = useCallback((id: string) => {
@@ -471,14 +490,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
 
     setFocusId(id);
     setQuery("");
-    markArchiveDiscovered(node.id, node.archiveType);
   }, []);
-
-  useEffect(() => {
-    if (focusNode) {
-      markArchiveDiscovered(focusNode.id, focusNode.archiveType);
-    }
-  }, [focusNode]);
 
   function submitSearch() {
     const suggestion = suggestions[0];
@@ -494,7 +506,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     data: {
       ...node,
       isFocus: node.id === focusId,
-      isSoft: Boolean(focusId && node.id !== focusId && !getDirectRelationIds(focusId).includes(node.id)),
+      isSoft: Boolean(focusId && node.id !== focusId && !getRelationIds(focusId).includes(node.id)),
       onFocus: focusNodeById,
     },
   }));
@@ -506,7 +518,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     data: { label: relation.label },
   }));
   const directConnections = focusId
-    ? getDirectRelationIds(focusId).map((id) => focusData.nodes.get(id)).filter((node): node is FocusNode => Boolean(node))
+    ? getRelationIds(focusId).map((id) => focusData.nodes.get(id)).filter((node): node is FocusNode => Boolean(node))
     : visibleNodes;
 
   return (
@@ -531,7 +543,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   className="symbol-focus-search__input"
-                  placeholder="majim, אור, Genesis 1,3, Licht, Buchstabe..."
+                  placeholder="majim, אור, Genesis 1,2, Licht …"
                   aria-label="Symbolnetz durchsuchen"
                 />
                 <button type="submit" className="symbol-focus-search__button">Fokussieren</button>
@@ -582,6 +594,12 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                   </button>
                 ))}
               </div>
+              {focusNode ? (
+                <div className="symbol-focus-mobile__actions">
+                  {focusNode.codexHref ? <Link href={focusNode.codexHref}>Im Codex öffnen</Link> : null}
+                  {focusNode.roomHref ? <Link href={focusNode.roomHref}>Raum betreten</Link> : null}
+                </div>
+              ) : null}
             </div>
 
             <div className="symbol-focus-toolbar max-md:hidden">
@@ -619,8 +637,6 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
             <h2>{focusNode?.label ?? "Beruehre ein Zeichen"}</h2>
             <p className="symbol-focus-inspector__type">{focusNode ? KIND_LABELS[focusNode.kind] : "Symbolnetz"}</p>
             <p className="symbol-copy mt-5">{focusNode?.summary ?? "Das Netz zeigt zuerst nur die grossen Raeume. Eine Suche oder ein Klick oeffnet direkte Beziehungen."}</p>
-            <p className="symbol-focus-inspector__visible">{describeVisibleSet(focusNode, visibleNodes)}</p>
-
             {directConnections.length ? (
               <div className="symbol-focus-inspector__connections">
                 <p>Direkte Verbindungen</p>
@@ -634,9 +650,8 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
             ) : null}
 
             <div className="symbol-focus-inspector__actions">
-              {focusNode?.codexHref ? <Link href={focusNode.codexHref}>Im Codex oeffnen</Link> : <Link href="/codex">Zum Codex</Link>}
+              {focusNode?.codexHref ? <Link href={focusNode.codexHref}>Im Codex öffnen</Link> : <Link href="/codex">Zum Codex</Link>}
               {focusNode?.roomHref ? <Link href={focusNode.roomHref}>Raum betreten</Link> : null}
-              {focusNode?.scriptureAnchors?.length ? <span>{focusNode.scriptureAnchors.slice(0, 2).join(" / ")}</span> : null}
             </div>
           </aside>
         </div>
