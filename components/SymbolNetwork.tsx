@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
@@ -94,6 +94,11 @@ const OVERVIEW_POSITIONS: Record<string, { x: number; y: number }> = {
 };
 
 const FOCUS_CENTER = { x: 430, y: 245 };
+const MAX_DIRECT_NODES = 12;
+const MAX_NEAR_NODES = 16;
+const MAX_DEEP_NODES = 18;
+const MAX_VISIBLE_RELATIONS = 24;
+const MAX_GROUP_ENTRIES = 6;
 const ORBIT_POSITIONS = [
   { x: 440, y: 42 },
   { x: 660, y: 112 },
@@ -290,7 +295,7 @@ function createFocusData() {
 
   for (const word of hebrewWords) {
     for (const letterId of word.letterIds) {
-      addRelation(word.id, letterId, "Buchstabe");
+      addRelation(word.id, letterId, "Buchstabe", "deep");
     }
     for (const symbolId of word.relatedSymbolSlugs) {
       addRelation(word.id, symbolId, "Symbol", "near");
@@ -424,9 +429,13 @@ function getSuggestions(query: string): SearchSuggestion[] {
     }
   }
 
-  return local
-    .sort((a, b) => b.score - a.score || a.node.label.localeCompare(b.node.label, "de"))
-    .slice(0, 8);
+  const ranked = local
+    .sort((a, b) => b.score - a.score || a.node.label.localeCompare(b.node.label, "de"));
+  const hasExactMatch = (ranked[0]?.score ?? 0) >= 300;
+
+  return ranked
+    .filter((suggestion) => !hasExactMatch || suggestion.score >= 300)
+    .slice(0, hasExactMatch ? 5 : 8);
 }
 
 function getRelationIds(id: string, strengths: FocusRelation["strength"][] = ["direct"]) {
@@ -435,31 +444,69 @@ function getRelationIds(id: string, strengths: FocusRelation["strength"][] = ["d
     .map((relation) => relation.from === id ? relation.to : relation.from);
 }
 
+const KIND_PRIORITY: Record<FocusKind, number> = {
+  word: 0,
+  meaning: 1,
+  symbol: 2,
+  scripture: 3,
+  letter: 4,
+};
+
+function rankNodeIds(ids: string[]) {
+  return unique(ids).sort((leftId, rightId) => {
+    const left = focusData.nodes.get(leftId);
+    const right = focusData.nodes.get(rightId);
+    if (!left || !right) return leftId.localeCompare(rightId);
+    return KIND_PRIORITY[left.kind] - KIND_PRIORITY[right.kind]
+      || left.label.localeCompare(right.label, "de");
+  });
+}
+
 function getVisibleNodeIds(focusId: string | null, depth: FocusDepth) {
   if (!focusId) return new Set(MAIN_SYMBOL_IDS);
 
   const visible = new Set<string>([focusId]);
-  const direct = getRelationIds(focusId);
+  const direct = rankNodeIds(getRelationIds(focusId));
   direct.forEach((id) => visible.add(id));
 
   if (depth === "near") {
-    getRelationIds(focusId, ["direct", "near"]).forEach((id) => visible.add(id));
-    direct.flatMap((id) => getRelationIds(id)).forEach((id) => visible.add(id));
+    rankNodeIds(getRelationIds(focusId, ["direct", "near"])).forEach((id) => visible.add(id));
+    rankNodeIds(direct.flatMap((id) => getRelationIds(id))).forEach((id) => visible.add(id));
   }
 
   if (depth === "deep") {
-    const queue = [...getRelationIds(focusId, ["direct", "near", "deep"])];
-    while (queue.length && visible.size < 18) {
+    const prioritizedRoots = [
+      ...getRelationIds(focusId, ["direct"]),
+      ...getRelationIds(focusId, ["near"]),
+      ...getRelationIds(focusId, ["deep"]),
+    ];
+    const queue = rankNodeIds(prioritizedRoots);
+    while (queue.length && visible.size < MAX_DEEP_NODES) {
       const current = queue.shift();
       if (!current || visible.has(current)) continue;
       visible.add(current);
-      getRelationIds(current, ["direct", "near", "deep"]).forEach((id) => {
+      rankNodeIds(getRelationIds(current, ["direct", "near", "deep"])).forEach((id) => {
         if (!visible.has(id) && !queue.includes(id)) queue.push(id);
       });
     }
   }
 
-  return visible;
+  const uniqueLabels = new Set<string>();
+  const calmSelection = Array.from(visible).filter((id) => {
+    const node = focusData.nodes.get(id);
+    if (!node) return false;
+    const label = normalize(node.label);
+    if (uniqueLabels.has(label)) return false;
+    uniqueLabels.add(label);
+    return true;
+  });
+
+  const nodeLimit = depth === "direct"
+    ? MAX_DIRECT_NODES
+    : depth === "near"
+      ? MAX_NEAR_NODES
+      : MAX_DEEP_NODES;
+  return new Set(calmSelection.slice(0, nodeLimit));
 }
 
 const KIND_ARCS: Record<FocusKind, number> = {
@@ -557,6 +604,7 @@ function getInitialFocus(initialUrlState?: SymbolNetworkInitialUrlState) {
 }
 
 export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: SymbolNetworkInitialUrlState }) {
+  const [isDesktop, setIsDesktop] = useState(false);
   const [query, setQuery] = useState("");
   const [searchedTerm, setSearchedTerm] = useState("");
   const [focusId, setFocusId] = useState<string | null>(() => getInitialFocus(initialUrlState));
@@ -566,6 +614,14 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     const initial = getInitialFocus(initialUrlState);
     return initial ? [initial] : [];
   });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const updateViewport = () => setIsDesktop(mediaQuery.matches);
+    updateViewport();
+    mediaQuery.addEventListener("change", updateViewport);
+    return () => mediaQuery.removeEventListener("change", updateViewport);
+  }, []);
 
   const focusNode = focusId ? focusData.nodes.get(focusId) : undefined;
   const suggestions = useMemo(() => getSuggestions(query), [query]);
@@ -584,15 +640,22 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
       if (!visibleIds.has(relation.from) || !visibleIds.has(relation.to)) return false;
       if (!focusId) return false;
       if (depth === "direct") return relation.strength === "direct" && (relation.from === focusId || relation.to === focusId);
-      if (depth === "near") {
-        return relation.from === focusId
-          || relation.to === focusId
-          || getRelationIds(focusId).includes(relation.from)
-          || getRelationIds(focusId).includes(relation.to);
-      }
-      return true;
-    }),
-    [depth, focusId, visibleIds],
+      const touchesFocus = relation.from === focusId || relation.to === focusId;
+      const bridgesFromDirect = directIds.has(relation.from) !== directIds.has(relation.to);
+      return touchesFocus || bridgesFromDirect;
+    }).sort((left, right) => {
+      const leftTouchesFocus = left.from === focusId || left.to === focusId;
+      const rightTouchesFocus = right.from === focusId || right.to === focusId;
+      const strengthPriority: Record<NonNullable<FocusRelation["strength"]>, number> = {
+        direct: 0,
+        near: 1,
+        deep: 2,
+      };
+      return Number(rightTouchesFocus) - Number(leftTouchesFocus)
+        || strengthPriority[left.strength ?? "direct"] - strengthPriority[right.strength ?? "direct"]
+        || left.id.localeCompare(right.id);
+    }).slice(0, MAX_VISIBLE_RELATIONS),
+    [depth, directIds, focusId, visibleIds],
   );
 
   const focusNodeById = useCallback((id: string, searchTerm?: string) => {
@@ -639,14 +702,21 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
       showLabel: Boolean(hoveredId && (relation.from === hoveredId || relation.to === hoveredId)),
     },
   }));
-  const directConnections = focusId
+  const rawDirectConnections = focusId
     ? getRelationIds(focusId).map((id) => focusData.nodes.get(id)).filter((node): node is FocusNode => Boolean(node))
     : visibleNodes;
+  const connectionLabels = new Set<string>(focusNode ? [normalize(focusNode.label)] : []);
+  const directConnections = rawDirectConnections.filter((node) => {
+    const label = normalize(node.label);
+    if (connectionLabels.has(label)) return false;
+    connectionLabels.add(label);
+    return true;
+  });
   const groupedConnections = (focusId ? directConnections : visibleNodes).reduce<Partial<Record<FocusKind, FocusNode[]>>>((groups, node) => {
     (groups[node.kind] ??= []).push(node);
     return groups;
   }, {});
-  const groupOrder: FocusKind[] = ["meaning", "letter", "word", "scripture", "symbol"];
+  const groupOrder: FocusKind[] = ["word", "meaning", "letter", "scripture", "symbol"];
   const furtherConnections = visibleNodes.filter((node) => node.id !== focusId && !directIds.has(node.id));
   const groupedFurtherConnections = furtherConnections.reduce<Partial<Record<FocusKind, FocusNode[]>>>((groups, node) => {
     (groups[node.kind] ??= []).push(node);
@@ -743,7 +813,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 <section className="symbol-focus-mobile__group" key={kind}>
                   <h3>{KIND_GROUP_LABELS[kind]}</h3>
                   <div className="symbol-focus-mobile__connections">
-                    {groupedConnections[kind]!.slice(0, 8).map((node) => (
+                    {groupedConnections[kind]!.slice(0, MAX_GROUP_ENTRIES).map((node) => (
                       <button key={node.id} type="button" onClick={() => focusNodeById(node.id)}>
                         <span>{node.hebrew ?? KIND_LABELS[node.kind]}</span>
                         <strong>{node.label}</strong>
@@ -761,7 +831,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
               ) : null}
             </div>
 
-            <div className="symbol-focus-toolbar max-md:hidden">
+            {isDesktop ? <div className="symbol-focus-toolbar">
               <span>
                 {searchedTerm ? <>Gesucht: <strong>{searchedTerm}</strong> · Fokus: <strong>{focusNode?.label}</strong></> : focusNode ? `${focusNode.label}-Fokus` : "Startfokus"}
               </span>
@@ -772,9 +842,9 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                   </button>
                 ))}
               </div>
-            </div>
+            </div> : null}
 
-            <div className="symbol-focus-graph max-md:hidden">
+            {isDesktop ? <div className="symbol-focus-graph">
               {focusId && depth !== "direct" ? (
                 <div className="symbol-focus-cluster-labels" aria-hidden="true">
                   <span className="is-meaning">Bedeutungsfelder</span>
@@ -800,7 +870,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 panOnDrag={false}
                 preventScrolling={false}
               />
-            </div>
+            </div> : null}
           </div>
 
           <aside className="symbol-focus-inspector">
@@ -817,7 +887,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 {groupOrder.map((kind) => groupedConnections[kind]?.length ? (
                   <section key={kind}>
                     <p>{KIND_GROUP_LABELS[kind]}</p>
-                    {groupedConnections[kind]!.map((node) => (
+                    {groupedConnections[kind]!.slice(0, MAX_GROUP_ENTRIES).map((node) => (
                       <button key={node.id} type="button" onClick={() => focusNodeById(node.id)}>
                         <span>{node.hebrew ?? node.transliteration ?? KIND_LABELS[node.kind]}</span>
                         {node.label}
@@ -829,7 +899,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
             ) : null}
             {focusNode && furtherConnections.length ? (
               <div className="symbol-focus-inspector__further">
-                <p>Weitere Nähe / Tiefe</p>
+                <p>{depth === "deep" ? "Tiefe Resonanzen" : "Nahe Verbindungen"}</p>
                 {groupOrder.map((kind) => groupedFurtherConnections[kind]?.length ? (
                   <section key={kind}>
                     <span>{KIND_GROUP_LABELS[kind]}</span>

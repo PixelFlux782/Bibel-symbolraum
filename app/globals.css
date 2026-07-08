@@ -413,13 +413,14 @@
 .symbol-focus-node--meaning strong { font-size: 1rem; font-style: normal; }
 .symbol-focus-node i { max-width: 100%; overflow: hidden; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
 .symbol-focus-edge .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.1); stroke-width: .75; transition: stroke 240ms ease,stroke-width 240ms ease,opacity 240ms ease; }
-.symbol-focus-edge.strength-near .react-flow__edge-path, .symbol-focus-edge.strength-deep .react-flow__edge-path { opacity: .18; }
+.symbol-focus-edge.strength-near .react-flow__edge-path { opacity: .14; }
+.symbol-focus-edge.strength-deep .react-flow__edge-path { opacity: .08; }
 .symbol-focus-edge.relation-buchstabe .react-flow__edge-path { stroke: rgba(var(--cyan-rgb),.18); }
 .symbol-focus-edge.relation-bibelanker .react-flow__edge-path, .symbol-focus-edge[class*="relation-genesis"] .react-flow__edge-path { stroke: rgba(var(--foreground-rgb),.1); stroke-dasharray: 2 6; }
 .symbol-focus-edge.relation-symbol .react-flow__edge-path, .symbol-focus-edge.relation-raum .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.24); }
 .symbol-focus-edge.is-active .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.58); stroke-width: 1.45; opacity: 1; }
 .symbol-focus-edge__label { paint-order: stroke; stroke: rgba(2,6,11,.92); stroke-width: 4px; }
-.symbol-focus-cluster-labels { position: absolute; inset: 0; z-index: 4; color: rgba(var(--cyan-rgb),.24); font-size: .5rem; letter-spacing: .2em; pointer-events: none; text-transform: uppercase; }
+.symbol-focus-cluster-labels { position: absolute; inset: 0; z-index: 4; color: rgba(var(--cyan-rgb),.18); font-size: .5rem; letter-spacing: .2em; pointer-events: none; text-transform: uppercase; }
 .symbol-focus-cluster-labels span { position: absolute; }
 .symbol-focus-cluster-labels .is-meaning { right: 5%; top: 12%; }.symbol-focus-cluster-labels .is-word { right: 4%; bottom: 24%; }.symbol-focus-cluster-labels .is-scripture { bottom: 5%; left: 48%; }.symbol-focus-cluster-labels .is-letter { bottom: 14%; left: 5%; }.symbol-focus-cluster-labels .is-symbol { left: 5%; top: 18%; }
 .symbol-focus-inspector__hebrew { margin-top: 1.35rem; color: rgba(var(--gold-rgb),.88); font-family: var(--font-serif),serif; font-size: 2.6rem; line-height: 1; }
@@ -444,6 +445,11 @@
 .symbol-focus-mobile__connections button strong, .symbol-focus-mobile__connections button i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .symbol-focus-mobile__connections button strong { color: rgba(var(--foreground-rgb),.84); font-family: var(--font-serif),serif; font-weight: normal; }
 .symbol-focus-mobile__connections button i { grid-column: 2; color: rgba(var(--foreground-rgb),.4); font-size: .7rem; }
+@media (max-width:767px) {
+  .symbol-focus-trace { gap: .35rem; margin-top: .7rem; opacity: .72; }
+  .symbol-focus-trace > span:first-child { flex-basis: 100%; }
+  .symbol-focus-mobile__actions { grid-template-columns: 1fr; }
+}
 @media (prefers-reduced-motion:no-preference) {
   .symbol-focus-graph .react-flow__node { animation: symbol-orbit-arrive 520ms cubic-bezier(.22,1,.36,1) both; }
   @keyframes symbol-orbit-arrive { from { opacity: 0; transform: scale(.96); } }
