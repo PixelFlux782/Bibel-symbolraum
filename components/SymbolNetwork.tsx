@@ -16,6 +16,7 @@ import { resolveCodexEntry, searchCodexEntries } from "@/lib/codex/getCodexEntry
 import { hebrewLetters } from "@/lib/hebrew/hebrewLetters";
 import { hebrewWords } from "@/lib/hebrew/hebrewWords";
 import { biblicalMeaningLinks, hebrewMeaningLinks, symbolMeaningLinks } from "@/lib/meaning/meaningMappings";
+import { biblicalReferences } from "@/lib/meaning/biblicalReferences";
 import { meaningNodes } from "@/lib/meaning/meaningNodes";
 import { buildSymbolMeaningNetwork } from "@/lib/meaning/buildSymbolMeaningNetwork";
 import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
@@ -105,6 +106,22 @@ const ORBIT_POSITIONS = [
   { x: 840, y: 240 },
   { x: 40, y: 240 },
 ];
+
+const CORE_MEANINGS: Record<string, string[]> = {
+  wasser: ["depth", "transition", "purification"],
+  licht: ["light", "revelation", "guidance"],
+  feuer: ["fire", "transformation", "presence"],
+  wueste: ["desert", "testing", "guidance"],
+  brot: ["nourishment", "gift", "community"],
+  majim: ["origin", "depth", "transition"],
+  or: ["light", "revelation", "knowledge"],
+  ruach: ["breath", "life", "presence"],
+  davar: ["word", "order", "revelation"],
+  tehom: ["origin", "depth", "hiddenness"],
+  esch: ["fire", "transformation", "presence"],
+  midbar: ["desert", "testing", "voice"],
+  lechem: ["nourishment", "gift", "community"],
+};
 
 function normalize(value: string) {
   return value
@@ -251,13 +268,23 @@ function createFocusData() {
 
   for (const link of symbolMeaningLinks) {
     for (const meaningId of link.nodeIds) {
-      addRelation(link.symbolId, meaningId, "Bedeutung");
+      addRelation(
+        link.symbolId,
+        meaningId,
+        "Bedeutung",
+        CORE_MEANINGS[link.symbolId]?.includes(meaningId) ? "direct" : "near",
+      );
     }
   }
 
   for (const link of hebrewMeaningLinks) {
     for (const meaningId of link.nodeIds) {
-      addRelation(link.hebrewWordId, meaningId, "Bedeutung");
+      addRelation(
+        link.hebrewWordId,
+        meaningId,
+        "Bedeutung",
+        CORE_MEANINGS[link.hebrewWordId]?.includes(meaningId) ? "direct" : "near",
+      );
     }
   }
 
@@ -269,21 +296,19 @@ function createFocusData() {
       addRelation(word.id, symbolId, "Symbol", "near");
     }
     for (const reference of word.biblicalReferences) {
-      const scriptureId = reference.reference.toLocaleLowerCase("de-DE").startsWith("genesis 1,2")
-        ? "genesis-1-2"
-        : reference.reference.toLocaleLowerCase("de-DE").startsWith("genesis 1,3")
-          ? "genesis-1-3"
-          : reference.reference.toLocaleLowerCase("de-DE").startsWith("genesis 1,4")
-            ? "genesis-1-4"
-            : undefined;
+      const normalizedReference = normalize(reference.reference);
+      const scriptureId = biblicalReferences.find((anchor) => (
+        normalizedReference.startsWith(normalize(anchor.reference))
+        || normalize(anchor.reference).startsWith(normalizedReference)
+      ))?.id;
 
-      if (scriptureId) addRelation(word.id, scriptureId, "Bibelanker");
+      if (scriptureId) addRelation(word.id, scriptureId, "Schriftspur", "near");
     }
   }
 
   for (const scripture of biblicalMeaningLinks) {
-    for (const meaningId of scripture.nodeIds) {
-      addRelation(scripture.biblicalReferenceId, meaningId, "Bedeutung");
+    for (const [index, meaningId] of scripture.nodeIds.entries()) {
+      addRelation(scripture.biblicalReferenceId, meaningId, "Bedeutung", index < 3 ? "direct" : "near");
     }
   }
 
@@ -295,23 +320,65 @@ function createFocusData() {
     ["wasser", "majim", "Wort"],
     ["wasser", "tehom", "Tiefe"],
     ["wasser", "ruach", "Atem"],
+    ["wasser", "exodus-14", "Wasser wird Weg"],
     ["majim", "tehom", "Tiefe"],
     ["majim", "ruach", "Ruach ueber den Wassern"],
     ["majim", "genesis-1-2", "Genesis 1,2"],
     ["majim", "transition", "Uebergang"],
-    ["majim", "purification", "Reinigung"],
+    ["majim", "purification", "Reinigung", "near"],
     ["tehom", "genesis-1-2", "Genesis 1,2"],
     ["ruach", "genesis-1-2", "Genesis 1,2"],
+    ["ruach", "davar", "Atem trägt Wort", "near"],
+    ["ruach", "aleph", "Unsichtbarer Anfang", "deep"],
     ["licht", "or", "Wort"],
-    ["or", "raah", "Licht und Sehen"],
-    ["or", "tov", "Licht und Gut"],
+    ["or", "raah", "Licht und Sehen", "near"],
+    ["or", "tov", "Licht und Gut", "near"],
     ["or", "genesis-1-3", "Genesis 1,3"],
-    ["or", "genesis-1-4", "Genesis 1,4"],
+    ["or", "genesis-1-4", "Genesis 1,4", "near"],
     ["raah", "genesis-1-4", "Genesis 1,4"],
     ["tov", "genesis-1-4", "Genesis 1,4"],
     ["licht", "genesis-1-3", "Genesis 1,3"],
     ["licht", "genesis-1-4", "Genesis 1,4"],
-  ].forEach(([from, to, label]) => addRelation(from, to, label));
+    ["licht", "aleph", "Ursprung des Lichts", "near"],
+    ["licht", "resh", "Ausrichtung", "deep"],
+    ["feuer", "esch", "Wort"],
+    ["feuer", "exodus-3-2", "Offenbarung"],
+    ["feuer", "shin", "Wandlung", "near"],
+    ["wueste", "midbar", "Wort"],
+    ["wueste", "exodus-wilderness", "Weg im Mangel"],
+    ["wueste", "davar", "Wort im Hören", "near"],
+    ["wueste", "bet", "Innenraum", "deep"],
+    ["brot", "lechem", "Wort"],
+    ["brot", "exodus-16-4", "Gabe im Mangel"],
+    ["brot", "lamed", "Lernen und Weisung", "near"],
+    ["brot", "davar", "Innere Nahrung", "deep"],
+    ["tehom", "mem", "Verborgene Tiefe", "near"],
+    ["tehom", "birth", "Hervortreten", "deep"],
+    ["midbar", "bet", "Innenraum des Hörens", "near"],
+    ["midbar", "resh", "Ausrichtung", "near"],
+    ["davar", "bet", "Wort im Haus", "near"],
+    ["davar", "resh", "Richtung", "near"],
+    ["lechem", "lamed", "Weisung", "near"],
+    ["mem", "depth", "Tiefe"],
+    ["mem", "hiddenness", "Verborgenheit"],
+    ["mem", "birth", "Mutterraum", "near"],
+    ["mem", "transition", "Bewegung", "near"],
+    ["aleph", "origin", "Ursprung"],
+    ["aleph", "breath", "Atem", "near"],
+    ["shin", "fire", "Feuer"],
+    ["shin", "transformation", "Wandlung", "near"],
+    ["bet", "house", "Haus"],
+    ["bet", "origin", "Anfangsraum", "near"],
+    ["resh", "origin", "Anfang"],
+    ["resh", "guidance", "Ausrichtung", "near"],
+    ["lamed", "knowledge", "Lernen"],
+    ["lamed", "guidance", "Weisung", "near"],
+  ].forEach(([from, to, label, strength]) => addRelation(
+    from,
+    to,
+    label,
+    (strength as FocusRelation["strength"] | undefined) ?? "direct",
+  ));
 
   return { nodes, relations };
 }
@@ -381,12 +448,12 @@ function getVisibleNodeIds(focusId: string | null, depth: FocusDepth) {
   }
 
   if (depth === "deep") {
-    const queue = [...getRelationIds(focusId, ["direct", "near"])];
+    const queue = [...getRelationIds(focusId, ["direct", "near", "deep"])];
     while (queue.length && visible.size < 18) {
       const current = queue.shift();
       if (!current || visible.has(current)) continue;
       visible.add(current);
-      getRelationIds(current, ["direct", "near"]).forEach((id) => {
+      getRelationIds(current, ["direct", "near", "deep"]).forEach((id) => {
         if (!visible.has(id) && !queue.includes(id)) queue.push(id);
       });
     }

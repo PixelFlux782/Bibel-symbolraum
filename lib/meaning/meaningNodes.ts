@@ -2,9 +2,14 @@ import type { MeaningField, MeaningNode } from "@/types/meaningGraph";
 
 export const meaningNodes: MeaningNode[] = [
   {
+    id: "origin",
+    label: "Ursprung",
+    description: "Der verborgene Anfang, aus dem Gestalt und Richtung hervortreten.",
+  },
+  {
     id: "depth",
     label: "Tiefe",
-    description: "Ein Raum unterhalb des unmittelbar Sichtbaren.",
+    description: "Der verborgene Raum unter dem Sichtbaren, der Möglichkeit bewahrt.",
   },
   {
     id: "chaos",
@@ -53,8 +58,18 @@ export const meaningNodes: MeaningNode[] = [
   },
   {
     id: "awareness",
-    label: "Bewusstsein",
-    description: "Innere Wahrnehmung, in der Sichtbarkeit zu Erkenntnis werden kann.",
+    label: "Wahrnehmung",
+    description: "Aufmerksames Sehen und Hören, in dem Gegenwart lesbar wird.",
+  },
+  {
+    id: "knowledge",
+    label: "Erkenntnis",
+    description: "Ein Verstehen, das aus Wahrnehmung, Unterscheidung und Beziehung wächst.",
+  },
+  {
+    id: "order",
+    label: "Ordnung",
+    description: "Eine tragende Unterscheidung, die dem Offenen Form und Beziehung gibt.",
   },
   {
     id: "guidance",
@@ -75,6 +90,11 @@ export const meaningNodes: MeaningNode[] = [
     id: "presence",
     label: "Gegenwart",
     description: "Eine tragende Nähe, die im Augenblick erfahrbar wird.",
+  },
+  {
+    id: "breath",
+    label: "Atem",
+    description: "Unsichtbare Lebenskraft, die Bewegung, Stimme und Gegenwart trägt.",
   },
   {
     id: "calling",
@@ -114,7 +134,12 @@ export const meaningNodes: MeaningNode[] = [
   {
     id: "word",
     label: "Wort",
-    description: "Gesprochener Sinn, der Orientierung gibt, ohne die ganze Zukunft vorwegzunehmen.",
+    description: "Gesprochener Sinn, der Wirklichkeit benennt, ordnet und in Bewegung setzt.",
+  },
+  {
+    id: "house",
+    label: "Haus",
+    description: "Ein bergender Innenraum, in dem Leben, Beziehung und Anfang Gestalt gewinnen.",
   },
   {
     id: "path",
@@ -148,19 +173,19 @@ export const meaningFields: MeaningField[] = [
     id: "water",
     label: "Wasser",
     description: "Archetypische Bedeutungsräume, die sich im Symbol Wasser verdichten.",
-    nodeIds: ["depth", "chaos", "birth", "transition", "purification", "life", "hiddenness"],
+    nodeIds: ["origin", "depth", "chaos", "birth", "transition", "purification", "life", "hiddenness"],
   },
   {
     id: "light",
     label: "Licht",
     description: "Archetypische Bedeutungsräume, die sich im Symbol Licht verdichten.",
-    nodeIds: ["light", "revelation", "awareness", "guidance", "life", "goodness"],
+    nodeIds: ["light", "revelation", "awareness", "knowledge", "order", "guidance", "life", "goodness"],
   },
   {
     id: "fire",
     label: "Feuer",
     description: "Archetypische Bedeutungsräume, die sich im Symbol Feuer verdichten.",
-    nodeIds: ["fire", "transformation", "presence", "purification", "calling"],
+    nodeIds: ["fire", "transformation", "presence", "purification", "calling", "revelation"],
   },
   {
     id: "desert",
