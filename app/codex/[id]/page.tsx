@@ -4224,8 +4224,8 @@ function ScriptureFoundationSection({ model }: { model: ScriptureFoundationModel
   const coreWords = model.words.filter((word) => word.layer === "core");
   const passiveWords = model.words.filter((word) => word.layer === "passive");
   const symbolNetworkHref = model.id === "genesis-1-3"
-    ? "/symbolnetz?symbol=licht&path=erste-bewegung"
-    : "/symbolnetz?symbol=wasser&path=erste-bewegung";
+    ? "/symbolnetz?symbol=licht"
+    : "/symbolnetz?symbol=wasser";
 
   return (
     <section className="grid gap-8">

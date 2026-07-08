@@ -80,7 +80,7 @@ export default function StartPage() {
               <span>Wasser-Raum betreten</span>
             </Link>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
-              <Link href="/symbolnetz?symbol=wasser&path=erste-bewegung" className="symbol-cta">
+              <Link href="/symbolnetz?symbol=wasser" className="symbol-cta">
                 Erste Bewegung ansehen
               </Link>
               <Link href="/mein-pfad" className="symbol-cta symbol-cta-secondary">

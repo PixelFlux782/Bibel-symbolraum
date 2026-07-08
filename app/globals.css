@@ -376,6 +376,67 @@
   }
 }
 
+/* Phase 41C: the focus network is an observatory, not a route map. */
+.symbol-focus-net::before { position: absolute; inset: 0; background-image: radial-gradient(rgba(var(--foreground-rgb), .16) .5px, transparent .7px); background-size: 5rem 5rem; content: ""; opacity: .08; pointer-events: none; }
+.symbol-focus-search, .symbol-focus-inspector { border-color: rgba(var(--gold-rgb), .1); background: linear-gradient(145deg, rgba(8,15,23,.88), rgba(3,8,14,.8)); }
+.symbol-focus-trace { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin-top: .9rem; color: rgba(var(--foreground-rgb),.4); font-size: .58rem; letter-spacing: .1em; }
+.symbol-focus-trace > span:first-child { margin-right: .25rem; color: rgba(var(--cyan-rgb),.55); text-transform: uppercase; }
+.symbol-focus-trace span, .symbol-focus-trace button { display: inline-flex; align-items: center; gap: .45rem; }
+.symbol-focus-trace button { color: rgba(var(--foreground-rgb),.62); }
+.symbol-focus-trace button:hover { color: rgba(var(--gold-rgb),.9); }
+.symbol-focus-tabs { gap: .7rem; margin-top: 1.25rem; }
+.symbol-focus-tabs button { display: inline-flex; align-items: center; gap: .5rem; border-radius: 999px; background: radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb),.07), transparent 70%); }
+.symbol-focus-tabs button span { color: rgba(var(--gold-rgb),.75); font-family: var(--font-serif),serif; font-size: 1rem; letter-spacing: 0; }
+.symbol-focus-graph { position: relative; overflow: hidden; height: min(72vh,46rem); min-height: 38rem; border-color: rgba(var(--gold-rgb),.08); background: radial-gradient(ellipse 26% 22% at 50% 49%,rgba(var(--gold-rgb),.06),transparent 72%),radial-gradient(ellipse 36% 32% at 50% 49%,transparent 96%,rgba(var(--gold-rgb),.08) 98%,transparent 100%),radial-gradient(ellipse 49% 44% at 50% 49%,transparent 97%,rgba(var(--cyan-rgb),.055) 99%,transparent 100%),rgba(2,6,11,.74); }
+.symbol-focus-graph .react-flow__node { transition: transform 650ms cubic-bezier(.22,1,.36,1),opacity 420ms ease; }
+.symbol-focus-node { width: 9.2rem; min-height: 6.8rem; border-color: rgba(var(--gold-rgb),.14); border-radius: .2rem; background: linear-gradient(145deg,rgba(10,18,27,.94),rgba(4,9,15,.92)); padding: .75rem; box-shadow: 0 1.5rem 3rem rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.025); }
+.symbol-focus-node:hover, .symbol-focus-node:focus-visible { border-color: rgba(var(--gold-rgb),.42); outline: none; }
+.symbol-focus-node.is-focus { width: 12.5rem; min-height: 10.5rem; border-color: rgba(var(--gold-rgb),.52); background: radial-gradient(circle at 50% 24%,rgba(var(--gold-rgb),.14),transparent 58%),linear-gradient(145deg,rgba(15,21,28,.98),rgba(5,10,16,.96)); box-shadow: 0 0 0 .35rem rgba(var(--gold-rgb),.025),0 0 3rem rgba(var(--gold-rgb),.09),0 2rem 4rem rgba(0,0,0,.4); }
+.symbol-focus-node--word:not(.is-focus) { width: 10rem; min-height: 7.8rem; border-color: rgba(var(--gold-rgb),.23); background: linear-gradient(145deg,rgba(17,20,23,.94),rgba(6,10,15,.94)); }
+.symbol-focus-node--meaning:not(.is-focus) { min-height: 5.6rem; border-color: rgba(var(--cyan-rgb),.12); background: rgba(6,13,20,.9); }
+.symbol-focus-node--meaning:not(.is-focus) .symbol-focus-node__hebrew, .symbol-focus-node--scripture:not(.is-focus) .symbol-focus-node__hebrew { display: none; }
+.symbol-focus-node--letter:not(.is-focus) { width: 6.6rem; min-height: 7rem; border-color: rgba(var(--cyan-rgb),.18); border-radius: 48% 48% 42% 42%; }
+.symbol-focus-node--letter:not(.is-focus) .symbol-focus-node__hebrew { font-size: 2.65rem; }
+.symbol-focus-node--scripture:not(.is-focus) { width: 8rem; min-height: 4.8rem; border-style: solid none; background: rgba(7,11,16,.82); }
+.symbol-focus-node--scripture:not(.is-focus) strong { font-size: .92rem; font-style: normal; }
+.symbol-focus-node--symbol:not(.is-focus) { width: 7.8rem; min-height: 7.8rem; border-color: rgba(var(--gold-rgb),.32); border-radius: 50%; background: radial-gradient(circle,rgba(var(--gold-rgb),.08),rgba(4,10,16,.92) 66%); box-shadow: 0 0 1.8rem rgba(var(--gold-rgb),.06); }
+.symbol-focus-node.is-soft { opacity: .3; }
+.symbol-focus-node__kind { font-size: .5rem; opacity: .7; }
+.symbol-focus-node__hebrew { font-size: 1.85rem; }
+.symbol-focus-node.is-focus .symbol-focus-node__hebrew { font-size: 3rem; text-shadow: 0 0 1.5rem rgba(var(--gold-rgb),.17); }
+.symbol-focus-node--meaning strong { font-size: 1rem; font-style: normal; }
+.symbol-focus-node i { max-width: 100%; overflow: hidden; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
+.symbol-focus-edge .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.14); stroke-width: .85; transition: stroke 240ms ease,stroke-width 240ms ease,opacity 240ms ease; }
+.symbol-focus-edge.strength-near .react-flow__edge-path, .symbol-focus-edge.strength-deep .react-flow__edge-path { opacity: .35; }
+.symbol-focus-edge.relation-buchstabe .react-flow__edge-path { stroke: rgba(var(--cyan-rgb),.18); }
+.symbol-focus-edge.relation-bibelanker .react-flow__edge-path, .symbol-focus-edge[class*="relation-genesis"] .react-flow__edge-path { stroke: rgba(var(--foreground-rgb),.1); stroke-dasharray: 2 6; }
+.symbol-focus-edge.relation-symbol .react-flow__edge-path, .symbol-focus-edge.relation-raum .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.24); }
+.symbol-focus-edge.is-active .react-flow__edge-path { stroke: rgba(var(--gold-rgb),.58); stroke-width: 1.45; opacity: 1; }
+.symbol-focus-edge__label { paint-order: stroke; stroke: rgba(2,6,11,.92); stroke-width: 4px; }
+.symbol-focus-cluster-labels { position: absolute; inset: 0; z-index: 4; color: rgba(var(--cyan-rgb),.24); font-size: .5rem; letter-spacing: .2em; pointer-events: none; text-transform: uppercase; }
+.symbol-focus-cluster-labels span { position: absolute; }
+.symbol-focus-cluster-labels .is-meaning { right: 5%; top: 12%; }.symbol-focus-cluster-labels .is-word { right: 4%; bottom: 24%; }.symbol-focus-cluster-labels .is-scripture { bottom: 5%; left: 48%; }.symbol-focus-cluster-labels .is-letter { bottom: 14%; left: 5%; }.symbol-focus-cluster-labels .is-symbol { left: 5%; top: 18%; }
+.symbol-focus-inspector__hebrew { margin-top: 1.35rem; color: rgba(var(--gold-rgb),.88); font-family: var(--font-serif),serif; font-size: 2.6rem; line-height: 1; }
+.symbol-focus-inspector__transliteration { margin-top: .4rem; color: rgba(var(--gold-rgb),.56); font-family: var(--font-serif),serif; font-size: .85rem; font-style: italic; }
+.symbol-focus-inspector__essence { margin-top: 1rem; border-left: 1px solid rgba(var(--gold-rgb),.2); padding-left: .8rem; color: rgba(var(--foreground-rgb),.5); font-family: var(--font-serif),serif; font-size: .82rem; line-height: 1.55; }
+.symbol-focus-inspector__connections section { display: grid; gap: .35rem; padding-top: .8rem; }
+.symbol-focus-inspector__connections section + section { border-top: 1px solid rgba(var(--gold-rgb),.07); }
+.symbol-focus-inspector__connections button { border-color: transparent; border-bottom-color: rgba(var(--gold-rgb),.07); }
+.symbol-focus-inspector__actions > span { color: rgba(var(--cyan-rgb),.5); font-size: .52rem; }
+.symbol-focus-inspector__actions a { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(var(--gold-rgb),.1); padding: .65rem 0; }
+.symbol-focus-inspector__actions a i { font-style: normal; opacity: .55; }
+.symbol-focus-card b { display: block; margin-top: 1rem; color: rgba(var(--gold-rgb),.88); font-family: var(--font-serif),serif; font-size: 2.8rem; font-weight: normal; }
+.symbol-focus-card > i { color: rgba(var(--gold-rgb),.58); font-family: var(--font-serif),serif; font-size: .85rem; }
+.symbol-focus-mobile__group h3 { margin-bottom: .45rem; color: rgba(var(--cyan-rgb),.6); font-size: .56rem; letter-spacing: .16em; text-transform: uppercase; }
+.symbol-focus-mobile__connections button { display: grid; grid-template-columns: 2.5rem minmax(0,1fr); min-height: 3.5rem; padding-block: .55rem; }
+.symbol-focus-mobile__connections button strong, .symbol-focus-mobile__connections button i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.symbol-focus-mobile__connections button strong { color: rgba(var(--foreground-rgb),.84); font-family: var(--font-serif),serif; font-weight: normal; }
+.symbol-focus-mobile__connections button i { grid-column: 2; color: rgba(var(--foreground-rgb),.4); font-size: .7rem; }
+@media (prefers-reduced-motion:no-preference) {
+  .symbol-focus-graph .react-flow__node { animation: symbol-orbit-arrive 520ms cubic-bezier(.22,1,.36,1) both; }
+  @keyframes symbol-orbit-arrive { from { opacity: 0; transform: scale(.96); } }
+}
+
 html {
   scroll-behavior: smooth;
   scrollbar-color: rgba(var(--gold-rgb), 0.18) rgba(2, 5, 12, 0.92);

@@ -126,7 +126,7 @@ const genesisRoomAnchors: Record<string, {
     text: "Der Anfang fuehrt in die Tiefe. Ueber den Wassern bewegt sich Atem; aus dem Wasser oeffnet sich das Wort.",
     traces: ["Ursprung", "Tiefe", "Ruach", "Wort", "Licht"],
     codexHref: "/codex/genesis-1-2?from=raum&symbol=wasser",
-    networkHref: "/symbolnetz?symbol=wasser&path=erste-bewegung",
+    networkHref: "/symbolnetz?symbol=wasser",
     onwardHref: "/raeume/licht?from=wasser&path=erste-bewegung",
     onwardLabel: "Dem Licht leise folgen",
   },
@@ -135,7 +135,7 @@ const genesisRoomAnchors: Record<string, {
     text: "Das Wort oeffnet Licht. Was sichtbar wird, kann erkannt werden; Genesis 1,4 bleibt die leise Schwelle von Sehen und Gut.",
     traces: ["Wort", "Licht", "Sehen", "Gut"],
     codexHref: "/codex/genesis-1-3?from=raum&symbol=licht",
-    networkHref: "/symbolnetz?symbol=licht&path=erste-bewegung",
+    networkHref: "/symbolnetz?symbol=licht",
   },
 };
 
