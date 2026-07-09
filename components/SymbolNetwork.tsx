@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
@@ -548,14 +548,20 @@ function getNodePositions(nodes: FocusNode[], focusId: string | null, directIds:
   return positions;
 }
 
-function FocusGraphNode({ data }: NodeProps<FocusGraphNodeData>) {
+const FocusGraphNode = memo(function FocusGraphNode({ data }: NodeProps<FocusGraphNodeData>) {
+  const handlePointerEnter = useCallback(() => data.onHover(data.id), [data]);
+  const handlePointerLeave = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as globalThis.Node | null)) return;
+    data.onHover(null);
+  }, [data]);
+
   return (
     <button
       type="button"
       className={`symbol-focus-node symbol-focus-node--${data.kind} ${data.isFocus ? "is-focus" : ""} ${data.isSoft ? "is-soft" : ""}`}
       onClick={() => data.onFocus(data.id)}
-      onMouseEnter={() => data.onHover(data.id)}
-      onMouseLeave={() => data.onHover(null)}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       onFocus={() => data.onHover(data.id)}
       onBlur={() => data.onHover(null)}
     >
@@ -567,11 +573,11 @@ function FocusGraphNode({ data }: NodeProps<FocusGraphNodeData>) {
       <Handle type="source" position={Position.Bottom} />
     </button>
   );
-}
+});
 
 type FocusEdgeData = { label?: string; relation: string; strength: FocusRelation["strength"]; isActive: boolean; showLabel: boolean };
 
-function FocusGraphEdge({ id, sourceX, sourceY, targetX, targetY, data }: EdgeProps<FocusEdgeData>) {
+const FocusGraphEdge = memo(function FocusGraphEdge({ id, sourceX, sourceY, targetX, targetY, data }: EdgeProps<FocusEdgeData>) {
   const path = `M ${sourceX},${sourceY} C ${sourceX},${(sourceY + targetY) / 2} ${targetX},${(sourceY + targetY) / 2} ${targetX},${targetY}`;
   const relationClass = normalize(data?.relation ?? "").replace(/\s+/g, "-");
 
@@ -587,11 +593,12 @@ function FocusGraphEdge({ id, sourceX, sourceY, targetX, targetY, data }: EdgePr
       ) : null}
     </g>
   );
-}
+});
 
 const nodeTypes = { focus: FocusGraphNode };
 const edgeTypes = { focus: FocusGraphEdge };
 const reactFlowOptions = { hideAttribution: true };
+const fitViewOptions = { padding: 0.16, maxZoom: 1.05 };
 
 function getInitialFocus(initialUrlState?: SymbolNetworkInitialUrlState) {
   if (initialUrlState?.symbol && focusData.nodes.has(initialUrlState.symbol)) {
@@ -669,6 +676,9 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     setSearchedTerm(searchTerm?.trim() ?? "");
     setQuery("");
   }, []);
+  const hoverNodeById = useCallback((id: string | null) => {
+    setHoveredId((currentId) => currentId === id ? currentId : id);
+  }, []);
 
   function submitSearch() {
     const suggestion = suggestions[0];
@@ -677,7 +687,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     }
   }
 
-  const graphNodes: Node<FocusGraphNodeData>[] = visibleNodes.map((node) => ({
+  const graphNodes = useMemo<Node<FocusGraphNodeData>[]>(() => visibleNodes.map((node) => ({
     id: node.id,
     type: "focus",
     position: nodePositions.get(node.id) ?? FOCUS_CENTER,
@@ -688,10 +698,10 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
         (relation.from === hoveredId && relation.to === node.id) || (relation.to === hoveredId && relation.from === node.id)
       )))),
       onFocus: focusNodeById,
-      onHover: setHoveredId,
+      onHover: hoverNodeById,
     },
-  }));
-  const graphEdges: Edge<FocusEdgeData>[] = visibleRelations.map((relation) => ({
+  })), [directIds, focusId, focusNodeById, hoveredId, hoverNodeById, nodePositions, visibleNodes, visibleRelations]);
+  const graphEdges = useMemo<Edge<FocusEdgeData>[]>(() => visibleRelations.map((relation) => ({
     id: relation.id,
     source: relation.from,
     target: relation.to,
@@ -703,7 +713,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
       isActive: Boolean(hoveredId && (relation.from === hoveredId || relation.to === hoveredId)),
       showLabel: Boolean(hoveredId && (relation.from === hoveredId || relation.to === hoveredId)),
     },
-  }));
+  })), [hoveredId, visibleRelations]);
   const rawDirectConnections = focusId
     ? getRelationIds(focusId).map((id) => focusData.nodes.get(id)).filter((node): node is FocusNode => Boolean(node))
     : visibleNodes;
@@ -864,7 +874,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 edgeTypes={edgeTypes}
                 proOptions={reactFlowOptions}
                 fitView
-                fitViewOptions={{ padding: 0.16, maxZoom: 1.05 }}
+                fitViewOptions={fitViewOptions}
                 nodesDraggable={false}
                 nodesConnectable={false}
                 zoomOnScroll={false}

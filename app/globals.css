@@ -394,7 +394,12 @@
 .symbol-focus-tabs button { display: inline-flex; align-items: center; gap: .5rem; border-radius: 999px; background: radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb),.07), transparent 70%); }
 .symbol-focus-tabs button span { color: rgba(var(--gold-rgb),.75); font-family: var(--font-serif),serif; font-size: 1rem; letter-spacing: 0; }
 .symbol-focus-graph { position: relative; overflow: hidden; height: min(72vh,46rem); min-height: 38rem; border-color: rgba(var(--gold-rgb),.08); background: radial-gradient(ellipse 26% 22% at 50% 49%,rgba(var(--gold-rgb),.06),transparent 72%),radial-gradient(ellipse 36% 32% at 50% 49%,transparent 96%,rgba(var(--gold-rgb),.08) 98%,transparent 100%),radial-gradient(ellipse 49% 44% at 50% 49%,transparent 97%,rgba(var(--cyan-rgb),.055) 99%,transparent 100%),rgba(2,6,11,.74); }
-.symbol-focus-graph .react-flow__node { transition: transform 650ms cubic-bezier(.22,1,.36,1),opacity 420ms ease; }
+.symbol-focus-graph .react-flow__node { transition: opacity 420ms ease; }
+.symbol-focus-graph .react-flow__edges,
+.symbol-focus-graph .react-flow__edge,
+.symbol-focus-graph .react-flow__edge-text,
+.symbol-focus-graph .react-flow__edgeupdater,
+.symbol-focus-node .react-flow__handle { pointer-events: none; }
 .symbol-focus-node { width: 9.2rem; min-height: 6.8rem; border-color: rgba(var(--gold-rgb),.14); border-radius: .2rem; background: linear-gradient(145deg,rgba(10,18,27,.94),rgba(4,9,15,.92)); padding: .75rem; box-shadow: 0 1.5rem 3rem rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.025); }
 .symbol-focus-node:hover, .symbol-focus-node:focus-visible { border-color: rgba(var(--gold-rgb),.42); outline: none; }
 .symbol-focus-node.is-focus { width: 12.5rem; min-height: 10.5rem; border-color: rgba(var(--gold-rgb),.52); background: radial-gradient(circle at 50% 24%,rgba(var(--gold-rgb),.14),transparent 58%),linear-gradient(145deg,rgba(15,21,28,.98),rgba(5,10,16,.96)); box-shadow: 0 0 0 .35rem rgba(var(--gold-rgb),.025),0 0 3rem rgba(var(--gold-rgb),.09),0 2rem 4rem rgba(0,0,0,.4); }
