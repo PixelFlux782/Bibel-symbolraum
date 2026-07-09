@@ -1,0 +1,180 @@
+/* Phase 42A: final cascade for Codex and Symbolnetz. */
+.codex-archive {
+  background:
+    radial-gradient(ellipse at 50% 4%, rgba(var(--gold-rgb), .085), transparent 31rem),
+    radial-gradient(ellipse at 88% 35%, rgba(var(--cyan-rgb), .035), transparent 28rem),
+    linear-gradient(180deg, #050b14, #020711 58%, #01050c);
+}
+
+.codex-archive .codex-meaningful-card,
+.symbol-focus-search,
+.symbol-focus-results,
+.symbol-focus-toolbar,
+.symbol-focus-inspector,
+.symbol-focus-mobile .symbol-focus-card {
+  border-color: rgba(var(--gold-rgb), .12) !important;
+  border-radius: .15rem;
+  background:
+    radial-gradient(circle at 88% 4%, rgba(var(--cyan-rgb), .06), transparent 38%),
+    linear-gradient(155deg, rgba(8, 15, 23, .92), rgba(5, 11, 18, .8)) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.025), inset 0 -3rem 5rem rgba(0,0,0,.13), 0 2rem 5rem rgba(0,0,0,.2) !important;
+}
+
+.codex-archive [role="tablist"] {
+  gap: .2rem;
+  border-block: 1px solid rgba(var(--gold-rgb), .07);
+  padding-block: .55rem;
+}
+
+.codex-archive [role="tab"] {
+  border: 0 !important;
+  border-bottom: 1px solid transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(var(--foreground-rgb), .44);
+}
+
+.codex-archive [role="tab"][aria-selected="true"] {
+  border-bottom-color: rgba(var(--gold-rgb), .42) !important;
+  color: rgba(var(--gold-rgb), .9);
+}
+
+.codex-archive .codex-meaningful-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1px;
+  background: linear-gradient(transparent, rgba(var(--gold-rgb), .38), transparent);
+  content: "";
+  opacity: .55;
+}
+
+.codex-archive .codex-meaningful-card:hover,
+.codex-archive .codex-meaningful-card:focus-within {
+  border-color: rgba(var(--gold-rgb), .24) !important;
+  box-shadow: inset 0 0 4rem rgba(var(--gold-rgb), .018), 0 2rem 5rem rgba(0,0,0,.25) !important;
+}
+
+.codex-archive [lang="he"],
+.codex-sanctum [lang="he"],
+.symbol-focus-net [lang="he"] {
+  color: rgba(224,194,132,.92) !important;
+  font-style: normal;
+  letter-spacing: .04em;
+  text-shadow: 0 0 1.8rem rgba(var(--gold-rgb), .16);
+}
+
+.codex-sanctum > div:last-child > header {
+  position: relative;
+  min-height: 34rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid rgba(var(--gold-rgb), .1);
+}
+
+.codex-sanctum > div:last-child > header [lang="he"] {
+  font-size: clamp(4.5rem, 12vw, 8.5rem);
+  line-height: .9;
+}
+
+.codex-sanctum details {
+  margin-top: 1rem;
+  border: 1px solid rgba(var(--gold-rgb), .09) !important;
+  background: radial-gradient(circle at 90% 0%, rgba(var(--cyan-rgb), .035), transparent 30%), linear-gradient(135deg, rgba(var(--gold-rgb), .027), transparent 38%), rgba(4,10,17,.66) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.018), 0 1.6rem 4rem rgba(0,0,0,.12);
+}
+
+.codex-sanctum details[open] {
+  border-color: rgba(var(--gold-rgb), .16) !important;
+  box-shadow: inset 0 0 5rem rgba(var(--gold-rgb), .015), 0 2rem 5rem rgba(0,0,0,.18);
+}
+
+.codex-sanctum details > summary { padding-inline: clamp(1rem, 4vw, 2.25rem); }
+.codex-sanctum details > div { padding-right: clamp(1rem, 4vw, 2.25rem); }
+
+.symbol-focus-net {
+  background: linear-gradient(rgba(2,7,14,.88), rgba(1,5,11,.96)), var(--visual-symbolnetz-hero) center / cover fixed;
+}
+
+.symbol-focus-search__input {
+  border: 0;
+  border-bottom: 1px solid rgba(var(--cyan-rgb), .18);
+  background: rgba(0,0,0,.16);
+}
+
+.symbol-focus-tabs button {
+  border: 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), .1);
+  border-radius: 0;
+  background: transparent;
+}
+
+.symbol-focus-graph {
+  border-color: rgba(var(--gold-rgb), .07);
+  background: radial-gradient(ellipse 18% 14% at 50% 49%, rgba(var(--gold-rgb), .065), transparent 72%), repeating-radial-gradient(ellipse at 50% 52%, transparent 0 7.9rem, rgba(var(--cyan-rgb), .022) 8rem, transparent 8.08rem), rgba(1,5,11,.74);
+  box-shadow: inset 0 0 7rem rgba(0,0,0,.34);
+}
+
+.symbol-focus-node,
+.symbol-focus-node--word:not(.is-focus),
+.symbol-focus-node--meaning:not(.is-focus),
+.symbol-focus-node--letter:not(.is-focus),
+.symbol-focus-node--scripture:not(.is-focus),
+.symbol-focus-node--symbol:not(.is-focus) {
+  border-color: transparent;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(7,15,23,.94), rgba(3,9,16,.68) 60%, transparent 72%);
+  box-shadow: none;
+  transform: translateZ(0);
+  transition: opacity 520ms ease, filter 520ms ease;
+}
+
+.symbol-focus-node::before {
+  position: absolute;
+  inset: .55rem;
+  border: 1px solid rgba(var(--gold-rgb), .16);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.symbol-focus-node.is-focus {
+  border-color: transparent;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--gold-rgb), .12), rgba(6,14,22,.9) 60%, transparent 72%);
+  box-shadow: 0 0 3.5rem rgba(var(--gold-rgb), .06);
+}
+
+.symbol-focus-node.is-hovered { filter: brightness(1.12); }
+.symbol-focus-node.is-soft { opacity: .12; filter: saturate(.55); }
+.symbol-focus-edge.strength-near .react-flow__edge-path { opacity: .1; }
+.symbol-focus-edge.strength-deep .react-flow__edge-path { opacity: .045; }
+.symbol-focus-edge.is-active .react-flow__edge-path { stroke: rgba(var(--gold-rgb), .56); stroke-width: 1.35; }
+
+.symbol-focus-inspector {
+  border-inline: 1px solid rgba(var(--gold-rgb), .1) !important;
+  border-block: 0 !important;
+}
+
+.symbol-focus-inspector__connections button,
+.symbol-focus-mobile__connections button,
+.symbol-focus-results button {
+  border: 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), .07);
+  background: transparent;
+}
+
+@media (max-width: 767px) {
+  .codex-sanctum > div:last-child > header { min-height: auto; padding-block: 4.5rem; }
+  .codex-sanctum > div:last-child > header [lang="he"] { font-size: clamp(4rem, 23vw, 6.5rem); }
+  .codex-sanctum details { margin-inline: -.35rem; }
+  .codex-sanctum details > div { padding-inline: 1rem; }
+  .codex-archive .codex-meaningful-card { padding: 1.25rem; }
+  .symbol-focus-tabs { gap: 0; }
+  .symbol-focus-mobile .symbol-focus-card { min-height: 17rem; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .symbol-focus-node,
+  .symbol-focus-edge .react-flow__edge-path { transition: none; }
+}

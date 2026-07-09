@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import ReactFlow, {
   BaseEdge,
   Edge,
@@ -55,8 +55,8 @@ type FocusRelation = {
 type FocusGraphNodeData = FocusNode & {
   isFocus: boolean;
   isSoft: boolean;
+  neighborIds: string[];
   onFocus: (id: string) => void;
-  onHover: (id: string | null) => void;
 };
 
 type SearchSuggestion = {
@@ -548,22 +548,29 @@ function getNodePositions(nodes: FocusNode[], focusId: string | null, directIds:
   return positions;
 }
 
+const GraphHoverContext = createContext<{
+  hoveredId: string | null;
+  setHoveredId: (id: string | null) => void;
+}>({ hoveredId: null, setHoveredId: () => undefined });
+
 const FocusGraphNode = memo(function FocusGraphNode({ data }: NodeProps<FocusGraphNodeData>) {
-  const handlePointerEnter = useCallback(() => data.onHover(data.id), [data]);
+  const { hoveredId, setHoveredId } = useContext(GraphHoverContext);
+  const isHoverSoft = Boolean(hoveredId && hoveredId !== data.id && !data.neighborIds.includes(hoveredId));
+  const handlePointerEnter = useCallback(() => setHoveredId(data.id), [data.id, setHoveredId]);
   const handlePointerLeave = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
     if (event.currentTarget.contains(event.relatedTarget as globalThis.Node | null)) return;
-    data.onHover(null);
-  }, [data]);
+    setHoveredId(null);
+  }, [setHoveredId]);
 
   return (
     <button
       type="button"
-      className={`symbol-focus-node symbol-focus-node--${data.kind} ${data.isFocus ? "is-focus" : ""} ${data.isSoft ? "is-soft" : ""}`}
+      className={`symbol-focus-node symbol-focus-node--${data.kind} ${data.isFocus ? "is-focus" : ""} ${data.isSoft || isHoverSoft ? "is-soft" : ""} ${hoveredId === data.id ? "is-hovered" : ""}`}
       onClick={() => data.onFocus(data.id)}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      onFocus={() => data.onHover(data.id)}
-      onBlur={() => data.onHover(null)}
+      onFocus={() => setHoveredId(data.id)}
+      onBlur={() => setHoveredId(null)}
     >
       <Handle type="target" position={Position.Top} />
       <span className="symbol-focus-node__kind">{KIND_LABELS[data.kind]}</span>
@@ -575,16 +582,24 @@ const FocusGraphNode = memo(function FocusGraphNode({ data }: NodeProps<FocusGra
   );
 });
 
-type FocusEdgeData = { label?: string; relation: string; strength: FocusRelation["strength"]; isActive: boolean; showLabel: boolean };
+type FocusEdgeData = {
+  label?: string;
+  relation: string;
+  strength: FocusRelation["strength"];
+  sourceId: string;
+  targetId: string;
+};
 
 const FocusGraphEdge = memo(function FocusGraphEdge({ id, sourceX, sourceY, targetX, targetY, data }: EdgeProps<FocusEdgeData>) {
+  const { hoveredId } = useContext(GraphHoverContext);
   const path = `M ${sourceX},${sourceY} C ${sourceX},${(sourceY + targetY) / 2} ${targetX},${(sourceY + targetY) / 2} ${targetX},${targetY}`;
   const relationClass = normalize(data?.relation ?? "").replace(/\s+/g, "-");
+  const isActive = Boolean(hoveredId && (data?.sourceId === hoveredId || data?.targetId === hoveredId));
 
   return (
-    <g className={`symbol-focus-edge relation-${relationClass} strength-${data?.strength ?? "direct"} ${data?.isActive ? "is-active" : ""}`}>
+    <g className={`symbol-focus-edge relation-${relationClass} strength-${data?.strength ?? "direct"} ${isActive ? "is-active" : ""}`}>
       <BaseEdge id={id} path={path} />
-      {data?.label && data.showLabel ? (
+      {data?.label && isActive ? (
         <text className="symbol-focus-edge__label">
           <textPath href={`#${id}`} startOffset="50%" textAnchor="middle">
             {data.label}
@@ -599,6 +614,31 @@ const nodeTypes = { focus: FocusGraphNode };
 const edgeTypes = { focus: FocusGraphEdge };
 const reactFlowOptions = { hideAttribution: true };
 const fitViewOptions = { padding: 0.16, maxZoom: 1.05 };
+
+function StableFocusGraph({ nodes, edges }: { nodes: Node<FocusGraphNodeData>[]; edges: Edge<FocusEdgeData>[] }) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const hoverValue = useMemo(() => ({ hoveredId, setHoveredId }), [hoveredId]);
+
+  return (
+    <GraphHoverContext.Provider value={hoverValue}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        proOptions={reactFlowOptions}
+        fitView
+        fitViewOptions={fitViewOptions}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        zoomOnScroll={false}
+        panOnScroll={false}
+        panOnDrag={false}
+        preventScrolling={false}
+      />
+    </GraphHoverContext.Provider>
+  );
+}
 
 function getInitialFocus(initialUrlState?: SymbolNetworkInitialUrlState) {
   if (initialUrlState?.symbol && focusData.nodes.has(initialUrlState.symbol)) {
@@ -618,7 +658,6 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
   const [searchedTerm, setSearchedTerm] = useState("");
   const [focusId, setFocusId] = useState<string | null>(() => getInitialFocus(initialUrlState));
   const [depth, setDepth] = useState<FocusDepth>("direct");
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [focusTrace, setFocusTrace] = useState<string[]>(() => {
     const initial = getInitialFocus(initialUrlState);
     return initial ? [initial] : [];
@@ -676,10 +715,6 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     setSearchedTerm(searchTerm?.trim() ?? "");
     setQuery("");
   }, []);
-  const hoverNodeById = useCallback((id: string | null) => {
-    setHoveredId((currentId) => currentId === id ? currentId : id);
-  }, []);
-
   function submitSearch() {
     const suggestion = suggestions[0];
     if (suggestion) {
@@ -694,13 +729,13 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
     data: {
       ...node,
       isFocus: node.id === focusId,
-      isSoft: Boolean((focusId && node.id !== focusId && !directIds.has(node.id)) || (hoveredId && node.id !== hoveredId && !visibleRelations.some((relation) => (
-        (relation.from === hoveredId && relation.to === node.id) || (relation.to === hoveredId && relation.from === node.id)
-      )))),
+      isSoft: Boolean(focusId && node.id !== focusId && !directIds.has(node.id)),
+      neighborIds: visibleRelations
+        .filter((relation) => relation.from === node.id || relation.to === node.id)
+        .map((relation) => relation.from === node.id ? relation.to : relation.from),
       onFocus: focusNodeById,
-      onHover: hoverNodeById,
     },
-  })), [directIds, focusId, focusNodeById, hoveredId, hoverNodeById, nodePositions, visibleNodes, visibleRelations]);
+  })), [directIds, focusId, focusNodeById, nodePositions, visibleNodes, visibleRelations]);
   const graphEdges = useMemo<Edge<FocusEdgeData>[]>(() => visibleRelations.map((relation) => ({
     id: relation.id,
     source: relation.from,
@@ -710,10 +745,10 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
       label: relation.label,
       relation: relation.label,
       strength: relation.strength,
-      isActive: Boolean(hoveredId && (relation.from === hoveredId || relation.to === hoveredId)),
-      showLabel: Boolean(hoveredId && (relation.from === hoveredId || relation.to === hoveredId)),
+      sourceId: relation.from,
+      targetId: relation.to,
     },
-  })), [hoveredId, visibleRelations]);
+  })), [visibleRelations]);
   const rawDirectConnections = focusId
     ? getRelationIds(focusId).map((id) => focusData.nodes.get(id)).filter((node): node is FocusNode => Boolean(node))
     : visibleNodes;
@@ -866,21 +901,10 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                   <span className="is-symbol">Räume</span>
                 </div>
               ) : null}
-              <ReactFlow
+              <StableFocusGraph
                 key={`${focusId ?? "start"}-${depth}`}
                 nodes={graphNodes}
                 edges={graphEdges}
-                nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
-                proOptions={reactFlowOptions}
-                fitView
-                fitViewOptions={fitViewOptions}
-                nodesDraggable={false}
-                nodesConnectable={false}
-                zoomOnScroll={false}
-                panOnScroll={false}
-                panOnDrag={false}
-                preventScrolling={false}
               />
             </div> : null}
           </div>

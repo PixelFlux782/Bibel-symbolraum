@@ -4,6 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Phase 42A surface vocabulary:
+   depth-ground · archive-tablet · seal · script-anchor · resonance-field */
+
 :root {
   --background: #0b0b0f; /* Deep Ink */
   --foreground: #f5f1e8; /* Aged Paper */
@@ -19,6 +22,341 @@
   --visual-archiv-hero: url("/Visuals/hebr_archiv_waende_background.png");
   --visual-pfad-hero: url("/Visuals/hebr_archiv_waende_background.png");
   --visual-symbolnetz-hero: url("/Visuals/symbolnetz_backround.png");
+}
+
+/* Phase 42A · Symbolraum UI mystification */
+:root {
+  --depth-ground: #020711;
+  --archive-tablet: rgba(5, 11, 18, 0.78);
+  --seal-line: rgba(var(--gold-rgb), 0.14);
+  --script-light: rgba(224, 194, 132, 0.92);
+  --resonance-cyan: rgba(var(--cyan-rgb), 0.09);
+}
+
+.symbol-panel,
+.codex-meaningful-card,
+.symbol-focus-search,
+.symbol-focus-results,
+.symbol-focus-toolbar,
+.symbol-focus-inspector,
+.symbol-focus-mobile .symbol-focus-card {
+  border-color: var(--seal-line) !important;
+  border-radius: 0.15rem;
+  background:
+    linear-gradient(115deg, rgba(var(--gold-rgb), 0.025), transparent 30%),
+    radial-gradient(circle at 88% 4%, var(--resonance-cyan), transparent 38%),
+    linear-gradient(155deg, rgba(8, 15, 23, 0.9), var(--archive-tablet)) !important;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.025),
+    inset 0 -2.5rem 5rem rgba(0, 0, 0, 0.13),
+    0 2rem 5rem rgba(0, 0, 0, 0.2) !important;
+}
+
+.symbol-kicker,
+.codex-archive button,
+.codex-sanctum summary > span:first-child,
+.symbol-focus-net button {
+  letter-spacing: 0.25em;
+}
+
+.symbol-kicker {
+  font-size: 0.56rem;
+  opacity: 0.82;
+}
+
+.symbol-cta,
+.symbol-focus-search__button,
+.symbol-focus-mobile__actions a {
+  border: 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.28);
+  background: linear-gradient(180deg, transparent, rgba(var(--gold-rgb), 0.025));
+  box-shadow: none;
+  transition: color 700ms ease, border-color 700ms ease, background-color 700ms ease;
+}
+
+.symbol-cta:hover,
+.symbol-focus-search__button:hover,
+.symbol-focus-mobile__actions a:hover {
+  border-color: rgba(var(--gold-rgb), 0.52);
+  background: rgba(var(--gold-rgb), 0.025);
+  box-shadow: inset 0 -1rem 2.5rem rgba(var(--gold-rgb), 0.02);
+}
+
+/* Codex overview · tablets in a quiet archive rather than dashboard cards */
+.codex-archive {
+  background:
+    radial-gradient(ellipse at 50% 4%, rgba(var(--gold-rgb), 0.085), transparent 31rem),
+    radial-gradient(ellipse at 88% 35%, rgba(var(--cyan-rgb), 0.035), transparent 28rem),
+    linear-gradient(180deg, #050b14, var(--depth-ground) 58%, #01050c);
+}
+
+.codex-archive [role="tablist"] {
+  gap: 0.2rem;
+  border-block: 1px solid rgba(var(--gold-rgb), 0.07);
+  padding-block: 0.55rem;
+}
+
+.codex-archive [role="tab"] {
+  border: 0 !important;
+  border-bottom: 1px solid transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding-inline: 1rem;
+  color: rgba(var(--foreground-rgb), 0.42);
+}
+
+.codex-archive [role="tab"].is-active,
+.codex-archive [role="tab"][aria-selected="true"] {
+  border-bottom-color: rgba(var(--gold-rgb), 0.42) !important;
+  color: rgba(var(--gold-rgb), 0.9);
+}
+
+.codex-archive .codex-meaningful-card {
+  position: relative;
+  overflow: hidden;
+  transform: none;
+  transition: border-color 700ms ease, background-color 700ms ease, box-shadow 700ms ease;
+}
+
+.codex-archive .codex-meaningful-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1px;
+  background: linear-gradient(transparent, rgba(var(--gold-rgb), 0.38), transparent);
+  content: "";
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.codex-archive .codex-meaningful-card:hover,
+.codex-archive .codex-meaningful-card:focus-within {
+  border-color: rgba(var(--gold-rgb), 0.24) !important;
+  background-color: rgba(var(--gold-rgb), 0.025) !important;
+  box-shadow: inset 0 0 4rem rgba(var(--gold-rgb), 0.018), 0 2rem 5rem rgba(0, 0, 0, 0.25) !important;
+}
+
+.codex-archive [lang="he"],
+.codex-sanctum [lang="he"] {
+  color: var(--script-light) !important;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 1.8rem rgba(var(--gold-rgb), 0.16);
+}
+
+/* Codex detail · sequential archive chambers */
+.codex-sanctum > div:last-child > header {
+  position: relative;
+  min-height: 34rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.1);
+}
+
+.codex-sanctum > div:last-child > header::after {
+  position: absolute;
+  right: 1rem;
+  bottom: -1px;
+  left: 1rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--cyan-rgb), 0.18), rgba(var(--gold-rgb), 0.3), transparent);
+  content: "";
+}
+
+.codex-sanctum > div:last-child > header [lang="he"] {
+  font-size: clamp(4.5rem, 12vw, 8.5rem);
+  line-height: 0.9;
+}
+
+.codex-sanctum details {
+  margin-top: 1rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.09) !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(var(--cyan-rgb), 0.035), transparent 30%),
+    linear-gradient(135deg, rgba(var(--gold-rgb), 0.027), transparent 38%),
+    rgba(4, 10, 17, 0.66) !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.018), 0 1.6rem 4rem rgba(0, 0, 0, 0.12);
+}
+
+.codex-sanctum details[open] {
+  border-color: rgba(var(--gold-rgb), 0.16) !important;
+  box-shadow: inset 0 0 5rem rgba(var(--gold-rgb), 0.015), 0 2rem 5rem rgba(0, 0, 0, 0.18);
+}
+
+.codex-sanctum details > summary {
+  padding-inline: clamp(1rem, 4vw, 2.25rem);
+}
+
+.codex-sanctum details > div {
+  padding-right: clamp(1rem, 4vw, 2.25rem);
+}
+
+.codex-sanctum details article[class*="border"],
+.codex-sanctum a[class*="border"] {
+  border-color: rgba(var(--gold-rgb), 0.12);
+  background-color: rgba(2, 7, 13, 0.34);
+}
+
+/* Symbol network · still water, seals and script-light */
+.symbol-focus-net {
+  background:
+    linear-gradient(rgba(2, 7, 14, 0.88), rgba(1, 5, 11, 0.96)),
+    var(--visual-symbolnetz-hero) center / cover fixed;
+}
+
+.symbol-focus-net::after {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-radial-gradient(ellipse at 50% 64%, transparent 0 4.9rem, rgba(var(--cyan-rgb), 0.018) 5rem, transparent 5.08rem),
+    linear-gradient(105deg, transparent 20%, rgba(var(--gold-rgb), 0.018) 50%, transparent 78%);
+  content: "";
+  pointer-events: none;
+}
+
+.symbol-focus-search__input {
+  border: 0;
+  border-bottom: 1px solid rgba(var(--cyan-rgb), 0.18);
+  background: rgba(0, 0, 0, 0.16);
+  transition: border-color 600ms ease, background-color 600ms ease;
+}
+
+.symbol-focus-tabs button {
+  border: 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.1);
+  border-radius: 0;
+  background: transparent;
+}
+
+.symbol-focus-graph {
+  border-color: rgba(var(--gold-rgb), 0.07);
+  background:
+    radial-gradient(ellipse 18% 14% at 50% 49%, rgba(var(--gold-rgb), 0.065), transparent 72%),
+    repeating-radial-gradient(ellipse at 50% 52%, transparent 0 7.9rem, rgba(var(--cyan-rgb), 0.022) 8rem, transparent 8.08rem),
+    rgba(1, 5, 11, 0.74);
+  box-shadow: inset 0 0 7rem rgba(0, 0, 0, 0.34);
+}
+
+.symbol-focus-node {
+  border-color: transparent;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(8, 17, 26, 0.92) 0 42%, rgba(5, 12, 19, 0.74) 62%, transparent 73%);
+  box-shadow: none;
+  transform: translateZ(0);
+  will-change: opacity;
+  transition: opacity 520ms ease, filter 520ms ease, color 520ms ease;
+}
+
+.symbol-focus-node::before {
+  position: absolute;
+  inset: 0.55rem;
+  border: 1px solid rgba(var(--gold-rgb), 0.16);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.symbol-focus-node--word:not(.is-focus),
+.symbol-focus-node--meaning:not(.is-focus),
+.symbol-focus-node--letter:not(.is-focus),
+.symbol-focus-node--scripture:not(.is-focus),
+.symbol-focus-node--symbol:not(.is-focus) {
+  border-color: transparent;
+  background: radial-gradient(circle, rgba(7, 15, 23, 0.94), rgba(3, 9, 16, 0.68) 60%, transparent 72%);
+  box-shadow: none;
+}
+
+.symbol-focus-node--scripture:not(.is-focus)::before {
+  border-radius: 48%;
+  border-color: rgba(var(--cyan-rgb), 0.12);
+}
+
+.symbol-focus-node.is-focus {
+  border-color: transparent;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--gold-rgb), 0.12), rgba(6, 14, 22, 0.9) 60%, transparent 72%);
+  box-shadow: 0 0 3.5rem rgba(var(--gold-rgb), 0.06);
+}
+
+.symbol-focus-node.is-hovered {
+  filter: brightness(1.12);
+}
+
+.symbol-focus-node.is-soft {
+  opacity: 0.12;
+  filter: saturate(0.55);
+}
+
+.symbol-focus-edge .react-flow__edge-path {
+  transition: stroke 500ms ease, stroke-width 500ms ease, opacity 500ms ease;
+}
+
+.symbol-focus-edge.strength-near .react-flow__edge-path {
+  opacity: 0.1;
+}
+
+.symbol-focus-edge.strength-deep .react-flow__edge-path {
+  opacity: 0.045;
+}
+
+.symbol-focus-edge.is-active .react-flow__edge-path {
+  stroke: rgba(var(--gold-rgb), 0.56);
+  stroke-width: 1.35;
+}
+
+.symbol-focus-inspector {
+  border-inline: 1px solid rgba(var(--gold-rgb), 0.1) !important;
+  border-block: 0 !important;
+}
+
+.symbol-focus-inspector__connections button,
+.symbol-focus-mobile__connections button,
+.symbol-focus-results button {
+  border: 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), 0.07);
+  background: transparent;
+}
+
+@media (max-width: 767px) {
+  .codex-sanctum > div:last-child > header {
+    min-height: auto;
+    padding-block: 4.5rem;
+  }
+
+  .codex-sanctum > div:last-child > header [lang="he"] {
+    font-size: clamp(4rem, 23vw, 6.5rem);
+  }
+
+  .codex-sanctum details {
+    margin-inline: -0.35rem;
+  }
+
+  .codex-sanctum details > div {
+    padding-inline: 1rem;
+  }
+
+  .codex-archive .codex-meaningful-card {
+    padding: 1.25rem;
+  }
+
+  .symbol-focus-tabs {
+    gap: 0;
+  }
+
+  .symbol-focus-mobile .symbol-focus-card {
+    min-height: 17rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .symbol-focus-node,
+  .symbol-focus-edge .react-flow__edge-path {
+    transition: none;
+  }
 }
 
 .symbol-focus-net {

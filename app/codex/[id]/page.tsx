@@ -2733,7 +2733,7 @@ function CalmCodexDetail({
     ?? essence;
 
   return (
-    <main className="symbol-page relative min-h-screen overflow-x-hidden bg-[#030812] px-5 pb-24 pt-24 sm:px-8 sm:pt-28">
+    <main className="codex-sanctum symbol-page relative min-h-screen overflow-x-hidden bg-[#030812] px-5 pb-24 pt-24 sm:px-8 sm:pt-28">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(189,160,109,0.10),transparent_34%),radial-gradient(ellipse_at_88%_24%,rgba(83,164,184,0.045),transparent_26%),linear-gradient(180deg,#07101d_0%,#030812_48%,#02060d_100%)]" />
       <div className="relative mx-auto max-w-4xl">
         <nav className="flex flex-wrap items-center justify-between gap-4">

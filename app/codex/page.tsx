@@ -1471,7 +1471,7 @@ function CodexPageContent() {
     : "";
 
   return (
-    <main className="symbol-page symbol-section relative min-h-screen overflow-hidden py-20 md:py-36">
+    <main className="codex-archive symbol-page symbol-section relative min-h-screen overflow-hidden py-20 md:py-36">
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_8%,rgba(189,160,109,0.12),transparent_30%),radial-gradient(ellipse_at_78%_28%,rgba(127,184,201,0.055),transparent_28%),linear-gradient(180deg,rgba(2,5,12,0.18),rgba(2,5,12,0.82)_52%,rgba(2,5,12,0.96))]" />
         <div className="absolute inset-x-[8%] top-[23rem] h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
