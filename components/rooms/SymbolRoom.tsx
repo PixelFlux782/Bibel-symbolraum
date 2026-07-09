@@ -151,7 +151,7 @@ export function SymbolRoom({ definition }: { definition: SymbolRoomDefinition })
 
   return (
     <div
-      className={`symbol-page symbol-room symbol-room--${theme.id} ${atmosphereHooks.className}`}
+      className={`symbol-page symbol-room symbol-room-shell symbol-room--${theme.id} ${atmosphereHooks.className}`}
       {...atmosphereHooks.dataAttributes}
       style={{
         "--symbol-room-background": theme.colors.background,

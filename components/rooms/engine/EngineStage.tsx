@@ -12,7 +12,7 @@ export function EngineStage({ state, children }: EngineStageProps) {
 
   return (
     <main
-      className={`symbol-engine symbol-engine--${state.id}`}
+      className={`symbol-engine symbol-room-shell symbol-engine--${state.id}`}
       data-atmosphere={visual.atmosphere.id}
       data-light={visual.atmosphere.light}
       data-mood={visual.atmosphere.mood}

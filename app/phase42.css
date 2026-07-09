@@ -453,3 +453,432 @@
     border-bottom: 1px solid rgba(var(--gold-rgb), .1) !important;
   }
 }
+
+/* Phase 42C · one nocturnal material language across archive, field and rooms. */
+.codex-archive,
+.codex-sanctum,
+.symbol-focus-net,
+.symbol-engine {
+  --phase42c-ink: 2, 7, 15;
+  --phase42c-deep: 1, 4, 10;
+  --phase42c-warm: 224, 194, 132;
+}
+
+.codex-archive::before,
+.codex-sanctum::before,
+.symbol-focus-net::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 72% 34% at 50% -7%, rgba(var(--phase42c-warm), .075), transparent 68%),
+    radial-gradient(ellipse 55% 35% at 6% 58%, rgba(var(--cyan-rgb), .035), transparent 72%),
+    linear-gradient(112deg, transparent 18%, rgba(var(--gold-rgb), .012) 48%, transparent 76%),
+    linear-gradient(180deg, rgba(var(--phase42c-ink), .1), rgba(var(--phase42c-deep), .72));
+  content: "";
+  pointer-events: none;
+}
+
+/* Codex overview · a spacious index chamber. */
+.codex-archive {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(var(--gold-rgb), .085), transparent 34rem),
+    radial-gradient(ellipse at 92% 42%, rgba(var(--cyan-rgb), .03), transparent 31rem),
+    linear-gradient(180deg, #050b14 0%, #020711 48%, #01040a 100%);
+}
+
+.codex-archive > .relative {
+  isolation: isolate;
+}
+
+.codex-archive header {
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.codex-archive input[type="search"] {
+  min-height: 4.4rem;
+  border: 1px solid rgba(var(--gold-rgb), .11);
+  border-inline-color: rgba(var(--gold-rgb), .07);
+  padding-inline: clamp(1rem, 3vw, 1.5rem);
+  background:
+    radial-gradient(ellipse at 28% 0%, rgba(var(--gold-rgb), .065), transparent 62%),
+    rgba(2, 7, 14, .68);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, .018),
+    inset 0 -2rem 4rem rgba(0, 0, 0, .18),
+    0 1.5rem 4rem rgba(0, 0, 0, .16);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+}
+
+.codex-archive input[type="search"]:focus {
+  border-color: rgba(var(--gold-rgb), .3);
+  outline: 1px solid rgba(var(--gold-rgb), .07);
+  outline-offset: 3px;
+  box-shadow: inset 0 0 3rem rgba(var(--gold-rgb), .025), 0 2rem 5rem rgba(0, 0, 0, .22);
+}
+
+.codex-archive [role="tablist"] {
+  margin-block: clamp(1.5rem, 4vw, 3rem);
+  border-color: rgba(var(--gold-rgb), .085);
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb), .018) 50%, transparent);
+}
+
+.codex-archive [role="tab"] {
+  padding-block: .8rem;
+}
+
+.codex-archive .codex-meaningful-card {
+  min-height: 17rem;
+  border-color: rgba(var(--gold-rgb), .095) !important;
+  background:
+    radial-gradient(ellipse at 82% 0%, rgba(var(--gold-rgb), .045), transparent 42%),
+    linear-gradient(155deg, rgba(8, 15, 23, .9), rgba(3, 8, 15, .78)) !important;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, .02),
+    inset 0 -4rem 6rem rgba(0, 0, 0, .12),
+    0 2.25rem 5rem rgba(0, 0, 0, .18) !important;
+  transition: transform 700ms ease, border-color 700ms ease, box-shadow 700ms ease;
+}
+
+.codex-archive .codex-meaningful-card:nth-child(3n + 2) {
+  transform: none;
+}
+
+.codex-archive .codex-meaningful-card:hover,
+.codex-archive .codex-meaningful-card:focus-within {
+  transform: translateY(-.18rem);
+  border-color: rgba(var(--gold-rgb), .22) !important;
+  box-shadow:
+    inset 1px 0 rgba(var(--gold-rgb), .18),
+    inset 0 0 4rem rgba(var(--gold-rgb), .018),
+    0 2.7rem 6rem rgba(0, 0, 0, .26) !important;
+}
+
+/* Codex detail · inscription, meaning tablet and scripture slabs. */
+.codex-sanctum {
+  background:
+    radial-gradient(ellipse 58% 24% at 50% 5%, rgba(var(--gold-rgb), .07), transparent 72%),
+    radial-gradient(ellipse 40% 28% at 88% 38%, rgba(var(--cyan-rgb), .025), transparent 72%),
+    linear-gradient(180deg, #040a13, #020711 45%, #01040a) !important;
+}
+
+.codex-sanctum > div:last-child {
+  position: relative;
+  z-index: 1;
+}
+
+.codex-sanctum > div:last-child > .codex-sanctum-hero {
+  min-height: min(72svh, 45rem);
+  padding-block: clamp(5rem, 12vw, 8rem);
+  border-bottom-color: rgba(var(--gold-rgb), .12);
+}
+
+.codex-sanctum-hero::before {
+  position: absolute;
+  inset: 8% -12% 0;
+  z-index: -1;
+  background: radial-gradient(ellipse 42% 48% at 28% 42%, rgba(var(--gold-rgb), .045), transparent 74%);
+  content: "";
+  pointer-events: none;
+}
+
+.codex-sanctum-hero .codex-hero-glyph {
+  position: relative;
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+  padding: 1.35rem clamp(1.2rem, 4vw, 2.25rem);
+  border: 1px solid rgba(var(--gold-rgb), .12);
+  border-inline-width: 1px 0;
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .045), transparent 78%);
+}
+
+.codex-sanctum-hero .codex-hero-glyph [lang="he"] {
+  font-size: clamp(4.2rem, 10vw, 7rem);
+  text-shadow: 0 0 1.6rem rgba(var(--gold-rgb), .14), 0 0 4rem rgba(var(--gold-rgb), .055);
+}
+
+.codex-chamber {
+  border-inline: 0 !important;
+  border-bottom-color: rgba(var(--gold-rgb), .075) !important;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(var(--gold-rgb), .025), transparent 46%),
+    linear-gradient(90deg, rgba(5, 11, 18, .66), rgba(2, 7, 14, .28) 76%, transparent) !important;
+}
+
+.codex-chamber:first-child {
+  margin-top: clamp(2rem, 5vw, 4rem);
+  border-top-color: rgba(var(--gold-rgb), .2) !important;
+}
+
+.codex-chamber[open] {
+  box-shadow: inset 1px 0 rgba(var(--gold-rgb), .16), 0 2rem 5rem rgba(0, 0, 0, .12);
+}
+
+.codex-chamber:first-child[open] > div {
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  border: 1px solid rgba(var(--gold-rgb), .105);
+  border-inline-width: 1px 0;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  background: linear-gradient(110deg, rgba(var(--gold-rgb), .04), rgba(3, 9, 16, .56) 52%, transparent);
+}
+
+.codex-scripture-anchor,
+.codex-sanctum .codex-chamber article[class*="border"] {
+  border-color: rgba(var(--gold-rgb), .13) !important;
+  background:
+    linear-gradient(105deg, rgba(var(--gold-rgb), .04), rgba(4, 10, 17, .5) 58%, transparent) !important;
+  box-shadow: inset 1px 0 rgba(var(--gold-rgb), .12);
+}
+
+.codex-calm-section {
+  position: relative;
+  margin-top: clamp(1rem, 3vw, 2.5rem);
+  padding-inline: clamp(1rem, 4vw, 2.25rem);
+  background: radial-gradient(ellipse at 12% 50%, rgba(var(--gold-rgb), .035), transparent 56%);
+}
+
+.codex-calm-section a {
+  text-shadow: 0 0 1.6rem rgba(var(--gold-rgb), .08);
+}
+
+/* Symbol network · deep field, quiet call chamber, precious focus. */
+.symbol-focus-net {
+  background:
+    radial-gradient(ellipse 62% 40% at 50% 38%, rgba(20, 43, 61, .18), transparent 74%),
+    linear-gradient(rgba(2, 7, 14, .88), rgba(1, 4, 10, .97)),
+    var(--visual-symbolnetz-hero) center / cover fixed;
+}
+
+.symbol-focus-net::after {
+  background:
+    radial-gradient(ellipse 48% 30% at 50% 58%, transparent 60%, rgba(var(--cyan-rgb), .018) 78%, transparent 80%),
+    linear-gradient(108deg, transparent 26%, rgba(var(--gold-rgb), .014) 51%, transparent 75%);
+}
+
+.symbol-focus-search {
+  border-color: rgba(var(--gold-rgb), .105) !important;
+  background:
+    radial-gradient(ellipse at 18% 0%, rgba(var(--gold-rgb), .045), transparent 58%),
+    linear-gradient(145deg, rgba(7, 14, 22, .88), rgba(2, 7, 13, .82)) !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .02), 0 2rem 5rem rgba(0, 0, 0, .18) !important;
+}
+
+.symbol-focus-graph {
+  border-color: rgba(var(--gold-rgb), .075);
+  background:
+    radial-gradient(ellipse 22% 18% at 50% 49%, rgba(var(--gold-rgb), .055), transparent 72%),
+    radial-gradient(ellipse 55% 44% at 50% 55%, rgba(var(--cyan-rgb), .022), transparent 76%),
+    linear-gradient(155deg, rgba(3, 9, 16, .72), rgba(1, 5, 11, .88));
+  box-shadow: inset 0 0 9rem rgba(0, 0, 0, .42), 0 2rem 6rem rgba(0, 0, 0, .18);
+}
+
+.symbol-focus-cluster-labels {
+  color: rgba(var(--cyan-rgb), .13);
+}
+
+.symbol-focus-node::before {
+  border-color: rgba(var(--gold-rgb), .12);
+}
+
+.symbol-focus-node.is-focus {
+  background:
+    radial-gradient(circle, rgba(var(--gold-rgb), .13), rgba(7, 14, 21, .93) 57%, transparent 73%);
+  box-shadow:
+    0 0 0 1px rgba(var(--gold-rgb), .12),
+    0 0 2.2rem rgba(var(--gold-rgb), .09),
+    0 2rem 4rem rgba(0, 0, 0, .32);
+}
+
+.symbol-focus-node.is-focus::before {
+  border-color: rgba(var(--gold-rgb), .5);
+  box-shadow: inset 0 0 1.5rem rgba(var(--gold-rgb), .025);
+}
+
+.symbol-focus-inspector {
+  position: relative;
+  border-color: rgba(var(--gold-rgb), .12) !important;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(var(--gold-rgb), .055), transparent 42%),
+    linear-gradient(165deg, rgba(8, 15, 23, .94), rgba(3, 8, 14, .86)) !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .02), 0 2rem 5rem rgba(0, 0, 0, .2) !important;
+}
+
+.symbol-focus-inspector__summary,
+.symbol-focus-inspector__connections,
+.symbol-focus-inspector__further {
+  border-color: rgba(var(--gold-rgb), .085);
+}
+
+/* Rooms · the same archive world, with each existing atmosphere left intact. */
+.symbol-engine {
+  background:
+    radial-gradient(ellipse at 70% 18%, rgba(var(--cyan-rgb), .04), transparent 46%),
+    linear-gradient(180deg, #030914, #01040a);
+}
+
+.symbol-engine__veil {
+  background:
+    linear-gradient(90deg, rgba(0, 3, 8, calc(var(--symbol-engine-veil-opacity) + .08)), rgba(0, 3, 8, .58) 46%, rgba(0, 3, 8, .22) 74%, rgba(0, 3, 8, .72)),
+    radial-gradient(ellipse at 22% 58%, transparent 20%, rgba(0, 3, 8, .2) 68%),
+    linear-gradient(180deg, rgba(0, 3, 8, .65), transparent 30%, rgba(0, 3, 8, .82));
+}
+
+.symbol-engine__content {
+  padding-bottom: clamp(4.5rem, 10vh, 8rem);
+}
+
+.symbol-engine__glyph {
+  width: fit-content;
+  margin-top: clamp(1.5rem, 4vh, 3rem);
+  margin-bottom: -1rem;
+  padding: .3rem 1.2rem .6rem 0;
+  border-bottom: 1px solid rgba(var(--gold-rgb), .18);
+  font-size: clamp(4.5rem, 10vw, 8rem);
+  text-shadow: 0 0 2rem rgba(var(--gold-rgb), .15), 0 0 5rem rgba(var(--gold-rgb), .06);
+}
+
+.symbol-engine__essence {
+  padding-left: 1rem;
+  border-left: 1px solid rgba(var(--gold-rgb), .2);
+}
+
+.symbol-engine__active-axis {
+  border-top-color: rgba(var(--gold-rgb), .16);
+  background: linear-gradient(105deg, rgba(var(--gold-rgb), .025), transparent 72%);
+  padding: clamp(1.4rem, 3vw, 2rem) clamp(.8rem, 2vw, 1.35rem);
+}
+
+.symbol-engine__thresholds {
+  gap: 1rem;
+  border: 1px solid rgba(var(--gold-rgb), .1);
+  border-inline-width: 1px 0;
+  padding: clamp(1.2rem, 3vw, 1.75rem);
+  background:
+    radial-gradient(ellipse at 18% 50%, rgba(var(--gold-rgb), .055), transparent 60%),
+    linear-gradient(90deg, rgba(3, 9, 16, .66), transparent);
+  box-shadow: inset 0 0 3rem rgba(var(--gold-rgb), .012), 0 2rem 5rem rgba(0, 0, 0, .16);
+}
+
+.symbol-engine__thresholds a {
+  border-bottom: 1px solid rgba(var(--gold-rgb), .16);
+  padding: .55rem .1rem;
+}
+
+.symbol-engine__map-return {
+  border-left: 1px solid rgba(var(--cyan-rgb), .16);
+  padding: .5rem 0 .5rem 1rem;
+}
+
+.symbol-engine__layers {
+  gap: .7rem;
+}
+
+/* Phase 42D · a quiet threshold between the global controls and every room. */
+.symbol-room-shell {
+  --symbol-room-safe-top: clamp(4.5rem, 7.5vw, 7.5rem);
+  overflow-x: clip;
+}
+
+.symbol-room.symbol-room-shell > .symbol-section:first-of-type {
+  min-height: calc(100svh + var(--symbol-room-safe-top));
+  padding-top: calc(10rem + var(--symbol-room-safe-top));
+}
+
+.symbol-engine.symbol-room-shell .symbol-engine__content {
+  padding-top: clamp(8rem, 11vw, 10rem);
+}
+
+@media (min-width: 1024px) {
+  .symbol-engine.symbol-room-shell .symbol-engine__layers {
+    max-height: calc(100svh - clamp(14rem, 19vh, 17rem));
+  }
+}
+
+.symbol-engine__layer,
+.symbol-engine__reflection {
+  border-color: rgba(var(--gold-rgb), .09);
+  background:
+    radial-gradient(ellipse at 90% 0%, rgba(var(--cyan-rgb), .035), transparent 48%),
+    linear-gradient(145deg, rgba(5, 12, 20, .86), rgba(2, 7, 13, .68));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .018), 0 1.5rem 4rem rgba(0, 0, 0, .16);
+}
+
+@media (max-width: 767px) {
+  .symbol-room-shell {
+    --symbol-room-safe-top: clamp(2rem, 10vw, 3.5rem);
+  }
+
+  .symbol-room.symbol-room-shell > .symbol-section:first-of-type {
+    min-height: calc(100svh + var(--symbol-room-safe-top));
+    padding-top: calc(10rem + var(--symbol-room-safe-top));
+  }
+
+  .symbol-engine.symbol-room-shell .symbol-engine__content {
+    padding-top: clamp(4.8rem, 15vw, 6.3rem);
+  }
+
+  .codex-archive header {
+    padding-bottom: 2rem;
+  }
+
+  .codex-archive input[type="search"] {
+    min-height: 3.7rem;
+  }
+
+  .codex-archive .codex-meaningful-card,
+  .codex-archive .codex-meaningful-card:hover,
+  .codex-archive .codex-meaningful-card:focus-within {
+    min-height: auto;
+    transform: none;
+  }
+
+  .codex-sanctum > div:last-child > .codex-sanctum-hero {
+    min-height: auto;
+    padding-block: 3.5rem 4.5rem;
+  }
+
+  .codex-sanctum-hero .codex-hero-glyph {
+    padding: 1rem;
+  }
+
+  .codex-sanctum-hero .codex-hero-glyph [lang="he"] {
+    font-size: clamp(3.25rem, 17vw, 5.25rem);
+  }
+
+  .codex-chamber:first-child[open] > div {
+    padding: 1.2rem 1rem;
+  }
+
+  .symbol-focus-net {
+    background-attachment: scroll;
+  }
+
+  .symbol-engine__glyph {
+    max-width: 100%;
+    margin-top: 1.25rem;
+    font-size: clamp(3.6rem, 19vw, 5.5rem);
+  }
+
+  .symbol-engine__active-axis,
+  .symbol-engine__thresholds {
+    padding-inline: 1rem;
+  }
+
+  .symbol-engine__thresholds div {
+    display: grid;
+    gap: .25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-archive .codex-meaningful-card,
+  .codex-archive .codex-meaningful-card *,
+  .symbol-focus-node,
+  .symbol-engine *,
+  .symbol-engine *::before,
+  .symbol-engine *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
