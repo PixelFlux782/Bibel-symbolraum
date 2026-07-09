@@ -882,3 +882,35 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* Phase 42E · browser-audit polish: mobile threshold and quieter archive leaves. */
+@media (max-width: 767px) {
+  .codex-archive {
+    padding-top: 9rem;
+  }
+
+  .codex-archive > .relative > .mt-16.grid {
+    margin-top: 3.5rem;
+    gap: 3.5rem;
+  }
+
+  .codex-archive .codex-meaningful-card,
+  .codex-archive .codex-meaningful-card:hover,
+  .codex-archive .codex-meaningful-card:focus-within {
+    border-width: 0 0 0 1px !important;
+    border-left-color: rgba(var(--gold-rgb), .16) !important;
+    padding: 1.35rem 1rem 1.45rem 1.25rem;
+    background:
+      linear-gradient(90deg, rgba(var(--gold-rgb), .035), rgba(3, 9, 16, .44) 42%, transparent) !important;
+    box-shadow: none !important;
+  }
+
+  .codex-archive .codex-meaningful-card::before {
+    opacity: .72;
+  }
+
+  .symbol-archive-list {
+    -webkit-mask-image: linear-gradient(90deg, #000 0 88%, transparent);
+    mask-image: linear-gradient(90deg, #000 0 88%, transparent);
+  }
+}
