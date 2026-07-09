@@ -1,4 +1,4 @@
-/* Phase 42A: final cascade for Codex and Symbolnetz. */
+/* Phase 42A/42B: final cascade for Codex and Symbolnetz. */
 .codex-archive {
   background:
     radial-gradient(ellipse at 50% 4%, rgba(var(--gold-rgb), .085), transparent 31rem),
@@ -177,4 +177,219 @@
 @media (prefers-reduced-motion: reduce) {
   .symbol-focus-node,
   .symbol-focus-edge .react-flow__edge-path { transition: none; }
+}
+
+/* Phase 42B · quieter hierarchy, more legible chambers and a decisive focus state. */
+.codex-sanctum > div:last-child > .codex-sanctum-hero {
+  min-height: 0;
+  padding-block: clamp(3.5rem, 9vw, 6.5rem);
+}
+
+.codex-sanctum-hero .codex-hero-glyph {
+  width: fit-content;
+  max-width: 100%;
+  padding-left: clamp(.9rem, 3vw, 1.5rem);
+  border-left: 1px solid rgba(var(--gold-rgb), .2);
+}
+
+.codex-sanctum-hero .codex-hero-glyph [lang="he"] {
+  font-size: clamp(3.6rem, 9vw, 6.25rem);
+  line-height: .92;
+  text-shadow: 0 0 1.4rem rgba(var(--gold-rgb), .11);
+}
+
+.codex-chamber {
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .018), transparent 40%);
+}
+
+.codex-chamber > summary {
+  padding-block: clamp(1.45rem, 3vw, 2rem);
+}
+
+.codex-chamber > summary > span:nth-child(2) > span:first-child {
+  font-size: clamp(1.08rem, 2vw, 1.35rem);
+}
+
+.codex-chamber > summary > span:nth-child(2) > span:last-child {
+  color: rgba(var(--foreground-rgb), .46);
+}
+
+.codex-chamber[open] {
+  border-top-color: rgba(var(--gold-rgb), .22);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .035), transparent 48%);
+}
+
+.codex-chamber > div {
+  padding-top: .5rem;
+}
+
+.codex-chamber .symbol-kicker,
+.codex-calm-section > p:first-child {
+  font-size: .54rem;
+  letter-spacing: .2em;
+  opacity: .78;
+}
+
+.codex-scripture-anchor {
+  border-inline-width: 0 0;
+  border-color: rgba(var(--gold-rgb), .2);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .045), transparent 78%);
+  box-shadow: none;
+}
+
+.codex-scripture-anchor .symbol-copy {
+  max-width: 42rem;
+}
+
+.codex-archive .codex-meaningful-card {
+  box-shadow: inset 0 1px rgba(255,255,255,.018), 0 1.5rem 3.5rem rgba(0,0,0,.15) !important;
+}
+
+.codex-archive .codex-meaningful-card .symbol-kicker {
+  color: rgba(var(--cyan-rgb), .62);
+}
+
+.codex-archive .codex-meaningful-card .symbol-copy {
+  color: rgba(var(--foreground-rgb), .68);
+  line-height: 1.72;
+}
+
+.codex-archive .codex-meaningful-card [lang="he"] {
+  text-shadow: 0 0 1.1rem rgba(var(--gold-rgb), .1);
+}
+
+.symbol-focus-search {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.symbol-focus-search__input {
+  min-height: 3.6rem;
+  padding-inline: .25rem;
+  border-bottom-color: rgba(var(--gold-rgb), .24);
+  color: rgba(var(--foreground-rgb), .92);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  letter-spacing: .025em;
+  box-shadow: inset 0 -1.5rem 2.5rem rgba(var(--gold-rgb), .012);
+}
+
+.symbol-focus-search__input::placeholder {
+  color: rgba(var(--foreground-rgb), .38);
+  font-style: italic;
+}
+
+.symbol-focus-search__input:focus-visible {
+  border-bottom-color: rgba(var(--gold-rgb), .62);
+  box-shadow: 0 .75rem 2.8rem rgba(var(--gold-rgb), .06);
+}
+
+.symbol-focus-node.is-focus {
+  opacity: 1;
+  filter: none;
+  box-shadow: 0 0 1.4rem rgba(var(--gold-rgb), .12), 0 0 4.5rem rgba(var(--gold-rgb), .08);
+}
+
+.symbol-focus-node.is-focus::before {
+  border-color: rgba(var(--gold-rgb), .56);
+}
+
+.symbol-focus-node.is-soft {
+  opacity: .075;
+  filter: grayscale(.35) saturate(.38);
+}
+
+.symbol-focus-edge .react-flow__edge-path {
+  opacity: .34;
+}
+
+.symbol-focus-edge.strength-near .react-flow__edge-path { opacity: .075; }
+.symbol-focus-edge.strength-deep .react-flow__edge-path { opacity: .025; }
+
+.symbol-focus-inspector {
+  padding: clamp(1.5rem, 3vw, 2rem);
+  box-shadow: none !important;
+}
+
+.symbol-focus-inspector__summary {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(var(--gold-rgb), .09);
+}
+
+.symbol-focus-inspector__summary > span,
+.symbol-focus-inspector__connections > h3 {
+  display: block;
+  margin-bottom: .65rem;
+  color: rgba(var(--gold-rgb), .68);
+  font-size: .56rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.symbol-focus-inspector__connections {
+  margin-top: 1.6rem;
+}
+
+.symbol-focus-inspector__connections section > p {
+  opacity: .66;
+}
+
+.symbol-focus-inspector__connections button {
+  padding-block: .7rem;
+}
+
+.symbol-focus-inspector__further {
+  opacity: .68;
+}
+
+@media (max-width: 767px) {
+  .codex-sanctum {
+    padding-inline: 1rem;
+  }
+
+  .codex-sanctum > div:last-child > .codex-sanctum-hero {
+    padding-block: 3.25rem 4rem;
+  }
+
+  .codex-sanctum-hero .codex-hero-glyph [lang="he"] {
+    font-size: clamp(3.25rem, 16vw, 5.25rem);
+    line-height: .94;
+  }
+
+  .codex-hero-actions > a {
+    flex: 1 1 9.5rem;
+    justify-content: center;
+  }
+
+  .codex-chamber > div {
+    padding-bottom: 2.4rem;
+  }
+
+  .codex-archive .codex-meaningful-card [lang="he"] {
+    font-size: clamp(2.75rem, 14vw, 4.6rem);
+  }
+
+  .symbol-focus-search {
+    padding: 1.35rem;
+  }
+
+  .symbol-focus-search__button {
+    min-height: 3rem;
+  }
+
+  .symbol-focus-mobile .symbol-focus-card {
+    min-height: 13.5rem;
+    padding-block: 2rem;
+  }
+
+  .symbol-focus-mobile .symbol-focus-card [lang="he"] {
+    font-size: clamp(3rem, 16vw, 5rem);
+    line-height: .95;
+  }
+
+  .symbol-focus-inspector {
+    margin-top: .5rem;
+    border-top: 1px solid rgba(var(--gold-rgb), .1) !important;
+    border-bottom: 1px solid rgba(var(--gold-rgb), .1) !important;
+  }
 }

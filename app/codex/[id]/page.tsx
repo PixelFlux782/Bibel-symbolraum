@@ -2586,7 +2586,7 @@ function CalmSection({
   children: ReactNode;
 }) {
   return (
-    <section className="border-t border-white/[0.07] py-9 sm:py-12">
+    <section className="codex-calm-section border-t border-white/[0.07] py-9 sm:py-12">
       <p className="text-[0.58rem] uppercase tracking-[0.24em] text-gold/68">{eyebrow}</p>
       <div className="mt-5">{children}</div>
     </section>
@@ -2610,7 +2610,7 @@ function CodexChamber({
     <details
       name="codex-depth"
       open={open}
-      className="group border-t border-gold/[0.12] bg-[linear-gradient(90deg,rgba(189,160,109,0.025),transparent_42%)]"
+      className="codex-chamber group border-t border-gold/[0.12] bg-[linear-gradient(90deg,rgba(189,160,109,0.025),transparent_42%)]"
     >
       <summary className="flex cursor-pointer list-none items-center gap-4 py-6 outline-none marker:content-none focus-visible:ring-2 focus-visible:ring-gold/20 sm:gap-6 sm:py-8 [&::-webkit-details-marker]:hidden">
         <span className="grid size-10 shrink-0 place-items-center rounded-full border border-gold/20 font-serif text-sm italic text-gold/72 transition-colors group-open:border-gold/45 group-open:bg-gold/[0.07] sm:size-12">
@@ -2631,7 +2631,7 @@ function CodexChamber({
 
 function ScriptureTextPanel({ text }: { text: ScriptureText }) {
   return (
-    <article className="border border-gold/15 bg-[linear-gradient(180deg,rgba(189,160,109,0.045),rgba(0,0,0,0.08))] p-5 sm:p-7">
+    <article className="codex-scripture-anchor border border-gold/15 bg-[linear-gradient(180deg,rgba(189,160,109,0.045),rgba(0,0,0,0.08))] p-5 sm:p-7">
       <p className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/72">{text.reference}</p>
       <p className="mt-2 text-[0.58rem] tracking-[0.16em] text-muted-soft">{text.translationLabel}</p>
       <div className="symbol-copy mt-6 whitespace-pre-line font-serif text-lg leading-[1.9] text-foreground-strong/90 sm:text-xl">
@@ -2745,13 +2745,15 @@ function CalmCodexDetail({
           </Link>
         </nav>
 
-        <header className="pb-12 pt-12 sm:pb-16 sm:pt-16">
+        <header className="codex-sanctum-hero pb-12 pt-12 sm:pb-16 sm:pt-16">
           <p className="text-[0.6rem] uppercase tracking-[0.26em] text-cyan-soft/72">{typeLabel}</p>
-          {entry.hebrew ? (
-            <p className="mt-7 font-serif text-5xl leading-none text-gold/88 sm:text-6xl" lang="he" dir="rtl">{entry.hebrew}</p>
-          ) : null}
           <h1 className="mt-5 max-w-3xl font-serif text-5xl italic leading-[1.02] text-foreground-strong sm:text-7xl">{entry.title}</h1>
-          {entry.transliteration ? <p className="mt-4 text-xs tracking-[0.22em] text-gold/65">{entry.transliteration}</p> : null}
+          {entry.hebrew ? (
+            <div className="codex-hero-glyph mt-7">
+              <p className="font-serif text-5xl leading-none text-gold/88 sm:text-6xl" lang="he" dir="rtl">{entry.hebrew}</p>
+              {entry.transliteration ? <p className="mt-3 text-xs tracking-[0.22em] text-gold/65">{entry.transliteration}</p> : null}
+            </div>
+          ) : null}
           {entry.subtitle && entry.subtitle !== entry.transliteration ? (
             <p className="symbol-copy mt-5 max-w-2xl font-serif text-xl italic leading-relaxed text-muted-soft sm:text-2xl">{entry.subtitle}</p>
           ) : null}
@@ -2759,7 +2761,7 @@ function CalmCodexDetail({
           <p className="symbol-copy mt-6 max-w-2xl border-l border-gold/30 pl-5 font-serif text-xl italic leading-relaxed text-gold/88 sm:text-2xl">
             {strongInterpretation}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="codex-hero-actions mt-8 flex flex-wrap gap-3">
             <Link href={returnHref} className="symbol-cta symbol-cta-secondary">Im Symbolnetz sehen</Link>
             {roomHref && roomLabel ? <Link href={roomHref} className="symbol-cta">Raum betreten</Link> : null}
             {primaryAnchorEntry ? (
