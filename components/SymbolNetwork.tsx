@@ -67,9 +67,9 @@ type SearchSuggestion = {
 const network = buildSymbolMeaningNetwork();
 const MAIN_SYMBOL_IDS = ["wasser", "licht", "feuer", "wueste", "brot"];
 const FOCUS_DEPTH_LABELS: Record<FocusDepth, string> = {
-  direct: "Direkt",
-  near: "Nah",
-  deep: "Tief",
+  direct: "Direkte Resonanz",
+  near: "Nahe Felder",
+  deep: "Tiefe Ferne",
 };
 const KIND_LABELS: Record<FocusKind, string> = {
   symbol: "Raum",
@@ -771,9 +771,9 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
           <div className="min-w-0">
             <div className="symbol-focus-search">
               <p className="symbol-kicker text-cyan-soft">Symbolnetz</p>
-              <h1 className="mt-3 font-serif text-4xl italic text-foreground-strong md:text-6xl">Freier Bedeutungsraum</h1>
+              <h1 className="mt-3 font-serif text-4xl italic text-foreground-strong md:text-6xl">Bedeutungssternkarte</h1>
               <p className="symbol-copy mt-4 max-w-2xl text-lg">
-                Suche ein Wort, ein Zeichen oder eine Bibelstelle.
+                Ein Wort wird gerufen. Sein Bedeutungsfeld antwortet.
               </p>
               <form
                 className="mt-6 flex flex-col gap-3 md:flex-row"
@@ -789,7 +789,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 placeholder="Wort, Zeichen oder Schwelle suchen…"
                   aria-label="Symbolnetz durchsuchen"
                 />
-                <button type="submit" className="symbol-focus-search__button">Fokussieren</button>
+                <button type="submit" className="symbol-focus-search__button">Zeichen rufen</button>
               </form>
 
               <div className="symbol-focus-tabs" aria-label="Raumportale">
@@ -812,13 +812,13 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
 
             {query.trim() ? (
               <div className="symbol-focus-results" aria-label="Suchergebnisse">
-                <p className="symbol-focus-results__query">Gesucht: <strong>{query.trim()}</strong></p>
+                <p className="symbol-focus-results__query">Gerufen: <strong>{query.trim()}</strong></p>
                 {suggestions.length ? suggestions.map(({ node }, index) => (
                   <button key={node.id} type="button" onClick={() => focusNodeById(node.id, query)}>
                     <span>{KIND_LABELS[node.kind]}</span>
                     <strong>{node.label}</strong>
                     <i>{node.transliteration ?? node.detail}</i>
-                    {index === 0 ? <em>stärkster Bezug</em> : null}
+                    {index === 0 ? <em>stärkste Antwort</em> : null}
                   </button>
                 )) : (
                   <div className="symbol-focus-empty">
@@ -861,9 +861,9 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
 
             {isDesktop ? <div className="symbol-focus-toolbar">
               <span>
-                {searchedTerm ? <>Gesucht: <strong>{searchedTerm}</strong> · Fokus: <strong>{focusNode?.label}</strong></> : focusNode ? `${focusNode.label}-Fokus` : "Startfokus"}
+                {searchedTerm ? <>Gerufen: <strong>{searchedTerm}</strong> · Zeichen: <strong>{focusNode?.label}</strong></> : focusNode ? `Gerufenes Zeichen · ${focusNode.label}` : "Freies Bedeutungsfeld"}
               </span>
-              <div aria-label="Beziehungstiefe">
+              <div aria-label="Resonanztiefe">
                 {(["direct", "near", "deep"] as const).map((value) => (
                   <button key={value} type="button" className={depth === value ? "is-active" : ""} onClick={() => setDepth(value)}>
                     {FOCUS_DEPTH_LABELS[value]}
@@ -883,7 +883,6 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
                 </div>
               ) : null}
               <StableFocusGraph
-                key={`${focusId ?? "start"}-${depth}`}
                 nodes={graphNodes}
                 edges={graphEdges}
               />
@@ -893,7 +892,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
           <aside className="symbol-focus-inspector">
             <p className="symbol-kicker text-cyan-soft">{focusNode ? "Resonanztafel" : "Erster Blick"}</p>
             <h2>{focusNode?.label ?? "Berühre ein Zeichen"}</h2>
-            {searchedTerm ? <p className="symbol-focus-inspector__searched">Gesucht: {searchedTerm}</p> : null}
+            {searchedTerm ? <p className="symbol-focus-inspector__searched">Gerufen: {searchedTerm}</p> : null}
             {focusNode?.hebrew ? <div className="symbol-focus-inspector__hebrew" lang="he" dir="rtl">{focusNode.hebrew}</div> : null}
             {focusNode?.transliteration ? <p className="symbol-focus-inspector__transliteration">{focusNode.transliteration}</p> : null}
             <p className="symbol-focus-inspector__type">{focusNode ? KIND_LABELS[focusNode.kind] : "Symbolnetz"}</p>
@@ -933,7 +932,7 @@ export default function SymbolNetwork({ initialUrlState }: { initialUrlState?: S
             ) : null}
 
             <div className="symbol-focus-inspector__actions">
-              <span>Codex-Schwelle</span>
+              <span>Schriftkammer</span>
               {focusNode?.codexHref ? <Link href={focusNode.codexHref}>Im Codex öffnen <i>↗</i></Link> : <Link href="/codex">Zum Codex <i>↗</i></Link>}
               {focusNode?.roomHref ? <><span>Raum-Schwelle</span><Link href={focusNode.roomHref}>{focusNode.label}-Raum betreten <i>→</i></Link></> : null}
             </div>

@@ -32,23 +32,23 @@ type CodexViewId =
 
 const CODEX_GROUPS: { type: CodexEntryType; label: string; optional?: boolean }[] = [
   { type: "symbol", label: "Symbole" },
-  { type: "hebrew-letter", label: "Buchstaben" },
-  { type: "scripture", label: "Bibelstellen" },
-  { type: "meaning", label: "Bedeutung" },
-  { type: "meaning-field", label: "Bedeutungsfelder", optional: true },
-  { type: "number", label: "Zahlen", optional: true },
-  { type: "journey", label: "Spuren", optional: true },
+  { type: "hebrew-letter", label: "Zeichenkörper" },
+  { type: "scripture", label: "Schriftanker" },
+  { type: "meaning", label: "Bedeutungsfelder" },
+  { type: "meaning-field", label: "Archivfelder", optional: true },
+  { type: "number", label: "Zahlrhythmen", optional: true },
+  { type: "journey", label: "Bedeutungsspuren", optional: true },
 ];
 
 const CODEX_VIEWS: { id: CodexViewId; label: string; description: string }[] = [
-  { id: "all", label: "Alle", description: "Alle Codex-Einträge" },
+  { id: "all", label: "Ganzes Archiv", description: "Alle Archivfelder" },
   { id: "symbols", label: "Symbole", description: "Symbolische Grundfiguren" },
-  { id: "hebrew", label: "Hebräisch", description: "Einträge mit hebräischer Spur" },
-  { id: "letters", label: "Buchstaben", description: "Hebräische Buchstaben" },
-  { id: "torah", label: "Thora", description: "Schrift- und Versanker" },
-  { id: "gematria", label: "Gematria", description: "Zahlen und Werte" },
-  { id: "meaning", label: "Bedeutung", description: "Bedeutungsfelder" },
-  { id: "journeys", label: "Spuren", description: "Verbundene Spuren" },
+  { id: "hebrew", label: "Hebräisch", description: "Wörter mit hebräischer Spur" },
+  { id: "letters", label: "Zeichenkörper", description: "Hebräische Buchstaben" },
+  { id: "torah", label: "Schriftanker", description: "Schrift- und Versanker" },
+  { id: "gematria", label: "Zahlrhythmen", description: "Zahlen und Werte" },
+  { id: "meaning", label: "Bedeutungsfelder", description: "Berührte Bedeutungsfelder" },
+  { id: "journeys", label: "Spuren", description: "Verbundene Bedeutungsspuren" },
 ];
 
 const MOBILE_CURATED_ENTRY_IDS = [
@@ -778,7 +778,7 @@ function HebrewGroupSection({
           </h2>
         </div>
         <p className="text-[0.62rem] uppercase tracking-[0.26em] text-gold/65">
-          {count} Einträge
+          {count} Zeichen
         </p>
       </div>
       {children}
@@ -811,7 +811,7 @@ function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { ent
           </div>
         ) : (
           <p className="symbol-copy text-base italic text-muted-soft">
-            Keine hebräischen Wörter zu dieser Suche gefunden.
+            Auf diesen Ruf antwortet noch kein hebräisches Wort.
           </p>
         )}
       </HebrewGroupSection>
@@ -834,7 +834,7 @@ function HebrewCodexView({ entries, activeCodexId, onActivateCodexEntry }: { ent
           </div>
         ) : (
           <p className="symbol-copy text-base italic text-muted-soft">
-            Buchstaben-Knoten sind vorbereitet. Verknüpfte Einträge erscheinen hier automatisch.
+            Zeichenkörper sind vorbereitet. Berührte Felder erscheinen hier, sobald sie erschlossen sind.
           </p>
         )}
       </HebrewGroupSection>
@@ -855,7 +855,7 @@ function CodexCard({ entry, activeCodexId, onActivateCodexEntry }: { entry: Code
       className={`codex-meaningful-card group relative block h-full overflow-hidden border bg-white/[0.025] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)] outline-none backdrop-blur-md transition-colors duration-700 hover:border-gold/20 focus-visible:border-gold/35 focus-visible:ring-2 focus-visible:ring-gold/20 sm:p-7 ${
         isActive ? "border-gold/42" : "border-white/[0.075]"
       }`}
-      aria-label={`Codex-Eintrag ${entry.title} ansehen`}
+      aria-label={`${entry.title} im Codex tiefer sehen`}
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(189,160,109,0.075),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.028),transparent_34%)] opacity-70 transition-opacity duration-700 group-hover:opacity-100" />
 
@@ -1484,10 +1484,10 @@ function CodexPageContent() {
             CODEX
           </h1>
           <p className="symbol-copy mt-7 max-w-3xl text-2xl italic text-gold/80 md:text-3xl">
-            Das Gedächtnis des Bedeutungsuniversums
+            Begehbarer Index des Bedeutungsuniversums
           </p>
           <p className="symbol-copy mt-7 max-w-3xl text-lg md:text-xl">
-            Der Codex verbindet Symbole, hebräische Wörter, Buchstaben, Zahlen, Bibelstellen und Bedeutungsfelder.
+            Keine Liste zum Abarbeiten: Zeichen, Wörter und Schriftanker warten hier darauf, berührt und tiefer gelesen zu werden.
           </p>
         </header>
 
@@ -1500,19 +1500,19 @@ function CodexPageContent() {
 
         <section className="mt-8 max-w-2xl md:mt-12">
           <label htmlFor="codex-search" className="symbol-kicker text-cyan-soft">
-            Suche
+            Ein Archivzeichen rufen
           </label>
           <input
             id="codex-search"
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Symbol, Buchstabe, Bibelstelle..."
+            placeholder="Wort, Zeichen oder Schriftanker suchen…"
             className="mt-4 w-full border border-white/[0.08] bg-white/[0.035] px-5 py-4 font-serif text-lg italic text-foreground outline-none backdrop-blur-md transition-colors duration-500 placeholder:text-muted/55 focus:border-gold/30"
           />
           {trimmedQuery ? (
             <p className="mt-4 text-[0.62rem] uppercase tracking-[0.24em] text-muted-soft">
-              {visibleEntries.length} Treffer in {activeView.label}
+              {visibleEntries.length} Antworten im Feld {activeView.label}
             </p>
           ) : null}
         </section>
@@ -1588,13 +1588,13 @@ function CodexPageContent() {
               <section key={group.type}>
                 <div className="mb-7 flex flex-wrap items-end justify-between gap-4 border-b border-white/[0.055] pb-5">
                   <div>
-                    <p className="symbol-kicker text-cyan-soft">Codex-Typ</p>
+                    <p className="symbol-kicker text-cyan-soft">Archivfeld</p>
                     <h2 className="mt-3 font-serif text-4xl italic leading-tight text-foreground-strong md:text-5xl">
                       {group.label}
                     </h2>
                   </div>
                   <p className="text-[0.62rem] uppercase tracking-[0.26em] text-gold/65">
-                    {group.entries.length} Einträge
+                    {group.entries.length} Zeichen
                   </p>
                 </div>
 
@@ -1611,7 +1611,7 @@ function CodexPageContent() {
                   </div>
                 ) : (
                   <p className="symbol-copy text-base italic text-muted-soft">
-                    Diese Ansicht ist vorbereitet. Einträge folgen.
+                    Dieses Archivfeld ist vorbereitet. Zeichen folgen.
                   </p>
                 )}
               </section>
@@ -1626,7 +1626,7 @@ function CodexPageContent() {
                   </h2>
                 </div>
                 <p className="text-[0.62rem] uppercase tracking-[0.26em] text-gold/65">
-                  {visibleEntries.length} Einträge
+                  {visibleEntries.length} Zeichen
                 </p>
               </div>
 
@@ -1680,8 +1680,8 @@ function CodexPageContent() {
               ) : (
                 <p className="symbol-copy text-base italic text-muted-soft">
                   {hasPreparedEmptyView
-                    ? "Diese Ansicht ist vorbereitet. Einträge folgen."
-                    : "Im aktuellen Codex ist zu dieser Suche noch kein Eintrag hinterlegt."}
+                    ? "Dieses Archivfeld ist vorbereitet. Zeichen folgen."
+                    : "Auf diesen Ruf antwortet im aktuellen Codex noch kein Zeichen."}
                 </p>
               )}
             </section>
@@ -1689,9 +1689,9 @@ function CodexPageContent() {
 
           {hasSearchWithoutResults ? (
             <section className="border border-white/[0.065] bg-white/[0.025] p-8 text-center backdrop-blur-md">
-              <p className="symbol-kicker text-cyan-soft">Keine Treffer</p>
+              <p className="symbol-kicker text-cyan-soft">Noch keine Antwort</p>
               <p className="symbol-copy mt-4 text-xl italic">
-                Im aktuellen Codex ist zu dieser Suche in {activeView.label} noch kein Eintrag hinterlegt.
+                In {activeView.label} antwortet auf diesen Ruf noch kein Zeichen.
               </p>
             </section>
           ) : null}

@@ -2741,12 +2741,12 @@ function CalmCodexDetail({
             Codex
           </Link>
           <Link href={returnHref} className="text-[0.6rem] uppercase tracking-[0.22em] text-gold/72 transition-colors hover:text-gold">
-            Zurück zum Symbolnetz
+            Zurück ins Bedeutungsfeld
           </Link>
         </nav>
 
         <header className="codex-sanctum-hero pb-12 pt-12 sm:pb-16 sm:pt-16">
-          <p className="text-[0.6rem] uppercase tracking-[0.26em] text-cyan-soft/72">{typeLabel}</p>
+          <p className="text-[0.6rem] uppercase tracking-[0.26em] text-cyan-soft/72">Schwelle · {typeLabel}</p>
           <h1 className="mt-5 max-w-3xl font-serif text-5xl italic leading-[1.02] text-foreground-strong sm:text-7xl">{entry.title}</h1>
           {entry.hebrew ? (
             <div className="codex-hero-glyph mt-7">
@@ -2762,11 +2762,11 @@ function CalmCodexDetail({
             {strongInterpretation}
           </p>
           <div className="codex-hero-actions mt-8 flex flex-wrap gap-3">
-            <Link href={returnHref} className="symbol-cta symbol-cta-secondary">Im Symbolnetz sehen</Link>
-            {roomHref && roomLabel ? <Link href={roomHref} className="symbol-cta">Raum betreten</Link> : null}
+            <Link href={returnHref} className="symbol-cta symbol-cta-secondary">Im Bedeutungsfeld sehen</Link>
+            {roomHref && roomLabel ? <Link href={roomHref} className="symbol-cta">Den {roomLabel}-Raum betreten</Link> : null}
             {primaryAnchorEntry ? (
               <Link href={`/codex/${primaryAnchorEntry.id}`} className="symbol-cta symbol-cta-secondary">
-                Schrift öffnen
+                Schriftanker sehen
               </Link>
             ) : null}
           </div>
@@ -2801,7 +2801,7 @@ function CalmCodexDetail({
           </CodexChamber>
 
           {(entry.hebrew || entry.meaningFields.length > 0) ? (
-            <CodexChamber level="II" title="Bedeutung" subtitle="Nuancen, Wortfelder und die innere Bildkraft.">
+            <CodexChamber level="II" title="Zeichenkörper" subtitle="Schriftgestalt, Nuancen und innere Bildkraft.">
               <CalmHebrewBody entry={entry} entity={entity} />
               <MeaningFieldsSection entry={entry} title="Bedeutungsfelder" />
               {entity ? <VisibleHiddenSection entity={entity} /> : null}
@@ -2809,7 +2809,7 @@ function CalmCodexDetail({
           ) : null}
 
           {entry.type === "hebrew-word" ? (
-            <CodexChamber level="III" title="Hebräischer Körper" subtitle="Schriftbild, Wurzelhinweise, Gematria und Buchstabenbewegung.">
+            <CodexChamber level="III" title="Hebräischer Zeichenkörper" subtitle="Schriftbild, Wurzelhinweise, Gematria und Buchstabenbewegung.">
               <HebrewWordIdentitySection entry={entry} />
               {word?.rootNote ? <p className="symbol-copy mt-5 max-w-3xl border-l border-gold/20 pl-5 italic leading-relaxed text-muted-soft">{word.rootNote}</p> : null}
               {word?.possibleRootIds?.length ? <p className="mt-4 text-xs tracking-[0.16em] text-cyan-soft/72">Wurzelspuren · {word.possibleRootIds.join(" · ")}</p> : null}
@@ -2840,7 +2840,7 @@ function CalmCodexDetail({
           ) : null}
 
           {groups.length > 0 ? (
-          <CodexChamber level="V" title="Beziehungen" subtitle="Wörter, Buchstaben, Bedeutungsfelder, Räume und verwandte Einträge.">
+          <CodexChamber level="V" title="Resonanzen" subtitle="Direkte Resonanzen, nahe Felder und berührte Räume.">
             <div className="grid gap-8 sm:grid-cols-2">
               {groups.map((group) => {
                 const visible = group.items.slice(0, 3);
@@ -2851,7 +2851,7 @@ function CalmCodexDetail({
                     <div className="mt-3 grid gap-2">{visible.map((item) => <CalmRelationCard key={item.id} item={item} />)}</div>
                     {hidden.length > 0 ? (
                       <details className="mt-3">
-                        <summary className="cursor-pointer text-xs tracking-[0.14em] text-gold/68">Mehr anzeigen</summary>
+                        <summary className="cursor-pointer text-xs tracking-[0.14em] text-gold/68">Tiefer sehen</summary>
                         <div className="mt-3 grid gap-2">{hidden.map((item) => <CalmRelationCard key={item.id} item={item} />)}</div>
                       </details>
                     ) : null}
@@ -2862,7 +2862,7 @@ function CalmCodexDetail({
           </CodexChamber>
         ) : null}
 
-          <CodexChamber level="VI" title="Tiefenresonanz" subtitle="Weiterführende Bewegungen, persönliche Spur und stiller Nachklang.">
+          <CodexChamber level="VI" title="Raumöffnung" subtitle="Weiterführende Bewegungen, Erfahrungsräume und stiller Nachklang.">
             {entry.id === "wasser" ? <WaterCodexReferenceSection /> : null}
             {entry.id === "licht" ? <LightCodexReferenceSection /> : null}
             {entry.id === "feuer" ? <FireCodexReferenceSection /> : null}
@@ -2874,7 +2874,10 @@ function CalmCodexDetail({
         </div>
 
         {roomHref && roomLabel ? (
-          <CalmSection eyebrow="Raum-Schwelle">
+          <CalmSection eyebrow="Raumöffnung">
+            <p className="symbol-copy mb-5 max-w-2xl text-sm italic text-muted-soft">
+              Dieses Zeichen kann nicht nur gelesen werden. Es kann betreten werden.
+            </p>
             <Link href={roomHref} className="group inline-flex items-center gap-4 font-serif text-2xl italic text-foreground-strong transition-colors hover:text-gold">
               Den {roomLabel}-Raum betreten <span className="text-gold/55 transition-transform group-hover:translate-x-1">→</span>
             </Link>
@@ -2904,7 +2907,7 @@ function CalmCodexDetail({
         </div>
 
         <Link href={returnHref} className="inline-flex border-t border-gold/18 pt-5 font-serif text-xl italic text-gold/78 transition-colors hover:text-gold">
-          Zurück zur Karte · {entry.title}
+          Zurück ins Bedeutungsfeld · {entry.title}
         </Link>
         <CodexVisitTracker entryId={entry.id} entryType={entry.type} label={entry.title} roomId={entry.symbolRoomSlug} />
       </div>

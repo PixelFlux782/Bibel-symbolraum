@@ -310,7 +310,7 @@ function SymbolRoomEntrance({ definition, symbol }: { definition: SymbolRoomDefi
                 href={`/codex/${codexEntry.id}`}
                 className="inline-flex border border-gold/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-gold/75 transition-colors hover:border-gold/45 hover:text-gold focus-visible:border-gold/60 focus-visible:text-gold"
               >
-                Im Codex ansehen
+                Zeichenkörper im Codex
               </Link>
             ) : null}
           </div>

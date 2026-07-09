@@ -26,6 +26,19 @@
   padding-block: .55rem;
 }
 
+.codex-archive input[type="search"] {
+  border-width: 0 0 1px;
+  border-color: rgba(var(--gold-rgb), .22);
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .028), transparent 72%);
+  padding-inline: .25rem;
+  box-shadow: none;
+}
+
+.codex-archive input[type="search"]:focus {
+  border-color: rgba(var(--gold-rgb), .58);
+  box-shadow: 0 1.5rem 3rem rgba(var(--gold-rgb), .035);
+}
+
 .codex-archive [role="tab"] {
   border: 0 !important;
   border-bottom: 1px solid transparent !important;
@@ -46,6 +59,14 @@
   background: linear-gradient(transparent, rgba(var(--gold-rgb), .38), transparent);
   content: "";
   opacity: .55;
+}
+
+.codex-archive .codex-meaningful-card {
+  min-height: 18rem;
+}
+
+.codex-archive .codex-meaningful-card:nth-child(3n + 2) {
+  transform: translateY(.8rem);
 }
 
 .codex-archive .codex-meaningful-card:hover,
@@ -198,6 +219,15 @@
   text-shadow: 0 0 1.4rem rgba(var(--gold-rgb), .11);
 }
 
+.codex-sanctum-hero::after {
+  display: block;
+  width: min(16rem, 44vw);
+  height: 1px;
+  margin-top: 3rem;
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .42), transparent);
+  content: "";
+}
+
 .codex-chamber {
   background: linear-gradient(90deg, rgba(var(--gold-rgb), .018), transparent 40%);
 }
@@ -283,6 +313,19 @@
   box-shadow: 0 .75rem 2.8rem rgba(var(--gold-rgb), .06);
 }
 
+.symbol-focus-search__button {
+  border-color: rgba(var(--gold-rgb), .28);
+  background: linear-gradient(135deg, rgba(var(--gold-rgb), .11), rgba(var(--gold-rgb), .035));
+  color: rgba(var(--gold-rgb), .9);
+  letter-spacing: .16em;
+}
+
+.symbol-focus-search__button:hover,
+.symbol-focus-search__button:focus-visible {
+  border-color: rgba(var(--gold-rgb), .58);
+  background: rgba(var(--gold-rgb), .13);
+}
+
 .symbol-focus-node.is-focus {
   opacity: 1;
   filter: none;
@@ -308,6 +351,15 @@
 .symbol-focus-inspector {
   padding: clamp(1.5rem, 3vw, 2rem);
   box-shadow: none !important;
+}
+
+.symbol-focus-inspector::before {
+  display: block;
+  width: 3.5rem;
+  height: 1px;
+  margin-bottom: 1.5rem;
+  background: rgba(var(--gold-rgb), .42);
+  content: "";
 }
 
 .symbol-focus-inspector__summary {
@@ -367,6 +419,14 @@
 
   .codex-archive .codex-meaningful-card [lang="he"] {
     font-size: clamp(2.75rem, 14vw, 4.6rem);
+  }
+
+  .codex-archive .codex-meaningful-card {
+    min-height: auto;
+  }
+
+  .codex-archive .codex-meaningful-card:nth-child(3n + 2) {
+    transform: none;
   }
 
   .symbol-focus-search {
