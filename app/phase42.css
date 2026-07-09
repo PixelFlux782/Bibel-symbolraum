@@ -585,6 +585,294 @@
   }
 }
 
+/* Phase 42G · seven thresholds through the water. */
+.water-experience {
+  overflow-x: hidden;
+  overflow-y: clip;
+}
+
+.water-experience__particles {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background-image:
+    radial-gradient(circle at 22% 64%, rgba(213, 225, 218, .2) 0 1px, transparent 2px),
+    radial-gradient(circle at 38% 76%, rgba(169, 197, 199, .16) 0 1px, transparent 2px),
+    radial-gradient(circle at 63% 61%, rgba(225, 205, 156, .14) 0 1px, transparent 2px),
+    radial-gradient(circle at 76% 81%, rgba(169, 197, 199, .13) 0 1px, transparent 2px);
+  background-size: 13rem 11rem, 17rem 14rem, 19rem 16rem, 23rem 18rem;
+  transition: opacity 1.8s ease;
+  animation: water-particles-drift 18s linear infinite;
+}
+
+.water-experience--ruach .water-experience__particles,
+.water-experience--birth .water-experience__particles,
+.water-experience--reflection .water-experience__particles,
+.water-experience--light .water-experience__particles { opacity: .7; }
+
+.water-experience--depth .water-experience__light { opacity: .24; }
+.water-experience--ruach .water-experience__light { opacity: .72; }
+.water-experience--birth .water-experience__light { opacity: .82; }
+.water-experience--passage .water-experience__light { opacity: .9; }
+.water-experience--reflection .water-experience__light { opacity: .66; }
+.water-experience--light .water-experience__light { opacity: 1; }
+
+.water-experience--reflection .water-experience__surface {
+  opacity: .88;
+  box-shadow: 0 0 4rem rgba(157, 197, 202, .18);
+}
+
+.water-experience__path {
+  position: absolute;
+  z-index: 2;
+  top: 37%;
+  left: 54%;
+  width: min(32rem, 35vw);
+  height: 63%;
+  pointer-events: none;
+  background: linear-gradient(176deg, rgba(232, 218, 179, .18), rgba(119, 169, 180, .04) 45%, transparent 90%);
+  clip-path: polygon(43% 0, 57% 0, 100% 100%, 0 100%);
+  filter: blur(1.2rem);
+  animation: water-path-open 2.4s ease both;
+}
+
+.water-experience__counter {
+  line-height: 1.6;
+}
+
+.water-experience__word-field {
+  max-width: 36rem;
+  margin-top: 1.6rem;
+}
+
+.water-experience__word-field > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.15rem;
+}
+
+.water-experience__word-field button,
+.water-experience__echoes span {
+  color: rgba(var(--foreground-rgb), .4);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .55rem;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  transition: color .5s ease;
+}
+
+.water-experience__word-field button:hover,
+.water-experience__word-field button:focus-visible {
+  color: rgba(var(--gold-rgb), .92);
+}
+
+.water-experience__word-field p,
+.water-experience__letter-note {
+  max-width: 32rem;
+  min-height: 3.5rem;
+  margin-top: 1rem;
+  color: rgba(var(--foreground-rgb), .62);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: .92rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.water-experience__letters {
+  display: flex;
+  width: fit-content;
+  align-items: flex-end;
+  gap: clamp(.7rem, 2vw, 1.5rem);
+  margin-top: .8rem;
+  direction: ltr;
+}
+
+.water-experience__letters button {
+  display: grid;
+  min-width: clamp(4.25rem, 8vw, 6.4rem);
+  justify-items: center;
+  color: rgba(235, 215, 170, .5);
+  transition: color .8s ease, transform .8s ease, filter .8s ease;
+}
+
+.water-experience__letters button > span {
+  font-family: var(--font-serif), serif;
+  font-size: clamp(4.3rem, 9vw, 7rem);
+  line-height: .9;
+}
+
+.water-experience__letters button small {
+  margin-top: .8rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .48rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+
+.water-experience__letters button.is-active {
+  color: rgba(242, 222, 174, .94);
+  filter: drop-shadow(0 0 1.8rem rgba(126, 193, 202, .22));
+  transform: translateY(-.3rem);
+}
+
+.water-experience--letter-jod .water-experience__light {
+  background:
+    radial-gradient(circle at 63% 43%, rgba(245, 218, 150, .42) 0 1px, rgba(245, 218, 150, .12) 2px, transparent 3.5rem),
+    radial-gradient(ellipse 30% 50% at 66% -12%, rgba(224, 199, 139, .13), transparent 72%);
+}
+
+.water-experience--letter-mem .water-experience__depth,
+.water-experience--letter-final-mem .water-experience__depth {
+  background:
+    radial-gradient(ellipse 55% 64% at 55% 48%, transparent 12%, rgba(0, 3, 10, .68) 76%),
+    linear-gradient(90deg, rgba(0, 3, 9, .92), rgba(0, 5, 12, .48), rgba(0, 3, 8, .78));
+}
+
+.water-experience__birth-rhythm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem 1.75rem;
+  margin-top: 1.8rem;
+}
+
+.water-experience__birth-rhythm span {
+  color: rgba(var(--gold-rgb), .72);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(.9rem, 1.5vw, 1.1rem);
+  font-style: italic;
+  opacity: 0;
+  animation: water-word-born 5.6s ease infinite;
+}
+
+.water-experience__birth-rhythm span:nth-child(2) { animation-delay: .7s; }
+.water-experience__birth-rhythm span:nth-child(3) { animation-delay: 1.4s; }
+.water-experience__birth-rhythm span:nth-child(4) { animation-delay: 2.1s; }
+
+.water-experience__echoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem 1.2rem;
+  max-width: 36rem;
+  margin-top: 1.5rem;
+}
+
+.water-experience__echoes span {
+  color: rgba(var(--foreground-rgb), .36);
+}
+
+.water-experience__question {
+  margin-top: 1.7rem;
+  padding-left: 1.25rem;
+  border-left: 1px solid rgba(var(--gold-rgb), .32);
+  color: rgba(240, 222, 181, .82);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  font-style: italic;
+  line-height: 1.65;
+}
+
+.water-experience__formula {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .8rem;
+  margin-top: 1.6rem;
+  color: rgba(var(--foreground-rgb), .7);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .62rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.water-experience__formula i {
+  color: rgba(var(--gold-rgb), .68);
+  font-style: normal;
+}
+
+@keyframes water-particles-drift {
+  from { transform: translate3d(0, 3%, 0); }
+  to { transform: translate3d(-2%, -8%, 0); }
+}
+
+@keyframes water-path-open {
+  from { opacity: 0; transform: scaleX(.2); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes water-word-born {
+  0%, 100% { opacity: .16; transform: translateY(.25rem); }
+  22%, 58% { opacity: .92; transform: translateY(0); }
+}
+
+@media (max-width: 767px) {
+  .water-experience {
+    min-height: max(100svh, 52.75rem);
+  }
+
+  .water-experience__moment {
+    min-height: max(100svh, 52.75rem);
+    justify-content: flex-end;
+    padding-top: 11.5rem;
+    padding-bottom: 3.1rem;
+  }
+
+  .water-experience__moment h1 {
+    margin-top: .85rem;
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+
+  .water-experience__copy,
+  .water-experience__revelation {
+    margin-top: 1rem;
+  }
+
+  .water-experience__revelation {
+    font-size: 1.08rem;
+  }
+
+  .water-experience__letters {
+    gap: .35rem;
+  }
+
+  .water-experience__letters button {
+    min-width: 3.7rem;
+  }
+
+  .water-experience__letters button > span {
+    font-size: 4.1rem;
+  }
+
+  .water-experience__word-field,
+  .water-experience__letter-note,
+  .water-experience__question,
+  .water-experience__birth-rhythm,
+  .water-experience__echoes {
+    margin-top: 1.05rem;
+  }
+
+  .water-experience__word-field p,
+  .water-experience__letter-note {
+    min-height: 2.8rem;
+    font-size: .84rem;
+  }
+
+  .water-experience__continue,
+  .water-experience__primary-exit {
+    margin-top: 1.25rem;
+  }
+
+  .water-experience__trace {
+    top: 8rem;
+  }
+
+  .water-experience__path {
+    left: 42%;
+    width: 55vw;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .symbol-focus-node,
   .symbol-focus-edge .react-flow__edge-path { transition: none; }
