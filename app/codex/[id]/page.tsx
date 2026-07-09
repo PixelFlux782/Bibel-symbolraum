@@ -9,6 +9,7 @@ import { codexEntryIds, codexRegistry } from "@/lib/codex/codexRegistry";
 import { getSymbolCodexAnchorBridge, getSymbolCodexChipLinks, getWaterCodexChipLinks, resolveScriptureAnchorHref } from "@/lib/codex/linking";
 import { resolveCodexEntry } from "@/lib/codex/resolveCodexEntry";
 import { buildScriptureFoundationModel, type ScriptureFoundationLink, type ScriptureFoundationModel } from "@/lib/codex/scriptureFoundation";
+import { getScriptureTexts, type ScriptureText } from "@/lib/codex/scriptureTexts";
 import type { CodexEntry, CodexEntryType, CodexRelation } from "@/lib/codex/types";
 import { breakdownHebrewWord } from "@/lib/hebrew/gematria";
 import {
@@ -2592,6 +2593,54 @@ function CalmSection({
   );
 }
 
+function CodexChamber({
+  level,
+  title,
+  subtitle,
+  children,
+  open = false,
+}: {
+  level: string;
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+  open?: boolean;
+}) {
+  return (
+    <details
+      name="codex-depth"
+      open={open}
+      className="group border-t border-gold/[0.12] bg-[linear-gradient(90deg,rgba(189,160,109,0.025),transparent_42%)]"
+    >
+      <summary className="flex cursor-pointer list-none items-center gap-4 py-6 outline-none marker:content-none focus-visible:ring-2 focus-visible:ring-gold/20 sm:gap-6 sm:py-8 [&::-webkit-details-marker]:hidden">
+        <span className="grid size-10 shrink-0 place-items-center rounded-full border border-gold/20 font-serif text-sm italic text-gold/72 transition-colors group-open:border-gold/45 group-open:bg-gold/[0.07] sm:size-12">
+          {level}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-serif text-xl italic text-foreground-strong sm:text-2xl">{title}</span>
+          <span className="mt-1 block text-xs leading-relaxed text-muted-soft sm:text-sm">{subtitle}</span>
+        </span>
+        <span aria-hidden="true" className="text-xl text-gold/55 transition-transform duration-500 motion-reduce:transition-none group-open:rotate-45">+</span>
+      </summary>
+      <div className="grid overflow-hidden pb-9 pl-0 sm:pb-12 sm:pl-[4.5rem]">
+        {children}
+      </div>
+    </details>
+  );
+}
+
+function ScriptureTextPanel({ text }: { text: ScriptureText }) {
+  return (
+    <article className="border border-gold/15 bg-[linear-gradient(180deg,rgba(189,160,109,0.045),rgba(0,0,0,0.08))] p-5 sm:p-7">
+      <p className="text-[0.58rem] uppercase tracking-[0.22em] text-gold/72">{text.reference}</p>
+      <p className="mt-2 text-[0.58rem] tracking-[0.16em] text-muted-soft">{text.translationLabel}</p>
+      <div className="symbol-copy mt-6 whitespace-pre-line font-serif text-lg leading-[1.9] text-foreground-strong/90 sm:text-xl">
+        {text.text}
+      </div>
+    </article>
+  );
+}
+
 function CalmRelationCard({ item }: { item: CalmRelationGroup["items"][number] }) {
   const content = (
     <>
@@ -2669,6 +2718,19 @@ function CalmCodexDetail({
   const typeLabel = formatType(entry.type);
   const returnHref = `/symbolnetz?symbol=${encodeURIComponent(entry.id)}`;
   const essence = entity?.summary ?? entry.summary;
+  const word = entry.type === "hebrew-word" ? hebrewWords.find((candidate) => candidate.id === entry.id) : undefined;
+  const letter = entry.type === "hebrew-letter" ? hebrewLetters.find((candidate) => candidate.id === entry.id) : undefined;
+  const scriptureTexts = getScriptureTexts([
+    entry.type === "scripture" ? entry.id : undefined,
+    ...entry.scriptureAnchors.map((anchor) => anchor.id),
+  ]);
+  const primaryAnchor = entry.scriptureAnchors[0];
+  const primaryAnchorEntry = resolveLinkedCodexEntry(primaryAnchor?.id) ?? resolveLinkedCodexEntry(primaryAnchor?.reference);
+  const strongInterpretation =
+    entity?.archetypalRole
+    ?? word?.meaningThreshold
+    ?? letter?.symbolism[0]?.description
+    ?? essence;
 
   return (
     <main className="symbol-page relative min-h-screen overflow-x-hidden bg-[#030812] px-5 pb-24 pt-24 sm:px-8 sm:pt-28">
@@ -2694,22 +2756,93 @@ function CalmCodexDetail({
             <p className="symbol-copy mt-5 max-w-2xl font-serif text-xl italic leading-relaxed text-muted-soft sm:text-2xl">{entry.subtitle}</p>
           ) : null}
           <p className="symbol-copy mt-7 max-w-2xl text-lg leading-relaxed text-foreground-strong/82">{essence}</p>
+          <p className="symbol-copy mt-6 max-w-2xl border-l border-gold/30 pl-5 font-serif text-xl italic leading-relaxed text-gold/88 sm:text-2xl">
+            {strongInterpretation}
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href={returnHref} className="symbol-cta symbol-cta-secondary">Im Symbolnetz sehen</Link>
+            {roomHref && roomLabel ? <Link href={roomHref} className="symbol-cta">Raum betreten</Link> : null}
+            {primaryAnchorEntry ? (
+              <Link href={`/codex/${primaryAnchorEntry.id}`} className="symbol-cta symbol-cta-secondary">
+                Schrift öffnen
+              </Link>
+            ) : null}
+          </div>
         </header>
 
-        <CalmSection eyebrow="Bedeutung">
-          <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong sm:text-3xl">
-            {entity?.archetypalRole ?? essence}
-          </p>
-        </CalmSection>
+        <div className="border-b border-gold/[0.12]" aria-label="Tiefenschichten des Codex">
+          <CodexChamber level="I" title="Essenz" subtitle="Die tragende Deutung und ihre Bedeutungsachsen." open>
+            <p className="symbol-copy max-w-3xl font-serif text-2xl italic leading-relaxed text-foreground-strong sm:text-3xl">
+              {strongInterpretation}
+            </p>
+            {word?.meaningFields?.length ? (
+              <div className="mt-7 grid gap-4 sm:grid-cols-2">
+                {word.meaningFields.map((field) => (
+                  <article key={field.id} className="border-l border-cyan-soft/20 px-4 py-2">
+                    <h3 className="font-serif text-xl italic text-cyan-soft/85">{field.label}</h3>
+                    <p className="symbol-copy mt-2 text-sm leading-relaxed text-muted-soft">{field.description}</p>
+                    {field.experienceFields.length ? <p className="mt-3 text-xs tracking-[0.12em] text-gold/65">{field.experienceFields.join(" · ")}</p> : null}
+                  </article>
+                ))}
+              </div>
+            ) : null}
+            {letter?.symbolism?.length ? (
+              <div className="mt-7 grid gap-4 sm:grid-cols-2">
+                {letter.symbolism.map((symbolism) => (
+                  <article key={symbolism.id} className="border-l border-gold/20 px-4 py-2">
+                    <h3 className="font-serif text-xl italic text-gold/85">{symbolism.label}</h3>
+                    <p className="symbol-copy mt-2 text-sm leading-relaxed text-muted-soft">{symbolism.description}</p>
+                  </article>
+                ))}
+              </div>
+            ) : null}
+          </CodexChamber>
 
-        <CalmHebrewBody entry={entry} entity={entity} />
+          {(entry.hebrew || entry.meaningFields.length > 0) ? (
+            <CodexChamber level="II" title="Bedeutung" subtitle="Nuancen, Wortfelder und die innere Bildkraft.">
+              <CalmHebrewBody entry={entry} entity={entity} />
+              <MeaningFieldsSection entry={entry} title="Bedeutungsfelder" />
+              {entity ? <VisibleHiddenSection entity={entity} /> : null}
+            </CodexChamber>
+          ) : null}
 
-        {groups.length > 0 ? (
-          <CalmSection eyebrow="Beziehungen">
+          {entry.type === "hebrew-word" ? (
+            <CodexChamber level="III" title="Hebräischer Körper" subtitle="Schriftbild, Wurzelhinweise, Gematria und Buchstabenbewegung.">
+              <HebrewWordIdentitySection entry={entry} />
+              {word?.rootNote ? <p className="symbol-copy mt-5 max-w-3xl border-l border-gold/20 pl-5 italic leading-relaxed text-muted-soft">{word.rootNote}</p> : null}
+              {word?.possibleRootIds?.length ? <p className="mt-4 text-xs tracking-[0.16em] text-cyan-soft/72">Wurzelspuren · {word.possibleRootIds.join(" · ")}</p> : null}
+            </CodexChamber>
+          ) : null}
+
+          {entry.type === "hebrew-letter" ? (
+            <CodexChamber level="III" title="Zeichenkörper" subtitle="Laut, Zahlenwert, Urbild und verbundene Wörter.">
+              <LetterResonanceSection entry={entry} />
+            </CodexChamber>
+          ) : null}
+
+          {(scriptureTexts.length > 0 || entry.scriptureAnchors.length > 0) ? (
+            <CodexChamber level="IV" title="Schriftanker" subtitle="Bibeltexte vollständig lesen und ihre Resonanzen öffnen.">
+              <div className="grid gap-5">
+                {scriptureTexts.map((text) => <ScriptureTextPanel key={text.id} text={text} />)}
+                {entry.scriptureAnchors.map((anchor, index) => {
+                  const linked = resolveLinkedCodexEntry(anchor.id) ?? resolveLinkedCodexEntry(anchor.reference);
+                  return (
+                    <article key={`${anchor.reference}-${index}`} className="border-l border-gold/18 px-4 py-2">
+                      {linked ? <Link href={`/codex/${linked.id}`} className="font-serif text-xl italic text-gold/82 hover:text-gold">{anchor.reference}</Link> : <p className="font-serif text-xl italic text-gold/82">{anchor.reference}</p>}
+                      {anchor.note ? <p className="symbol-copy mt-2 text-sm leading-relaxed text-muted-soft">{anchor.note}</p> : null}
+                    </article>
+                  );
+                })}
+              </div>
+            </CodexChamber>
+          ) : null}
+
+          {groups.length > 0 ? (
+          <CodexChamber level="V" title="Beziehungen" subtitle="Wörter, Buchstaben, Bedeutungsfelder, Räume und verwandte Einträge.">
             <div className="grid gap-8 sm:grid-cols-2">
               {groups.map((group) => {
-                const visible = group.items.slice(0, 4);
-                const hidden = group.items.slice(4);
+                const visible = group.items.slice(0, 3);
+                const hidden = group.items.slice(3);
                 return (
                   <section key={group.title} className="min-w-0">
                     <h2 className="text-xs uppercase tracking-[0.2em] text-cyan-soft/68">{group.title}</h2>
@@ -2724,24 +2857,19 @@ function CalmCodexDetail({
                 );
               })}
             </div>
-          </CalmSection>
+          </CodexChamber>
         ) : null}
 
-        {entry.scriptureAnchors.length > 0 ? (
-          <CalmSection eyebrow="Schriftanker">
-            <div className="grid gap-3 sm:grid-cols-2">
-              {entry.scriptureAnchors.slice(0, 4).map((anchor, index) => {
-                const linked = resolveLinkedCodexEntry(anchor.id) ?? resolveLinkedCodexEntry(anchor.reference);
-                return (
-                  <article key={`${anchor.reference}-${index}`} className="border-l border-gold/18 px-4 py-2">
-                    {linked ? <Link href={`/codex/${linked.id}`} className="font-serif text-xl italic text-gold/82 hover:text-gold">{anchor.reference}</Link> : <p className="font-serif text-xl italic text-gold/82">{anchor.reference}</p>}
-                    {anchor.note ? <p className="symbol-copy mt-2 line-clamp-3 text-sm leading-relaxed text-muted-soft">{anchor.note}</p> : null}
-                  </article>
-                );
-              })}
-            </div>
-          </CalmSection>
-        ) : null}
+          <CodexChamber level="VI" title="Tiefenresonanz" subtitle="Weiterführende Bewegungen, persönliche Spur und stiller Nachklang.">
+            {entry.id === "wasser" ? <WaterCodexReferenceSection /> : null}
+            {entry.id === "licht" ? <LightCodexReferenceSection /> : null}
+            {entry.id === "feuer" ? <FireCodexReferenceSection /> : null}
+            {entry.id === "wueste" || entry.id === "brot" ? <ResonanceRoomInline symbolId={entry.id} /> : null}
+            <MeaningResonanceSection entry={entry} />
+            <SymbolicTrailSection entry={entry} />
+            {entry.type === "number" ? <NumberResonanceSection entry={entry} /> : null}
+          </CodexChamber>
+        </div>
 
         {roomHref && roomLabel ? (
           <CalmSection eyebrow="Raum-Schwelle">
