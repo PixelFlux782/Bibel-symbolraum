@@ -1,4 +1,4 @@
-import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import WaterRoom from "@/components/rooms/water/WaterRoom";
 import { waterEngineData } from "@/components/rooms/water/waterEngineData";
 import {
   resolveRoomInitialStateId,
@@ -20,5 +20,5 @@ export default async function WasserRaumPage({ searchParams }: { searchParams: R
   });
   const roomContext = resolveRoomContext(resolvedSearchParams, "wasser");
 
-  return <SymbolEngineRoom data={waterEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
+  return <WaterRoom initialStateId={initialStateId} roomContext={roomContext} />;
 }

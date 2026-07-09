@@ -1,151 +1,191 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { recordRoomVisitForRoute } from "@/lib/pathActivity";
+import type { RoomContext } from "@/lib/rooms/roomContext";
+import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
 import { visualAssets } from "@/lib/visualAssets";
+import { RoomPersonalTraceCard } from "@/components/rooms/engine/RoomPersonalTraceCard";
 
-type WaterJourneyStage = {
-  id: string;
-  eyebrow: string;
-  title: string;
-  text: string;
-  action: string;
-  image: string;
-  alt: string;
-  glyph?: string;
-  inscription?: string;
+type WaterRoomProps = {
+  initialStateId?: string;
+  roomContext?: RoomContext;
 };
 
-const waterJourney: WaterJourneyStage[] = [
+type WaterMoment = {
+  id: string;
+  label: string;
+  title: string;
+  text?: string;
+  secondLine?: string;
+  hebrew?: string;
+  transliteration?: string;
+  image: string;
+  alt: string;
+};
+
+const waterMoments: WaterMoment[] = [
   {
-    id: "water",
-    eyebrow: "Wasser",
-    title: "Wasser trägt. Wasser trennt.",
-    text: "Bleib einen Moment an der Oberfläche. Vor dir liegt kein Thema, sondern eine Schwelle.",
-    action: "Unter die Oberfläche",
-    image: visualAssets.wasserInterface,
-    alt: "Ein ruhiger Wasserraum zwischen Tiefe und Licht",
+    id: "before-order",
+    label: "Eintritt",
+    title: "Vor der Form ist Tiefe.",
+    text: "Du betrittst nicht einfach Wasser. Du betrittst die Tiefe vor der Ordnung.",
+    image: visualAssets.wasserCinema,
+    alt: "Dunkle Wasserfläche vor der Form",
   },
   {
     id: "depth",
-    eyebrow: "Tiefe",
-    title: "Die Tiefe öffnet sich.",
-    text: "Im Dunkel liegt nicht nur Gefahr. Mem, der Buchstabe des Wassers, trägt Chaos, Ursprung und Geburt zugleich.",
-    action: "Der Spur folgen",
+    label: "Atem",
+    title: "Und der Geist Gottes schwebte über den Wassern.",
+    hebrew: "וְרוּחַ אֱלֹהִים",
     image: visualAssets.wasserDepth,
-    alt: "Ein tiefer Wasserraum mit einem Lichtstrahl und hebräischen Zeichen",
-    glyph: "מ",
-    inscription: "Mem · Tiefe · Ursprung",
+    alt: "Licht und feiner Nebel über dunklem Wasser",
   },
   {
-    id: "exodus",
-    eyebrow: "Exodus 14",
-    title: "Die Grenze wird zum Weg.",
-    text: "Das Meer verschwindet nicht. Es teilt sich. Befreiung beginnt dort, wo du dich der Grenze anvertraust.",
-    action: "Durch das Wasser gehen",
-    image: visualAssets.wasserScene,
-    alt: "Der Weg durch das geteilte Meer im Exodus",
-    inscription: "Grenze · Durchzug · Befreiung",
+    id: "majim",
+    label: "Wort",
+    title: "Die Tiefe ist nicht leer.",
+    text: "Sie wartet auf das Wort.",
+    hebrew: "מַיִם",
+    transliteration: "MAJIM",
+    image: visualAssets.wasserHebrew,
+    alt: "Hebräische Zeichen unter einer dunklen Wasseroberfläche",
+  },
+  {
+    id: "genesis",
+    label: "Gegenwart",
+    title: "Die Erde war wüst und leer, und Finsternis lag über der Tiefe.",
+    secondLine: "Aber der Geist war schon da.",
+    image: visualAssets.wasserInterface,
+    alt: "Eine schwebende Bewegung über der Tiefe",
   },
   {
     id: "light",
-    eyebrow: "Licht",
-    title: "Aus der Tiefe steigt Licht.",
-    text: "Du kehrst nicht an dieselbe Oberfläche zurück. Was Grenze war, ist Durchgang geworden.",
-    action: "Noch einmal ins Wasser lauschen",
-    image: visualAssets.wasserMacro,
-    alt: "Eine ruhige Wasseroberfläche mit feinem Licht",
-    inscription: "Offenbarung · Neubeginn",
+    label: "Schwelle",
+    title: "Aus der Tiefe ruft das Licht.",
+    text: "Erlebe zuerst. Verstehe danach.",
+    image: visualAssets.wasserRoomHero,
+    alt: "Wasser zwischen dunkler Tiefe und anbrechendem Licht",
   },
 ];
 
-export default function WaterRoom() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeStage = waterJourney[activeIndex];
-  const isComplete = activeIndex === waterJourney.length - 1;
+const stateToMoment: Record<string, string> = {
+  boundary: "majim",
+  exodus: "light",
+};
 
-  const continueJourney = () => {
-    setActiveIndex(isComplete ? 0 : activeIndex + 1);
-  };
+export default function WaterRoom({ initialStateId, roomContext }: WaterRoomProps) {
+  const initialMomentId = stateToMoment[initialStateId ?? ""] ?? initialStateId;
+  const initialIndex = Math.max(0, waterMoments.findIndex((moment) => moment.id === initialMomentId));
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const activeMoment = waterMoments[activeIndex];
+  const isLastMoment = activeIndex === waterMoments.length - 1;
+  const symbolPath = useMemo(() => getSymbolPathConfig("wasser"), []);
+
+  useEffect(() => {
+    recordRoomVisitForRoute({
+      symbolId: "wasser",
+      roomHref: symbolPath?.roomHref ?? "/raeume/wasser",
+      routeKey: "room:wasser",
+    });
+  }, [symbolPath?.roomHref]);
 
   return (
-    <main className={`water-journey water-journey--${activeStage.id}`}>
-      <div className="water-journey__scenes" aria-live="polite">
-        {waterJourney.map((stage, index) => (
+    <main className={`water-experience water-experience--${activeMoment.id}`}>
+      <div className="water-experience__scenes" aria-hidden="true">
+        {waterMoments.map((moment, index) => (
           <div
-            key={stage.id}
-            className={`water-journey__scene ${index === activeIndex ? "is-active" : ""}`}
-            aria-hidden={index !== activeIndex}
+            className={`water-experience__scene ${index === activeIndex ? "is-active" : ""}`}
+            key={moment.id}
           >
             <Image
-              src={stage.image}
-              alt={stage.alt}
+              src={moment.image}
+              alt=""
               fill
               priority={index === 0}
               sizes="100vw"
-              className="water-journey__image"
+              className="water-experience__image"
             />
           </div>
         ))}
       </div>
+      <div className="water-experience__depth" aria-hidden="true" />
+      <div className="water-experience__light" aria-hidden="true" />
+      <div className="water-experience__mist" aria-hidden="true" />
+      <div className="water-experience__surface" aria-hidden="true" />
 
-      <div className="water-journey__veil" aria-hidden="true" />
-      <div className="water-journey__current" aria-hidden="true" />
-
-      <nav className="water-journey__trail" aria-label="Spur durch den Wasserraum">
-        <p className="water-journey__trail-label">Wasserraum</p>
+      <nav className="water-experience__navigation" aria-label="Schwellen des Wasser-Raums">
+        <p>Wasser-Raum</p>
         <ol>
-          {waterJourney.map((stage, index) => (
-            <li key={stage.id}>
+          {waterMoments.map((moment, index) => (
+            <li key={moment.id}>
               <button
                 type="button"
-                className={`water-journey__trail-step ${index === activeIndex ? "is-active" : ""} ${index < activeIndex ? "is-passed" : ""}`}
                 onClick={() => setActiveIndex(index)}
+                className={index === activeIndex ? "is-active" : index < activeIndex ? "is-past" : ""}
                 aria-current={index === activeIndex ? "step" : undefined}
-                aria-label={`${stage.eyebrow}${index === activeIndex ? ", aktuelle Station" : ""}`}
+                aria-label={`${index + 1}. ${moment.label}`}
               >
-                <span className="water-journey__trail-mark" />
-                <span>{stage.eyebrow}</span>
+                <span aria-hidden="true" />
+                <b>{moment.label}</b>
               </button>
             </li>
           ))}
         </ol>
       </nav>
 
-      <section className="water-journey__content" key={activeStage.id}>
-        <p className="water-journey__eyebrow">
-          {String(activeIndex + 1).padStart(2, "0")} / {String(waterJourney.length).padStart(2, "0")} · {activeStage.eyebrow}
+      <section className="water-experience__moment" key={activeMoment.id} aria-live="polite">
+        <p className="water-experience__counter">
+          {String(activeIndex + 1).padStart(2, "0")} / {String(waterMoments.length).padStart(2, "0")}
         </p>
-        {activeStage.glyph ? (
-          <p className="water-journey__glyph" lang="he" dir="rtl">
-            {activeStage.glyph}
+
+        {activeMoment.hebrew ? (
+          <p className="water-experience__hebrew" lang="he" dir="rtl">
+            {activeMoment.hebrew}
           </p>
         ) : null}
-        <h1 className="water-journey__title">{activeStage.title}</h1>
-        <p className="water-journey__text">{activeStage.text}</p>
-        {activeStage.inscription ? (
-          <p className="water-journey__inscription">{activeStage.inscription}</p>
+        {activeMoment.transliteration ? (
+          <p className="water-experience__transliteration">{activeMoment.transliteration}</p>
         ) : null}
-        <div className="water-journey__actions">
-          {activeIndex > 0 ? (
-            <button
-              type="button"
-              className="water-journey__back"
-              onClick={() => setActiveIndex(activeIndex - 1)}
-            >
-              Zurück
-            </button>
-          ) : null}
-          <button type="button" className="water-journey__action" onClick={continueJourney}>
-            {activeStage.action}
+
+        <h1>{activeMoment.title}</h1>
+        {activeMoment.text ? <p className="water-experience__copy">{activeMoment.text}</p> : null}
+        {activeMoment.secondLine ? <p className="water-experience__revelation">{activeMoment.secondLine}</p> : null}
+
+        {activeIndex === 0 && roomContext ? (
+          <Link className="water-experience__return" href={roomContext.returnHref}>
+            {roomContext.mobileText} · {roomContext.returnLabel}
+          </Link>
+        ) : null}
+
+        {isLastMoment ? (
+          <div className="water-experience__exits">
+            <Link href="/raeume/licht?from=journey&path=journey-wasser-geist&symbol=licht" className="water-experience__primary-exit">
+              Weiter zum Licht-Raum <span aria-hidden="true" />
+            </Link>
+            <div className="water-experience__codex-exits" aria-label="Im Codex vertiefen">
+              <Link href="/codex/majim">MAJIM im Codex</Link>
+              <Link href="/codex/genesis-1-2">Genesis 1,2 lesen</Link>
+              <Link href="/codex/tiefe">Tiefe öffnen</Link>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="water-experience__continue"
+            onClick={() => setActiveIndex((index) => Math.min(index + 1, waterMoments.length - 1))}
+          >
+            {activeIndex === 0 ? "In die Tiefe" : "Weiter lauschen"}
             <span aria-hidden="true" />
           </button>
-        </div>
+        )}
       </section>
 
-      <p className="water-journey__hint">
-        {isComplete ? "Die Spur ist sichtbar geworden." : "Eine Spur öffnet sich leise."}
-      </p>
+      <aside className="water-experience__trace">
+        <RoomPersonalTraceCard symbolSlug="wasser" roomContext={roomContext} />
+      </aside>
     </main>
   );
 }
