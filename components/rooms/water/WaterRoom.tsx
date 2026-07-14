@@ -31,8 +31,8 @@ const thresholds: WaterThreshold[] = [
     label: "Tiefe",
     eyebrow: "Vor der Form",
     title: "Am Anfang ist Wasser nicht romantisch.",
-    text: "Es ist das Ungeformte. Das Noch-nicht-Geteilte. Die Tiefe, in der alles verborgen liegt.",
-    revelation: "Du betrittst nicht ein Thema. Du betrittst einen Anfang.",
+    text: "Es ist das Noch-nicht-Geformte. Die Tiefe, in der alles verborgen liegt.",
+    revelation: "Sie ist nicht leer. Sie wartet darauf, angesprochen zu werden.",
     image: visualAssets.wasserCinema,
     alt: "Dunkle Wasserfläche in Nebel vor der Form",
   },
@@ -51,7 +51,7 @@ const thresholds: WaterThreshold[] = [
     label: "Majim",
     eyebrow: "מַיִם · Wasser",
     title: "Wasser trägt den Punkt des Werdens in sich.",
-    text: "Ein Wort im Pluralklang. Wasser ist nie ganz einzeln. Es ist Bewegung, Beziehung, Strömung.",
+    text: "Ein Wort im Pluralklang. Wasser ist nie ganz einzeln. Es trägt Bewegung, Beziehung und Strömung.",
     image: visualAssets.wasserHebrew,
     alt: "Hebräische Wasserzeichen in einer dunklen Tiefe",
   },
@@ -250,7 +250,7 @@ export default function WaterRoom({ initialStateId, roomContext }: WaterRoomProp
               <Link href="/raeume/licht?from=journey&path=journey-wasser-geist&symbol=licht" className="water-experience__primary-exit">
                 Aus der Tiefe ins Licht gehen <span aria-hidden="true" />
               </Link>
-              <div className="water-experience__codex-exits" aria-label="Ruhige Archivspuren">
+              <div className="water-experience__codex-exits" aria-label="Leise Spuren zur Vertiefung">
                 {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
               </div>
             </div>

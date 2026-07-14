@@ -59,7 +59,7 @@ export const fireEngineData: SymbolEngineData = {
     },
   ],
   connections: [
-    { id: "spark", label: "Funke", relation: "Potential", detail: "In der Glut liegt eine Kraft, die noch keine sichtbare Flamme braucht." },
+    { id: "spark", label: "Funke", relation: "Möglichkeit", detail: "In der Glut liegt eine Kraft, die noch keine sichtbare Flamme braucht." },
     { id: "presence", label: "Gegenwart", relation: "Offenbarung", detail: "Der Dornbusch brennt, ohne zu verbrennen: Feuer wird zum Zeichen tragender Nähe." },
     { id: "calling", label: "Ruf", relation: "Berufung", detail: "Mose wird beim Namen gerufen und aus der Distanz in Gegenwart geführt." },
     { id: "guidance", label: "Führung", relation: "Weg", detail: "Die Feuersäule gibt Richtung, ohne den ganzen Weg vorwegzunehmen." },
@@ -70,10 +70,10 @@ export const fireEngineData: SymbolEngineData = {
     {
       id: "hidden-fire",
       navigationLabel: "Verborgenes Feuer",
-      eyebrow: "\u05d0\u05e9 / Potential",
+      eyebrow: "\u05d0\u05e9 / Möglichkeit",
       title: "Verborgenes Feuer",
       text: "Wärme wartet unter der Oberfläche. Ein Funke genügt, damit sichtbar wird, was bereits in Bewegung ist.",
-      inscription: "Potential / Glut / Funke",
+      inscription: "Möglichkeit / Glut / Funke",
       visual: {
         image: visualAssets.feuerGlut,
         backgroundImage: visualAssets.feuerAsh,

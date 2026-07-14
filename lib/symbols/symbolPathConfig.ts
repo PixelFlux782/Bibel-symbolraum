@@ -105,7 +105,7 @@ export const symbolPathConfigs = {
       contextLabels: {
         majim: "Wasser als getragene Tiefe",
         tehom: "Tiefe vor der Form",
-        ruach: "Atem ueber den Wassern",
+        ruach: "Atem über den Wassern",
         "genesis-1-2": "Wasser vor der Ordnung",
         "exodus-14": "Wasser als Schwelle",
       },
@@ -171,9 +171,9 @@ export const symbolPathConfigs = {
       contextLabels: {
         "genesis-1-3": "Licht als erstes Sichtbarwerden",
         "genesis-1-4": "Licht als leise Schwelle von Sehen und Gut",
-        or: "Licht als hebraeischer Klang",
+        or: "Licht als hebräischer Klang",
         raah: "Sehen als Folgeschwelle des Lichts",
-        tov: "Gut als erkannte Qualitaet",
+        tov: "Gut als erkannte Qualität",
       },
       returnLabel: "Zum Licht-Codex zurückkehren",
       roomLabel: "Den Lichtraum betreten",

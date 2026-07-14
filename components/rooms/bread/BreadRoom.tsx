@@ -29,9 +29,9 @@ const thresholds: BreadThreshold[] = [
   {
     id: "hunger",
     label: "Hunger",
-    eyebrow: "Beduerftigkeit",
+    eyebrow: "Bedürftigkeit",
     title: "Brot beginnt nicht beim Besitz.",
-    text: "Nach der Wueste ist der Mensch leer, still und angewiesen. Er kommt nicht als Besitzer, sondern als Empfangender.",
+    text: "Nach der Wüste ist der Mensch leer, still und angewiesen. Er kommt nicht als Besitzer, sondern als Empfangender.",
     revelation: "Hunger ist nicht nur Mangel. Hunger zeigt, wovon der Mensch lebt.",
     image: visualAssets.brotGrain,
     alt: "Dunkler Steinboden mit kaum sichtbaren Brotkrumen und ferner warmer Lichtquelle",
@@ -41,38 +41,38 @@ const thresholds: BreadThreshold[] = [
     label: "Gabe",
     eyebrow: "Manna",
     title: "Brot ist Gabe, bevor es Besitz ist.",
-    text: "In die Leere faellt nicht Ueberfluss, sondern etwas Feines: genug, leise, taeglich.",
+    text: "In die Leere fällt nicht Überfluss, sondern etwas Feines: genug, leise, täglich.",
     revelation: "Was Leben gibt, kommt nicht zuerst aus der Hand des Menschen.",
     image: visualAssets.brotManna,
-    alt: "Feine helle Lichtkoerner wie Tau auf dunklem Boden",
+    alt: "Feine helle Lichtkörner wie Tau auf dunklem Boden",
   },
   {
     id: "lechem",
     label: "Lechem",
     eyebrow: "לֶחֶם / Lechem",
-    title: "Ein einfaches Wort traegt Hunger, Gabe, Ringen und Leben.",
-    text: "Lechem ist kein Lexikon im Raum. Die Buchstaben werden zu einem Schriftkoerper aus Korn, Wasser, Feuer und Wort.",
+    title: "Ein einfaches Wort trägt Hunger, Gabe, Ringen und Leben.",
+    text: "Lechem ist kein Lexikon im Raum. Die Buchstaben werden zu einem Körper aus Korn, Wasser, Feuer und Wort.",
     revelation: "Brot ist nicht nur weich. Brot steht im Ringen ums Leben.",
     image: visualAssets.archivHero,
     alt: "Sakraler Archivraum mit hebräischen Zeichen und warmem Licht",
   },
   {
     id: "tagesmass",
-    label: "Tagesmass",
+    label: "Tagesmaß",
     eyebrow: "Heute",
     title: "Heute reicht.",
-    text: "Das taegliche Brot ist kein Besitz fuer immer. Es ist Vertrauen fuer heute.",
+    text: "Das tägliche Brot ist kein Besitz für immer. Es ist Vertrauen für heute.",
     revelation: "Was ich brauche, darf ich empfangen. Was ich empfange, muss ich nicht festhalten wie einen Gott.",
     image: visualAssets.brotDew,
-    alt: "Reduzierte Lichtkoerner in einem dunklen Raum als Bild fuer Tagesmass",
+    alt: "Reduzierte Lichtkörner in einem dunklen Raum als Bild für Tagesmaß",
   },
   {
     id: "teilen",
     label: "Teilen",
     eyebrow: "Brechen",
     title: "Brot, das gebrochen wird, wird Gemeinschaft.",
-    text: "Brot erfuellt sich nicht im Festhalten. Im Brechen wird Gabe sichtbar, und die Mitte wird teilbar.",
-    revelation: "Ich empfange nicht nur fuer mich.",
+    text: "Brot erfüllt sich nicht im Festhalten. Im Brechen wird Gabe sichtbar, und die Mitte wird teilbar.",
+    revelation: "Ich empfange nicht nur für mich.",
     image: visualAssets.brotPath,
     alt: "Warme Lichtspuren und Krumen in einem dunklen Tischraum",
   },
@@ -81,7 +81,7 @@ const thresholds: BreadThreshold[] = [
     label: "Wort",
     eyebrow: "Leben",
     title: "Der Mensch lebt nicht vom Brot allein.",
-    text: "Brot naehrt den Leib. Das Wort naehrt den Weg. Im Einfachen oeffnet sich das Geheimnis des Lebens.",
+    text: "Brot nährt den Leib. Das Wort nährt den Weg. Im Einfachen öffnet sich das Geheimnis des Lebens.",
     revelation: "Brot wird Zeichen, wenn es auf das Leben verweist.",
     image: visualAssets.lichtCinema,
     alt: "Tiefe blaue Lichtachse mit warmen goldenen Reflexen",
@@ -89,9 +89,9 @@ const thresholds: BreadThreshold[] = [
   {
     id: "tisch",
     label: "Tisch",
-    eyebrow: "Rueckkehr",
+    eyebrow: "Rückkehr",
     title: "Brot sammelt die Reise und macht sie teilbar.",
-    text: "Was aus der Tiefe kam, was sichtbar wurde, was geprueft wurde und was in der Wueste empfangen wurde, liegt nun als Brot in der Mitte.",
+    text: "Was aus der Tiefe kam, was sichtbar wurde, was geprüft wurde und was in der Wüste empfangen wurde, liegt nun als Brot in der Mitte.",
     revelation: "Am Tisch wird Gabe zu neuer Gemeinschaft.",
     image: visualAssets.brotHero,
     alt: "Sakrales Brotsymbol aus warmem Licht in einem dunklen Raum",
@@ -112,7 +112,7 @@ const lechemLetters = [
     mode: "lamed",
     letterId: "lamed",
     note: "Brot lehrt den Menschen, woher Leben kommt.",
-    detail: "Stab, Lernen, Richtung: das Herz wird gefuehrt.",
+    detail: "Stab, Lernen, Richtung: das Herz wird geführt.",
   },
   {
     glyph: "ח",
@@ -128,21 +128,21 @@ const lechemLetters = [
     mode: "mem",
     letterId: "mem",
     note: "Auch im Brot bleibt die Tiefe des Wassers verborgen.",
-    detail: "Wasser, Tiefe, Mutterraum: das Umhuellende bleibt im Brotlicht.",
+    detail: "Wasser, Tiefe, Mutterraum: das Umhüllende bleibt im Brotlicht.",
   },
 ] as const;
 
-const dailyMovement = ["Manna", "Tagesmass", "Vertrauen", "Dank"];
+const dailyMovement = ["Manna", "Tagesmaß", "Vertrauen", "Dank"];
 const giftMovement = ["leer", "empfangen", "danken", "leben"];
-const tableEchoes = ["Wasser", "Licht", "Feuer", "Wueste", "Brot"];
+const tableEchoes = ["Wasser", "Licht", "Feuer", "Wüste", "Brot"];
 const sharingEchoes = ["Abraham", "Manna", "Viele", "Emmaus", "Tisch"];
-const wordEchoes = ["Manna", "Tora", "taegliches Brot", "Brot des Lebens", "Wort", "Leib", "Leben"];
+const wordEchoes = ["Manna", "Tora", "tägliches Brot", "Brot des Lebens", "Wort", "Leib", "Leben"];
 
 const archiveExits = [
   ["Brot", "/codex/brot"],
   ["Lechem", "/codex/lechem"],
   ["Manna", "/codex/manna"],
-  ["Taegliches Brot", "/codex/deuteronomy-8-3"],
+  ["Tägliches Brot", "/codex/deuteronomy-8-3"],
   ["Brot vom Himmel", "/codex/brot-vom-himmel"],
   ["Gabe", "/codex/gabe"],
   ["Nahrung", "/codex/nahrung"],
@@ -221,11 +221,11 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
       </nav>
 
       <section className="bread-sanctum__moment" key={active.id} aria-live="polite">
-        <p className="bread-sanctum__counter">{String(activeIndex + 1).padStart(2, "0")} / 07 - {active.eyebrow}</p>
+        <p className="bread-sanctum__counter">{String(activeIndex + 1).padStart(2, "0")} / 07 · {active.eyebrow}</p>
 
         {active.id === "lechem" ? (
           <div className="bread-sanctum__word" aria-label="Die Buchstaben von Lechem">
-            <p lang="he" dir="rtl">לחם</p>
+            <p lang="he" dir="rtl">לֶחֶם</p>
             <div>
               {lechemLetters.map((letter) => (
                 <button
@@ -262,7 +262,7 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
         ) : null}
 
         {active.id === "tagesmass" ? (
-          <p className="bread-sanctum__movement" aria-label="Bewegung des Tagesmasses">
+          <p className="bread-sanctum__movement" aria-label="Bewegung des Tagesmaßes">
             {dailyMovement.map((word) => <span key={word}>{word}</span>)}
           </p>
         ) : null}
@@ -284,11 +284,11 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
             <p className="bread-sanctum__echoes" aria-label="Gesammelte Reise">
               {tableEchoes.map((word) => <span key={word}>{word}</span>)}
             </p>
-            <p className="bread-sanctum__return-note">Was empfangen wurde, kehrt als Verbindung zurueck.</p>
+            <p className="bread-sanctum__return-note">Was empfangen wurde, kehrt als Verbindung zurück.</p>
             <Link href={symbolPath?.symbolNetworkHref ?? "/symbolnetz?symbol=brot"} className="bread-sanctum__primary-exit">
               Brot im Symbolnetz wiedersehen <span aria-hidden="true" />
             </Link>
-            <div className="bread-sanctum__codex-exits" aria-label="Ruhige Archivspuren">
+            <div className="bread-sanctum__codex-exits" aria-label="Leise Spuren zur Vertiefung">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
 
         {activeIndex === 0 && roomContext ? (
           <Link className="bread-sanctum__return" href={roomContext.returnHref}>
-            {roomContext.mobileText} - {roomContext.returnLabel}
+            {roomContext.mobileText} · {roomContext.returnLabel}
           </Link>
         ) : null}
       </section>

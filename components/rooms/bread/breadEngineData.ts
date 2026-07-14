@@ -70,7 +70,7 @@ export const breadEngineData: SymbolEngineData = {
       id: "john-6-life",
       reference: "Johannes 6,35",
       title: "Brot des Lebens",
-      text: "Jesus spricht vom Brot des Lebens. Die tägliche Nahrung wird zum Zeichen einer inneren Versorgung, die tiefer reicht als Saettigung.",
+      text: "Jesus spricht vom Brot des Lebens. Die tägliche Nahrung wird zum Zeichen einer inneren Versorgung, die tiefer reicht als Sättigung.",
       meaning: "Brot verweist auf Christus als Nahrung für das innere Leben und auf das Wort, von dem der Mensch lebt.",
     },
   ],

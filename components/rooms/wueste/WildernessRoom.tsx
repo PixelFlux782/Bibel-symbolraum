@@ -30,59 +30,59 @@ const thresholds: WildernessThreshold[] = [
     id: "leere",
     label: "Leere",
     eyebrow: "Entzug",
-    title: "Wueste beginnt dort, wo nichts mehr antwortet.",
-    text: "Der Raum ist weit. Besitz, Laerm und Gewohnheit verlieren ihre Stimme.",
-    revelation: "Nicht jede Leere ist Verlassenheit. Manche Leere macht hoerbar.",
+    title: "Wüste beginnt dort, wo nichts mehr antwortet.",
+    text: "Der Raum ist weit. Besitz, Lärm und Gewohnheit verlieren ihre Stimme.",
+    revelation: "Nicht jede Leere ist Verlassenheit. Manche Leere macht hörbar.",
     image: visualAssets.wuesteHero,
-    alt: "Dunkler Wuestenraum in Nachtblau mit trockenem Goldhorizont",
+    alt: "Dunkler Wüstenraum in Nachtblau mit trockenem Goldhorizont",
   },
   {
     id: "herausgefuehrt",
-    label: "Herausgefuehrt",
+    label: "Herausgeführt",
     eyebrow: "Exodus",
-    title: "Die Wueste beginnt nach der Befreiung.",
-    text: "Israel kommt nicht zufaellig in eine Landschaft. Es wird herausgefuehrt und steht zuerst nicht im Ziel.",
-    revelation: "Freiheit beginnt oft als Wueste.",
+    title: "Die Wüste beginnt nach der Befreiung.",
+    text: "Israel kommt nicht zufällig in eine Landschaft. Es wird herausgeführt und steht zuerst nicht im Ziel.",
+    revelation: "Freiheit beginnt oft als Wüste.",
     image: visualAssets.wuestePath,
     alt: "Feine Wegspur in einer dunklen trockenen Weite",
   },
   {
     id: "midbar",
     label: "Midbar",
-    eyebrow: "\u05de\u05b4\u05d3\u05b0\u05d1\u05b8\u05bc\u05e8 / Midbar",
+    eyebrow: "מִדְבָּר / Midbar",
     title: "Ein Ort der Leere. Und doch klingt darin: dabar.",
-    text: "Die Wueste ist kein Lexikonwort. Sie wird zum Wort-Raum, in dem Zeichen aus Staub und Stille hervortreten.",
-    revelation: "Die Wueste ist der Ort, an dem Wort in der Leere hoerbar wird.",
+    text: "Midbar ist kein Lexikonwort. Es wird zum Raum, in dem Zeichen aus Staub und Stille hervortreten.",
+    revelation: "Die Wüste ist der Ort, an dem Wort in der Leere hörbar wird.",
     image: visualAssets.wuesteHebrew,
-    alt: "Hebraeische Zeichen aus Sand und Licht in einem dunklen Archivraum",
+    alt: "Hebräische Zeichen aus Sand und Licht in einem dunklen Archivraum",
   },
   {
     id: "pruefung",
-    label: "Pruefung",
+    label: "Prüfung",
     eyebrow: "Formung",
-    title: "Die Wueste fragt nicht: Was besitzt du?",
+    title: "Die Wüste fragt nicht: Was besitzt du?",
     text: "Sie fragt: Wovon lebst du, wenn nichts dich ablenkt?",
-    revelation: "In der Wueste wird sichtbar, ob Freiheit schon Vertrauen geworden ist.",
+    revelation: "In der Wüste wird sichtbar, ob Freiheit schon Vertrauen geworden ist.",
     image: visualAssets.wuesteDust,
-    alt: "Weite trockene Flaeche mit feinem Staub und kaum sichtbarer Wegspur",
+    alt: "Weite trockene Fläche mit feinem Staub und kaum sichtbarer Wegspur",
   },
   {
     id: "manna",
     label: "Manna",
-    eyebrow: "Taegliches Brot",
+    eyebrow: "Tägliches Brot",
     title: "Manna ist Nahrung, die man nicht lagern kann.",
-    text: "Es erscheint fein, ueberraschend und im Tagesmass. Keine Vorratsmacht, keine Kontrolle.",
-    revelation: "Das Brot der Wueste lehrt: Heute reicht.",
+    text: "Es erscheint fein, überraschend und im Tagesmaß. Keine Vorratsmacht, keine Kontrolle.",
+    revelation: "Das Brot der Wüste lehrt: Heute reicht.",
     image: visualAssets.brotManna,
-    alt: "Helle Lichtkoerner wie Tau auf dunklem Boden",
+    alt: "Helle Lichtkörner wie Tau auf dunklem Boden",
   },
   {
     id: "stimme",
     label: "Stimme",
-    eyebrow: "Hoerraum",
-    title: "In der Wueste wird das Wort nicht lauter.",
-    text: "Der Mensch wird leiser. Staub legt sich, und eine Linie von Stimme traegt durch den offenen Raum.",
-    revelation: "Wo nichts mehr traegt, kann Stimme tragen.",
+    eyebrow: "Hörraum",
+    title: "In der Wüste wird das Wort nicht lauter.",
+    text: "Der Mensch wird leiser. Staub legt sich, und eine Linie von Stimme trägt durch den offenen Raum.",
+    revelation: "Wo nichts mehr trägt, kann Stimme tragen.",
     image: visualAssets.archivHero,
     alt: "Stiller dunkler Archivraum mit fernen Zeichen und warmer Lichtlinie",
   },
@@ -90,11 +90,11 @@ const thresholds: WildernessThreshold[] = [
     id: "brot",
     label: "Brot / Heimat",
     eyebrow: "Gabe",
-    title: "Die Wueste nimmt, damit der Mensch empfangen lernt.",
-    text: "Aus den Lichtkoernern wird ein ruhiges Zeichen: Nahrung, Wort und Leben.",
-    revelation: "Wer in der Wueste Brot empfaengt, lernt Leben als Gabe.",
+    title: "Die Wüste nimmt, damit der Mensch empfangen lernt.",
+    text: "Aus den Lichtkörnern wird ein ruhiges Zeichen: Nahrung, Wort und Leben.",
+    revelation: "Wer in der Wüste Brot empfängt, lernt Leben als Gabe.",
     image: visualAssets.brotHero,
-    alt: "Sakrales Brotsymbol aus warmem Licht und stillen Koernern",
+    alt: "Sakrales Brotsymbol aus warmem Licht und stillen Körnern",
   },
 ];
 
@@ -113,14 +113,14 @@ const midbarLetters = [
     name: "Mem",
     mode: "mem",
     note: "Die Tiefe geht mit. Auch in der Trockenheit.",
-    detail: "Tiefe, Wasser, Ursprung, das Umhuellende.",
+    detail: "Tiefe, Wasser, Ursprung, das Umhüllende.",
   },
   {
     glyph: "\u05d3",
     name: "Dalet",
     mode: "dalet",
-    note: "Die Wueste ist eine Tuer, nicht nur ein Ende.",
-    detail: "Tuer, Schwelle, Durchgang.",
+    note: "Die Wüste ist eine Tür, nicht nur ein Ende.",
+    detail: "Tür, Schwelle, Durchgang.",
   },
   {
     glyph: "\u05d1",
@@ -139,7 +139,7 @@ const midbarLetters = [
 ] as const;
 
 const archiveExits = [
-  ["Wueste", "/codex/wueste"],
+  ["Wüste", "/codex/wueste"],
   ["Midbar", "/codex/midbar"],
   ["Exodus", "/codex/exodus-14"],
   ["Manna", "/codex/manna"],
@@ -150,9 +150,9 @@ const archiveExits = [
   ["Brot", "/codex/brot"],
 ] as const;
 
-const exodusMovement = ["heraus", "hindurch", "leer", "gefuehrt"];
+const exodusMovement = ["heraus", "hindurch", "leer", "geführt"];
 const testingWords = ["Hunger", "Durst", "Ungeduld", "Angst", "Kontrolle", "Vertrauen"];
-const mannaMovement = ["Hunger", "Empfang", "Mass", "Vertrauen"];
+const mannaMovement = ["Hunger", "Empfang", "Maß", "Vertrauen"];
 const voiceEchoes = ["Mose", "Sinai", "Propheten", "Jesus", "Stille", "Gehorsam", "Weg"];
 
 export default function WildernessRoom({ initialStateId, roomContext }: WildernessRoomProps) {
@@ -196,8 +196,8 @@ export default function WildernessRoom({ initialStateId, roomContext }: Wilderne
       <div className="wilderness-way__voice-line" aria-hidden="true" />
       <div className="wilderness-way__bread-sign" aria-hidden="true" />
 
-      <nav className="wilderness-way__navigation" aria-label="Sieben Schwellen des Wuesten-Raums">
-        <p>Wuesten-Raum</p>
+      <nav className="wilderness-way__navigation" aria-label="Sieben Schwellen des Wüsten-Raums">
+        <p>Wüsten-Raum</p>
         <ol>
           {thresholds.map((item, index) => (
             <li key={item.id}>
@@ -217,11 +217,11 @@ export default function WildernessRoom({ initialStateId, roomContext }: Wilderne
       </nav>
 
       <section className="wilderness-way__moment" key={active.id} aria-live="polite">
-        <p className="wilderness-way__counter">{String(activeIndex + 1).padStart(2, "0")} / 07 - {active.eyebrow}</p>
+        <p className="wilderness-way__counter">{String(activeIndex + 1).padStart(2, "0")} / 07 · {active.eyebrow}</p>
 
         {active.id === "midbar" ? (
           <div className="wilderness-way__word" aria-label="Die Buchstaben von Midbar">
-            <p lang="he" dir="rtl">{"\u05de\u05d3\u05d1\u05e8"}</p>
+            <p lang="he" dir="rtl">{"\u05de\u05b4\u05d3\u05b0\u05d1\u05b8\u05bc\u05e8"}</p>
             <div>
               {midbarLetters.map((letter) => (
                 <button
@@ -258,7 +258,7 @@ export default function WildernessRoom({ initialStateId, roomContext }: Wilderne
         ) : null}
 
         {active.id === "pruefung" ? (
-          <p className="wilderness-way__echoes" aria-label="Ferne Pruefungsworte">
+          <p className="wilderness-way__echoes" aria-label="Ferne Prüfungsworte">
             {testingWords.map((word) => <span key={word}>{word}</span>)}
           </p>
         ) : null}
@@ -280,19 +280,19 @@ export default function WildernessRoom({ initialStateId, roomContext }: Wilderne
             <Link href="/raeume/brot?from=journey&path=journey-wueste-brot&symbol=brot" className="wilderness-way__primary-exit">
               Brot als Gabe empfangen <span aria-hidden="true" />
             </Link>
-            <div className="wilderness-way__codex-exits" aria-label="Ruhige Archivspuren">
+            <div className="wilderness-way__codex-exits" aria-label="Leise Spuren zur Vertiefung">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
             </div>
           </div>
         ) : (
           <button type="button" className="wilderness-way__continue" onClick={() => selectThreshold(activeIndex + 1)}>
-            {activeIndex === 0 ? "In die Stille gehen" : "Weiter durch die Wueste"} <span aria-hidden="true" />
+            {activeIndex === 0 ? "In die Stille gehen" : "Weiter durch die Wüste"} <span aria-hidden="true" />
           </button>
         )}
 
         {activeIndex === 0 && roomContext ? (
           <Link className="wilderness-way__return" href={roomContext.returnHref}>
-            {roomContext.mobileText} - {roomContext.returnLabel}
+            {roomContext.mobileText} · {roomContext.returnLabel}
           </Link>
         ) : null}
       </section>

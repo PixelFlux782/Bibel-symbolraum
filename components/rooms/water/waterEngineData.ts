@@ -41,7 +41,7 @@ export const waterEngineData: SymbolEngineData = {
         name: "Geschlossenes Mem",
         position: "Ende",
         meaning: "Grenze, Sammlung, verborgene Quelle",
-        detail: "Das Wasser schliesst sich zur Gestalt. Die Tiefe wird nicht aufgehoben, sondern gehalten.",
+        detail: "Das Wasser schließt sich zur Gestalt. Die Tiefe wird nicht aufgehoben, sondern gehalten.",
       },
     ],
   },
@@ -49,8 +49,8 @@ export const waterEngineData: SymbolEngineData = {
     {
       id: "genesis-1-1",
       reference: "Genesis 1,1",
-      title: "Der Anfang ist beruehrt.",
-      text: "Im Anfang werden Himmel und Erde genannt. Noch ist die Geschichte kaum geoeffnet, aber der Raum ist gesetzt.",
+      title: "Der Anfang ist berührt.",
+      text: "Im Anfang werden Himmel und Erde genannt. Noch ist die Geschichte kaum geöffnet, aber der Raum ist gesetzt.",
       meaning: "Genesis 1,1 bleibt die Schwelle, aus der die Tiefe von Genesis 1,2 hervortritt.",
     },
     {
@@ -76,7 +76,7 @@ export const waterEngineData: SymbolEngineData = {
     },
     {
       id: "jordan-baptism",
-      reference: "Matthaeus 3,13-17",
+      reference: "Matthäus 3,13-17",
       title: "Jordan und Taufe",
       text: "Jesus steigt in den Jordan. Beim Auftauchen öffnet sich der Himmel.",
       meaning: "Untertauchen markiert keinen Verlust, sondern einen neuen Anfang.",
@@ -86,7 +86,7 @@ export const waterEngineData: SymbolEngineData = {
       reference: "Johannes 4,14",
       title: "Lebendiges Wasser",
       text: "Das gegebene Wasser wird im Menschen zu einer Quelle, die ins ewige Leben quillt.",
-      meaning: "Die Quelle liegt nicht mehr nur ausserhalb. Sie beginnt im Inneren zu strömen.",
+      meaning: "Die Quelle liegt nicht mehr nur außerhalb. Sie beginnt im Inneren zu strömen.",
     },
   ],
   connections: [
@@ -109,7 +109,7 @@ export const waterEngineData: SymbolEngineData = {
       navigationLabel: "Tiefe",
       eyebrow: "Genesis 1,1-2",
       title: "Der Weg beginnt nicht oben, sondern in der Tiefe.",
-      text: "Wasser traegt, bevor Form erscheint. Unter dem ersten Anfang liegt Tehom: dunkel, offen, noch nicht sichtbar geordnet.",
+      text: "Wasser trägt, bevor Form erscheint. Unter dem ersten Anfang liegt Tehom: dunkel, offen, noch nicht sichtbar geordnet.",
       inscription: "Anfang / Tiefe / Wasser",
       visual: {
         image: visualAssets.wasserCinema,
@@ -129,9 +129,9 @@ export const waterEngineData: SymbolEngineData = {
     {
       id: "depth",
       navigationLabel: "Atem",
-      eyebrow: "Ruach ueber den Wassern",
-      title: "Ueber der Tiefe bewegt sich Atem.",
-      text: "Die Tiefe bleibt dunkel, aber nicht starr. Ruach schwebt ueber den Wassern; aus dieser Bewegung oeffnet sich das Wort.",
+      eyebrow: "Ruach über den Wassern",
+      title: "Über der Tiefe bewegt sich Atem.",
+      text: "Die Tiefe bleibt dunkel, aber nicht starr. Ruach schwebt über den Wassern; aus dieser Bewegung öffnet sich das Wort.",
       inscription: "Ruach / Bewegung / Wort / Licht",
       visual: {
         image: visualAssets.wasserDepth,
@@ -146,7 +146,7 @@ export const waterEngineData: SymbolEngineData = {
       hebrewSummary: "Offenes Mem, Jod und geschlossenes Mem halten Tiefe, Impuls und Sammlung zusammen.",
       biblicalSceneIds: ["genesis-1-2"],
       connectionIds: ["spirit", "merachefet", "creation"],
-      reflection: { kicker: "Innere Erfahrung", question: "Wo spuerst du Bewegung, obwohl noch nichts sichtbar ist?" },
+      reflection: { kicker: "Innere Erfahrung", question: "Wo spürst du Bewegung, obwohl noch nichts sichtbar ist?" },
     },
     {
       id: "boundary",
@@ -247,7 +247,7 @@ export const waterEngineData: SymbolEngineData = {
         image: visualAssets.wasserInterface,
         backgroundImage: visualAssets.wasserMacro,
         alt: "Leuchtender Wasserraum mit aufsteigender Bewegung",
-        atmosphere: { id: "living-water", mood: "lebendig", motion: "stroemend", light: "cyan und gold", density: 0.42 },
+        atmosphere: { id: "living-water", mood: "lebendig", motion: "strömend", light: "cyan und gold", density: 0.42 },
         veilOpacity: 0.48,
       },
       hebrewLetterIds: ["yod"],

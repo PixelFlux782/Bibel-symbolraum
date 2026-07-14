@@ -31,57 +31,57 @@ const thresholds: FireThreshold[] = [
     eyebrow: "Verborgenes Brennen",
     title: "Feuer beginnt nicht laut.",
     text: "Es beginnt als verborgenes Brennen. Gesammelt. Innerlich. Noch ohne Flamme.",
-    revelation: "Nicht alles, was brennt, zerstoert. Manches Feuer ruft.",
+    revelation: "Nicht alles, was brennt, zerstört. Manches Feuer ruft.",
     image: visualAssets.tiefenraum,
   },
   {
     id: "ruf",
     label: "Ruf",
     eyebrow: "Dornbusch",
-    title: "Das Feuer ruft, bevor es erklaert.",
-    text: "Mose sieht ein Feuer, das brennt und nicht verbraucht. Naehe haelt ihn auf.",
+    title: "Das Feuer ruft, bevor es erklärt.",
+    text: "Mose sieht ein Feuer, das brennt und nicht verbraucht. Nähe hält ihn auf.",
     revelation: "Zieh deine Schuhe aus. Nicht weil der Boden anders aussieht, sondern weil Gegenwart ihn heiligt.",
     image: visualAssets.feuerHero,
   },
   {
     id: "esh",
-    label: "Esh",
-    eyebrow: "Esh / Feuer",
-    title: "Ein kurzes Wort traegt Hitze, Atem und Zeichen.",
-    text: "Esh traegt Ruf, Naehe, Gefahr und Verwandlung. Sichtbare Naehe des Unsichtbaren.",
+    label: "Esch",
+    eyebrow: "אֵשׁ / Esch",
+    title: "Ein kurzes Wort trägt Hitze, Atem und Zeichen.",
+    text: "Esch trägt Ruf, Nähe, Gefahr und Verwandlung. Sichtbare Nähe des Unsichtbaren.",
     image: visualAssets.feuerSmoke,
   },
   {
     id: "gegenwart",
     label: "Gegenwart",
-    eyebrow: "Heilige Naehe",
-    title: "Feuer ist Naehe, die nicht besessen werden kann.",
-    text: "Es zieht an und haelt Abstand. Es offenbart Gegenwart und setzt Grenze.",
-    revelation: "Gottes Gegenwart waermt nicht nur. Sie setzt Grenze.",
+    eyebrow: "Heilige Nähe",
+    title: "Feuer ist Nähe, die nicht besessen werden kann.",
+    text: "Es zieht an und hält Abstand. Es offenbart Gegenwart und setzt Grenze.",
+    revelation: "Gottes Gegenwart wärmt nicht nur. Sie setzt Grenze.",
     image: visualAssets.archivHero,
   },
   {
     id: "pruefung",
-    label: "Pruefung",
+    label: "Prüfung",
     eyebrow: "Was bleibt",
-    title: "Feuer fragt nicht: Wie glaenzt du?",
-    text: "Feuer fragt: Was bleibt? Was nur Oberflaeche ist, verliert seine Stimme.",
+    title: "Feuer fragt nicht: Wie glänzt du?",
+    text: "Feuer fragt: Was bleibt? Was nur Oberfläche ist, verliert seine Stimme.",
     revelation: "Licht macht sichtbar. Feuer macht wahr.",
     image: visualAssets.feuerGlut,
   },
   {
     id: "reinigung",
     label: "Reinigung",
-    eyebrow: "Laeuterung",
-    title: "Wasser loest. Feuer laeutert.",
-    text: "Schlacke loest sich. Gold bleibt. Das Echte wird vom Unechten getrennt.",
+    eyebrow: "Läuterung",
+    title: "Wasser löst. Feuer läutert.",
+    text: "Schlacke löst sich. Gold bleibt. Das Echte wird vom Unechten getrennt.",
     revelation: "Was durch Wasser weich wurde, wird im Feuer klar.",
     image: visualAssets.feuerAsh,
   },
   {
     id: "sendung",
     label: "Sendung",
-    eyebrow: "Weg / Wueste",
+    eyebrow: "Weg / Wüste",
     title: "Feuer bleibt nicht im Heiligtum.",
     text: "Was im Feuer klar geworden ist, muss den Weg betreten.",
     revelation: "Feuer wird Auftrag.",
@@ -107,14 +107,14 @@ const eshLetters = [
     name: "Aleph",
     mode: "aleph",
     note: "Das Feuer beginnt im Unsichtbaren.",
-    detail: "Ursprung, Atem, verborgene Gegenwart, goettlicher Anfang.",
+    detail: "Ursprung, Atem, verborgene Gegenwart, göttlicher Anfang.",
   },
   {
     glyph: "\u05e9",
     name: "Shin",
     mode: "shin",
     note: "Die Flamme trennt, was bleibt, von dem, was vergeht.",
-    detail: "Zahn, Flamme, Dreiheit, Verzehren, Verwandeln, goettlicher Abdruck.",
+    detail: "Zahn, Flamme, Dreiheit, Verzehren, Verwandeln, göttlicher Abdruck.",
   },
 ] as const;
 
@@ -126,11 +126,11 @@ const archiveExits = [
   ["Wandlung", "/codex/wandlung"],
   ["Korban", "/codex/korban"],
   ["Pfingstspur", "/codex/feuer?spur=pfingsten"],
-  ["Wueste", "/codex/wueste"],
+  ["Wüste", "/codex/wueste"],
 ] as const;
 
-const presenceEchoes = ["Dornbusch", "Altar", "Opfer", "Feuersaeule", "Tempellicht", "Pfingstflammen"];
-const refiningWords = ["sichtbar", "geprueft", "gelaeutert", "klar"];
+const presenceEchoes = ["Dornbusch", "Altar", "Opfer", "Feuersäule", "Tempellicht", "Pfingstflammen"];
+const refiningWords = ["sichtbar", "geprüft", "geläutert", "klar"];
 
 export default function FireRoom({ initialStateId, roomContext }: FireRoomProps) {
   const initialId = stateToThreshold[initialStateId ?? ""] ?? initialStateId;
@@ -197,7 +197,7 @@ export default function FireRoom({ initialStateId, roomContext }: FireRoomProps)
         <p className="fire-trial__counter">{String(activeIndex + 1).padStart(2, "0")} / 07 · {active.eyebrow}</p>
 
         {active.id === "esh" ? (
-          <div className="fire-trial__word" aria-label="Die Buchstaben von Esh">
+          <div className="fire-trial__word" aria-label="Die Buchstaben von Esch">
             <p lang="he" dir="rtl">{"\u05d0\u05e9"}</p>
             <div>
               {eshLetters.map((letter) => (
@@ -229,7 +229,7 @@ export default function FireRoom({ initialStateId, roomContext }: FireRoomProps)
         ) : null}
 
         {active.id === "ruf" ? (
-          <p className="fire-trial__ground">stehen bleiben · hoeren · gerufen werden</p>
+          <p className="fire-trial__ground">stehen bleiben · hören · gerufen werden</p>
         ) : null}
 
         {active.id === "gegenwart" ? (
@@ -240,12 +240,12 @@ export default function FireRoom({ initialStateId, roomContext }: FireRoomProps)
 
         {active.id === "pruefung" ? (
           <blockquote className="fire-trial__question">
-            Was bleibt,<br />wenn der Glanz nicht mehr genuegt?
+            Was bleibt,<br />wenn der Glanz nicht mehr genügt?
           </blockquote>
         ) : null}
 
         {active.id === "reinigung" ? (
-          <p className="fire-trial__movement" aria-label="Bewegung der Laeuterung">
+          <p className="fire-trial__movement" aria-label="Bewegung der Läuterung">
             {refiningWords.map((word) => <span key={word}>{word}</span>)}
           </p>
         ) : null}
@@ -253,9 +253,9 @@ export default function FireRoom({ initialStateId, roomContext }: FireRoomProps)
         {active.id === "sendung" ? (
           <div className="fire-trial__exits">
             <Link href="/raeume/wueste?from=journey&path=journey-licht-feuer-wueste&symbol=wueste" className="fire-trial__primary-exit">
-              Den geklaerten Weg betreten <span aria-hidden="true" />
+              Den geklärten Weg betreten <span aria-hidden="true" />
             </Link>
-            <div className="fire-trial__codex-exits" aria-label="Ruhige Archivspuren">
+            <div className="fire-trial__codex-exits" aria-label="Leise Spuren zur Vertiefung">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
             </div>
           </div>

@@ -42,17 +42,17 @@ const thresholds: LightThreshold[] = [
     eyebrow: "Wort vor Bild",
     title: "Nicht das Licht beginnt. Das Wort ruft es.",
     text: "Die Welt wird nicht angeleuchtet. Sie wird angesprochen.",
-    revelation: "Wort wird Ruf. Ruf wird Erwartung. Erwartung oeffnet Sichtbarkeit.",
+    revelation: "Wort wird Ruf. Ruf wird Erwartung. Erwartung öffnet Sichtbarkeit.",
     image: visualAssets.lichtCinema,
     alt: "Dunkler Raum mit kaum sichtbarer goldener Schwingung",
   },
   {
     id: "or",
-    label: "OR",
-    eyebrow: "Or / Licht",
+    label: "Or",
+    eyebrow: "אוֹר / Or",
     title: "Ein Wort, das nicht nur hell macht.",
-    text: "Aleph, Waw und Resch bilden eine Bewegung vom unsichtbaren Ursprung ueber Verbindung zur sichtbaren Gestalt.",
-    revelation: "OR oeffnet Richtung.",
+    text: "Aleph, Waw und Resch tragen eine Bewegung: vom unsichtbaren Ursprung über Verbindung zur sichtbaren Gestalt.",
+    revelation: "Or öffnet Richtung.",
     image: visualAssets.lichtReflection,
     alt: "Goldene hebräische Lichtschrift in einem dunklen Archivraum",
   },
@@ -61,7 +61,7 @@ const thresholds: LightThreshold[] = [
     label: "Genesis 1,3",
     eyebrow: "Jehi Or",
     title: "Und Gott sprach: Es werde Licht.",
-    text: "Der Vers steht nicht als Karte im Raum. Er geschieht als ruhige Oeffnung.",
+    text: "Der Vers steht nicht wie eine Tafel im Raum. Er geschieht als ruhige Öffnung.",
     revelation: "Das Licht ist nicht da, um zu blenden. Es ist da, damit gesehen werden kann.",
     image: visualAssets.lichtHero,
     alt: "Warme Lichtachse bricht ruhig durch einen tiefen blauen Raum",
@@ -72,7 +72,7 @@ const thresholds: LightThreshold[] = [
     eyebrow: "Grenze / Ordnung",
     title: "Licht vernichtet die Finsternis nicht.",
     text: "Es unterscheidet sie. Wo Licht erscheint, beginnt Grenze. Und aus Grenze wird Welt.",
-    revelation: "Schoepfung entsteht durch heilige Unterscheidung.",
+    revelation: "Schöpfung entsteht durch heilige Unterscheidung.",
     image: visualAssets.lichtOrderLine,
     alt: "Sanfte goldene Grenze zwischen Licht und Dunkel im Nebel",
   },
@@ -81,16 +81,16 @@ const thresholds: LightThreshold[] = [
     label: "Sehen / Tov",
     eyebrow: "Raah / Tov",
     title: "Gott sah das Licht. Und es war gut.",
-    text: "Gut ist hier nicht Geschmack. Gut heisst: Es stimmt. Es traegt. Es findet seinen Ort.",
+    text: "Gut ist hier nicht Geschmack. Gut heißt: Es stimmt. Es trägt. Es findet seinen Ort.",
     revelation: "Licht macht Bedeutung lesbar.",
     image: visualAssets.archivHero,
-    alt: "Kosmische Archivflaechen werden von warmem Goldlicht lesbar",
+    alt: "Kosmische Archivflächen werden von warmem Goldlicht lesbar",
   },
   {
     id: "fire",
     label: "Feuer",
-    eyebrow: "Sendung / Pruefung",
-    title: "Licht zeigt. Feuer prueft.",
+    eyebrow: "Sendung / Prüfung",
+    title: "Licht zeigt. Feuer prüft.",
     text: "Was sichtbar geworden ist, kann verwandelt werden.",
     revelation: "Am Ende der Lichtachse sammelt sich ein heiliger Brennpunkt.",
     image: visualAssets.feuerGlut,
@@ -112,7 +112,7 @@ const orLetters = [
     name: "Aleph",
     mode: "aleph",
     note: "Das Licht beginnt im Unsichtbaren.",
-    detail: "Ursprung, Atem, das Unhoerbare vor dem Laut, goettliche Gegenwart.",
+    detail: "Ursprung, Atem, das Unhörbare vor dem Laut, göttliche Gegenwart.",
   },
   {
     glyph: "\u05d5",
@@ -132,7 +132,7 @@ const orLetters = [
 
 const archiveExits = [
   ["Licht", "/codex/licht"],
-  ["OR", "/codex/or"],
+  ["Or", "/codex/or"],
   ["Genesis 1,3", "/codex/genesis-1-3"],
   ["Tov", "/codex/tov"],
   ["Raah", "/codex/raah"],
@@ -239,7 +239,7 @@ export default function LightRoom({ initialStateId, roomContext }: LightRoomProp
         ) : null}
 
         {active.id === "boundary" ? (
-          <p className="light-revelation__trace-line" aria-label="Ruhige Archivspuren">
+          <p className="light-revelation__trace-line" aria-label="Leise Spuren zur Vertiefung">
             <span>Scheidung</span><span>Grenze</span><span>Ordnung</span><span>Tag / Nacht</span>
           </p>
         ) : null}
@@ -253,9 +253,9 @@ export default function LightRoom({ initialStateId, roomContext }: LightRoomProp
         {active.id === "fire" ? (
           <div className="light-revelation__exits">
             <Link href="/raeume/feuer?from=journey&path=journey-licht-feuer-wort&symbol=feuer" className="light-revelation__primary-exit">
-              Das Sichtbare im Feuer pruefen <span aria-hidden="true" />
+              Das Sichtbare im Feuer prüfen <span aria-hidden="true" />
             </Link>
-            <div className="light-revelation__codex-exits" aria-label="Ruhige Archivspuren">
+            <div className="light-revelation__codex-exits" aria-label="Leise Spuren zur Vertiefung">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
             </div>
           </div>

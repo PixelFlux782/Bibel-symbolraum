@@ -1,0 +1,222 @@
+[
+  {
+    "route": "/raeume/wasser",
+    "label": "desktop:wasser",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\desktop-raeume-wasser.png",
+    "title": "Wasser-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 592,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/licht",
+    "label": "desktop:licht",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\desktop-raeume-licht.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 477,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/feuer",
+    "label": "desktop:feuer",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\desktop-raeume-feuer.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 458,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/wueste",
+    "label": "desktop:wueste",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\desktop-raeume-wueste.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 481,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/brot",
+    "label": "desktop:brot",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\desktop-raeume-brot.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 516,
+    "emptyControls": 1
+  },
+  {
+    "route": "/symbolnetz",
+    "label": "desktop:/symbolnetz",
+    "screenshotPath": null,
+    "title": "Symbolnetz | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 964,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/wasser",
+    "label": "desktop:/codex/wasser",
+    "screenshotPath": null,
+    "title": "Wasser | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1164,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/licht",
+    "label": "desktop:/codex/licht",
+    "screenshotPath": null,
+    "title": "Licht | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1182,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/feuer",
+    "label": "desktop:/codex/feuer",
+    "screenshotPath": null,
+    "title": "Feuer | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1100,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/wueste",
+    "label": "desktop:/codex/wueste",
+    "screenshotPath": null,
+    "title": "Wüste | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1131,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/brot",
+    "label": "desktop:/codex/brot",
+    "screenshotPath": null,
+    "title": "Brot | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 934,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/wasser",
+    "label": "mobile:wasser",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\mobile-raeume-wasser.png",
+    "title": "Wasser-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 575,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/licht",
+    "label": "mobile:licht",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\mobile-raeume-licht.png",
+    "title": "Licht-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 460,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/feuer",
+    "label": "mobile:feuer",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\mobile-raeume-feuer.png",
+    "title": "Feuer-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 441,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/wueste",
+    "label": "mobile:wueste",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\mobile-raeume-wueste.png",
+    "title": "Wüstenraum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 464,
+    "emptyControls": 1
+  },
+  {
+    "route": "/raeume/brot",
+    "label": "mobile:brot",
+    "screenshotPath": "reports\\phase42m-room-language-audit\\mobile-raeume-brot.png",
+    "title": "Brot-Raum | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 499,
+    "emptyControls": 1
+  },
+  {
+    "route": "/symbolnetz",
+    "label": "mobile:/symbolnetz",
+    "screenshotPath": null,
+    "title": "Symbolnetz | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 494,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/wasser",
+    "label": "mobile:/codex/wasser",
+    "screenshotPath": null,
+    "title": "Wasser | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1146,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/licht",
+    "label": "mobile:/codex/licht",
+    "screenshotPath": null,
+    "title": "Licht | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1164,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/feuer",
+    "label": "mobile:/codex/feuer",
+    "screenshotPath": null,
+    "title": "Feuer | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1082,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/wueste",
+    "label": "mobile:/codex/wueste",
+    "screenshotPath": null,
+    "title": "Wüste | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 1113,
+    "emptyControls": 1
+  },
+  {
+    "route": "/codex/brot",
+    "label": "mobile:/codex/brot",
+    "screenshotPath": null,
+    "title": "Brot | Codex | Bibel-Symbolraum",
+    "overflow": false,
+    "hits": [],
+    "textLength": 916,
+    "emptyControls": 1
+  }
+]

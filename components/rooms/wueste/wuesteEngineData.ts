@@ -50,7 +50,7 @@ export const wuesteEngineData: SymbolEngineData = {
         name: "Resh",
         position: "Ende",
         meaning: "Ausrichtung, Wahrnehmung, Weg",
-        detail: "Resh schliesst das Wort mit einer neuen Ausrichtung: Eine Spur wird lesbar.",
+        detail: "Resh schließt das Wort mit einer neuen Ausrichtung: Eine Spur wird lesbar.",
       },
     ],
   },
