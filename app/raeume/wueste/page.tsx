@@ -1,4 +1,4 @@
-import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import WildernessRoom from "@/components/rooms/wueste/WildernessRoom";
 import { wuesteEngineData } from "@/components/rooms/wueste/wuesteEngineData";
 import {
   resolveRoomInitialStateId,
@@ -20,5 +20,5 @@ export default async function WuesteRaumPage({ searchParams }: { searchParams: R
   });
   const roomContext = resolveRoomContext(resolvedSearchParams, "wueste");
 
-  return <SymbolEngineRoom data={wuesteEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
+  return <WildernessRoom initialStateId={initialStateId} roomContext={roomContext} />;
 }

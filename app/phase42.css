@@ -2951,3 +2951,658 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* Phase 42J - seven thresholds through the wilderness. */
+.wilderness-way {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  overflow-x: clip;
+  background: #01040b;
+  color: rgba(var(--foreground-rgb), .95);
+}
+
+.wilderness-way__scenes,
+.wilderness-way__scene,
+.wilderness-way__veil,
+.wilderness-way__dust,
+.wilderness-way__horizon,
+.wilderness-way__path,
+.wilderness-way__threshold,
+.wilderness-way__grain,
+.wilderness-way__voice-line,
+.wilderness-way__bread-sign {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.wilderness-way__scene {
+  opacity: 0;
+  transform: scale(1.045);
+  transition: opacity 1.8s ease, transform 7s ease;
+}
+
+.wilderness-way__scene.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.wilderness-way__image {
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(.52) contrast(1.06) brightness(.36);
+}
+
+.wilderness-way--herausgefuehrt .wilderness-way__image,
+.wilderness-way--pruefung .wilderness-way__image {
+  filter: saturate(.58) contrast(1.08) brightness(.42);
+}
+
+.wilderness-way--midbar .wilderness-way__image,
+.wilderness-way--stimme .wilderness-way__image {
+  filter: saturate(.48) contrast(1.04) brightness(.34);
+}
+
+.wilderness-way--manna .wilderness-way__image,
+.wilderness-way--brot .wilderness-way__image {
+  filter: saturate(.64) contrast(1.05) brightness(.48);
+}
+
+.wilderness-way__veil {
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 48% 35% at 52% 72%, rgba(194, 139, 64, .09), transparent 70%),
+    radial-gradient(ellipse 62% 44% at 58% 18%, rgba(54, 111, 132, .035), transparent 72%),
+    linear-gradient(90deg, rgba(0, 3, 10, .94), rgba(1, 7, 17, .54) 52%, rgba(0, 3, 10, .9)),
+    linear-gradient(180deg, rgba(0, 2, 8, .82), transparent 34%, rgba(0, 2, 8, .92));
+  transition: opacity 1.8s ease, background 1.8s ease;
+}
+
+.wilderness-way--leere .wilderness-way__veil { opacity: .98; }
+.wilderness-way--herausgefuehrt .wilderness-way__veil { opacity: .9; }
+.wilderness-way--midbar .wilderness-way__veil { opacity: .84; }
+.wilderness-way--pruefung .wilderness-way__veil { opacity: .88; }
+.wilderness-way--manna .wilderness-way__veil { opacity: .76; }
+.wilderness-way--stimme .wilderness-way__veil { opacity: .82; }
+.wilderness-way--brot .wilderness-way__veil { opacity: .68; }
+
+.wilderness-way__dust {
+  z-index: 2;
+  inset: 10% -18% 12%;
+  background:
+    radial-gradient(ellipse at 44% 64%, rgba(216, 187, 132, .08), transparent 60%),
+    radial-gradient(ellipse at 66% 42%, rgba(98, 130, 137, .045), transparent 68%);
+  filter: blur(3.4rem);
+  opacity: .34;
+  animation: wilderness-dust-drift 19s ease-in-out infinite;
+}
+
+.wilderness-way__horizon {
+  z-index: 2;
+  opacity: .62;
+  background:
+    linear-gradient(180deg, transparent 50%, rgba(172, 119, 54, .08) 69%, rgba(224, 176, 93, .2) 78%, rgba(2, 5, 10, .28) 92%),
+    linear-gradient(90deg, transparent 8%, rgba(229, 190, 111, .2) 45%, rgba(236, 210, 155, .28) 50%, rgba(229, 190, 111, .13) 58%, transparent 92%);
+  transition: opacity 1.6s ease, transform 1.8s ease;
+}
+
+.wilderness-way--leere .wilderness-way__horizon {
+  opacity: .42;
+}
+
+.wilderness-way--brot .wilderness-way__horizon,
+.wilderness-way--manna .wilderness-way__horizon {
+  opacity: .9;
+}
+
+.wilderness-way__path {
+  z-index: 2;
+  top: 36%;
+  left: 47%;
+  width: min(42rem, 42vw);
+  height: 66%;
+  background: linear-gradient(178deg, rgba(231, 206, 151, .17), rgba(156, 109, 52, .06) 46%, transparent 88%);
+  clip-path: polygon(46% 0, 54% 0, 88% 100%, 12% 100%);
+  filter: blur(1.15rem);
+  opacity: .18;
+  transform: translateX(-50%);
+  transition: opacity 1.7s ease, transform 1.7s ease;
+}
+
+.wilderness-way--herausgefuehrt .wilderness-way__path,
+.wilderness-way--pruefung .wilderness-way__path,
+.wilderness-way--stimme .wilderness-way__path,
+.wilderness-way--brot .wilderness-way__path {
+  opacity: .68;
+  transform: translateX(-45%);
+}
+
+.wilderness-way__threshold {
+  z-index: 2;
+  opacity: 0;
+  background:
+    linear-gradient(90deg, transparent 43%, rgba(236, 209, 151, .14) 49.8%, rgba(248, 229, 184, .3) 50%, rgba(236, 209, 151, .12) 50.2%, transparent 57%),
+    radial-gradient(ellipse 18% 54% at 50% 38%, rgba(230, 191, 113, .14), transparent 72%);
+  filter: blur(.75rem);
+  transition: opacity 1.7s ease;
+}
+
+.wilderness-way--letter-dalet .wilderness-way__threshold,
+.wilderness-way--herausgefuehrt .wilderness-way__threshold {
+  opacity: .76;
+}
+
+.wilderness-way__grain {
+  z-index: 2;
+  opacity: .14;
+  background-image:
+    radial-gradient(circle at 19% 69%, rgba(244, 224, 177, .28) 0 1px, transparent 2px),
+    radial-gradient(circle at 38% 76%, rgba(224, 176, 93, .18) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 67%, rgba(246, 236, 206, .2) 0 1px, transparent 2px),
+    radial-gradient(circle at 79% 82%, rgba(196, 145, 73, .16) 0 1px, transparent 2px);
+  background-size: 13rem 11rem, 17rem 14rem, 20rem 16rem, 24rem 18rem;
+  transition: opacity 1.5s ease;
+  animation: wilderness-grain-drift 26s linear infinite;
+}
+
+.wilderness-way--manna .wilderness-way__grain,
+.wilderness-way--brot .wilderness-way__grain {
+  opacity: .86;
+}
+
+.wilderness-way__voice-line {
+  z-index: 2;
+  opacity: 0;
+  background:
+    linear-gradient(104deg, transparent 28%, rgba(104, 175, 185, .06) 46%, rgba(241, 219, 171, .2) 50%, rgba(104, 175, 185, .05) 54%, transparent 72%),
+    radial-gradient(ellipse 36% 10% at 52% 54%, rgba(240, 220, 172, .14), transparent 70%);
+  filter: blur(.9rem);
+  transition: opacity 1.7s ease;
+}
+
+.wilderness-way--stimme .wilderness-way__voice-line,
+.wilderness-way--letter-resh .wilderness-way__voice-line {
+  opacity: .85;
+}
+
+.wilderness-way__bread-sign {
+  z-index: 2;
+  inset: auto auto 23% 58%;
+  width: min(15rem, 38vw);
+  aspect-ratio: 1.36;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 50% 58%, rgba(244, 218, 158, .35), transparent 64%),
+    radial-gradient(ellipse at 50% 50%, rgba(166, 100, 45, .2), transparent 72%);
+  filter: blur(1rem);
+  opacity: 0;
+  transform: translateX(-50%) scale(.82);
+  transition: opacity 1.6s ease, transform 1.6s ease;
+}
+
+.wilderness-way--brot .wilderness-way__bread-sign {
+  opacity: .88;
+  transform: translateX(-50%) scale(1);
+}
+
+.wilderness-way--letter-mem .wilderness-way__dust {
+  opacity: .5;
+  background:
+    radial-gradient(ellipse at 42% 62%, rgba(92, 158, 176, .08), transparent 62%),
+    radial-gradient(ellipse at 58% 48%, rgba(214, 189, 133, .07), transparent 68%);
+}
+
+.wilderness-way--letter-bet .wilderness-way__bread-sign {
+  opacity: .42;
+  transform: translateX(-50%) scale(.76);
+}
+
+.wilderness-way__navigation {
+  position: absolute;
+  z-index: 4;
+  top: clamp(7rem, 12vh, 9rem);
+  left: clamp(1.25rem, 5vw, 5rem);
+  right: clamp(1.25rem, 5vw, 5rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .56rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+
+.wilderness-way__navigation > p {
+  color: rgba(232, 196, 125, .78);
+}
+
+.wilderness-way__navigation ol {
+  display: flex;
+  align-items: center;
+  gap: clamp(.72rem, 2.1vw, 2.2rem);
+}
+
+.wilderness-way__navigation button {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  color: rgba(var(--foreground-rgb), .3);
+  transition: color .8s ease;
+}
+
+.wilderness-way__navigation button > span {
+  width: .38rem;
+  height: .38rem;
+  border: 1px solid rgba(232, 196, 125, .3);
+  border-radius: 999px;
+  transition: background .8s ease, box-shadow .8s ease, transform .8s ease;
+}
+
+.wilderness-way__navigation button.is-past,
+.wilderness-way__navigation button.is-active {
+  color: rgba(var(--foreground-rgb), .72);
+}
+
+.wilderness-way__navigation button.is-past > span {
+  background: rgba(176, 121, 58, .58);
+}
+
+.wilderness-way__navigation button.is-active > span {
+  background: rgba(242, 215, 160, .94);
+  box-shadow: 0 0 1.25rem rgba(215, 158, 78, .36);
+  transform: scale(1.35);
+}
+
+.wilderness-way__moment {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  min-height: 100svh;
+  width: min(51rem, 100%);
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(11rem, 22vh, 16rem) clamp(1.25rem, 6vw, 6rem) clamp(5.5rem, 10vh, 8rem);
+  animation: wilderness-arrive 1.25s ease both;
+}
+
+.wilderness-way--midbar .wilderness-way__moment,
+.wilderness-way--brot .wilderness-way__moment {
+  width: min(57rem, 100%);
+}
+
+.wilderness-way__counter {
+  color: rgba(var(--gold-rgb), .72);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .58rem;
+  line-height: 1.6;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+}
+
+.wilderness-way__moment h1 {
+  max-width: 46rem;
+  margin-top: 1.15rem;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(2.45rem, 5.35vw, 5.05rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.035;
+  text-wrap: balance;
+  text-shadow: 0 1rem 3rem rgba(0, 0, 0, .64);
+}
+
+.wilderness-way--pruefung .wilderness-way__moment h1,
+.wilderness-way--manna .wilderness-way__moment h1 {
+  font-size: clamp(2.2rem, 4.85vw, 4.55rem);
+}
+
+.wilderness-way__copy,
+.wilderness-way__revelation {
+  max-width: 36rem;
+  margin-top: 1.45rem;
+  color: rgba(var(--foreground-rgb), .7);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(1.05rem, 2vw, 1.38rem);
+  font-style: italic;
+  line-height: 1.65;
+}
+
+.wilderness-way__revelation {
+  margin-top: 1.9rem;
+  color: rgba(244, 226, 185, .94);
+  font-size: clamp(1.2rem, 2.3vw, 1.65rem);
+}
+
+.wilderness-way__word {
+  width: min(38rem, 100%);
+  margin-bottom: .9rem;
+}
+
+.wilderness-way__word > p {
+  width: fit-content;
+  margin: 0 0 .8rem;
+  color: rgba(242, 222, 181, .94);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(5.2rem, 13vw, 9.4rem);
+  line-height: .9;
+  text-shadow: 0 0 2.1rem rgba(105, 183, 190, .12), 0 0 5rem rgba(226, 177, 91, .08);
+}
+
+.wilderness-way__word > div {
+  display: flex;
+  gap: .75rem;
+  align-items: stretch;
+}
+
+.wilderness-way__word button {
+  display: grid;
+  min-width: 5.25rem;
+  border: 1px solid rgba(232, 196, 125, .14);
+  padding: .7rem .85rem .65rem;
+  background: linear-gradient(145deg, rgba(7, 10, 15, .72), rgba(2, 7, 14, .42));
+  color: rgba(var(--foreground-rgb), .56);
+  transition: border-color .6s ease, color .6s ease, background .6s ease, transform .6s ease;
+}
+
+.wilderness-way__word button span {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 2.55rem;
+  line-height: 1;
+}
+
+.wilderness-way__word button small {
+  margin-top: .35rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .54rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.wilderness-way__word button:hover,
+.wilderness-way__word button:focus-visible,
+.wilderness-way__word button.is-active {
+  border-color: rgba(232, 196, 125, .44);
+  background: linear-gradient(145deg, rgba(232, 196, 125, .08), rgba(2, 8, 15, .5));
+  color: rgba(244, 226, 185, .95);
+  transform: translateY(-.12rem);
+}
+
+.wilderness-way__letter-note {
+  max-width: 35rem;
+  min-height: 4.2rem;
+  margin-top: 1.2rem;
+  border-left: 1px solid rgba(232, 196, 125, .24);
+  padding-left: 1rem;
+  color: rgba(var(--foreground-rgb), .66);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: .95rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.wilderness-way__letter-note strong,
+.wilderness-way__letter-note span {
+  display: block;
+}
+
+.wilderness-way__letter-note strong {
+  color: rgba(var(--gold-rgb), .9);
+  font-weight: 400;
+}
+
+.wilderness-way__letter-note span {
+  margin-top: .35rem;
+}
+
+.wilderness-way__movement,
+.wilderness-way__echoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem 1.15rem;
+  max-width: 42rem;
+  margin-top: 1.7rem;
+  color: rgba(var(--foreground-rgb), .5);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .56rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.wilderness-way__movement span {
+  color: rgba(239, 202, 137, .72);
+}
+
+.wilderness-way__echoes span {
+  color: rgba(var(--foreground-rgb), .4);
+}
+
+.wilderness-way__continue,
+.wilderness-way__primary-exit {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.1rem;
+  border-bottom: 1px solid rgba(232, 196, 125, .5);
+  padding: .75rem 0 .85rem;
+  color: rgba(244, 226, 185, .92);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .6rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+}
+
+.wilderness-way__continue span,
+.wilderness-way__primary-exit span {
+  width: 2.75rem;
+  height: 1px;
+  flex: 0 0 auto;
+  background: linear-gradient(90deg, rgba(232, 196, 125, .84), transparent);
+  transition: width .6s ease;
+}
+
+.wilderness-way__continue:hover span,
+.wilderness-way__continue:focus-visible span,
+.wilderness-way__primary-exit:hover span,
+.wilderness-way__primary-exit:focus-visible span {
+  width: 4rem;
+}
+
+.wilderness-way__return {
+  width: fit-content;
+  max-width: 34rem;
+  margin-top: 1.4rem;
+  color: rgba(var(--foreground-rgb), .46);
+  font-size: .68rem;
+  line-height: 1.5;
+}
+
+.wilderness-way__codex-exits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem 1.25rem;
+  max-width: 43rem;
+  margin-top: 1.4rem;
+}
+
+.wilderness-way__codex-exits a {
+  color: rgba(var(--foreground-rgb), .48);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .55rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  transition: color .5s ease;
+}
+
+.wilderness-way__codex-exits a:hover,
+.wilderness-way__codex-exits a:focus-visible {
+  color: rgba(var(--gold-rgb), .82);
+}
+
+.wilderness-way__trace {
+  position: absolute;
+  z-index: 4;
+  right: clamp(1.25rem, 5vw, 5rem);
+  bottom: clamp(1.25rem, 4vh, 3rem);
+  width: min(22rem, 34vw);
+}
+
+.wilderness-way__trace .symbol-engine__personal-trace {
+  margin: 0;
+  border: 0;
+  border-left: 1px solid rgba(232, 196, 125, .14);
+  padding: .25rem 0 .25rem 1rem;
+  background: transparent;
+  box-shadow: none;
+  opacity: .66;
+}
+
+.wilderness-way__trace .symbol-engine__personal-trace-preview,
+.wilderness-way__trace .symbol-engine__personal-trace-actions {
+  display: none;
+}
+
+@keyframes wilderness-arrive {
+  from { opacity: 0; transform: translateY(1.25rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wilderness-dust-drift {
+  0%, 100% { opacity: .28; transform: translate3d(-2%, 0, 0) scale(1); }
+  50% { opacity: .5; transform: translate3d(3%, -2%, 0) scale(1.05); }
+}
+
+@keyframes wilderness-grain-drift {
+  from { background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 12rem -18rem, -17rem -21rem, 20rem -22rem, -24rem -26rem; }
+}
+
+@media (max-width: 767px) {
+  .wilderness-way__navigation {
+    top: 6.2rem;
+    justify-content: space-between;
+    gap: .8rem;
+  }
+
+  .wilderness-way__navigation > p {
+    font-size: .5rem;
+  }
+
+  .wilderness-way__navigation ol {
+    gap: .72rem;
+  }
+
+  .wilderness-way__navigation button b {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .wilderness-way__moment {
+    min-height: 100svh;
+    width: 100%;
+    padding: 10rem 1.25rem 5.25rem;
+  }
+
+  .wilderness-way__moment h1,
+  .wilderness-way--pruefung .wilderness-way__moment h1,
+  .wilderness-way--manna .wilderness-way__moment h1 {
+    max-width: 22rem;
+    font-size: clamp(2rem, 9.6vw, 3.15rem);
+    line-height: 1.05;
+  }
+
+  .wilderness-way__copy {
+    max-width: 21rem;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .wilderness-way__revelation {
+    max-width: 22rem;
+    font-size: 1.16rem;
+  }
+
+  .wilderness-way__word > p {
+    font-size: clamp(4.55rem, 23vw, 6.65rem);
+  }
+
+  .wilderness-way__word > div {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .45rem;
+    width: min(100%, 21rem);
+  }
+
+  .wilderness-way__word button {
+    min-width: 0;
+    padding-inline: .45rem;
+  }
+
+  .wilderness-way__word button span {
+    font-size: 1.9rem;
+  }
+
+  .wilderness-way__word button small {
+    font-size: .46rem;
+    letter-spacing: .1em;
+  }
+
+  .wilderness-way__letter-note {
+    max-width: 21rem;
+  }
+
+  .wilderness-way__continue,
+  .wilderness-way__primary-exit {
+    white-space: normal;
+    letter-spacing: .18em;
+    line-height: 1.35;
+  }
+
+  .wilderness-way__codex-exits {
+    display: grid;
+    gap: .65rem;
+  }
+
+  .wilderness-way__trace {
+    top: auto;
+    right: 1.25rem;
+    bottom: 1.15rem;
+    width: min(12rem, calc(100vw - 5.5rem));
+    font-size: .62rem;
+    opacity: .45;
+    pointer-events: none;
+  }
+
+  .wilderness-way__path {
+    left: 58%;
+    width: 54vw;
+  }
+
+  .wilderness-way__bread-sign {
+    left: 65%;
+    bottom: 31%;
+    width: min(12rem, 48vw);
+  }
+
+  .wilderness-way__veil {
+    background:
+      radial-gradient(ellipse 58% 38% at 50% 44%, rgba(194, 139, 64, .065), transparent 68%),
+      linear-gradient(90deg, rgba(0, 3, 10, .88), rgba(1, 7, 17, .56) 62%, rgba(0, 3, 10, .86)),
+      linear-gradient(180deg, rgba(0, 2, 8, .78), transparent 34%, rgba(0, 2, 8, .91));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wilderness-way *,
+  .wilderness-way *::before,
+  .wilderness-way *::after {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+}
