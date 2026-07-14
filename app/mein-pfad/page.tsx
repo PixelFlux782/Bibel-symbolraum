@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
+  FIRST_JOURNEY_SUMMARY_CONTEXT,
+  FIRST_JOURNEY_SUMMARY_EVENT_ID,
+  FIRST_JOURNEY_SUMMARY_ROUTE,
+  getFirstJourneyState,
+} from "@/lib/firstJourneySummary";
+import {
   FIRST_MOVEMENT_COMPLETION_EVENT_ID,
   getPersonalPathEvents,
   getPersonalPathEventSentence,
@@ -36,6 +42,10 @@ function formatDate(value: string) {
 }
 
 function getEventHref(event: PersonalPathEvent) {
+  if (event.id === FIRST_JOURNEY_SUMMARY_EVENT_ID || event.targetId === "tiefe-bis-brot") {
+    return FIRST_JOURNEY_SUMMARY_ROUTE;
+  }
+
   if (event.type === "room_entered" && event.roomId) {
     return getSymbolPathConfig(event.roomId)?.roomHref ?? `/raeume/${event.roomId}`;
   }
@@ -52,6 +62,10 @@ function getEventHref(event: PersonalPathEvent) {
 }
 
 function getEventSentence(event: PersonalPathEvent) {
+  if (event.id === FIRST_JOURNEY_SUMMARY_EVENT_ID || event.targetId === "tiefe-bis-brot") {
+    return "Von der Tiefe zum Brot: Der erste Weg wurde zur Zusammenschau.";
+  }
+
   return getPersonalPathEventSentence(event);
 }
 
@@ -158,6 +172,8 @@ export default function MeinPfadPage() {
   );
   const movementLabels = useMemo(() => getMovementLabels(sortedEvents), [sortedEvents]);
   const nextThreshold = useMemo(() => getNextThreshold(sortedEvents), [sortedEvents]);
+  const firstJourneyState = useMemo(() => getFirstJourneyState({ events: sortedEvents }), [sortedEvents]);
+  const showFirstJourneyMarker = firstJourneyState.completed || firstJourneyState.hasSummaryMarker;
   const latestEvent = sortedEvents[0];
 
   return (
@@ -221,6 +237,22 @@ export default function MeinPfadPage() {
                   <h2>{movementLabels.join(" / ")}</h2>
                   <p>Diese Bewegung entsteht nur aus Orten, die du betreten oder beruehrt hast.</p>
                 </div>
+              </section>
+            ) : null}
+
+            {showFirstJourneyMarker ? (
+              <section className="symbol-personal-way symbol-personal-way--summary" aria-label="Wegzeichen">
+                <div className="symbol-personal-way__head">
+                  <p className="symbol-kicker">Wegzeichen</p>
+                  <h2>Von der Tiefe zum Brot</h2>
+                  <p>Wasser → Licht → Feuer → Wüste → Brot</p>
+                </div>
+                <p className="symbol-personal-way__memory">
+                  {FIRST_JOURNEY_SUMMARY_CONTEXT}
+                </p>
+                <Link href={FIRST_JOURNEY_SUMMARY_ROUTE} className="symbol-archive-action">
+                  Zusammenschau erneut öffnen
+                </Link>
               </section>
             ) : null}
 

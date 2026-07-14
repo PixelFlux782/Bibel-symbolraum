@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RoomPersonalTraceCard } from "@/components/rooms/engine/RoomPersonalTraceCard";
+import {
+  FIRST_JOURNEY_SUMMARY_ROUTE,
+  hasFirstJourneyCompleted,
+} from "@/lib/firstJourneySummary";
 import { recordActivatedLetter, recordRoomVisitForRoute } from "@/lib/pathActivity";
 import type { RoomContext } from "@/lib/rooms/roomContext";
 import { getSymbolPathConfig } from "@/lib/symbols/symbolPathConfig";
@@ -156,6 +160,7 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
   const initialIndex = Math.max(0, thresholds.findIndex((item) => item.id === initialId));
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [letterMode, setLetterMode] = useState<(typeof lechemLetters)[number]["mode"]>("lamed");
+  const [isJourneyComplete, setIsJourneyComplete] = useState(false);
   const active = thresholds[activeIndex];
   const activeLetter = lechemLetters.find((letter) => letter.mode === letterMode) ?? lechemLetters[0];
   const symbolPath = useMemo(() => getSymbolPathConfig("brot"), []);
@@ -166,6 +171,7 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
       roomHref: symbolPath?.roomHref ?? "/raeume/brot",
       routeKey: "room:brot",
     });
+    window.queueMicrotask(() => setIsJourneyComplete(hasFirstJourneyCompleted()));
   }, [symbolPath?.roomHref]);
 
   const selectThreshold = (index: number) => {
@@ -288,6 +294,15 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
             <Link href={symbolPath?.symbolNetworkHref ?? "/symbolnetz?symbol=brot"} className="bread-sanctum__primary-exit">
               Brot im Symbolnetz wiedersehen <span aria-hidden="true" />
             </Link>
+            {isJourneyComplete ? (
+              <Link href={FIRST_JOURNEY_SUMMARY_ROUTE} className="bread-sanctum__primary-exit bread-sanctum__primary-exit--summary">
+                Von der Tiefe zum Brot schauen <span aria-hidden="true" />
+              </Link>
+            ) : (
+              <p className="bread-sanctum__summary-hint">
+                Wenn der Weg vollständig gegangen ist, öffnet sich die Zusammenschau.
+              </p>
+            )}
             <div className="bread-sanctum__codex-exits" aria-label="Leise Spuren zur Vertiefung">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
             </div>
