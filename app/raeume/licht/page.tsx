@@ -1,4 +1,4 @@
-import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import LightRoom from "@/components/rooms/light/LightRoom";
 import { lightEngineData } from "@/components/rooms/light/lightEngineData";
 import {
   resolveRoomInitialStateId,
@@ -20,5 +20,5 @@ export default async function LichtRaumPage({ searchParams }: { searchParams: Ro
   });
   const roomContext = resolveRoomContext(resolvedSearchParams, "licht");
 
-  return <SymbolEngineRoom data={lightEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
+  return <LightRoom initialStateId={initialStateId} roomContext={roomContext} />;
 }

@@ -1592,3 +1592,676 @@
     mask-image: linear-gradient(90deg, #000 0 88%, transparent);
   }
 }
+
+/* Phase 42H · Licht als Offenbarungsraum. */
+.light-revelation {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  overflow-x: clip;
+  background: #01040a;
+  color: rgba(var(--foreground-rgb), .95);
+}
+
+.light-revelation__scenes,
+.light-revelation__scene,
+.light-revelation__veil,
+.light-revelation__mist,
+.light-revelation__waterline,
+.light-revelation__voice,
+.light-revelation__axis,
+.light-revelation__boundary,
+.light-revelation__particles,
+.light-revelation__ember {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.light-revelation__scene {
+  opacity: 0;
+  transform: scale(1.055);
+  transition: opacity 1.8s ease, transform 7s ease;
+}
+
+.light-revelation__scene.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.light-revelation__image {
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(.72) contrast(1.08) brightness(.72);
+}
+
+.light-revelation--darkness .light-revelation__image {
+  filter: saturate(.55) contrast(1.05) brightness(.32);
+}
+
+.light-revelation--voice .light-revelation__image {
+  filter: saturate(.62) contrast(1.04) brightness(.42);
+}
+
+.light-revelation--genesis .light-revelation__image,
+.light-revelation--boundary .light-revelation__image,
+.light-revelation--tov .light-revelation__image {
+  filter: saturate(.78) contrast(1.06) brightness(.82);
+}
+
+.light-revelation--fire .light-revelation__image {
+  filter: saturate(.82) contrast(1.05) brightness(.68);
+}
+
+.light-revelation__veil {
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 56% 40% at 50% 36%, rgba(225, 196, 132, .025), transparent 68%),
+    radial-gradient(ellipse 66% 50% at 50% 105%, rgba(70, 141, 160, .055), transparent 72%),
+    linear-gradient(90deg, rgba(0, 3, 9, .9), rgba(0, 5, 13, .58) 48%, rgba(0, 3, 9, .88)),
+    linear-gradient(180deg, rgba(0, 2, 7, .72), transparent 34%, rgba(0, 2, 7, .86));
+  transition: opacity 1.8s ease, background 1.8s ease;
+}
+
+.light-revelation--darkness .light-revelation__veil { opacity: .96; }
+.light-revelation--voice .light-revelation__veil { opacity: .9; }
+.light-revelation--or .light-revelation__veil { opacity: .78; }
+.light-revelation--genesis .light-revelation__veil { opacity: .62; }
+.light-revelation--boundary .light-revelation__veil { opacity: .66; }
+.light-revelation--tov .light-revelation__veil { opacity: .56; }
+.light-revelation--fire .light-revelation__veil { opacity: .68; }
+
+.light-revelation__mist {
+  z-index: 2;
+  inset: 18% -18% 20%;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(174, 205, 207, .07), transparent 66%),
+    radial-gradient(ellipse at 52% 58%, rgba(226, 196, 132, .045), transparent 62%);
+  filter: blur(3.4rem);
+  opacity: .42;
+  animation: light-revelation-mist 14s ease-in-out infinite;
+}
+
+.light-revelation__waterline {
+  z-index: 2;
+  top: 57%;
+  bottom: auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 8%, rgba(107, 178, 194, .07) 36%, rgba(225, 199, 143, .16) 64%, transparent 94%);
+  box-shadow: 0 0 2rem rgba(104, 178, 195, .08);
+  opacity: .38;
+}
+
+.light-revelation__voice {
+  z-index: 2;
+  inset: 0 18%;
+  background:
+    linear-gradient(90deg, transparent 0 35%, rgba(226, 196, 132, .08) 49.8%, rgba(226, 196, 132, .16) 50%, rgba(226, 196, 132, .08) 50.2%, transparent 65%),
+    radial-gradient(ellipse 18% 36% at 50% 43%, rgba(226, 196, 132, .08), transparent 70%);
+  filter: blur(.45rem);
+  opacity: 0;
+  transform: scaleY(.64);
+  transition: opacity 1.4s ease, transform 2s ease;
+}
+
+.light-revelation--voice .light-revelation__voice,
+.light-revelation--or .light-revelation__voice {
+  opacity: .72;
+  transform: scaleY(1);
+  animation: light-revelation-voice 5.5s ease-in-out infinite;
+}
+
+.light-revelation__axis {
+  z-index: 2;
+  background:
+    linear-gradient(96deg, transparent 40%, rgba(255, 226, 163, .18) 49%, rgba(255, 238, 197, .42) 50%, rgba(255, 226, 163, .16) 51%, transparent 63%),
+    radial-gradient(ellipse 16% 54% at 50% 30%, rgba(226, 196, 132, .22), transparent 72%);
+  filter: blur(.75rem);
+  opacity: 0;
+  transition: opacity 1.8s ease;
+}
+
+.light-revelation--genesis .light-revelation__axis,
+.light-revelation--boundary .light-revelation__axis,
+.light-revelation--tov .light-revelation__axis,
+.light-revelation--fire .light-revelation__axis {
+  opacity: .9;
+}
+
+.light-revelation--letter-waw .light-revelation__axis {
+  opacity: .86;
+}
+
+.light-revelation__boundary {
+  z-index: 2;
+  opacity: 0;
+  background:
+    linear-gradient(180deg, transparent 45%, rgba(226, 196, 132, .19) 49.8%, rgba(234, 215, 174, .3) 50%, rgba(226, 196, 132, .12) 50.2%, transparent 57%),
+    radial-gradient(ellipse 58% 12% at 50% 50%, rgba(95, 178, 194, .08), transparent 72%);
+  filter: blur(.55rem);
+  transition: opacity 1.6s ease;
+}
+
+.light-revelation--boundary .light-revelation__boundary,
+.light-revelation--tov .light-revelation__boundary {
+  opacity: .78;
+}
+
+.light-revelation__particles {
+  z-index: 2;
+  opacity: 0;
+  background-image:
+    radial-gradient(circle at 24% 35%, rgba(238, 224, 186, .2) 0 1px, transparent 2px),
+    radial-gradient(circle at 54% 61%, rgba(185, 216, 218, .13) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 44%, rgba(226, 196, 132, .16) 0 1px, transparent 2px);
+  background-size: 14rem 12rem, 18rem 16rem, 22rem 18rem;
+  transition: opacity 1.6s ease;
+  animation: light-revelation-particles 22s linear infinite;
+}
+
+.light-revelation--or .light-revelation__particles,
+.light-revelation--genesis .light-revelation__particles,
+.light-revelation--tov .light-revelation__particles,
+.light-revelation--fire .light-revelation__particles {
+  opacity: .7;
+}
+
+.light-revelation__ember {
+  z-index: 2;
+  inset: auto auto 18% 50%;
+  width: min(18rem, 44vw);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(255, 195, 104, .34), rgba(210, 111, 44, .13) 34%, transparent 68%);
+  filter: blur(2rem);
+  opacity: 0;
+  transform: translateX(-50%) scale(.68);
+  transition: opacity 1.8s ease, transform 1.8s ease;
+}
+
+.light-revelation--fire .light-revelation__ember {
+  opacity: .88;
+  transform: translateX(-50%) scale(1);
+  animation: light-revelation-ember 4.8s ease-in-out infinite;
+}
+
+.light-revelation__navigation {
+  position: absolute;
+  z-index: 4;
+  top: clamp(7rem, 12vh, 9rem);
+  left: clamp(1.25rem, 5vw, 5rem);
+  right: clamp(1.25rem, 5vw, 5rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .56rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+
+.light-revelation__navigation > p {
+  color: rgba(var(--gold-rgb), .78);
+}
+
+.light-revelation__navigation ol {
+  display: flex;
+  align-items: center;
+  gap: clamp(.8rem, 2.4vw, 2.4rem);
+}
+
+.light-revelation__navigation button {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  color: rgba(var(--foreground-rgb), .32);
+  transition: color .8s ease;
+}
+
+.light-revelation__navigation button > span {
+  width: .38rem;
+  height: .38rem;
+  border: 1px solid rgba(var(--gold-rgb), .26);
+  border-radius: 999px;
+  transition: background .8s ease, box-shadow .8s ease, transform .8s ease;
+}
+
+.light-revelation__navigation button.is-past,
+.light-revelation__navigation button.is-active {
+  color: rgba(var(--foreground-rgb), .72);
+}
+
+.light-revelation__navigation button.is-past > span {
+  background: rgba(var(--cyan-rgb), .36);
+}
+
+.light-revelation__navigation button.is-active > span {
+  background: rgba(var(--gold-rgb), .9);
+  box-shadow: 0 0 1.25rem rgba(var(--gold-rgb), .38);
+  transform: scale(1.35);
+}
+
+.light-revelation__moment {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  min-height: 100svh;
+  width: min(48rem, 100%);
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(11rem, 22vh, 16rem) clamp(1.25rem, 6vw, 6rem) clamp(5.5rem, 10vh, 8rem);
+  animation: light-revelation-arrive 1.25s ease both;
+}
+
+.light-revelation--or .light-revelation__moment,
+.light-revelation--tov .light-revelation__moment {
+  width: min(56rem, 100%);
+}
+
+.light-revelation__counter {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .58rem;
+  line-height: 1.6;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: rgba(var(--cyan-rgb), .72);
+}
+
+.light-revelation__formula {
+  width: fit-content;
+  margin: 1.1rem 0 -.2rem;
+  border-block: 1px solid rgba(var(--gold-rgb), .18);
+  padding: .55rem 1rem;
+  color: rgba(238, 220, 177, .9);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(2.4rem, 7vw, 5.4rem);
+  line-height: .95;
+  text-shadow: 0 0 2rem rgba(var(--gold-rgb), .15);
+}
+
+.light-revelation__moment h1 {
+  max-width: 45rem;
+  margin-top: 1.15rem;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(2.7rem, 5.8vw, 5.5rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.02;
+  text-wrap: balance;
+  text-shadow: 0 1rem 3rem rgba(0, 0, 0, .58);
+}
+
+.light-revelation--genesis .light-revelation__moment h1,
+.light-revelation--tov .light-revelation__moment h1 {
+  font-size: clamp(2.25rem, 4.9vw, 4.7rem);
+}
+
+.light-revelation__copy,
+.light-revelation__revelation {
+  max-width: 36rem;
+  margin-top: 1.45rem;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(1.05rem, 2vw, 1.38rem);
+  font-style: italic;
+  line-height: 1.65;
+  color: rgba(var(--foreground-rgb), .7);
+}
+
+.light-revelation__revelation {
+  margin-top: 1.9rem;
+  color: rgba(242, 221, 174, .95);
+  font-size: clamp(1.22rem, 2.35vw, 1.7rem);
+}
+
+.light-revelation__word {
+  width: min(36rem, 100%);
+  margin-bottom: .8rem;
+}
+
+.light-revelation__word > p {
+  width: fit-content;
+  margin: 0 0 .8rem;
+  color: rgba(238, 220, 177, .9);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(5rem, 13vw, 9rem);
+  line-height: .9;
+  text-shadow: 0 0 2.4rem rgba(var(--gold-rgb), .16), 0 0 5rem rgba(var(--gold-rgb), .07);
+}
+
+.light-revelation__word > div {
+  display: flex;
+  gap: .75rem;
+  align-items: stretch;
+}
+
+.light-revelation__word button {
+  display: grid;
+  min-width: 5.25rem;
+  border: 1px solid rgba(var(--gold-rgb), .13);
+  padding: .7rem .85rem .65rem;
+  background: linear-gradient(145deg, rgba(5, 12, 20, .72), rgba(2, 7, 13, .42));
+  color: rgba(var(--foreground-rgb), .58);
+  transition: border-color .6s ease, color .6s ease, background .6s ease, transform .6s ease;
+}
+
+.light-revelation__word button span {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.light-revelation__word button small {
+  margin-top: .35rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .54rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.light-revelation__word button:hover,
+.light-revelation__word button:focus-visible,
+.light-revelation__word button.is-active {
+  border-color: rgba(var(--gold-rgb), .4);
+  background: linear-gradient(145deg, rgba(var(--gold-rgb), .09), rgba(2, 7, 13, .52));
+  color: rgba(242, 221, 174, .95);
+  transform: translateY(-.12rem);
+}
+
+.light-revelation__letter-note {
+  max-width: 35rem;
+  min-height: 4.2rem;
+  margin-top: 1.2rem;
+  border-left: 1px solid rgba(var(--gold-rgb), .22);
+  padding-left: 1rem;
+  color: rgba(var(--foreground-rgb), .66);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: .95rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.light-revelation__letter-note strong,
+.light-revelation__letter-note span {
+  display: block;
+}
+
+.light-revelation__letter-note strong {
+  color: rgba(var(--gold-rgb), .9);
+  font-weight: 400;
+}
+
+.light-revelation__letter-note span {
+  margin-top: .35rem;
+}
+
+.light-revelation__trace-line,
+.light-revelation__movement {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .7rem 1.1rem;
+  max-width: 40rem;
+  margin-top: 1.7rem;
+  color: rgba(var(--foreground-rgb), .52);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .56rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.light-revelation__movement i {
+  width: 2.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .58), transparent);
+}
+
+.light-revelation__continue,
+.light-revelation__primary-exit {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.1rem;
+  border-bottom: 1px solid rgba(var(--gold-rgb), .48);
+  padding: .75rem 0 .85rem;
+  color: rgba(242, 222, 174, .92);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .6rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+}
+
+.light-revelation__continue span,
+.light-revelation__primary-exit span {
+  width: 2.75rem;
+  height: 1px;
+  flex: 0 0 auto;
+  background: linear-gradient(90deg, rgba(var(--gold-rgb), .8), transparent);
+  transition: width .6s ease;
+}
+
+.light-revelation__continue:hover span,
+.light-revelation__continue:focus-visible span,
+.light-revelation__primary-exit:hover span,
+.light-revelation__primary-exit:focus-visible span {
+  width: 4rem;
+}
+
+.light-revelation__return {
+  width: fit-content;
+  max-width: 34rem;
+  margin-top: 1.4rem;
+  color: rgba(var(--foreground-rgb), .46);
+  font-size: .68rem;
+  line-height: 1.5;
+}
+
+.light-revelation__codex-exits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem 1.25rem;
+  max-width: 42rem;
+  margin-top: 1.4rem;
+}
+
+.light-revelation__codex-exits a {
+  color: rgba(var(--foreground-rgb), .48);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: .55rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  transition: color .5s ease;
+}
+
+.light-revelation__codex-exits a:hover,
+.light-revelation__codex-exits a:focus-visible {
+  color: rgba(var(--gold-rgb), .82);
+}
+
+.light-revelation__trace {
+  position: absolute;
+  z-index: 4;
+  right: clamp(1.25rem, 5vw, 5rem);
+  bottom: clamp(1.25rem, 4vh, 3rem);
+  width: min(22rem, 34vw);
+}
+
+.light-revelation__trace .symbol-engine__personal-trace {
+  margin: 0;
+  border: 0;
+  border-left: 1px solid rgba(var(--gold-rgb), .14);
+  padding: .25rem 0 .25rem 1rem;
+  background: transparent;
+  box-shadow: none;
+  opacity: .66;
+}
+
+.light-revelation__trace .symbol-engine__personal-trace-preview,
+.light-revelation__trace .symbol-engine__personal-trace-actions {
+  display: none;
+}
+
+.light-revelation--letter-aleph .light-revelation__mist {
+  opacity: .34;
+  filter: blur(4rem);
+}
+
+.light-revelation--letter-resch .light-revelation__particles {
+  opacity: .86;
+}
+
+@keyframes light-revelation-arrive {
+  from { opacity: 0; transform: translateY(1.25rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes light-revelation-mist {
+  0%, 100% { opacity: .35; transform: translate3d(-2%, 0, 0) scale(1); }
+  50% { opacity: .62; transform: translate3d(3%, -2%, 0) scale(1.06); }
+}
+
+@keyframes light-revelation-voice {
+  0%, 100% { filter: blur(.45rem); transform: scaleY(.96); }
+  50% { filter: blur(.75rem); transform: scaleY(1.04); }
+}
+
+@keyframes light-revelation-particles {
+  from { background-position: 0 0, 0 0, 0 0; }
+  to { background-position: 14rem -12rem, -18rem -16rem, 22rem -18rem; }
+}
+
+@keyframes light-revelation-ember {
+  0%, 100% { filter: blur(2rem); }
+  50% { filter: blur(2.6rem); }
+}
+
+@media (max-width: 767px) {
+  .light-revelation__navigation {
+    top: 6.2rem;
+    justify-content: space-between;
+    gap: .8rem;
+  }
+
+  .light-revelation__navigation > p {
+    font-size: .5rem;
+  }
+
+  .light-revelation__navigation ol {
+    gap: .8rem;
+  }
+
+  .light-revelation__navigation button b {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .light-revelation__moment {
+    min-height: 100svh;
+    width: 100%;
+    padding: 10rem 1.25rem 5.25rem;
+  }
+
+  .light-revelation__moment h1,
+  .light-revelation--genesis .light-revelation__moment h1,
+  .light-revelation--tov .light-revelation__moment h1 {
+    max-width: 22rem;
+    font-size: clamp(2.05rem, 10vw, 3.25rem);
+    line-height: 1.05;
+  }
+
+  .light-revelation__copy {
+    max-width: 21rem;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .light-revelation__revelation {
+    max-width: 22rem;
+    font-size: 1.2rem;
+  }
+
+  .light-revelation__formula {
+    font-size: clamp(2.6rem, 16vw, 4.4rem);
+  }
+
+  .light-revelation__word > p {
+    font-size: clamp(4.7rem, 24vw, 6.7rem);
+  }
+
+  .light-revelation__word > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .55rem;
+    width: min(100%, 21rem);
+  }
+
+  .light-revelation__word button {
+    min-width: 0;
+    padding-inline: .55rem;
+  }
+
+  .light-revelation__word button span {
+    font-size: 2rem;
+  }
+
+  .light-revelation__letter-note {
+    max-width: 21rem;
+  }
+
+  .light-revelation__movement i {
+    width: 1.4rem;
+  }
+
+  .light-revelation__continue,
+  .light-revelation__primary-exit {
+    white-space: normal;
+    letter-spacing: .18em;
+    line-height: 1.35;
+  }
+
+  .light-revelation__codex-exits {
+    display: grid;
+    gap: .65rem;
+  }
+
+  .light-revelation__trace {
+    top: 8.4rem;
+    right: 1.25rem;
+    bottom: auto;
+    width: min(15rem, calc(100vw - 2.5rem));
+    font-size: .65rem;
+    opacity: .72;
+  }
+
+  .light-revelation__voice {
+    inset-inline: -10%;
+  }
+
+  .light-revelation__axis {
+    background:
+      linear-gradient(100deg, transparent 34%, rgba(255, 226, 163, .14) 48%, rgba(255, 238, 197, .32) 50%, rgba(255, 226, 163, .12) 52%, transparent 66%),
+      radial-gradient(ellipse 24% 54% at 50% 30%, rgba(226, 196, 132, .18), transparent 72%);
+  }
+
+  .light-revelation__veil {
+    background:
+      radial-gradient(ellipse 58% 38% at 50% 36%, rgba(225, 196, 132, .025), transparent 68%),
+      linear-gradient(90deg, rgba(0, 3, 9, .86), rgba(0, 5, 13, .5) 62%, rgba(0, 3, 9, .82)),
+      linear-gradient(180deg, rgba(0, 2, 7, .76), transparent 34%, rgba(0, 2, 7, .88));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .light-revelation *,
+  .light-revelation *::before,
+  .light-revelation *::after {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+}
