@@ -1,5 +1,5 @@
 import { breadEngineData } from "@/components/rooms/bread/breadEngineData";
-import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import BreadRoom from "@/components/rooms/bread/BreadRoom";
 import {
   resolveRoomInitialStateId,
   type RoomSearchParams,
@@ -20,5 +20,5 @@ export default async function BrotRaumPage({ searchParams }: { searchParams: Roo
   });
   const roomContext = resolveRoomContext(resolvedSearchParams, "brot");
 
-  return <SymbolEngineRoom data={breadEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
+  return <BreadRoom initialStateId={initialStateId} roomContext={roomContext} />;
 }
