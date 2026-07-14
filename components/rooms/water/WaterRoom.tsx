@@ -248,7 +248,7 @@ export default function WaterRoom({ initialStateId, roomContext }: WaterRoomProp
             <p className="water-experience__formula">Tiefe <i>+</i> Ruach <i>+</i> Wort <i>=</i> Anfang der Ordnung</p>
             <div className="water-experience__exits">
               <Link href="/raeume/licht?from=journey&path=journey-wasser-geist&symbol=licht" className="water-experience__primary-exit">
-                Dem Licht entgegengehen <span aria-hidden="true" />
+                Aus der Tiefe ins Licht gehen <span aria-hidden="true" />
               </Link>
               <div className="water-experience__codex-exits" aria-label="Ruhige Archivspuren">
                 {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}

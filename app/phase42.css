@@ -4034,6 +4034,16 @@
   color: rgba(var(--foreground-rgb), .42);
 }
 
+.bread-sanctum__return-note {
+  max-width: 34rem;
+  margin-top: 1.1rem;
+  color: rgba(244, 226, 185, .72);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  font-style: italic;
+  line-height: 1.55;
+}
+
 .bread-sanctum__continue,
 .bread-sanctum__primary-exit {
   display: flex;

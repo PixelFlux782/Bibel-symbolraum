@@ -131,13 +131,13 @@ const orLetters = [
 ] as const;
 
 const archiveExits = [
-  ["Codex Licht", "/codex/licht"],
-  ["Codex OR", "/codex/or"],
-  ["Codex Genesis 1,3", "/codex/genesis-1-3"],
-  ["Codex Tov", "/codex/tov"],
-  ["Codex Raah", "/codex/raah"],
-  ["Codex Ordnung", "/codex/ordnung"],
-  ["Codex Feuer", "/codex/feuer"],
+  ["Licht", "/codex/licht"],
+  ["OR", "/codex/or"],
+  ["Genesis 1,3", "/codex/genesis-1-3"],
+  ["Tov", "/codex/tov"],
+  ["Raah", "/codex/raah"],
+  ["Ordnung", "/codex/ordnung"],
+  ["Feuer", "/codex/feuer"],
 ] as const;
 
 export default function LightRoom({ initialStateId, roomContext }: LightRoomProps) {
@@ -253,7 +253,7 @@ export default function LightRoom({ initialStateId, roomContext }: LightRoomProp
         {active.id === "fire" ? (
           <div className="light-revelation__exits">
             <Link href="/raeume/feuer?from=journey&path=journey-licht-feuer-wort&symbol=feuer" className="light-revelation__primary-exit">
-              Dem Feuer entgegengehen <span aria-hidden="true" />
+              Das Sichtbare im Feuer pruefen <span aria-hidden="true" />
             </Link>
             <div className="light-revelation__codex-exits" aria-label="Ruhige Archivspuren">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}

@@ -119,14 +119,14 @@ const eshLetters = [
 ] as const;
 
 const archiveExits = [
-  ["Codex Feuer", "/codex/feuer"],
-  ["Codex Esch", "/codex/esch"],
-  ["Codex Dornbusch", "/codex/dornbusch"],
-  ["Codex Pruefung", "/codex/pruefung"],
-  ["Codex Reinigung", "/codex/reinigung"],
-  ["Codex Opfer", "/codex/korban"],
-  ["Codex Pfingsten", "/codex/feuer?spur=pfingsten"],
-  ["Codex Wueste", "/codex/wueste"],
+  ["Feuer", "/codex/feuer"],
+  ["Esch", "/codex/esch"],
+  ["Dornbusch", "/codex/exodus-3-2"],
+  ["Reinigung", "/codex/reinigung"],
+  ["Wandlung", "/codex/wandlung"],
+  ["Korban", "/codex/korban"],
+  ["Pfingstspur", "/codex/feuer?spur=pfingsten"],
+  ["Wueste", "/codex/wueste"],
 ] as const;
 
 const presenceEchoes = ["Dornbusch", "Altar", "Opfer", "Feuersaeule", "Tempellicht", "Pfingstflammen"];
@@ -253,7 +253,7 @@ export default function FireRoom({ initialStateId, roomContext }: FireRoomProps)
         {active.id === "sendung" ? (
           <div className="fire-trial__exits">
             <Link href="/raeume/wueste?from=journey&path=journey-licht-feuer-wueste&symbol=wueste" className="fire-trial__primary-exit">
-              In die Wueste gehen <span aria-hidden="true" />
+              Den geklaerten Weg betreten <span aria-hidden="true" />
             </Link>
             <div className="fire-trial__codex-exits" aria-label="Ruhige Archivspuren">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}

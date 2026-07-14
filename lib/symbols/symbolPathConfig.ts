@@ -293,8 +293,8 @@ export const symbolPathConfigs = {
       scriptureAnchors: [
         { id: "exodus-16", reference: "Exodus 16", label: "Exodus 16", href: "/codex/exodus-16" },
         { id: "exodus-16-4", reference: "Exodus 16,4", label: "Exodus 16,4", href: "/codex/exodus-16-4" },
-        { id: "deuteronomium-8", reference: "Deuteronomium 8", label: "Deuteronomium 8", href: "/codex/deuteronomium-8" },
-        { id: "deuteronomium-8-2", reference: "Deuteronomium 8,2", label: "Deuteronomium 8,2", href: "/codex/deuteronomium-8-2" },
+        { id: "deuteronomy-8", reference: "Deuteronomium 8", label: "Deuteronomium 8", href: "/codex/deuteronomy-8" },
+        { id: "deuteronomy-8-3", reference: "Deuteronomium 8,3", label: "Deuteronomium 8,3", href: "/codex/deuteronomy-8-3" },
       ],
     },
     codexAnchorBridge: {
@@ -382,8 +382,8 @@ export const symbolPathConfigs = {
       scriptureAnchors: [
         { id: "exodus-16", reference: "Exodus 16", label: "Exodus 16", href: "/codex/exodus-16" },
         { id: "exodus-16-4", reference: "Exodus 16,4", label: "Exodus 16,4", href: "/codex/exodus-16-4" },
-        { id: "deuteronomium-8", reference: "Deuteronomium 8", label: "Deuteronomium 8", href: "/codex/deuteronomium-8" },
-        { id: "deuteronomium-8-3", reference: "Deuteronomium 8,3", label: "Deuteronomium 8,3", href: "/codex/deuteronomium-8-3" },
+        { id: "deuteronomy-8", reference: "Deuteronomium 8", label: "Deuteronomium 8", href: "/codex/deuteronomy-8" },
+        { id: "deuteronomy-8-3", reference: "Deuteronomium 8,3", label: "Deuteronomium 8,3", href: "/codex/deuteronomy-8-3" },
         { id: "brot-vom-himmel", reference: "Exodus 16,4", label: "Brot vom Himmel", href: "/codex/brot-vom-himmel" },
         { id: "manna-in-der-wueste", reference: "Exodus 16", label: "Manna in der Wüste", href: "/codex/manna-in-der-wueste" },
       ],

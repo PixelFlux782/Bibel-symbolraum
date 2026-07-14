@@ -139,16 +139,16 @@ const sharingEchoes = ["Abraham", "Manna", "Viele", "Emmaus", "Tisch"];
 const wordEchoes = ["Manna", "Tora", "taegliches Brot", "Brot des Lebens", "Wort", "Leib", "Leben"];
 
 const archiveExits = [
-  ["Codex Brot", "/codex/brot"],
-  ["Codex Lechem", "/codex/lechem"],
-  ["Codex Manna", "/codex/manna"],
-  ["Codex taegliches Brot", "/codex/deuteronomium-8-3"],
-  ["Codex Brot vom Himmel", "/codex/brot-vom-himmel"],
-  ["Codex Gabe", "/codex/gabe"],
-  ["Codex Nahrung", "/codex/nahrung"],
-  ["Codex Teilen", "/codex/teilen"],
-  ["Codex Wort", "/codex/wort"],
-  ["Codex Leben", "/codex/leben"],
+  ["Brot", "/codex/brot"],
+  ["Lechem", "/codex/lechem"],
+  ["Manna", "/codex/manna"],
+  ["Taegliches Brot", "/codex/deuteronomy-8-3"],
+  ["Brot vom Himmel", "/codex/brot-vom-himmel"],
+  ["Gabe", "/codex/gabe"],
+  ["Nahrung", "/codex/nahrung"],
+  ["Teilen", "/codex/teilen"],
+  ["Wort", "/codex/wort"],
+  ["Leben", "/codex/leben"],
 ] as const;
 
 export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProps) {
@@ -284,8 +284,9 @@ export default function BreadRoom({ initialStateId, roomContext }: BreadRoomProp
             <p className="bread-sanctum__echoes" aria-label="Gesammelte Reise">
               {tableEchoes.map((word) => <span key={word}>{word}</span>)}
             </p>
+            <p className="bread-sanctum__return-note">Was empfangen wurde, kehrt als Verbindung zurueck.</p>
             <Link href={symbolPath?.symbolNetworkHref ?? "/symbolnetz?symbol=brot"} className="bread-sanctum__primary-exit">
-              Die Reise im Symbolnetz sehen <span aria-hidden="true" />
+              Brot im Symbolnetz wiedersehen <span aria-hidden="true" />
             </Link>
             <div className="bread-sanctum__codex-exits" aria-label="Ruhige Archivspuren">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}

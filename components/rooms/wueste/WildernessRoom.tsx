@@ -139,15 +139,15 @@ const midbarLetters = [
 ] as const;
 
 const archiveExits = [
-  ["Codex Wueste", "/codex/wueste"],
-  ["Codex Midbar", "/codex/midbar"],
-  ["Codex Exodus", "/codex/exodus-14"],
-  ["Codex Manna", "/codex/manna"],
-  ["Codex Brot", "/codex/brot"],
-  ["Codex Versuchung", "/codex/matthew-4"],
-  ["Codex Stimme", "/codex/stimme"],
-  ["Codex Weg", "/codex/weg"],
-  ["Codex Vertrauen", "/codex/vertrauen"],
+  ["Wueste", "/codex/wueste"],
+  ["Midbar", "/codex/midbar"],
+  ["Exodus", "/codex/exodus-14"],
+  ["Manna", "/codex/manna"],
+  ["Deuteronomium 8", "/codex/deuteronomy-8"],
+  ["Versuchung", "/codex/matthew-4"],
+  ["Stimme", "/codex/qol"],
+  ["Weg", "/codex/wandlung"],
+  ["Brot", "/codex/brot"],
 ] as const;
 
 const exodusMovement = ["heraus", "hindurch", "leer", "gefuehrt"];
@@ -278,7 +278,7 @@ export default function WildernessRoom({ initialStateId, roomContext }: Wilderne
         {active.id === "brot" ? (
           <div className="wilderness-way__exits">
             <Link href="/raeume/brot?from=journey&path=journey-wueste-brot&symbol=brot" className="wilderness-way__primary-exit">
-              Zum Brot weitergehen <span aria-hidden="true" />
+              Brot als Gabe empfangen <span aria-hidden="true" />
             </Link>
             <div className="wilderness-way__codex-exits" aria-label="Ruhige Archivspuren">
               {archiveExits.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
