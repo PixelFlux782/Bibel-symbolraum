@@ -65,9 +65,9 @@ const ROOM_MIXES: Record<SymbolraumRoom, SymbolraumMix> = {
     bread: 0,
   },
   licht: {
-    base: 0.4,
-    water: 0.15,
-    light: 0.75,
+    base: 0.3,
+    water: 0.1,
+    light: 0.92,
     fire: 0,
     desert: 0,
     bread: 0,
@@ -89,12 +89,12 @@ const ROOM_MIXES: Record<SymbolraumRoom, SymbolraumMix> = {
     bread: 0,
   },
   brot: {
-    base: 0.35,
+    base: 0.22,
     water: 0,
     light: 0,
     fire: 0,
-    desert: 0.08,
-    bread: 0.75,
+    desert: 0.06,
+    bread: 0.95,
   },
 };
 
