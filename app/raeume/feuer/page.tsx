@@ -1,4 +1,4 @@
-import { SymbolEngineRoom } from "@/components/rooms/engine/SymbolEngineRoom";
+import FireRoom from "@/components/rooms/fire/FireRoom";
 import { fireEngineData } from "@/components/rooms/fire/fireEngineData";
 import {
   resolveRoomInitialStateId,
@@ -20,5 +20,5 @@ export default async function FeuerRaumPage({ searchParams }: { searchParams: Ro
   });
   const roomContext = resolveRoomContext(resolvedSearchParams, "feuer");
 
-  return <SymbolEngineRoom data={fireEngineData} initialStateId={initialStateId} roomContext={roomContext} />;
+  return <FireRoom initialStateId={initialStateId} roomContext={roomContext} />;
 }
