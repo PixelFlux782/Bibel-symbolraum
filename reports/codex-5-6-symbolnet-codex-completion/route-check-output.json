@@ -1,0 +1,574 @@
+{
+  "checkedAt": "2026-07-15T08:50:56.152Z",
+  "counts": {
+    "slugs": 79,
+    "ok": 79
+  },
+  "allValid": true,
+  "cleanEncoding": true,
+  "cleanVisibleText": true,
+  "symbolNetworkCodexLinks": [],
+  "routes": [
+    {
+      "slug": "altar",
+      "status": 200,
+      "title": "Altar | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "auge",
+      "status": 200,
+      "title": "Auge | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "baum",
+      "status": 200,
+      "title": "Baum | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "brennender-dornbusch",
+      "status": 200,
+      "title": "Brennender Dornbusch | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "brot",
+      "status": 200,
+      "title": "Brot | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "brot-vom-himmel",
+      "status": 200,
+      "title": "Brot vom Himmel | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "deuteronomium-8",
+      "status": 200,
+      "title": "Deuteronomium 8 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "deuteronomium-8-2",
+      "status": 200,
+      "title": "Deuteronomium 8,2 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "deuteronomium-8-3",
+      "status": 200,
+      "title": "Deuteronomium 8,3 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "deuteronomy-8",
+      "status": 200,
+      "title": "Deuteronomium 8 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "deuteronomy-8-2",
+      "status": 200,
+      "title": "Deuteronomium 8,2 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "deuteronomy-8-3",
+      "status": 200,
+      "title": "Deuteronomium 8,3 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "dornbusch",
+      "status": 200,
+      "title": "Dornbusch | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false,
+      "desktopOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "slug": "erkenntnis",
+      "status": 200,
+      "title": "Erkenntnis | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "esch",
+      "status": 200,
+      "title": "Feuer · Flamme | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "exodus",
+      "status": 200,
+      "title": "Exodus | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "exodus-14",
+      "status": 200,
+      "title": "Exodus 14 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "exodus-16",
+      "status": 200,
+      "title": "Exodus 16 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "exodus-16-4",
+      "status": 200,
+      "title": "Exodus 16,4 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "exodus-3",
+      "status": 200,
+      "title": "Exodus 3 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "exodus-3-2",
+      "status": 200,
+      "title": "Exodus 3,2 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "felsen",
+      "status": 200,
+      "title": "Felsen | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "feuer",
+      "status": 200,
+      "title": "Feuer | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "flamme",
+      "status": 200,
+      "title": "Flamme | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "gabe",
+      "status": 200,
+      "title": "Gabe | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "gabe-im-mangel",
+      "status": 200,
+      "title": "Gabe im Mangel | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "geburt",
+      "status": 200,
+      "title": "Geburt | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "gegenwart",
+      "status": 200,
+      "title": "Gegenwart | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "geist",
+      "status": 200,
+      "title": "Geist | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "genesis-1-2",
+      "status": 200,
+      "title": "Genesis 1,2 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "genesis-1-3",
+      "status": 200,
+      "title": "Genesis 1,3 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "genesis-1-4",
+      "status": 200,
+      "title": "Genesis 1,4 | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "glanz",
+      "status": 200,
+      "title": "Glanz | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "glut",
+      "status": 200,
+      "title": "Glut | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "himmel",
+      "status": 200,
+      "title": "Himmel | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "laeuterung",
+      "status": 200,
+      "title": "Läuterung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "leben",
+      "status": 200,
+      "title": "Leben | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "lechem",
+      "status": 200,
+      "title": "Brot · Nahrung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "leere",
+      "status": 200,
+      "title": "Leere | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "licht",
+      "status": 200,
+      "title": "Licht | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "majim",
+      "status": 200,
+      "title": "Wasser · Wasserfluten | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "manna",
+      "status": 200,
+      "title": "Manna | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "manna-in-der-wueste",
+      "status": 200,
+      "title": "Manna in der Wüste | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "meer",
+      "status": 200,
+      "title": "Meer | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "midbar",
+      "status": 200,
+      "title": "Wüste · Wildnis | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "nahrung",
+      "status": 200,
+      "title": "Nahrung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "offenbarung",
+      "status": 200,
+      "title": "Offenbarung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "offenbarung-im-feuer",
+      "status": 200,
+      "title": "Offenbarung im Feuer | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "or",
+      "status": 200,
+      "title": "Licht · Helligkeit | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "ordnung",
+      "status": 200,
+      "title": "Ordnung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "pattern-gabe-im-mangel",
+      "status": 200,
+      "title": "Gabe im Mangel | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "pattern-offenbarung-im-feuer",
+      "status": 200,
+      "title": "Offenbarung im Feuer | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "pattern-pruefung-durch-entzug",
+      "status": 200,
+      "title": "Prüfung durch Entzug | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "pattern-weg-der-reifung",
+      "status": 200,
+      "title": "Weg der Reifung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "pruefung",
+      "status": 200,
+      "title": "Prüfung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "quelle",
+      "status": 200,
+      "title": "Quelle | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "raah",
+      "status": 200,
+      "title": "sehen | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "reinigung",
+      "status": 200,
+      "title": "Reinigung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "ruach",
+      "status": 200,
+      "title": "Ruach | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "ruf",
+      "status": 200,
+      "title": "Ruf | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "saettigung",
+      "status": 200,
+      "title": "Sättigung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "speise",
+      "status": 200,
+      "title": "Speise | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "stimme",
+      "status": 200,
+      "title": "Stimme | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "taufe",
+      "status": 200,
+      "title": "Taufe | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "tehom",
+      "status": 200,
+      "title": "Tehom | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "teilen",
+      "status": 200,
+      "title": "Teilen | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "tiefe",
+      "status": 200,
+      "title": "Tiefe | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "tov",
+      "status": 200,
+      "title": "gut | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "uebergang",
+      "status": 200,
+      "title": "Übergang | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "verborgenheit",
+      "status": 200,
+      "title": "Verborgenheit | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "wandlung",
+      "status": 200,
+      "title": "Wandlung | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "wasser",
+      "status": 200,
+      "title": "Wasser | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false,
+      "desktopOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "slug": "weg",
+      "status": 200,
+      "title": "Weg | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "wort",
+      "status": 200,
+      "title": "Wort | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "wueste",
+      "status": 200,
+      "title": "Wüste | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "vertrauen",
+      "status": 200,
+      "title": "Vertrauen | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false,
+      "desktopOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "slug": "hunger",
+      "status": 200,
+      "title": "Hunger | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "grenze",
+      "status": 200,
+      "title": "Grenze | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false
+    },
+    {
+      "slug": "spiegel",
+      "status": 200,
+      "title": "Spiegel | Codex | Bibel-Symbolraum",
+      "mojibake": false,
+      "technicalRemainder": false,
+      "desktopOverflow": false,
+      "mobileOverflow": false
+    }
+  ]
+}

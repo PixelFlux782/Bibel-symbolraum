@@ -1,0 +1,553 @@
+﻿{
+  "visibleTargets": [
+    "altar",
+    "auge",
+    "baum",
+    "brennender-dornbusch",
+    "brot",
+    "brot-vom-himmel",
+    "deuteronomium-8",
+    "deuteronomium-8-2",
+    "deuteronomium-8-3",
+    "deuteronomy-8",
+    "deuteronomy-8-2",
+    "deuteronomy-8-3",
+    "dornbusch",
+    "erkenntnis",
+    "esch",
+    "exodus",
+    "exodus-14",
+    "exodus-16",
+    "exodus-16-4",
+    "exodus-3",
+    "exodus-3-2",
+    "felsen",
+    "feuer",
+    "flamme",
+    "gabe",
+    "gabe-im-mangel",
+    "geburt",
+    "gegenwart",
+    "geist",
+    "genesis-1-2",
+    "genesis-1-3",
+    "genesis-1-4",
+    "glanz",
+    "glut",
+    "himmel",
+    "laeuterung",
+    "leben",
+    "lechem",
+    "leere",
+    "licht",
+    "majim",
+    "manna",
+    "manna-in-der-wueste",
+    "meer",
+    "midbar",
+    "nahrung",
+    "offenbarung",
+    "offenbarung-im-feuer",
+    "or",
+    "ordnung",
+    "pattern-gabe-im-mangel",
+    "pattern-offenbarung-im-feuer",
+    "pattern-pruefung-durch-entzug",
+    "pattern-weg-der-reifung",
+    "pruefung",
+    "quelle",
+    "raah",
+    "reinigung",
+    "ruach",
+    "ruf",
+    "saettigung",
+    "speise",
+    "stimme",
+    "taufe",
+    "tehom",
+    "teilen",
+    "tiefe",
+    "tov",
+    "uebergang",
+    "verborgenheit",
+    "wandlung",
+    "wasser",
+    "weg",
+    "wort",
+    "wueste"
+  ],
+  "counts": {
+    "visibleTargets": 75,
+    "registry": 149,
+    "unresolved": 0,
+    "weak": 76
+  },
+  "unresolved": [],
+  "outsideRegistry": [
+    "deuteronomium-8",
+    "deuteronomium-8-2",
+    "deuteronomium-8-3",
+    "pattern-gabe-im-mangel",
+    "pattern-offenbarung-im-feuer",
+    "pattern-pruefung-durch-entzug",
+    "pattern-weg-der-reifung"
+  ],
+  "weak": [
+    {
+      "id": "anfang",
+      "summaryLength": 81,
+      "anchors": 0,
+      "relations": 0
+    },
+    {
+      "id": "schoepfung",
+      "summaryLength": 77,
+      "anchors": 0,
+      "relations": 0
+    },
+    {
+      "id": "ursprung",
+      "summaryLength": 152,
+      "anchors": 1,
+      "relations": 8
+    },
+    {
+      "id": "ordnung",
+      "summaryLength": 175,
+      "anchors": 1,
+      "relations": 7
+    },
+    {
+      "id": "himmel",
+      "summaryLength": 94,
+      "anchors": 0,
+      "relations": 0
+    },
+    {
+      "id": "erde",
+      "summaryLength": 96,
+      "anchors": 0,
+      "relations": 0
+    },
+    {
+      "id": "feuer",
+      "summaryLength": 252,
+      "anchors": 0,
+      "relations": 10
+    },
+    {
+      "id": "wueste",
+      "summaryLength": 286,
+      "anchors": 0,
+      "relations": 14
+    },
+    {
+      "id": "brot",
+      "summaryLength": 289,
+      "anchors": 0,
+      "relations": 12
+    },
+    {
+      "id": "tiefe",
+      "summaryLength": 178,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "geist",
+      "summaryLength": 109,
+      "anchors": 0,
+      "relations": 2
+    },
+    {
+      "id": "wort",
+      "summaryLength": 77,
+      "anchors": 0,
+      "relations": 0
+    },
+    {
+      "id": "qol",
+      "summaryLength": 349,
+      "anchors": 0,
+      "relations": 11
+    },
+    {
+      "id": "offenbarung",
+      "summaryLength": 175,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "reinigung",
+      "summaryLength": 162,
+      "anchors": 2,
+      "relations": 8
+    },
+    {
+      "id": "davar-qol-or",
+      "summaryLength": 44,
+      "anchors": 1,
+      "relations": 3
+    },
+    {
+      "id": "tehom-davar-qol-or",
+      "summaryLength": 176,
+      "anchors": 2,
+      "relations": 6
+    },
+    {
+      "id": "mem",
+      "summaryLength": 154,
+      "anchors": 23,
+      "relations": 26
+    },
+    {
+      "id": "aleph",
+      "summaryLength": 114,
+      "anchors": 14,
+      "relations": 25
+    },
+    {
+      "id": "bet",
+      "summaryLength": 175,
+      "anchors": 5,
+      "relations": 15
+    },
+    {
+      "id": "dalet",
+      "summaryLength": 126,
+      "anchors": 7,
+      "relations": 5
+    },
+    {
+      "id": "resh",
+      "summaryLength": 165,
+      "anchors": 17,
+      "relations": 25
+    },
+    {
+      "id": "shin",
+      "summaryLength": 154,
+      "anchors": 8,
+      "relations": 17
+    },
+    {
+      "id": "jod",
+      "summaryLength": 160,
+      "anchors": 15,
+      "relations": 21
+    },
+    {
+      "id": "tav",
+      "summaryLength": 164,
+      "anchors": 7,
+      "relations": 18
+    },
+    {
+      "id": "lamed",
+      "summaryLength": 174,
+      "anchors": 10,
+      "relations": 15
+    },
+    {
+      "id": "he",
+      "summaryLength": 177,
+      "anchors": 12,
+      "relations": 21
+    },
+    {
+      "id": "vav",
+      "summaryLength": 169,
+      "anchors": 13,
+      "relations": 22
+    },
+    {
+      "id": "tsadi",
+      "summaryLength": 140,
+      "anchors": 2,
+      "relations": 12
+    },
+    {
+      "id": "chet",
+      "summaryLength": 155,
+      "anchors": 5,
+      "relations": 17
+    },
+    {
+      "id": "kaf",
+      "summaryLength": 135,
+      "anchors": 5,
+      "relations": 14
+    },
+    {
+      "id": "ayin",
+      "summaryLength": 149,
+      "anchors": 3,
+      "relations": 14
+    },
+    {
+      "id": "pe",
+      "summaryLength": 134,
+      "anchors": 5,
+      "relations": 16
+    },
+    {
+      "id": "qof",
+      "summaryLength": 135,
+      "anchors": 3,
+      "relations": 5
+    },
+    {
+      "id": "nun",
+      "summaryLength": 151,
+      "anchors": 9,
+      "relations": 18
+    },
+    {
+      "id": "genesis-1-4",
+      "summaryLength": 169,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "schoepfung-wasser",
+      "summaryLength": 35,
+      "anchors": 0,
+      "relations": 2
+    },
+    {
+      "id": "schilfmeer",
+      "summaryLength": 30,
+      "anchors": 0,
+      "relations": 1
+    },
+    {
+      "id": "felswasser",
+      "summaryLength": 38,
+      "anchors": 0,
+      "relations": 2
+    },
+    {
+      "id": "zahl-1",
+      "summaryLength": 170,
+      "anchors": 0,
+      "relations": 5
+    },
+    {
+      "id": "zahl-40",
+      "summaryLength": 170,
+      "anchors": 0,
+      "relations": 4
+    },
+    {
+      "id": "zahl-90",
+      "summaryLength": 176,
+      "anchors": 1,
+      "relations": 4
+    },
+    {
+      "id": "elohim",
+      "summaryLength": 170,
+      "anchors": 3,
+      "relations": 8
+    },
+    {
+      "id": "et",
+      "summaryLength": 158,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "tohu",
+      "summaryLength": 174,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "bohu",
+      "summaryLength": 170,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "amar",
+      "summaryLength": 148,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "jehi",
+      "summaryLength": 159,
+      "anchors": 1,
+      "relations": 7
+    },
+    {
+      "id": "haja",
+      "summaryLength": 152,
+      "anchors": 2,
+      "relations": 6
+    },
+    {
+      "id": "wajehi",
+      "summaryLength": 160,
+      "anchors": 1,
+      "relations": 7
+    },
+    {
+      "id": "al",
+      "summaryLength": 135,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "pnei",
+      "summaryLength": 100,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "bara",
+      "summaryLength": 172,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "schamajim",
+      "summaryLength": 158,
+      "anchors": 2,
+      "relations": 6
+    },
+    {
+      "id": "erez",
+      "summaryLength": 143,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "adam",
+      "summaryLength": 150,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "chava",
+      "summaryLength": 144,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "gan",
+      "summaryLength": 148,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "nahar",
+      "summaryLength": 152,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "mikwe",
+      "summaryLength": 179,
+      "anchors": 2,
+      "relations": 6
+    },
+    {
+      "id": "jordan",
+      "summaryLength": 158,
+      "anchors": 2,
+      "relations": 6
+    },
+    {
+      "id": "jam",
+      "summaryLength": 174,
+      "anchors": 1,
+      "relations": 4
+    },
+    {
+      "id": "panim",
+      "summaryLength": 158,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "chokma",
+      "summaryLength": 146,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "bina",
+      "summaryLength": 144,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "mizbeach",
+      "summaryLength": 149,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "korban",
+      "summaryLength": 137,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "derech",
+      "summaryLength": 149,
+      "anchors": 1,
+      "relations": 5
+    },
+    {
+      "id": "nes",
+      "summaryLength": 144,
+      "anchors": 1,
+      "relations": 4
+    },
+    {
+      "id": "sinai",
+      "summaryLength": 143,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "manna",
+      "summaryLength": 151,
+      "anchors": 1,
+      "relations": 4
+    },
+    {
+      "id": "dagan",
+      "summaryLength": 158,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "shever",
+      "summaryLength": 167,
+      "anchors": 1,
+      "relations": 4
+    },
+    {
+      "id": "seudah",
+      "summaryLength": 136,
+      "anchors": 1,
+      "relations": 6
+    },
+    {
+      "id": "noach",
+      "summaryLength": 171,
+      "anchors": 1,
+      "relations": 4
+    },
+    {
+      "id": "tahor",
+      "summaryLength": 171,
+      "anchors": 1,
+      "relations": 7
+    }
+  ]
+}

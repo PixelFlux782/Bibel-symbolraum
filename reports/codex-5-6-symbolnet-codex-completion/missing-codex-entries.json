@@ -1,0 +1,15 @@
+{
+  "before": 42,
+  "after": 0,
+  "resolution": "42 kuratierte Einträge wurden in die bestehende Registry aufgenommen. Weitere erreichbare Pattern-Knoten werden aus der bestehenden Ontologie dargestellt; drei deutsche Deuteronomium-Slugs sind kanonische Aliase.",
+  "addedIds": [
+    "grenze", "hunger", "spiegel", "vertrauen", "altar", "auge", "baum",
+    "brennender-dornbusch", "brot-vom-himmel", "deuteronomy-8",
+    "deuteronomy-8-2", "deuteronomy-8-3", "dornbusch", "erkenntnis",
+    "exodus", "exodus-16", "exodus-16-4", "exodus-3", "exodus-3-2",
+    "felsen", "flamme", "gabe", "gabe-im-mangel", "gegenwart", "glanz",
+    "glut", "laeuterung", "leben", "leere", "manna-in-der-wueste", "meer",
+    "nahrung", "offenbarung-im-feuer", "pruefung", "quelle", "ruf",
+    "saettigung", "speise", "stimme", "taufe", "teilen", "weg"
+  ]
+}

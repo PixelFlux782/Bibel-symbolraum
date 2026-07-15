@@ -14,8 +14,9 @@ import { meaningJourneys } from "@/lib/meaning/meaningJourneys";
 import { SYMBOLS, SYMBOL_NETWORK, type SymbolData, type SymbolItem } from "@/lib/symbols";
 
 import type { CodexEntry, CodexRelation, CodexSourceKind } from "./types";
+import { symbolNetCompletionEntries } from "./symbolNetCompletion";
 
-const CODEX_ENTRY_IDS = [
+export const CODEX_ENTRY_IDS = [
   "anfang",
   "schoepfung",
   "ursprung",
@@ -1931,12 +1932,31 @@ const seededCodexRegistry = [
 ] satisfies CodexEntry[];
 
 const seededCodexEntryIds = new Set(seededCodexRegistry.map((entry) => entry.id));
+const completionEntryIds = new Set(symbolNetCompletionEntries.map((entry) => entry.id));
+const CORE_SUMMARY_ENRICHMENTS: Record<string, string> = {
+  wasser: " Wasser ist der Zustand vor der Form und zugleich das Element jedes neuen Anfangs. Es trägt Tiefe, Möglichkeit, Geburt, Grenze und Übergang; die Schrift zeigt es als Raum, in dem Gott dem Ungeformten nahekommt und mitten durch eine Grenze einen Weg öffnet.",
+  majim: " Im Wortkörper מַיִם stehen offenes und geschlossenes Mem um den kleinen Impuls des Jod. Der Symbolraum liest darin keine starre Etymologie, sondern ein Bild: sichtbare Bewegung um eine verborgene Mitte, aus der Leben hervortreten kann.",
+  licht: " Licht ist nicht nur Helligkeit, sondern das erste Sichtbarwerden einer Ordnung. Es trennt nicht, um zu zerreißen, sondern damit Gestalten, Wege und Beziehungen erkennbar werden und das Verborgene eine lesbare Kontur erhält.",
+  or: " Im hebräischen אוֹר beginnt Or mit Aleph, dem stillen Anfang, wird durch Waw verbunden und findet in Resch Richtung. Als Zeichenkörper gelesen, trägt das Wort die Bewegung vom unsichtbaren Ursprung zur wahrnehmbaren Gestalt.",
+  feuer: " Feuer hält Nähe und Grenze zusammen. Es wärmt, leuchtet, verwandelt und kann verzehren; im Dornbusch erscheint es als Gegenwart, die wirklich brennt und dennoch das Empfangende nicht vernichtet.",
+  esch: " Im Wort אֵשׁ begegnen Aleph und Shin: stiller Ursprung und bewegte Feuerkraft. Diese Zeichenlesung ist kein sprachwissenschaftlicher Beweis, sondern öffnet die biblische Spannung zwischen verborgener Nähe und sichtbarer Energie.",
+  wueste: " Wüste ist der entleerte Raum, in dem Vorrat und Übersicht schwinden. Gerade dort werden Hunger, Prüfung, Stimme und Weg unterscheidbar; das Äußere erzählt von einer inneren Wirklichkeit, die neu hören und vertrauen lernt.",
+  midbar: " Im Klang von מִדְבָּר berührt Midbar das Wortfeld Dabar. Der Symbolraum hört darin behutsam die Nähe von Wüste und Wort: Wo das Viele verstummt, kann eine tragende Anrede neu hervortreten.",
+  brot: " Brot sammelt Erde, Arbeit, Feuer, Empfang und Gemeinschaft in einer einfachen Gestalt. Es nährt den Leib und weist zugleich über sich hinaus auf das Wort, von dem der Mensch lebt; im Brechen wird die empfangene Gabe teilbar.",
+  lechem: " לֶחֶם trägt mit Lamed, Chet und Mem eine Bewegung von Ausrichtung, Leben und verborgener Tiefe. Als Zeichenkörper gelesen, erinnert Lechem daran, dass Nahrung empfangen, verinnerlicht und wieder in Beziehung gegeben wird.",
+};
+
+function enrichCoreEntry(entry: CodexEntry): CodexEntry {
+  const enrichment = CORE_SUMMARY_ENRICHMENTS[entry.id];
+  return enrichment ? { ...entry, summary: `${entry.summary}${enrichment}`, meta: { ...entry.meta, status: "stable" } } : entry;
+}
 
 export const codexRegistry = canonicalizeCodexRegistry([
-  ...seededCodexRegistry,
+  ...symbolNetCompletionEntries,
+  ...seededCodexRegistry.filter((entry) => !completionEntryIds.has(entry.id)).map(enrichCoreEntry),
   ...hebrewWords
     .filter((word) => !seededCodexEntryIds.has(word.id))
     .map(generatedHebrewWordEntry),
 ] satisfies CodexEntry[]);
 
-export const codexEntryIds = CODEX_ENTRY_IDS;
+export const codexEntryIds = codexRegistry.map((entry) => entry.id);

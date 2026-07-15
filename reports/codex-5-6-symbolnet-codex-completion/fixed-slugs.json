@@ -1,0 +1,17 @@
+{
+  "aliases": {
+    "deuteronomium-8": "deuteronomy-8",
+    "deuteronomium-8-2": "deuteronomy-8-2",
+    "deuteronomium-8-3": "deuteronomy-8-3",
+    "wasser": "majim",
+    "licht": "or",
+    "feuer": "esch",
+    "esh": "esch",
+    "wueste": "midbar",
+    "brot": "lechem",
+    "tiefe": "tehom",
+    "wort": "davar",
+    "stimme": "qol"
+  },
+  "note": "Die Haupträume behalten eigene sichtbare Einträge; die Lookup-Aliase vereinheitlichen Suche und alternative Schreibweisen. Deutsche Deuteronomium-Routen werden ohne 404 auf die kanonischen Einträge geführt."
+}

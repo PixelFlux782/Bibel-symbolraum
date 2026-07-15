@@ -323,6 +323,9 @@ const CANONICAL_CODEX_ROUTE_IDS: Record<string, string> = {
   "chaos-ordnung": "journey-chaos-ordnung",
   "wasser-brot": "journey-wasser-zum-brot",
   "wasser-licht": "bridge-wasser-licht",
+  "deuteronomium-8": "deuteronomy-8",
+  "deuteronomium-8-2": "deuteronomy-8-2",
+  "deuteronomium-8-3": "deuteronomy-8-3",
 };
 
 function getDefaultSymbolRoomPath(entry: CodexEntry) {
